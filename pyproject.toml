@@ -7,14 +7,13 @@ name = "maplibreum"
 version = "0.1.0"
 description = "A Python library for creating interactive MapLibre maps, like Folium but for MapLibre."
 readme = "README.md"
-license = {file = "LICENSE"}
+license = "MIT"
 authors = [
-  {name = "Your Name", email = "you@example.com"}
+  {name = "Kauê de Moraes Vestena", email = "kauemv2@gmail.com"}
 ]
 keywords = ["map", "mapping", "geospatial", "GIS", "MapLibre", "Jupyter"]
 classifiers = [
   "Programming Language :: Python :: 3",
-  "License :: OSI Approved :: MIT License",
   "Operating System :: OS Independent",
 ]
 dependencies = [
@@ -22,22 +21,14 @@ dependencies = [
 ]
 
 [project.urls]
-"Source" = "https://github.com/yourusername/maplibreum"
-"Issues" = "https://github.com/yourusername/maplibreum/issues"
+"Source" = "https://github.com/kauevestena/maplibreum_prototype"
+"Issues" = "https://github.com/kauevestena/maplibreum_prototype/issues"
 
 [tool.setuptools]
-package-dir = {"" = "maplibreum"}
-include-package-data = true
-
-[tool.setuptools.packages.find]
-where = ["maplibreum"]
+packages = ["maplibreum", "maplibreum.templates"]
 
 [tool.setuptools.package-data]
 maplibreum = ["templates/*.html"]
-
-[tool.setuptools.scripts]
-# If you have command-line scripts, define them here
-# e.g., maplibreum = "maplibreum.cli:main"
 
 [tool.pytest.ini_options]
 testpaths = [
