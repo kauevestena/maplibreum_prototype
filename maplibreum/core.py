@@ -1,15 +1,27 @@
 import os
 import json
 import uuid
-from jinja2 import Environment, FileSystemLoader, Markup
+from jinja2 import Environment, FileSystemLoader
+from markupsafe import Markup
 from IPython.display import IFrame, display
+
+
+# Predefined map styles
+MAP_STYLES = {
+    "basic": "https://demotiles.maplibre.org/style.json",
+    "streets": "https://api.maptiler.com/maps/streets/style.json?key=get_your_own_OpIi9ZULNHzrESv6T2vL",
+    "satellite": "https://api.maptiler.com/maps/satellite/style.json?key=get_your_own_OpIi9ZULNHzrESv6T2vL",
+    "topo": "https://api.maptiler.com/maps/topo/style.json?key=get_your_own_OpIi9ZULNHzrESv6T2vL",
+    "dark": "https://api.maptiler.com/maps/darkmatter/style.json?key=get_your_own_OpIi9ZULNHzrESv6T2vL",
+    "light": "https://api.maptiler.com/maps/positron/style.json?key=get_your_own_OpIi9ZULNHzrESv6T2vL",
+}
 
 
 class Map:
     def __init__(
         self,
         title="MapLibreum Map",
-        map_style="https://demotiles.maplibre.org/style.json",
+        map_style="basic",
         center=[0, 0],
         zoom=2,
         width="100%",
@@ -21,7 +33,10 @@ class Map:
         custom_css="",
     ):
         self.title = title
-        self.map_style = map_style
+        if map_style in MAP_STYLES:
+            self.map_style = MAP_STYLES[map_style]
+        else:
+            self.map_style = map_style
         self.center = center
         self.zoom = zoom
         self.width = width
@@ -139,3 +154,90 @@ class Map:
     def save(self, filepath):
         with open(filepath, "w", encoding="utf-8") as f:
             f.write(self.render())
+
+
+class Marker:
+    def __init__(self, coordinates, popup=None, color="#007cbf"):
+        self.coordinates = coordinates
+        self.popup = popup
+        self.color = color
+
+    def add_to(self, map_instance):
+        layer_id = f"marker_{uuid.uuid4().hex}"
+        source = {
+            "type": "geojson",
+            "data": {
+                "type": "FeatureCollection",
+                "features": [
+                    {
+                        "type": "Feature",
+                        "geometry": {
+                            "type": "Point",
+                            "coordinates": self.coordinates,
+                        },
+                        "properties": {},
+                    }
+                ],
+            },
+        }
+        layer = {
+            "id": layer_id,
+            "type": "circle",
+            "source": layer_id,
+            "paint": {
+                "circle-radius": 8,
+                "circle-color": self.color,
+                "circle-stroke-width": 1,
+                "circle-stroke-color": "#fff",
+            },
+        }
+        map_instance.add_layer(layer, source=source)
+
+        if self.popup:
+            map_instance.add_popup(html=self.popup, layer_id=layer_id)
+
+
+class GeoJson:
+    def __init__(self, data, style_function=None, name=None):
+        self.data = data
+        self.name = name if name else f"geojson_{uuid.uuid4().hex}"
+
+        if style_function:
+            self.style_function = style_function
+        else:
+            self.style_function = lambda x: {
+                "color": "#007cbf",
+                "weight": 2,
+                "opacity": 1,
+                "fillColor": "#007cbf",
+                "fillOpacity": 0.6,
+            }
+
+    def add_to(self, map_instance):
+        source = {"type": "geojson", "data": self.data}
+        layer_id = self.name
+        layer = {
+            "id": layer_id,
+            "type": "fill",  # Default to fill, can be customized
+            "source": layer_id,
+            "paint": {
+                "fill-color": [
+                    "get",
+                    "color",
+                    ["properties"],
+                ],  # Example, needs more robust implementation
+                "fill-opacity": ["get", "opacity", ["properties"]],
+            },
+        }
+
+        # A more robust implementation would parse the style_function
+        # and apply it to the paint properties.
+        # For now, we'll keep it simple.
+
+        # Process features to add style properties
+        for feature in self.data["features"]:
+            style = self.style_function(feature)
+            feature["properties"]["color"] = style.get("fillColor", "#007cbf")
+            feature["properties"]["opacity"] = style.get("fillOpacity", 0.6)
+
+        map_instance.add_layer(layer, source=source)
