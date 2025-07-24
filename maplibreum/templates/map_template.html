@@ -50,15 +50,15 @@
 
         // Add layers
         map.on('load', function () {
-            {% for layer in layers %}
-            // Add source if defined
-            {% if layer.source %}
-            map.addSource("{{ layer.id }}", {{ layer.source | tojson }});
-        {% endif %}
+            // Add sources
+            {% for source in sources %}
+            map.addSource("{{ source.name }}", {{ source.definition | tojson | safe }});
+            {% endfor %}
 
-        // Add layer
-        map.addLayer({{ layer.definition | tojson }}, "{{ layer.before }}" || undefined);
-        {% endfor %}
+            // Add layers
+            {% for layer in layers %}
+            map.addLayer({{ layer.definition | tojson | safe }}, "{{ layer.before }}" || undefined);
+            {% endfor %}
 
         // Add popups
         {% for popup in popups %}

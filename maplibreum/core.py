@@ -42,6 +42,7 @@ class Map:
         self.width = width
         self.height = height
         self.controls = controls if controls is not None else []
+        self.sources = []
         self.layers = layers if layers is not None else []
         self.popups = popups if popups is not None else []
         self.extra_js = extra_js
@@ -68,6 +69,14 @@ class Map:
             {"type": control_type, "position": position, "options": options}
         )
 
+    def add_source(self, name, definition):
+        """
+        Add a source to the map.
+        name: str, the name of the source
+        definition: dict, the source definition
+        """
+        self.sources.append({"name": name, "definition": definition})
+
     def add_layer(self, layer_definition, source=None, before=None):
         """
         Add a layer to the map.
@@ -75,16 +84,21 @@ class Map:
         source: dict describing a MapLibre source (optional)
         before: the ID of an existing layer before which this layer should be placed
         """
+        if isinstance(source, str):
+            # Source is a string, so we assume it's a source name
+            # that has already been added to the map.
+            layer_definition["source"] = source
+        elif source is not None:
+            # Source is a dict, so we add it to the map's sources.
+            source_name = f"source_{uuid.uuid4().hex}"
+            self.add_source(source_name, source)
+            layer_definition["source"] = source_name
+
         layer_id = layer_definition.get("id", f"layer_{uuid.uuid4().hex}")
-        # Ensure layer has an id
         layer_definition["id"] = layer_id
+
         self.layers.append(
-            {
-                "id": layer_id,
-                "definition": layer_definition,
-                "source": source,
-                "before": before,
-            }
+            {"id": layer_id, "definition": layer_definition, "before": before}
         )
 
     def add_popup(
@@ -112,6 +126,66 @@ class Map:
             }
         )
 
+    def add_circle_layer(
+        self, name, source, paint=None, layout=None, before=None, filter=None
+    ):
+        """
+        Add a circle layer to the map.
+        """
+        if paint is None:
+            paint = {"circle-radius": 6, "circle-color": "#007cbf"}
+        layer_definition = {"id": name, "type": "circle", "paint": paint}
+        if layout:
+            layer_definition["layout"] = layout
+        if filter:
+            layer_definition["filter"] = filter
+        self.add_layer(layer_definition, source=source, before=before)
+
+    def add_fill_layer(
+        self, name, source, paint=None, layout=None, before=None, filter=None
+    ):
+        """
+        Add a fill layer to the map.
+        """
+        if paint is None:
+            paint = {"fill-color": "#007cbf", "fill-opacity": 0.5}
+        layer_definition = {"id": name, "type": "fill", "paint": paint}
+        if layout:
+            layer_definition["layout"] = layout
+        if filter:
+            layer_definition["filter"] = filter
+        self.add_layer(layer_definition, source=source, before=before)
+
+    def add_line_layer(
+        self, name, source, paint=None, layout=None, before=None, filter=None
+    ):
+        """
+        Add a line layer to the map.
+        """
+        if paint is None:
+            paint = {"line-color": "#007cbf", "line-width": 2}
+        layer_definition = {"id": name, "type": "line", "paint": paint}
+        if layout:
+            layer_definition["layout"] = layout
+        if filter:
+            layer_definition["filter"] = filter
+        self.add_layer(layer_definition, source=source, before=before)
+
+    def add_symbol_layer(
+        self, name, source, paint=None, layout=None, before=None, filter=None
+    ):
+        """
+        Add a symbol layer to the map.
+        """
+        if layout is None:
+            layout = {"icon-image": "marker-15"}
+        layer_definition = {"id": name, "type": "symbol", "layout": layout}
+        if paint:
+            layer_definition["paint"] = paint
+        if filter:
+            layer_definition["filter"] = filter
+        self.add_layer(layer_definition, source=source, before=before)
+
     def render(self):
         # Inject custom CSS to adjust the map div if needed
         # The template expects #map { width: ..., height: ... } to be set via custom_css if desired.
@@ -123,6 +197,7 @@ class Map:
             map_style=self.map_style,
             center=self.center,
             zoom=self.zoom,
+            sources=self.sources,
             controls=self.controls,
             layers=self.layers,
             popups=self.popups,
