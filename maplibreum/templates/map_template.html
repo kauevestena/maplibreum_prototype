@@ -17,11 +17,7 @@
             height: 500px;
         }
 
-            {
-                {
-                custom_css|safe
-            }
-        }
+        {{ custom_css | safe }}
     </style>
 </head>
 
@@ -32,9 +28,9 @@
         // Initialize map
         var map = new maplibregl.Map({
             container: 'map',
-            style: {{ map_style| tojson }},
-        center: { { center | tojson } },
-        zoom: { { zoom } }
+            style: {{ map_style | tojson }},
+            center: {{ center | tojson }},
+            zoom: {{ zoom }}
         });
 
         // Add controls
@@ -68,13 +64,13 @@
 
         {% if popup.coordinates %}
             // If popup is fixed at certain coordinates
-            popup_{ { loop.index } }.setLngLat({{ popup.coordinates | tojson }}).addTo(map);
+            popup_{{ loop.index }}.setLngLat({{ popup.coordinates | tojson }}).addTo(map);
         {% endif %}
 
         {% if popup.layer_id and popup.events %}
         // If popup is triggered by layer event (e.g., click)
         map.on('{{ popup.events|first }}', '{{ popup.layer_id }}', function (e) {
-                popup_{ { loop.index } }
+                popup_{{ loop.index }}
                     .setLngLat(e.lngLat)
                 .setHTML(`{{ popup.html }}`)
                 .addTo(map);
@@ -83,7 +79,7 @@
         {% endfor %}
         });
 
-        { { extra_js | safe } }
+        {{ extra_js | safe }}
     </script>
 </body>
 
