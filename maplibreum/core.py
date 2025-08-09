@@ -273,6 +273,25 @@ class Marker:
 
 
 class GeoJson:
+    """
+    Representation of a GeoJSON overlay.
+
+    Parameters
+    ----------
+    data : dict
+        A GeoJSON ``FeatureCollection``.
+    style_function : callable, optional
+        Function called for each feature. It should return a dictionary with
+        style properties similar to the Leaflet style specification. Supported
+        keys include ``stroke`` (bool), ``color`` (stroke color), ``weight``
+        (stroke width), ``opacity`` (stroke opacity), ``fill`` (bool),
+        ``fillColor`` (fill color), ``fillOpacity`` (fill opacity) and
+        ``radius`` (circle radius for point features). Missing keys fall back to
+        sensible defaults.
+    name : str, optional
+        Base name for generated source and layer identifiers.
+    """
+
     def __init__(self, data, style_function=None, name=None):
         self.data = data
         self.name = name if name else f"geojson_{uuid.uuid4().hex}"
@@ -280,39 +299,104 @@ class GeoJson:
         if style_function:
             self.style_function = style_function
         else:
-            self.style_function = lambda x: {
+            self.style_function = lambda feature: {
+                "stroke": True,
                 "color": "#007cbf",
                 "weight": 2,
                 "opacity": 1,
+                "fill": True,
                 "fillColor": "#007cbf",
                 "fillOpacity": 0.6,
+                "radius": 6,
             }
 
     def add_to(self, map_instance):
+        """Add this GeoJSON object to a map instance.
+
+        The geometry type of each feature is inspected and appropriate layers
+        (``fill`` for polygons, ``line`` for polylines and ``circle`` for
+        points) are created. The ``style_function`` is used to populate feature
+        properties such as ``stroke``, ``weight`` and ``fillColor`` which are
+        then referenced by the layer paint definitions.
+        """
+
+        source_id = f"{self.name}_source"
         source = {"type": "geojson", "data": self.data}
-        layer_id = self.name
-        layer = {
-            "id": layer_id,
-            "type": "fill",  # Default to fill, can be customized
-            "source": layer_id,
-            "paint": {
-                "fill-color": [
-                    "get",
-                    "color",
-                    ["properties"],
-                ],  # Example, needs more robust implementation
-                "fill-opacity": ["get", "opacity", ["properties"]],
-            },
-        }
+        map_instance.add_source(source_id, source)
 
-        # A more robust implementation would parse the style_function
-        # and apply it to the paint properties.
-        # For now, we'll keep it simple.
+        # Apply style function to each feature
+        for feature in self.data.get("features", []):
+            props = feature.setdefault("properties", {})
+            default_style = {
+                "stroke": True,
+                "color": "#007cbf",
+                "weight": 2,
+                "opacity": 1,
+                "fill": True,
+                "fillColor": "#007cbf",
+                "fillOpacity": 0.6,
+                "radius": 6,
+            }
+            style = self.style_function(feature) if self.style_function else {}
+            default_style.update(style)
+            if "fillColor" not in default_style:
+                default_style["fillColor"] = default_style["color"]
+            props.update(default_style)
 
-        # Process features to add style properties
-        for feature in self.data["features"]:
-            style = self.style_function(feature)
-            feature["properties"]["color"] = style.get("fillColor", "#007cbf")
-            feature["properties"]["opacity"] = style.get("fillOpacity", 0.6)
+        # Determine geometry types present
+        geometry_types = set()
+        for feature in self.data.get("features", []):
+            geom_type = feature.get("geometry", {}).get("type", "")
+            if geom_type.startswith("Multi"):
+                geom_type = geom_type[5:]
+            geometry_types.add(geom_type)
 
-        map_instance.add_layer(layer, source=source)
+        # Fill layer for polygons
+        if "Polygon" in geometry_types:
+            fill_layer = {
+                "id": f"{self.name}_fill",
+                "type": "fill",
+                "paint": {
+                    "fill-color": ["get", "fillColor", ["properties"]],
+                    "fill-opacity": ["get", "fillOpacity", ["properties"]],
+                    "fill-outline-color": [
+                        "case",
+                        ["boolean", ["get", "stroke", ["properties"]], True],
+                        ["get", "color", ["properties"]],
+                        "rgba(0,0,0,0)",
+                    ],
+                },
+                "filter": ["==", ["geometry-type"], "Polygon"],
+            }
+            map_instance.add_layer(fill_layer, source=source_id)
+
+        # Line layer for LineString features
+        if "LineString" in geometry_types:
+            line_layer = {
+                "id": f"{self.name}_line",
+                "type": "line",
+                "paint": {
+                    "line-color": ["get", "color", ["properties"]],
+                    "line-width": ["get", "weight", ["properties"]],
+                    "line-opacity": ["get", "opacity", ["properties"]],
+                },
+                "filter": ["==", ["geometry-type"], "LineString"],
+            }
+            map_instance.add_layer(line_layer, source=source_id)
+
+        # Circle layer for Point features
+        if "Point" in geometry_types:
+            circle_layer = {
+                "id": f"{self.name}_circle",
+                "type": "circle",
+                "paint": {
+                    "circle-color": ["get", "fillColor", ["properties"]],
+                    "circle-opacity": ["get", "fillOpacity", ["properties"]],
+                    "circle-stroke-color": ["get", "color", ["properties"]],
+                    "circle-stroke-width": ["get", "weight", ["properties"]],
+                    "circle-stroke-opacity": ["get", "opacity", ["properties"]],
+                    "circle-radius": ["get", "radius", ["properties"]],
+                },
+                "filter": ["==", ["geometry-type"], "Point"],
+            }
+            map_instance.add_layer(circle_layer, source=source_id)
