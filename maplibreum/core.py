@@ -373,8 +373,41 @@ class GeoJson:
         source_id = f"{self.name}_source"
         source = {"type": "geojson", "data": self.data}
         map_instance.add_source(source_id, source)
+        for feature in self.data.get("features", []):
+            style = self.style_function(feature)
+            props = feature.setdefault("properties", {})
+            props.update(style)
+            if "fillColor" in style and "color" not in style:
+                props["color"] = style["fillColor"]
+            if "fillOpacity" in style and "opacity" not in style:
+                props["opacity"] = style["fillOpacity"]
 
-        map_instance.add_layer(layer, source=source)
+        geom_types = {f["geometry"]["type"] for f in self.data.get("features", [])}
+        for geom_type in geom_types:
+            layer_id = f"{self.name}_{geom_type.lower()}"
+            if geom_type in ["Polygon", "MultiPolygon"]:
+                paint = {
+                    "fill-color": ["get", "color", ["properties"]],
+                    "fill-opacity": ["get", "opacity", ["properties"]],
+                }
+                layer_def = {"id": layer_id, "type": "fill", "source": source_id, "paint": paint}
+            elif geom_type in ["LineString", "MultiLineString"]:
+                paint = {
+                    "line-color": ["get", "color", ["properties"]],
+                    "line-width": ["get", "weight", ["properties"]],
+                    "line-opacity": ["get", "opacity", ["properties"]],
+                }
+                layer_def = {"id": layer_id, "type": "line", "source": source_id, "paint": paint}
+            elif geom_type in ["Point", "MultiPoint"]:
+                paint = {
+                    "circle-color": ["get", "fillColor", ["properties"]],
+                    "circle-radius": ["get", "radius", ["properties"]],
+                    "circle-stroke-width": ["get", "weight", ["properties"]],
+                }
+                layer_def = {"id": layer_id, "type": "circle", "source": source_id, "paint": paint}
+            else:
+                continue
+            map_instance.add_layer(layer_def)
 
 
 class Circle:

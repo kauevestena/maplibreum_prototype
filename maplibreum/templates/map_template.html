@@ -71,24 +71,41 @@ map.on('load', function() {
     {% endif %}
     {% endfor %}
 
-        {% if popup.coordinates %}
-            // If popup is fixed at certain coordinates
-            popup_{{ loop.index }}.setLngLat({{ popup.coordinates | tojson }}).addTo(map);
-        {% endif %}
+    // Tile Layers
+    var tileLayers = [
+    {% for tile in tile_layers %}
+        { id: "{{ tile.id }}", name: "{{ tile.name }}" },
+    {% endfor %}
+    ];
 
-        {% if popup.layer_id and popup.events %}
-        // If popup is triggered by layer event (e.g., click)
-        map.on('{{ popup.events|first }}', '{{ popup.layer_id }}', function (e) {
-                popup_{{ loop.index }}
-                    .setLngLat(e.lngLat)
-                .setHTML(`{{ popup.html }}`)
-                .addTo(map);
-        });
-        {% endif %}
-        {% endfor %}
-        });
+    {% if tile_layers %}
+    // Hide all but the first tile layer
+    tileLayers.forEach(function(tl, idx) {
+        map.setLayoutProperty(tl.id, 'visibility', idx === 0 ? 'visible' : 'none');
+    });
+    {% endif %}
 
-        {{ extra_js | safe }}
+    {% if layer_control %}
+    // Simple layer control
+    var layerControl = document.createElement('div');
+    layerControl.id = 'layer-control';
+    tileLayers.forEach(function(tl) {
+        var link = document.createElement('a');
+        link.href = '#';
+        link.textContent = tl.name;
+        link.addEventListener('click', function(e) {
+            e.preventDefault();
+            tileLayers.forEach(function(other) {
+                map.setLayoutProperty(other.id, 'visibility', other.id === tl.id ? 'visible' : 'none');
+            });
+        });
+        layerControl.appendChild(link);
+    });
+    map.getContainer().appendChild(layerControl);
+    {% endif %}
+});
+
+    {{ extra_js | safe }}
     </script>
 </body>
 
