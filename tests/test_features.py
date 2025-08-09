@@ -18,6 +18,13 @@ class TestFeatures(unittest.TestCase):
         self.assertEqual(len(m.popups), 1)
         self.assertEqual(m.layers[0]["definition"]["paint"]["circle-color"], "red")
 
+    def test_add_marker_wrapper(self):
+        m = Map()
+        m.add_marker(coordinates=[-74.5, 40], popup="Wrapper marker", color="green")
+        self.assertEqual(len(m.layers), 1)
+        self.assertEqual(len(m.popups), 1)
+        self.assertEqual(m.layers[0]["definition"]["paint"]["circle-color"], "green")
+
     def test_geojson(self):
         m = Map()
         geojson_data = {

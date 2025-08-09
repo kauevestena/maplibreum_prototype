@@ -16,8 +16,11 @@ from maplibreum import Map
 # Create a map centered at a specific location
 m = Map(center=[-23.5505, -46.6333], zoom=10)
 
-# Add a marker
+# Add a marker at the map center
 m.add_marker(popup="Hello, MapLibre!")
+
+# Or specify coordinates for the marker
+m.add_marker(coordinates=[-23.55, -46.63], popup="Another marker")
 
 # Save the map to an HTML file
 m.save("my_map.html")

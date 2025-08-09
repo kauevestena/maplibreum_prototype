@@ -126,6 +126,25 @@ class Map:
             }
         )
 
+    def add_marker(self, coordinates=None, popup=None, color="#007cbf"):
+        """Add a marker to the map.
+
+        Parameters
+        ----------
+        coordinates : list or tuple, optional
+            [lng, lat] pair where the marker will be placed. Defaults to the
+            map's center if not provided.
+        popup : str, optional
+            HTML content for a popup bound to the marker.
+        color : str, optional
+            Color of the marker, defaults to MapLibre blue.
+        """
+        if coordinates is None:
+            coordinates = self.center
+        marker = Marker(coordinates=coordinates, popup=popup, color=color)
+        marker.add_to(self)
+        return marker
+
     def add_circle_layer(
         self, name, source, paint=None, layout=None, before=None, filter=None
     ):
