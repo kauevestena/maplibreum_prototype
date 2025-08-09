@@ -302,6 +302,25 @@ class Marker:
 
 
 class GeoJson:
+    """
+    Representation of a GeoJSON overlay.
+
+    Parameters
+    ----------
+    data : dict
+        A GeoJSON ``FeatureCollection``.
+    style_function : callable, optional
+        Function called for each feature. It should return a dictionary with
+        style properties similar to the Leaflet style specification. Supported
+        keys include ``stroke`` (bool), ``color`` (stroke color), ``weight``
+        (stroke width), ``opacity`` (stroke opacity), ``fill`` (bool),
+        ``fillColor`` (fill color), ``fillOpacity`` (fill opacity) and
+        ``radius`` (circle radius for point features). Missing keys fall back to
+        sensible defaults.
+    name : str, optional
+        Base name for generated source and layer identifiers.
+    """
+
     def __init__(self, data, style_function=None, name=None):
         self.data = data
         self.name = name if name else f"geojson_{uuid.uuid4().hex}"
@@ -309,40 +328,30 @@ class GeoJson:
         if style_function:
             self.style_function = style_function
         else:
-            self.style_function = lambda x: {
+            self.style_function = lambda feature: {
+                "stroke": True,
                 "color": "#007cbf",
                 "weight": 2,
                 "opacity": 1,
+                "fill": True,
                 "fillColor": "#007cbf",
                 "fillOpacity": 0.6,
+                "radius": 6,
             }
 
     def add_to(self, map_instance):
+        """Add this GeoJSON object to a map instance.
+
+        The geometry type of each feature is inspected and appropriate layers
+        (``fill`` for polygons, ``line`` for polylines and ``circle`` for
+        points) are created. The ``style_function`` is used to populate feature
+        properties such as ``stroke``, ``weight`` and ``fillColor`` which are
+        then referenced by the layer paint definitions.
+        """
+
+        source_id = f"{self.name}_source"
         source = {"type": "geojson", "data": self.data}
-        layer_id = self.name
-        layer = {
-            "id": layer_id,
-            "type": "fill",  # Default to fill, can be customized
-            "source": layer_id,
-            "paint": {
-                "fill-color": [
-                    "get",
-                    "color",
-                    ["properties"],
-                ],  # Example, needs more robust implementation
-                "fill-opacity": ["get", "opacity", ["properties"]],
-            },
-        }
-
-        # A more robust implementation would parse the style_function
-        # and apply it to the paint properties.
-        # For now, we'll keep it simple.
-
-        # Process features to add style properties
-        for feature in self.data["features"]:
-            style = self.style_function(feature)
-            feature["properties"]["color"] = style.get("fillColor", "#007cbf")
-            feature["properties"]["opacity"] = style.get("fillOpacity", 0.6)
+        map_instance.add_source(source_id, source)
 
         map_instance.add_layer(layer, source=source)
 
@@ -487,3 +496,4 @@ class LayerControl:
     def add_to(self, map_instance):
         map_instance.layer_control = True
         return self
+

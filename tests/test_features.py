@@ -56,7 +56,68 @@ class TestFeatures(unittest.TestCase):
         self.assertEqual(m.layers[0]["definition"]["type"], "fill")
         self.assertEqual(
             m.layers[0]["definition"]["paint"]["fill-color"],
+            ["get", "fillColor", ["properties"]],
+        )
+
+    def test_geojson_line_and_point(self):
+        m = Map()
+        geojson_data = {
+            "type": "FeatureCollection",
+            "features": [
+                {
+                    "type": "Feature",
+                    "properties": {},
+                    "geometry": {
+                        "type": "LineString",
+                        "coordinates": [[0, 0], [1, 1]],
+                    },
+                },
+                {
+                    "type": "Feature",
+                    "properties": {},
+                    "geometry": {"type": "Point", "coordinates": [2, 2]},
+                },
+            ],
+        }
+
+        def style_function(feature):
+            return {
+                "color": "green",
+                "weight": 5,
+                "opacity": 0.7,
+                "fillColor": "yellow",
+                "fillOpacity": 0.4,
+            }
+
+        geojson_layer = GeoJson(geojson_data, style_function=style_function)
+        geojson_layer.add_to(m)
+
+        layer_types = {layer["definition"]["type"] for layer in m.layers}
+        self.assertIn("line", layer_types)
+        self.assertIn("circle", layer_types)
+
+        line_layer = next(
+            l for l in m.layers if l["definition"]["type"] == "line"
+        )
+        self.assertEqual(
+            line_layer["definition"]["paint"]["line-color"],
             ["get", "color", ["properties"]],
+        )
+        self.assertEqual(
+            line_layer["definition"]["paint"]["line-width"],
+            ["get", "weight", ["properties"]],
+        )
+
+        circle_layer = next(
+            l for l in m.layers if l["definition"]["type"] == "circle"
+        )
+        self.assertEqual(
+            circle_layer["definition"]["paint"]["circle-color"],
+            ["get", "fillColor", ["properties"]],
+        )
+        self.assertEqual(
+            circle_layer["definition"]["paint"]["circle-stroke-width"],
+            ["get", "weight", ["properties"]],
         )
 
     def test_tile_layer_and_control(self):
