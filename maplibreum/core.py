@@ -1,6 +1,7 @@
 import os
 import json
 import uuid
+import math
 from jinja2 import Environment, FileSystemLoader
 from markupsafe import Markup
 from IPython.display import IFrame, display
@@ -44,9 +45,11 @@ class Map:
         self.controls = controls if controls is not None else []
         self.sources = []
         self.layers = layers if layers is not None else []
+        self.tile_layers = []
         self.popups = popups if popups is not None else []
         self.extra_js = extra_js
         self.custom_css = custom_css
+        self.layer_control = False
 
         template_dir = os.path.join(os.path.dirname(__file__), "templates")
         self.env = Environment(loader=FileSystemLoader(template_dir))
@@ -100,6 +103,30 @@ class Map:
         self.layers.append(
             {"id": layer_id, "definition": layer_definition, "before": before}
         )
+
+    def add_tile_layer(self, url, name=None, attribution=None):
+        """Add a raster tile layer to the map.
+
+        Parameters
+        ----------
+        url : str
+            Tile URL template.
+        name : str, optional
+            Name of the layer. If omitted, a unique ID is generated.
+        attribution : str, optional
+            Attribution text for the layer.
+        """
+        layer_id = name or f"tilelayer_{uuid.uuid4().hex}"
+        source = {
+            "type": "raster",
+            "tiles": [url],
+            "tileSize": 256,
+        }
+        if attribution:
+            source["attribution"] = attribution
+        layer = {"id": layer_id, "type": "raster", "source": layer_id}
+        self.add_layer(layer, source=source)
+        self.tile_layers.append({"id": layer_id, "name": name or layer_id})
 
     def add_popup(
         self, html, coordinates=None, layer_id=None, events=None, options=None
@@ -200,6 +227,8 @@ class Map:
             sources=self.sources,
             controls=self.controls,
             layers=self.layers,
+            tile_layers=self.tile_layers,
+            layer_control=self.layer_control,
             popups=self.popups,
             extra_js=self.extra_js,
             custom_css=final_custom_css,
@@ -324,79 +353,147 @@ class GeoJson:
         source = {"type": "geojson", "data": self.data}
         map_instance.add_source(source_id, source)
 
-        # Apply style function to each feature
-        for feature in self.data.get("features", []):
-            props = feature.setdefault("properties", {})
-            default_style = {
-                "stroke": True,
-                "color": "#007cbf",
-                "weight": 2,
-                "opacity": 1,
-                "fill": True,
-                "fillColor": "#007cbf",
-                "fillOpacity": 0.6,
-                "radius": 6,
-            }
-            style = self.style_function(feature) if self.style_function else {}
-            default_style.update(style)
-            if "fillColor" not in default_style:
-                default_style["fillColor"] = default_style["color"]
-            props.update(default_style)
+        map_instance.add_layer(layer, source=source)
 
-        # Determine geometry types present
-        geometry_types = set()
-        for feature in self.data.get("features", []):
-            geom_type = feature.get("geometry", {}).get("type", "")
-            if geom_type.startswith("Multi"):
-                geom_type = geom_type[5:]
-            geometry_types.add(geom_type)
 
-        # Fill layer for polygons
-        if "Polygon" in geometry_types:
-            fill_layer = {
-                "id": f"{self.name}_fill",
-                "type": "fill",
-                "paint": {
-                    "fill-color": ["get", "fillColor", ["properties"]],
-                    "fill-opacity": ["get", "fillOpacity", ["properties"]],
-                    "fill-outline-color": [
-                        "case",
-                        ["boolean", ["get", "stroke", ["properties"]], True],
-                        ["get", "color", ["properties"]],
-                        "rgba(0,0,0,0)",
-                    ],
-                },
-                "filter": ["==", ["geometry-type"], "Polygon"],
-            }
-            map_instance.add_layer(fill_layer, source=source_id)
+class Circle:
+    """Draw a circle with radius in meters."""
 
-        # Line layer for LineString features
-        if "LineString" in geometry_types:
-            line_layer = {
-                "id": f"{self.name}_line",
-                "type": "line",
-                "paint": {
-                    "line-color": ["get", "color", ["properties"]],
-                    "line-width": ["get", "weight", ["properties"]],
-                    "line-opacity": ["get", "opacity", ["properties"]],
-                },
-                "filter": ["==", ["geometry-type"], "LineString"],
-            }
-            map_instance.add_layer(line_layer, source=source_id)
+    def __init__(
+        self,
+        location,
+        radius=1000,
+        color="#3388ff",
+        fill=True,
+        fill_color=None,
+        popup=None,
+    ):
+        self.location = location
+        self.radius = radius
+        self.color = color
+        self.fill = fill
+        self.fill_color = fill_color if fill_color else color
+        self.popup = popup
 
-        # Circle layer for Point features
-        if "Point" in geometry_types:
-            circle_layer = {
-                "id": f"{self.name}_circle",
-                "type": "circle",
-                "paint": {
-                    "circle-color": ["get", "fillColor", ["properties"]],
-                    "circle-opacity": ["get", "fillOpacity", ["properties"]],
-                    "circle-stroke-color": ["get", "color", ["properties"]],
-                    "circle-stroke-width": ["get", "weight", ["properties"]],
-                    "circle-stroke-opacity": ["get", "opacity", ["properties"]],
-                    "circle-radius": ["get", "radius", ["properties"]],
-                },
-                "filter": ["==", ["geometry-type"], "Point"],
-            }
-            map_instance.add_layer(circle_layer, source=source_id)
+    def _circle_polygon(self, center, radius, num_sides=64):
+        lng, lat = center
+        coords = []
+        for i in range(num_sides):
+            angle = 2 * math.pi * i / num_sides
+            dx = radius * math.cos(angle)
+            dy = radius * math.sin(angle)
+            delta_lng = dx / (111320 * math.cos(math.radians(lat)))
+            delta_lat = dy / 110540
+            coords.append([lng + delta_lng, lat + delta_lat])
+        coords.append(coords[0])
+        return [coords]
+
+    def add_to(self, map_instance):
+        layer_id = f"circle_{uuid.uuid4().hex}"
+        polygon = self._circle_polygon(self.location, self.radius)
+        source = {
+            "type": "geojson",
+            "data": {
+                "type": "FeatureCollection",
+                "features": [
+                    {
+                        "type": "Feature",
+                        "geometry": {"type": "Polygon", "coordinates": polygon},
+                        "properties": {},
+                    }
+                ],
+            },
+        }
+        paint = {
+            "fill-color": self.fill_color if self.fill else "rgba(0,0,0,0)",
+            "fill-opacity": 0.5 if self.fill else 0,
+            "fill-outline-color": self.color,
+        }
+        layer = {"id": layer_id, "type": "fill", "source": layer_id, "paint": paint}
+        map_instance.add_layer(layer, source=source)
+        if self.popup:
+            map_instance.add_popup(html=self.popup, layer_id=layer_id)
+
+
+class CircleMarker:
+    """Circle marker with radius in pixels."""
+
+    def __init__(
+        self,
+        location,
+        radius=6,
+        color="#3388ff",
+        fill=True,
+        fill_color=None,
+        popup=None,
+    ):
+        self.location = location
+        self.radius = radius
+        self.color = color
+        self.fill = fill
+        self.fill_color = fill_color if fill_color else color
+        self.popup = popup
+
+    def add_to(self, map_instance):
+        layer_id = f"circlemarker_{uuid.uuid4().hex}"
+        source = {
+            "type": "geojson",
+            "data": {
+                "type": "FeatureCollection",
+                "features": [
+                    {
+                        "type": "Feature",
+                        "geometry": {"type": "Point", "coordinates": self.location},
+                        "properties": {},
+                    }
+                ],
+            },
+        }
+        paint = {
+            "circle-radius": self.radius,
+            "circle-color": self.fill_color if self.fill else "rgba(0,0,0,0)",
+            "circle-stroke-color": self.color,
+            "circle-stroke-width": 1,
+        }
+        layer = {"id": layer_id, "type": "circle", "source": layer_id, "paint": paint}
+        map_instance.add_layer(layer, source=source)
+        if self.popup:
+            map_instance.add_popup(html=self.popup, layer_id=layer_id)
+
+
+class PolyLine:
+    def __init__(self, locations, color="#3388ff", weight=2, popup=None):
+        self.locations = locations
+        self.color = color
+        self.weight = weight
+        self.popup = popup
+
+    def add_to(self, map_instance):
+        layer_id = f"polyline_{uuid.uuid4().hex}"
+        source = {
+            "type": "geojson",
+            "data": {
+                "type": "FeatureCollection",
+                "features": [
+                    {
+                        "type": "Feature",
+                        "geometry": {"type": "LineString", "coordinates": self.locations},
+                        "properties": {},
+                    }
+                ],
+            },
+        }
+        paint = {"line-color": self.color, "line-width": self.weight}
+        layer = {"id": layer_id, "type": "line", "source": layer_id, "paint": paint}
+        map_instance.add_layer(layer, source=source)
+        if self.popup:
+            map_instance.add_popup(html=self.popup, layer_id=layer_id)
+
+
+class LayerControl:
+    """Simple layer control to toggle tile layers."""
+
+    def add_to(self, map_instance):
+        map_instance.layer_control = True
+        return self
+

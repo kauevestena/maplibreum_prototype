@@ -1,5 +1,18 @@
+import os
+import sys
 import unittest
-from maplibreum.core import Map, Marker, GeoJson
+
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
+
+from maplibreum.core import (
+    Map,
+    Marker,
+    GeoJson,
+    Circle,
+    CircleMarker,
+    PolyLine,
+    LayerControl,
+)
 
 
 class TestFeatures(unittest.TestCase):
@@ -106,6 +119,24 @@ class TestFeatures(unittest.TestCase):
             circle_layer["definition"]["paint"]["circle-stroke-width"],
             ["get", "weight", ["properties"]],
         )
+
+    def test_tile_layer_and_control(self):
+        m = Map()
+        m.add_tile_layer(
+            "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
+            name="OSM",
+            attribution="© OpenStreetMap contributors",
+        )
+        LayerControl().add_to(m)
+        self.assertEqual(len(m.tile_layers), 1)
+        self.assertTrue(m.layer_control)
+
+    def test_shapes(self):
+        m = Map()
+        Circle([0, 0], radius=1000).add_to(m)
+        CircleMarker([1, 1], radius=5).add_to(m)
+        PolyLine([[0, 0], [1, 1]]).add_to(m)
+        self.assertEqual(len(m.layers), 3)
 
 
 if __name__ == "__main__":
