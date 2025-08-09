@@ -70,23 +70,7 @@ map.on('load', function() {
     });
     {% endif %}
     {% endfor %}
-
-        {% if popup.coordinates %}
-            // If popup is fixed at certain coordinates
-            popup_{{ loop.index }}.setLngLat({{ popup.coordinates | tojson }}).addTo(map);
-        {% endif %}
-
-        {% if popup.layer_id and popup.events %}
-        // If popup is triggered by layer event (e.g., click)
-        map.on('{{ popup.events|first }}', '{{ popup.layer_id }}', function (e) {
-                popup_{{ loop.index }}
-                    .setLngLat(e.lngLat)
-                .setHTML(`{{ popup.html }}`)
-                .addTo(map);
-        });
-        {% endif %}
-        {% endfor %}
-        });
+});
 
         {{ extra_js | safe }}
     </script>

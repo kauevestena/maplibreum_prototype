@@ -59,6 +59,12 @@ class TestFeatures(unittest.TestCase):
 
         geojson_layer = GeoJson(geojson_data, style_function=style_function)
         geojson_layer.add_to(m)
+        self.assertEqual(
+            geojson_data["features"][0]["properties"]["fillColor"], "blue"
+        )
+        self.assertEqual(
+            geojson_data["features"][0]["properties"]["fillOpacity"], 0.5
+        )
         self.assertEqual(len(m.layers), 1)
         self.assertEqual(m.layers[0]["definition"]["type"], "fill")
         self.assertEqual(
@@ -98,6 +104,18 @@ class TestFeatures(unittest.TestCase):
 
         geojson_layer = GeoJson(geojson_data, style_function=style_function)
         geojson_layer.add_to(m)
+
+        self.assertEqual(
+            geojson_data["features"][0]["properties"]["color"], "green"
+        )
+        self.assertEqual(geojson_data["features"][0]["properties"]["weight"], 5)
+        self.assertEqual(geojson_data["features"][0]["properties"]["opacity"], 0.7)
+        self.assertEqual(
+            geojson_data["features"][1]["properties"]["fillColor"], "yellow"
+        )
+        self.assertEqual(
+            geojson_data["features"][1]["properties"]["fillOpacity"], 0.4
+        )
 
         layer_types = {layer["definition"]["type"] for layer in m.layers}
         self.assertIn("line", layer_types)
