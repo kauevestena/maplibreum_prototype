@@ -28,7 +28,8 @@ dependencies = [
 "Issues" = "https://github.com/kauevestena/maplibreum_prototype/issues"
 
 [tool.setuptools]
-packages = ["maplibreum", "maplibreum.templates"]
+packages = ["maplibreum"]
+include-package-data = false
 
 [tool.setuptools.package-data]
 maplibreum = ["templates/*.html"]
