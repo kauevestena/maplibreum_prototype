@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="utf-8" />
     <title>{{ title }}</title>
@@ -18,9 +17,9 @@
         }
 
         {{ custom_css | safe }}
+
     </style>
 </head>
-
 <body>
     <div id="map"></div>
     <script src="https://unpkg.com/maplibre-gl@latest/dist/maplibre-gl.js"></script>
@@ -33,34 +32,44 @@
             zoom: {{ zoom }}
         });
 
-        // Add controls
-        {% for ctrl in controls %}
-        {% if ctrl.type == "navigation" %}
-        map.addControl(new maplibregl.NavigationControl(), "{{ ctrl.position }}");
-        {% elif ctrl.type == "scale" %}
-        map.addControl(new maplibregl.ScaleControl({{ ctrl.options | tojson }}), "{{ ctrl.position }}");
-        {% elif ctrl.type == "fullscreen" %}
-        map.addControl(new maplibregl.FullscreenControl(), "{{ ctrl.position }}");
-        {% endif %}
-        {% endfor %}
 
-        // Add layers
-        map.on('load', function () {
-            // Add sources
-            {% for source in sources %}
-            map.addSource("{{ source.name }}", {{ source.definition | tojson | safe }});
-            {% endfor %}
+// Add controls
+{% for ctrl in controls %}
+{% if ctrl.type == "navigation" %}
+map.addControl(new maplibregl.NavigationControl(), "{{ ctrl.position }}");
+{% elif ctrl.type == "scale" %}
+map.addControl(new maplibregl.ScaleControl({{ ctrl.options | tojson }}), "{{ ctrl.position }}");
+{% elif ctrl.type == "fullscreen" %}
+map.addControl(new maplibregl.FullscreenControl(), "{{ ctrl.position }}");
+{% endif %}
+{% endfor %}
 
-            // Add layers
-            {% for layer in layers %}
-            map.addLayer({{ layer.definition | tojson | safe }}, "{{ layer.before }}" || undefined);
-            {% endfor %}
+map.on('load', function() {
+    // Add sources
+    {% for source in sources %}
+    map.addSource("{{ source.name }}", {{ source.definition | tojson | safe }});
+    {% endfor %}
 
-        // Add popups
-        {% for popup in popups %}
-        // Create a popup instance
-        var popup_{{ loop.index }} = new maplibregl.Popup({{ popup.options | tojson }})
-            .setHTML(`{{ popup.html }}`);
+    // Add layers
+    {% for layer in layers %}
+    map.addLayer({{ layer.definition | tojson | safe }}{% if layer.before %}, "{{ layer.before }}"{% endif %});
+    {% endfor %}
+
+    // Popups
+    {% for popup in popups %}
+    var popup_{{ loop.index }} = new maplibregl.Popup({{ popup.options | tojson }}).setHTML(`{{ popup.html }}`);
+    {% if popup.coordinates %}
+    popup_{{ loop.index }}.setLngLat({{ popup.coordinates | tojson }}).addTo(map);
+    {% endif %}
+    {% if popup.layer_id and popup.events %}
+    map.on('{{ popup.events|first }}', '{{ popup.layer_id }}', function(e) {
+        popup_{{ loop.index }}
+            .setLngLat(e.lngLat)
+            .setHTML(`{{ popup.html }}`)
+            .addTo(map);
+    });
+    {% endif %}
+    {% endfor %}
 
         {% if popup.coordinates %}
             // If popup is fixed at certain coordinates
