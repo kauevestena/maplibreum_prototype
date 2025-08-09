@@ -369,45 +369,62 @@ class GeoJson:
         properties such as ``stroke``, ``weight`` and ``fillColor`` which are
         then referenced by the layer paint definitions.
         """
+        # Apply the style function to each feature and update its properties
+        features = self.data.get("features", [])
+        for feature in features:
+            style = self.style_function(feature)
+            feature.setdefault("properties", {}).update(style)
 
         source_id = f"{self.name}_source"
         source = {"type": "geojson", "data": self.data}
         map_instance.add_source(source_id, source)
-        for feature in self.data.get("features", []):
-            style = self.style_function(feature)
-            props = feature.setdefault("properties", {})
-            props.update(style)
-            if "fillColor" in style and "color" not in style:
-                props["color"] = style["fillColor"]
-            if "fillOpacity" in style and "opacity" not in style:
-                props["opacity"] = style["fillOpacity"]
 
-        geom_types = {f["geometry"]["type"] for f in self.data.get("features", [])}
-        for geom_type in geom_types:
-            layer_id = f"{self.name}_{geom_type.lower()}"
-            if geom_type in ["Polygon", "MultiPolygon"]:
-                paint = {
-                    "fill-color": ["get", "color", ["properties"]],
-                    "fill-opacity": ["get", "opacity", ["properties"]],
-                }
-                layer_def = {"id": layer_id, "type": "fill", "source": source_id, "paint": paint}
-            elif geom_type in ["LineString", "MultiLineString"]:
-                paint = {
-                    "line-color": ["get", "color", ["properties"]],
-                    "line-width": ["get", "weight", ["properties"]],
-                    "line-opacity": ["get", "opacity", ["properties"]],
-                }
-                layer_def = {"id": layer_id, "type": "line", "source": source_id, "paint": paint}
-            elif geom_type in ["Point", "MultiPoint"]:
-                paint = {
-                    "circle-color": ["get", "fillColor", ["properties"]],
-                    "circle-radius": ["get", "radius", ["properties"]],
-                    "circle-stroke-width": ["get", "weight", ["properties"]],
-                }
-                layer_def = {"id": layer_id, "type": "circle", "source": source_id, "paint": paint}
-            else:
-                continue
-            map_instance.add_layer(layer_def)
+        def _get(prop):
+            return ["get", prop, ["properties"]]
+
+        geometry_types = [
+            f.get("geometry", {}).get("type") for f in features if f.get("geometry")
+        ]
+
+        if any(t in ("Polygon", "MultiPolygon") for t in geometry_types):
+            fill_layer = {
+                "id": f"{self.name}_fill",
+                "type": "fill",
+                "paint": {
+                    "fill-color": _get("fillColor"),
+                    "fill-opacity": _get("fillOpacity"),
+                    "fill-outline-color": _get("color"),
+                },
+            }
+            map_instance.add_layer(fill_layer, source=source_id)
+
+        if any(t in ("LineString", "MultiLineString") for t in geometry_types):
+            line_layer = {
+                "id": f"{self.name}_line",
+                "type": "line",
+                "paint": {
+                    "line-color": _get("color"),
+                    "line-width": _get("weight"),
+                    "line-opacity": _get("opacity"),
+                },
+            }
+            map_instance.add_layer(line_layer, source=source_id)
+
+        if any(t in ("Point", "MultiPoint") for t in geometry_types):
+            circle_layer = {
+                "id": f"{self.name}_circle",
+                "type": "circle",
+                "paint": {
+                    "circle-color": _get("fillColor"),
+                    "circle-opacity": _get("fillOpacity"),
+                    "circle-radius": _get("radius"),
+                    "circle-stroke-color": _get("color"),
+                    "circle-stroke-width": _get("weight"),
+                    "circle-stroke-opacity": _get("opacity"),
+                },
+            }
+            map_instance.add_layer(circle_layer, source=source_id)
+
 
 
 class Circle:

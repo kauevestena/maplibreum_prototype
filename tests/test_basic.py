@@ -81,7 +81,8 @@ def test_geojson_styling(map_instance):
 
     GeoJson(geojson, style_function=style_fn).add_to(map_instance)
     props = map_instance.sources[0]["definition"]["data"]["features"][0]["properties"]
-    assert props["color"] == "blue"
-    assert props["opacity"] == 0.5
+    assert props["fillColor"] == "blue"
+    assert props["fillOpacity"] == 0.5
     paint = map_instance.layers[0]["definition"]["paint"]
-    assert paint["fill-color"] == ["get", "color", ["properties"]]
+    assert paint["fill-color"] == ["get", "fillColor", ["properties"]]
+    assert paint["fill-opacity"] == ["get", "fillOpacity", ["properties"]]
