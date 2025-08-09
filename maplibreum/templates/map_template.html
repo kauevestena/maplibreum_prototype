@@ -70,9 +70,43 @@ map.on('load', function() {
     });
     {% endif %}
     {% endfor %}
+
+
+    // Tile Layers
+    var tileLayers = [
+    {% for tile in tile_layers %}
+        { id: "{{ tile.id }}", name: "{{ tile.name }}" },
+    {% endfor %}
+    ];
+
+    {% if tile_layers %}
+    // Hide all but the first tile layer
+    tileLayers.forEach(function(tl, idx) {
+        map.setLayoutProperty(tl.id, 'visibility', idx === 0 ? 'visible' : 'none');
+    });
+    {% endif %}
+
+    {% if layer_control %}
+    // Simple layer control
+    var layerControl = document.createElement('div');
+    layerControl.id = 'layer-control';
+    tileLayers.forEach(function(tl) {
+        var link = document.createElement('a');
+        link.href = '#';
+        link.textContent = tl.name;
+        link.addEventListener('click', function(e) {
+            e.preventDefault();
+            tileLayers.forEach(function(other) {
+                map.setLayoutProperty(other.id, 'visibility', other.id === tl.id ? 'visible' : 'none');
+            });
+        });
+        layerControl.appendChild(link);
+    });
+    map.getContainer().appendChild(layerControl);
+    {% endif %}
 });
 
-        {{ extra_js | safe }}
+    {{ extra_js | safe }}
     </script>
 </body>
 

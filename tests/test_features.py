@@ -69,7 +69,7 @@ class TestFeatures(unittest.TestCase):
         self.assertEqual(m.layers[0]["definition"]["type"], "fill")
         self.assertEqual(
             m.layers[0]["definition"]["paint"]["fill-color"],
-            ["get", "fillColor", ["properties"]],
+            ["get", "color", ["properties"]],
         )
 
     def test_geojson_line_and_point(self):
@@ -152,7 +152,13 @@ class TestFeatures(unittest.TestCase):
             name="OSM",
             attribution="© OpenStreetMap contributors",
         )
+        html_no_control = m.render()
+        self.assertIn("OSM", html_no_control)
+        self.assertNotIn("layer-control", html_no_control)
+
         LayerControl().add_to(m)
+        html_with_control = m.render()
+        self.assertIn("layer-control", html_with_control)
         self.assertEqual(len(m.tile_layers), 1)
         self.assertTrue(m.layer_control)
 

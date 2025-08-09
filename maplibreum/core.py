@@ -426,6 +426,7 @@ class GeoJson:
             map_instance.add_layer(circle_layer, source=source_id)
 
 
+
 class Circle:
     """Draw a circle with radius in meters."""
 
