@@ -126,6 +126,28 @@ class Map:
             }
         )
 
+    def add_marker(self, coordinates, popup=None, color="#007cbf"):
+        """Add a marker to the map.
+
+        Parameters
+        ----------
+        coordinates : list or tuple
+            ``[lng, lat]`` pair specifying where to place the marker.
+        popup : str, optional
+            Optional HTML content for a popup attached to the marker.
+        color : str, optional
+            Hex string defining the marker's color. Defaults to ``"#007cbf"``.
+
+        Returns
+        -------
+        Marker
+            The marker instance that was added to the map.
+        """
+
+        marker = Marker(coordinates=coordinates, popup=popup, color=color)
+        marker.add_to(self)
+        return marker
+
     def add_circle_layer(
         self, name, source, paint=None, layout=None, before=None, filter=None
     ):
