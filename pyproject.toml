@@ -18,6 +18,7 @@ classifiers = [
 ]
 dependencies = [
   "Jinja2>=3.0",
+
   "MarkupSafe>=2.0",
   "ipython>=8.0",
 ]
