@@ -6,21 +6,32 @@
     <meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no" />
     <link href="https://unpkg.com/maplibre-gl@latest/dist/maplibre-gl.css" rel="stylesheet" />
     <style>
-        body { margin: 0; padding: 0; }
-        #map { width: 100%; height: 500px; }
-{{ custom_css | safe }}
+        body {
+            margin: 0;
+            padding: 0;
+        }
+
+        #map {
+            width: 100%;
+            height: 500px;
+        }
+
+        {{ custom_css | safe }}
+
     </style>
 </head>
 <body>
-<div id="map"></div>
-<script src="https://unpkg.com/maplibre-gl@latest/dist/maplibre-gl.js"></script>
-<script>
-var map = new maplibregl.Map({
-    container: 'map',
-    style: {{ map_style | tojson }},
-    center: {{ center | tojson }},
-    zoom: {{ zoom }}
-});
+    <div id="map"></div>
+    <script src="https://unpkg.com/maplibre-gl@latest/dist/maplibre-gl.js"></script>
+    <script>
+        // Initialize map
+        var map = new maplibregl.Map({
+            container: 'map',
+            style: {{ map_style | tojson }},
+            center: {{ center | tojson }},
+            zoom: {{ zoom }}
+        });
+
 
 // Add controls
 {% for ctrl in controls %}
@@ -60,39 +71,25 @@ map.on('load', function() {
     {% endif %}
     {% endfor %}
 
-    {% if layer_control %}
-    var layerControl = document.createElement('div');
-    layerControl.id = 'layer-control';
-    layerControl.style.background = 'white';
-    layerControl.style.padding = '10px';
-    layerControl.style.position = 'absolute';
-    layerControl.style.top = '10px';
-    layerControl.style.right = '10px';
-    layerControl.style.zIndex = '1';
-    layerControl.style.fontFamily = 'sans-serif';
+        {% if popup.coordinates %}
+            // If popup is fixed at certain coordinates
+            popup_{{ loop.index }}.setLngLat({{ popup.coordinates | tojson }}).addTo(map);
+        {% endif %}
 
-    {% for t in tile_layers %}
-    (function(){
-        var input = document.createElement('input');
-        input.type = 'checkbox';
-        input.id = 'chk_{{ t.id }}';
-        input.checked = true;
-        input.onchange = function(){
-            map.setLayoutProperty('{{ t.id }}', 'visibility', this.checked ? 'visible' : 'none');
-        };
-        var label = document.createElement('label');
-        label.htmlFor = input.id;
-        label.innerText = '{{ t.name }}';
-        layerControl.appendChild(input);
-        layerControl.appendChild(label);
-        layerControl.appendChild(document.createElement('br'));
-    })();
-    {% endfor %}
-    map.getContainer().appendChild(layerControl);
-    {% endif %}
-});
+        {% if popup.layer_id and popup.events %}
+        // If popup is triggered by layer event (e.g., click)
+        map.on('{{ popup.events|first }}', '{{ popup.layer_id }}', function (e) {
+                popup_{{ loop.index }}
+                    .setLngLat(e.lngLat)
+                .setHTML(`{{ popup.html }}`)
+                .addTo(map);
+        });
+        {% endif %}
+        {% endfor %}
+        });
 
-{{ extra_js | safe }}
-</script>
+        {{ extra_js | safe }}
+    </script>
 </body>
+
 </html>
