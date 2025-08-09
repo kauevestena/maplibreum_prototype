@@ -153,23 +153,22 @@ class Map:
             }
         )
 
-    def add_marker(self, coordinates, popup=None, color="#007cbf"):
+    def add_marker(self, coordinates=None, popup=None, color="#007cbf"):
+
         """Add a marker to the map.
 
         Parameters
         ----------
-        coordinates : list or tuple
-            ``[lng, lat]`` pair specifying where to place the marker.
+        coordinates : list or tuple, optional
+            [lng, lat] pair where the marker will be placed. Defaults to the
+            map's center if not provided.
         popup : str, optional
-            Optional HTML content for a popup attached to the marker.
+            HTML content for a popup bound to the marker.
         color : str, optional
-            Hex string defining the marker's color. Defaults to ``"#007cbf"``.
-
-        Returns
-        -------
-        Marker
-            The marker instance that was added to the map.
+            Color of the marker, defaults to MapLibre blue.
         """
+        if coordinates is None:
+            coordinates = self.center
 
         marker = Marker(coordinates=coordinates, popup=popup, color=color)
         marker.add_to(self)
