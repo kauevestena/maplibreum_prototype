@@ -1,90 +1,98 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="utf-8" />
     <title>{{ title }}</title>
     <meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no" />
     <link href="https://unpkg.com/maplibre-gl@latest/dist/maplibre-gl.css" rel="stylesheet" />
     <style>
-        body {
-            margin: 0;
-            padding: 0;
-        }
-
-        #map {
-            width: 100%;
-            height: 500px;
-        }
-
-            {
-                {
-                custom_css|safe
-            }
-        }
+        body { margin: 0; padding: 0; }
+        #map { width: 100%; height: 500px; }
+{{ custom_css | safe }}
     </style>
 </head>
-
 <body>
-    <div id="map"></div>
-    <script src="https://unpkg.com/maplibre-gl@latest/dist/maplibre-gl.js"></script>
-    <script>
-        // Initialize map
-        var map = new maplibregl.Map({
-            container: 'map',
-            style: {{ map_style| tojson }},
-        center: { { center | tojson } },
-        zoom: { { zoom } }
-        });
+<div id="map"></div>
+<script src="https://unpkg.com/maplibre-gl@latest/dist/maplibre-gl.js"></script>
+<script>
+var map = new maplibregl.Map({
+    container: 'map',
+    style: {{ map_style | tojson }},
+    center: {{ center | tojson }},
+    zoom: {{ zoom }}
+});
 
-        // Add controls
-        {% for ctrl in controls %}
-        {% if ctrl.type == "navigation" %}
-        map.addControl(new maplibregl.NavigationControl(), "{{ ctrl.position }}");
-        {% elif ctrl.type == "scale" %}
-        map.addControl(new maplibregl.ScaleControl({{ ctrl.options | tojson }}), "{{ ctrl.position }}");
-        {% elif ctrl.type == "fullscreen" %}
-        map.addControl(new maplibregl.FullscreenControl(), "{{ ctrl.position }}");
-        {% endif %}
-        {% endfor %}
+// Add controls
+{% for ctrl in controls %}
+{% if ctrl.type == "navigation" %}
+map.addControl(new maplibregl.NavigationControl(), "{{ ctrl.position }}");
+{% elif ctrl.type == "scale" %}
+map.addControl(new maplibregl.ScaleControl({{ ctrl.options | tojson }}), "{{ ctrl.position }}");
+{% elif ctrl.type == "fullscreen" %}
+map.addControl(new maplibregl.FullscreenControl(), "{{ ctrl.position }}");
+{% endif %}
+{% endfor %}
 
-        // Add layers
-        map.on('load', function () {
-            // Add sources
-            {% for source in sources %}
-            map.addSource("{{ source.name }}", {{ source.definition | tojson | safe }});
-            {% endfor %}
+map.on('load', function() {
+    // Add sources
+    {% for source in sources %}
+    map.addSource("{{ source.name }}", {{ source.definition | tojson | safe }});
+    {% endfor %}
 
-            // Add layers
-            {% for layer in layers %}
-            map.addLayer({{ layer.definition | tojson | safe }}, "{{ layer.before }}" || undefined);
-            {% endfor %}
+    // Add layers
+    {% for layer in layers %}
+    map.addLayer({{ layer.definition | tojson | safe }}{% if layer.before %}, "{{ layer.before }}"{% endif %});
+    {% endfor %}
 
-        // Add popups
-        {% for popup in popups %}
-        // Create a popup instance
-        var popup_{{ loop.index }} = new maplibregl.Popup({{ popup.options | tojson }})
-            .setHTML(`{{ popup.html }}`);
+    // Popups
+    {% for popup in popups %}
+    var popup_{{ loop.index }} = new maplibregl.Popup({{ popup.options | tojson }}).setHTML(`{{ popup.html }}`);
+    {% if popup.coordinates %}
+    popup_{{ loop.index }}.setLngLat({{ popup.coordinates | tojson }}).addTo(map);
+    {% endif %}
+    {% if popup.layer_id and popup.events %}
+    map.on('{{ popup.events|first }}', '{{ popup.layer_id }}', function(e) {
+        popup_{{ loop.index }}
+            .setLngLat(e.lngLat)
+            .setHTML(`{{ popup.html }}`)
+            .addTo(map);
+    });
+    {% endif %}
+    {% endfor %}
 
-        {% if popup.coordinates %}
-            // If popup is fixed at certain coordinates
-            popup_{ { loop.index } }.setLngLat({{ popup.coordinates | tojson }}).addTo(map);
-        {% endif %}
+    {% if layer_control %}
+    var layerControl = document.createElement('div');
+    layerControl.id = 'layer-control';
+    layerControl.style.background = 'white';
+    layerControl.style.padding = '10px';
+    layerControl.style.position = 'absolute';
+    layerControl.style.top = '10px';
+    layerControl.style.right = '10px';
+    layerControl.style.zIndex = '1';
+    layerControl.style.fontFamily = 'sans-serif';
 
-        {% if popup.layer_id and popup.events %}
-        // If popup is triggered by layer event (e.g., click)
-        map.on('{{ popup.events|first }}', '{{ popup.layer_id }}', function (e) {
-                popup_{ { loop.index } }
-                    .setLngLat(e.lngLat)
-                .setHTML(`{{ popup.html }}`)
-                .addTo(map);
-        });
-        {% endif %}
-        {% endfor %}
-        });
+    {% for t in tile_layers %}
+    (function(){
+        var input = document.createElement('input');
+        input.type = 'checkbox';
+        input.id = 'chk_{{ t.id }}';
+        input.checked = true;
+        input.onchange = function(){
+            map.setLayoutProperty('{{ t.id }}', 'visibility', this.checked ? 'visible' : 'none');
+        };
+        var label = document.createElement('label');
+        label.htmlFor = input.id;
+        label.innerText = '{{ t.name }}';
+        layerControl.appendChild(input);
+        layerControl.appendChild(label);
+        layerControl.appendChild(document.createElement('br'));
+    })();
+    {% endfor %}
+    map.getContainer().appendChild(layerControl);
+    {% endif %}
+});
 
-        { { extra_js | safe } }
-    </script>
+{{ extra_js | safe }}
+</script>
 </body>
-
 </html>
