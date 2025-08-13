@@ -1,4 +1,4 @@
-from .core import Map, Marker, GeoJson
+from .core import Map, Marker, GeoJson, MarkerCluster
 
-__all__ = ["Map", "Marker", "GeoJson"]
+__all__ = ["Map", "Marker", "GeoJson", "MarkerCluster"]
 
