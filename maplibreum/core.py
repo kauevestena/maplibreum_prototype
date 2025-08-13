@@ -18,6 +18,16 @@ MAP_STYLES = {
 }
 
 
+class Icon:
+    """Representation of a custom marker icon."""
+
+    def __init__(self, icon_url, icon_size=1.0, icon_anchor="center", icon_id=None):
+        self.icon_url = icon_url
+        self.icon_size = icon_size
+        self.icon_anchor = icon_anchor
+        self.id = icon_id or f"icon_{uuid.uuid4().hex}"
+
+
 class Map:
     def __init__(
         self,
@@ -47,6 +57,7 @@ class Map:
         self.layers = layers if layers is not None else []
         self.tile_layers = []
         self.popups = popups if popups is not None else []
+        self.icons = []
         self.extra_js = extra_js
         self.custom_css = custom_css
         self.layer_control = False
@@ -71,6 +82,11 @@ class Map:
         self.controls.append(
             {"type": control_type, "position": position, "options": options}
         )
+
+    def add_icon(self, icon):
+        """Register an icon to be loaded in the map template."""
+        if not any(existing.id == icon.id for existing in self.icons):
+            self.icons.append(icon)
 
     def add_source(self, name, definition):
         """
@@ -153,7 +169,7 @@ class Map:
             }
         )
 
-    def add_marker(self, coordinates=None, popup=None, color="#007cbf"):
+    def add_marker(self, coordinates=None, popup=None, color="#007cbf", icon=None):
 
         """Add a marker to the map.
 
@@ -170,7 +186,7 @@ class Map:
         if coordinates is None:
             coordinates = self.center
 
-        marker = Marker(coordinates=coordinates, popup=popup, color=color)
+        marker = Marker(coordinates=coordinates, popup=popup, color=color, icon=icon)
         marker.add_to(self)
         return marker
 
@@ -251,6 +267,7 @@ class Map:
             tile_layers=self.tile_layers,
             layer_control=self.layer_control,
             popups=self.popups,
+            icons=self.icons,
             extra_js=self.extra_js,
             custom_css=final_custom_css,
         )
@@ -282,10 +299,11 @@ class Map:
 
 
 class Marker:
-    def __init__(self, coordinates, popup=None, color="#007cbf"):
+    def __init__(self, coordinates, popup=None, color="#007cbf", icon=None):
         self.coordinates = coordinates
         self.popup = popup
         self.color = color
+        self.icon = icon
 
     def add_to(self, map_instance):
         layer_id = f"marker_{uuid.uuid4().hex}"
@@ -305,17 +323,31 @@ class Marker:
                 ],
             },
         }
-        layer = {
-            "id": layer_id,
-            "type": "circle",
-            "source": layer_id,
-            "paint": {
-                "circle-radius": 8,
-                "circle-color": self.color,
-                "circle-stroke-width": 1,
-                "circle-stroke-color": "#fff",
-            },
-        }
+        if self.icon:
+            map_instance.add_icon(self.icon)
+            layout = {"icon-image": self.icon.id}
+            if self.icon.icon_size is not None:
+                layout["icon-size"] = self.icon.icon_size
+            if self.icon.icon_anchor is not None:
+                layout["icon-anchor"] = self.icon.icon_anchor
+            layer = {
+                "id": layer_id,
+                "type": "symbol",
+                "source": layer_id,
+                "layout": layout,
+            }
+        else:
+            layer = {
+                "id": layer_id,
+                "type": "circle",
+                "source": layer_id,
+                "paint": {
+                    "circle-radius": 8,
+                    "circle-color": self.color,
+                    "circle-stroke-width": 1,
+                    "circle-stroke-color": "#fff",
+                },
+            }
         map_instance.add_layer(layer, source=source)
 
         if self.popup:

@@ -7,6 +7,7 @@ from maplibreum.core import (
     CircleMarker,
     PolyLine,
     LayerControl,
+    Icon,
 )
 
 
@@ -33,6 +34,24 @@ def test_add_marker_wrapper():
     assert len(m.layers) == 1
     assert len(m.popups) == 1
     assert m.layers[0]["definition"]["paint"]["circle-color"] == "green"
+
+
+def test_marker_with_icon():
+    m = Map()
+    icon = Icon(
+        icon_url="https://example.com/icon.png",
+        icon_size=0.5,
+        icon_anchor="bottom",
+    )
+    m.add_marker(coordinates=[-74.5, 40], popup="Icon marker", icon=icon)
+    assert len(m.layers) == 1
+    layer_def = m.layers[0]["definition"]
+    assert layer_def["type"] == "symbol"
+    layout = layer_def["layout"]
+    assert layout["icon-image"] == icon.id
+    assert layout["icon-size"] == 0.5
+    assert layout["icon-anchor"] == "bottom"
+    assert len(m.icons) == 1
 
 
 def test_geojson():

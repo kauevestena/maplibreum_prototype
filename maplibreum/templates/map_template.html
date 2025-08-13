@@ -45,6 +45,14 @@ map.addControl(new maplibregl.FullscreenControl(), "{{ ctrl.position }}");
 {% endfor %}
 
 map.on('load', function() {
+    // Load icons
+    {% for icon in icons %}
+    map.loadImage("{{ icon.icon_url }}", function(error, image) {
+        if (error) throw error;
+        map.addImage("{{ icon.id }}", image);
+    });
+    {% endfor %}
+
     // Add sources
     {% for source in sources %}
     map.addSource("{{ source.name }}", {{ source.definition | tojson | safe }});
