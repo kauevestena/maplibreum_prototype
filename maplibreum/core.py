@@ -50,6 +50,7 @@ class Map:
         self.extra_js = extra_js
         self.custom_css = custom_css
         self.layer_control = False
+        self.overlay_groups = {}
 
         template_dir = os.path.join(os.path.dirname(__file__), "templates")
         self.env = Environment(loader=FileSystemLoader(template_dir))
@@ -80,7 +81,7 @@ class Map:
         """
         self.sources.append({"name": name, "definition": definition})
 
-    def add_layer(self, layer_definition, source=None, before=None):
+    def add_layer(self, layer_definition, source=None, before=None, group=None):
         """
         Add a layer to the map.
         layer_definition: dict describing a MapLibre GL style layer
@@ -103,6 +104,8 @@ class Map:
         self.layers.append(
             {"id": layer_id, "definition": layer_definition, "before": before}
         )
+        if group:
+            self.overlay_groups.setdefault(group, []).append(layer_id)
 
     def add_tile_layer(self, url, name=None, attribution=None):
         """Add a raster tile layer to the map.
@@ -175,7 +178,14 @@ class Map:
         return marker
 
     def add_circle_layer(
-        self, name, source, paint=None, layout=None, before=None, filter=None
+        self,
+        name,
+        source,
+        paint=None,
+        layout=None,
+        before=None,
+        filter=None,
+        group=None,
     ):
         """
         Add a circle layer to the map.
@@ -187,10 +197,17 @@ class Map:
             layer_definition["layout"] = layout
         if filter:
             layer_definition["filter"] = filter
-        self.add_layer(layer_definition, source=source, before=before)
+        self.add_layer(layer_definition, source=source, before=before, group=group)
 
     def add_fill_layer(
-        self, name, source, paint=None, layout=None, before=None, filter=None
+        self,
+        name,
+        source,
+        paint=None,
+        layout=None,
+        before=None,
+        filter=None,
+        group=None,
     ):
         """
         Add a fill layer to the map.
@@ -202,10 +219,17 @@ class Map:
             layer_definition["layout"] = layout
         if filter:
             layer_definition["filter"] = filter
-        self.add_layer(layer_definition, source=source, before=before)
+        self.add_layer(layer_definition, source=source, before=before, group=group)
 
     def add_line_layer(
-        self, name, source, paint=None, layout=None, before=None, filter=None
+        self,
+        name,
+        source,
+        paint=None,
+        layout=None,
+        before=None,
+        filter=None,
+        group=None,
     ):
         """
         Add a line layer to the map.
@@ -217,10 +241,17 @@ class Map:
             layer_definition["layout"] = layout
         if filter:
             layer_definition["filter"] = filter
-        self.add_layer(layer_definition, source=source, before=before)
+        self.add_layer(layer_definition, source=source, before=before, group=group)
 
     def add_symbol_layer(
-        self, name, source, paint=None, layout=None, before=None, filter=None
+        self,
+        name,
+        source,
+        paint=None,
+        layout=None,
+        before=None,
+        filter=None,
+        group=None,
     ):
         """
         Add a symbol layer to the map.
@@ -232,7 +263,7 @@ class Map:
             layer_definition["paint"] = paint
         if filter:
             layer_definition["filter"] = filter
-        self.add_layer(layer_definition, source=source, before=before)
+        self.add_layer(layer_definition, source=source, before=before, group=group)
 
     def render(self):
         # Inject custom CSS to adjust the map div if needed
@@ -250,6 +281,7 @@ class Map:
             layers=self.layers,
             tile_layers=self.tile_layers,
             layer_control=self.layer_control,
+            overlay_groups=self.overlay_groups,
             popups=self.popups,
             extra_js=self.extra_js,
             custom_css=final_custom_css,
@@ -561,8 +593,31 @@ class PolyLine:
             map_instance.add_popup(html=self.popup, layer_id=layer_id)
 
 
+class FeatureGroup:
+    """Group multiple layers under a single name."""
+
+    def __init__(self, name):
+        self.name = name
+        self._layers = []
+
+    def add_layer(self, layer_definition, source=None, before=None):
+        self._layers.append(
+            {"layer": layer_definition, "source": source, "before": before}
+        )
+
+    def add_to(self, map_instance):
+        for entry in self._layers:
+            map_instance.add_layer(
+                entry["layer"],
+                source=entry["source"],
+                before=entry["before"],
+                group=self.name,
+            )
+        return self
+
+
 class LayerControl:
-    """Simple layer control to toggle tile layers."""
+    """Simple layer control to toggle tile and overlay layers."""
 
     def add_to(self, map_instance):
         map_instance.layer_control = True
