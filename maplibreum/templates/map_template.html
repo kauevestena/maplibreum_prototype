@@ -79,6 +79,8 @@ map.on('load', function() {
     {% endfor %}
     ];
 
+    var layerGroups = {{ layer_groups | tojson | safe }};
+
     {% if tile_layers %}
     // Hide all but the first tile layer
     tileLayers.forEach(function(tl, idx) {
@@ -102,6 +104,23 @@ map.on('load', function() {
         });
         layerControl.appendChild(link);
     });
+
+    for (var group in layerGroups) {
+        var label = document.createElement('label');
+        var checkbox = document.createElement('input');
+        checkbox.type = 'checkbox';
+        checkbox.checked = true;
+        checkbox.setAttribute('data-group', group);
+        checkbox.addEventListener('change', function(e) {
+            var grp = e.target.getAttribute('data-group');
+            layerGroups[grp].forEach(function(id) {
+                map.setLayoutProperty(id, 'visibility', e.target.checked ? 'visible' : 'none');
+            });
+        });
+        label.appendChild(checkbox);
+        label.appendChild(document.createTextNode(group));
+        layerControl.appendChild(label);
+    }
     map.getContainer().appendChild(layerControl);
     {% endif %}
 });

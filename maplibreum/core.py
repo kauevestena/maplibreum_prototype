@@ -50,6 +50,10 @@ class Map:
         self.extra_js = extra_js
         self.custom_css = custom_css
         self.layer_control = False
+        # Mapping of group name to list of layer IDs
+        self.layer_groups = {}
+        # Internal tracker used when adding layers via a group object
+        self._current_group = None
 
         template_dir = os.path.join(os.path.dirname(__file__), "templates")
         self.env = Environment(loader=FileSystemLoader(template_dir))
@@ -80,13 +84,21 @@ class Map:
         """
         self.sources.append({"name": name, "definition": definition})
 
-    def add_layer(self, layer_definition, source=None, before=None):
+    def add_layer(self, layer_definition, source=None, before=None, group=None):
+        """Add a layer to the map.
+
+        Parameters
+        ----------
+        layer_definition : dict
+            MapLibre GL style layer definition.
+        source : dict or str, optional
+            Source definition or name for the layer.
+        before : str, optional
+            ID of an existing layer before which the new layer should be placed.
+        group : str, optional
+            Name of a layer group this layer belongs to.
         """
-        Add a layer to the map.
-        layer_definition: dict describing a MapLibre GL style layer
-        source: dict describing a MapLibre source (optional)
-        before: the ID of an existing layer before which this layer should be placed
-        """
+
         if isinstance(source, str):
             # Source is a string, so we assume it's a source name
             # that has already been added to the map.
@@ -103,6 +115,10 @@ class Map:
         self.layers.append(
             {"id": layer_id, "definition": layer_definition, "before": before}
         )
+
+        group_name = group or self._current_group
+        if group_name:
+            self.layer_groups.setdefault(group_name, []).append(layer_id)
 
     def add_tile_layer(self, url, name=None, attribution=None):
         """Add a raster tile layer to the map.
@@ -250,6 +266,7 @@ class Map:
             layers=self.layers,
             tile_layers=self.tile_layers,
             layer_control=self.layer_control,
+            layer_groups=self.layer_groups,
             popups=self.popups,
             extra_js=self.extra_js,
             custom_css=final_custom_css,
@@ -561,8 +578,35 @@ class PolyLine:
             map_instance.add_popup(html=self.popup, layer_id=layer_id)
 
 
+class LayerGroup:
+    """Group multiple layers under a single name."""
+
+    def __init__(self, name, layers=None):
+        self.name = name
+        self.layers = layers if layers is not None else []
+
+    def add_layer(self, layer):
+        self.layers.append(layer)
+        return self
+
+    def add_to(self, map_instance):
+        previous = map_instance._current_group
+        map_instance._current_group = self.name
+        for layer in self.layers:
+            if hasattr(layer, "add_to"):
+                layer.add_to(map_instance)
+            else:
+                map_instance.add_layer(layer)
+        map_instance._current_group = previous
+        return self
+
+
+class FeatureGroup(LayerGroup):
+    """Alias for :class:`LayerGroup` for Leaflet-style API."""
+
+
 class LayerControl:
-    """Simple layer control to toggle tile layers."""
+    """Simple layer control to toggle tile layers and layer groups."""
 
     def add_to(self, map_instance):
         map_instance.layer_control = True
