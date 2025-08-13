@@ -47,6 +47,7 @@ class Map:
         self.layers = layers if layers is not None else []
         self.tile_layers = []
         self.popups = popups if popups is not None else []
+        self.legends = []
         self.extra_js = extra_js
         self.custom_css = custom_css
         self.layer_control = False
@@ -71,6 +72,10 @@ class Map:
         self.controls.append(
             {"type": control_type, "position": position, "options": options}
         )
+
+    def add_legend(self, html):
+        """Add a legend (HTML string) to the map."""
+        self.legends.append(html)
 
     def add_source(self, name, definition):
         """
@@ -251,6 +256,7 @@ class Map:
             tile_layers=self.tile_layers,
             layer_control=self.layer_control,
             popups=self.popups,
+             legends=self.legends,
             extra_js=self.extra_js,
             custom_css=final_custom_css,
         )
