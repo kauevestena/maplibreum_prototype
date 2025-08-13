@@ -1,4 +1,20 @@
-from .core import Map, Marker, GeoJson
+from .core import (
+    Map,
+    Marker,
+    GeoJson,
+    Circle,
+    CircleMarker,
+    PolyLine,
+    LayerControl,
+)
 
-__all__ = ["Map", "Marker", "GeoJson"]
+__all__ = [
+    "Map",
+    "Marker",
+    "GeoJson",
+    "Circle",
+    "CircleMarker",
+    "PolyLine",
+    "LayerControl",
+]
 
