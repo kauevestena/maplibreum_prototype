@@ -50,6 +50,7 @@ class Map:
         self.extra_js = extra_js
         self.custom_css = custom_css
         self.layer_control = False
+        self.cluster_layers = []
 
         template_dir = os.path.join(os.path.dirname(__file__), "templates")
         self.env = Environment(loader=FileSystemLoader(template_dir))
@@ -153,7 +154,7 @@ class Map:
             }
         )
 
-    def add_marker(self, coordinates=None, popup=None, color="#007cbf"):
+    def add_marker(self, coordinates=None, popup=None, color="#007cbf", cluster=None):
 
         """Add a marker to the map.
 
@@ -171,6 +172,9 @@ class Map:
             coordinates = self.center
 
         marker = Marker(coordinates=coordinates, popup=popup, color=color)
+        if cluster:
+            cluster.add_marker(marker)
+            return marker
         marker.add_to(self)
         return marker
 
@@ -251,6 +255,7 @@ class Map:
             tile_layers=self.tile_layers,
             layer_control=self.layer_control,
             popups=self.popups,
+            cluster_layers=self.cluster_layers,
             extra_js=self.extra_js,
             custom_css=final_custom_css,
         )
@@ -281,6 +286,101 @@ class Map:
             f.write(self.render())
 
 
+class MarkerCluster:
+    """Group markers into clusters using MapLibre's built-in clustering."""
+
+    def __init__(self, name=None, cluster_radius=50, cluster_max_zoom=14):
+        self.name = name or f"markercluster_{uuid.uuid4().hex}"
+        self.cluster_radius = cluster_radius
+        self.cluster_max_zoom = cluster_max_zoom
+        self.features = []
+        self.map = None
+        self.source_name = None
+        self.cluster_layer_id = None
+        self.count_layer_id = None
+        self.unclustered_layer_id = None
+
+    def add_marker(self, marker):
+        feature = {
+            "type": "Feature",
+            "geometry": {"type": "Point", "coordinates": marker.coordinates},
+            "properties": {"color": marker.color},
+        }
+        self.features.append(feature)
+        if self.map and self.source_name:
+            for src in self.map.sources:
+                if src["name"] == self.source_name:
+                    src["definition"]["data"]["features"] = self.features
+                    break
+
+    def add_to(self, map_instance):
+        self.map = map_instance
+        self.source_name = f"{self.name}_source"
+        source = {
+            "type": "geojson",
+            "data": {"type": "FeatureCollection", "features": self.features},
+            "cluster": True,
+            "clusterRadius": self.cluster_radius,
+            "clusterMaxZoom": self.cluster_max_zoom,
+        }
+        map_instance.add_source(self.source_name, source)
+
+        self.cluster_layer_id = f"{self.name}_clusters"
+        cluster_layer = {
+            "id": self.cluster_layer_id,
+            "type": "circle",
+            "source": self.source_name,
+            "filter": ["has", "point_count"],
+            "paint": {
+                "circle-color": "#51bbd6",
+                "circle-radius": [
+                    "step",
+                    ["get", "point_count"],
+                    20,
+                    100,
+                    30,
+                    750,
+                    40,
+                ],
+            },
+        }
+        map_instance.add_layer(cluster_layer)
+
+        self.count_layer_id = f"{self.name}_cluster-count"
+        count_layer = {
+            "id": self.count_layer_id,
+            "type": "symbol",
+            "source": self.source_name,
+            "filter": ["has", "point_count"],
+            "layout": {
+                "text-field": ["get", "point_count_abbreviated"],
+                "text-font": ["Arial Unicode MS Bold"],
+                "text-size": 12,
+            },
+        }
+        map_instance.add_layer(count_layer)
+
+        self.unclustered_layer_id = f"{self.name}_unclustered"
+        unclustered = {
+            "id": self.unclustered_layer_id,
+            "type": "circle",
+            "source": self.source_name,
+            "filter": ["!", ["has", "point_count"]],
+            "paint": {
+                "circle-color": ["coalesce", ["get", "color"], "#007cbf"],
+                "circle-radius": 8,
+                "circle-stroke-width": 1,
+                "circle-stroke-color": "#fff",
+            },
+        }
+        map_instance.add_layer(unclustered)
+
+        map_instance.cluster_layers.append(
+            {"source": self.source_name, "cluster_layer": self.cluster_layer_id}
+        )
+        return self
+
+
 class Marker:
     def __init__(self, coordinates, popup=None, color="#007cbf"):
         self.coordinates = coordinates
@@ -288,6 +388,10 @@ class Marker:
         self.color = color
 
     def add_to(self, map_instance):
+        if isinstance(map_instance, MarkerCluster):
+            map_instance.add_marker(self)
+            return self
+
         layer_id = f"marker_{uuid.uuid4().hex}"
         source = {
             "type": "geojson",
@@ -320,7 +424,7 @@ class Marker:
 
         if self.popup:
             map_instance.add_popup(html=self.popup, layer_id=layer_id)
-
+        
 
 class GeoJson:
     """
