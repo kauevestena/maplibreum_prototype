@@ -219,6 +219,63 @@ class Map:
             layer_definition["filter"] = filter
         self.add_layer(layer_definition, source=source, before=before)
 
+    def add_heatmap_layer(
+        self, name, source, paint=None, layout=None, before=None, filter=None
+    ):
+        """
+        Add a heatmap layer to the map.
+
+        Parameters
+        ----------
+        name : str
+            Layer identifier.
+        source : dict or str
+            Source definition or the name of an existing source.
+        paint : dict, optional
+            Heatmap paint properties. Missing properties fall back to sensible
+            defaults.
+        layout : dict, optional
+            Layout properties for the layer.
+        before : str, optional
+            ID of an existing layer before which this layer should be placed.
+        filter : list, optional
+            MapLibre filter expression.
+        """
+        default_paint = {
+            "heatmap-radius": 20,
+            "heatmap-intensity": 1,
+            "heatmap-opacity": 1,
+            "heatmap-color": [
+                "interpolate",
+                ["linear"],
+                ["heatmap-density"],
+                0,
+                "rgba(0,0,255,0)",
+                0.2,
+                "blue",
+                0.4,
+                "cyan",
+                0.6,
+                "lime",
+                0.8,
+                "yellow",
+                1,
+                "red",
+            ],
+        }
+        if paint:
+            default_paint.update(paint)
+        layer_definition = {
+            "id": name,
+            "type": "heatmap",
+            "paint": default_paint,
+        }
+        if layout:
+            layer_definition["layout"] = layout
+        if filter:
+            layer_definition["filter"] = filter
+        self.add_layer(layer_definition, source=source, before=before)
+
     def add_symbol_layer(
         self, name, source, paint=None, layout=None, before=None, filter=None
     ):

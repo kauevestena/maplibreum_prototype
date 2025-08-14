@@ -22,6 +22,11 @@ m.add_marker(popup="Hello, MapLibre!")
 # Or specify coordinates for the marker
 m.add_marker(coordinates=[-23.55, -46.63], popup="Another marker")
 
+# Add a heatmap layer from GeoJSON points
+geojson = {"type": "FeatureCollection", "features": []}
+source = {"type": "geojson", "data": geojson}
+m.add_heatmap_layer("heat", source)
+
 # Save the map to an HTML file
 m.save("my_map.html")
 ```
