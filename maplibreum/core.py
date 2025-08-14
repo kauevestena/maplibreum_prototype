@@ -50,6 +50,7 @@ class Map:
         self.extra_js = extra_js
         self.custom_css = custom_css
         self.layer_control = False
+        self.legend = None
 
         template_dir = os.path.join(os.path.dirname(__file__), "templates")
         self.env = Environment(loader=FileSystemLoader(template_dir))
@@ -174,6 +175,10 @@ class Map:
         marker.add_to(self)
         return marker
 
+    def add_legend(self, legend):
+        """Register a legend instance for this map."""
+        self.legend = legend
+
     def add_circle_layer(
         self, name, source, paint=None, layout=None, before=None, filter=None
     ):
@@ -251,6 +256,7 @@ class Map:
             tile_layers=self.tile_layers,
             layer_control=self.layer_control,
             popups=self.popups,
+            legend_html=self.legend.render() if self.legend else "",
             extra_js=self.extra_js,
             custom_css=final_custom_css,
         )
@@ -566,5 +572,27 @@ class LayerControl:
 
     def add_to(self, map_instance):
         map_instance.layer_control = True
+        return self
+
+
+class Legend:
+    """Map legend supporting raw HTML or label/color pairs."""
+
+    def __init__(self, content):
+        if isinstance(content, str):
+            self._html = content
+        else:
+            items = []
+            for label, color in content:
+                items.append(
+                    f'<div><span style="background:{color}"></span>{label}</div>'
+                )
+            self._html = "".join(items)
+
+    def render(self):
+        return self._html
+
+    def add_to(self, map_instance):
+        map_instance.add_legend(self)
         return self
 

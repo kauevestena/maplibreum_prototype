@@ -16,12 +16,39 @@
             height: 500px;
         }
 
+        .maplibreum-legend {
+            position: absolute;
+            bottom: 10px;
+            left: 10px;
+            background: rgba(255, 255, 255, 0.8);
+            padding: 6px;
+            font-size: 12px;
+            border-radius: 4px;
+        }
+
+        .maplibreum-legend div {
+            display: flex;
+            align-items: center;
+            margin-bottom: 4px;
+        }
+
+        .maplibreum-legend span {
+            display: inline-block;
+            width: 12px;
+            height: 12px;
+            margin-right: 4px;
+        }
+
         {{ custom_css | safe }}
 
     </style>
 </head>
 <body>
-    <div id="map"></div>
+    <div id="map">
+    {% if legend_html %}
+        <div class="maplibreum-legend">{{ legend_html | safe }}</div>
+    {% endif %}
+    </div>
     <script src="https://unpkg.com/maplibre-gl@latest/dist/maplibre-gl.js"></script>
     <script>
         // Initialize map
