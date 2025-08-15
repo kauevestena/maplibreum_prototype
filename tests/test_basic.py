@@ -1,5 +1,5 @@
 import pytest
-from maplibreum.core import Map, GeoJson
+from maplibreum.core import Map, GeoJson, Legend
 
 
 @pytest.fixture
@@ -99,3 +99,13 @@ def test_geojson_styling(map_instance):
     paint = map_instance.layers[0]["definition"]["paint"]
     assert paint["fill-color"] == ["get", "fillColor", ["properties"]]
     assert paint["fill-opacity"] == ["get", "fillOpacity", ["properties"]]
+
+
+def test_legend_rendering():
+    m = Map()
+    legend = Legend([("A", "#ff0000"), ("B", "#00ff00")])
+    legend.add_to(m)
+    html = m.render()
+    assert "maplibreum-legend" in html
+    assert "#ff0000" in html
+    assert "A" in html

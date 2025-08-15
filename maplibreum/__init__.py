@@ -1,5 +1,6 @@
-from .core import Map, Marker, GeoJson
+from .core import Map, Marker, GeoJson, Legend
 from .choropleth import Choropleth
 
-__all__ = ["Map", "Marker", "GeoJson", "Choropleth"]
+__all__ = ["Map", "Marker", "GeoJson", "Legend", "Choropleth"]
+
 

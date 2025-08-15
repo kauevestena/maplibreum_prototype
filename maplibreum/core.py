@@ -74,9 +74,13 @@ class Map:
             {"type": control_type, "position": position, "options": options}
         )
 
-    def add_legend(self, html):
-        """Add a legend (HTML string) to the map."""
-        self.legends.append(html)
+    def add_legend(self, legend):
+        """Add a legend to the map."""
+        if isinstance(legend, Legend):
+            self.legends.append(legend)
+        else:
+            self.legends.append(Legend(legend))
+
 
     def add_source(self, name, definition):
         """
@@ -317,7 +321,7 @@ class Map:
             tile_layers=self.tile_layers,
             layer_control=self.layer_control,
             popups=self.popups,
-            legends=self.legends,
+            legends=[legend.render() for legend in self.legends],
             cluster_layers=self.cluster_layers,
             extra_js=self.extra_js,
             custom_css=final_custom_css,
@@ -794,5 +798,27 @@ class LayerControl:
 
     def add_to(self, map_instance):
         map_instance.layer_control = True
+        return self
+
+
+class Legend:
+    """Map legend supporting raw HTML or label/color pairs."""
+
+    def __init__(self, content):
+        if isinstance(content, str):
+            self._html = content
+        else:
+            items = []
+            for label, color in content:
+                items.append(
+                    f'<div><span style="background:{color}"></span>{label}</div>'
+                )
+            self._html = "".join(items)
+
+    def render(self):
+        return self._html
+
+    def add_to(self, map_instance):
+        map_instance.add_legend(self)
         return self
 
