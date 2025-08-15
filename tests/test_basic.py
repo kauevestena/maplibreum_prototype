@@ -53,6 +53,19 @@ def test_shape_layers(map_instance):
     assert types == ["circle", "line", "fill"]
 
 
+def test_heatmap_layer(map_instance):
+    source = {"type": "geojson", "data": {"type": "FeatureCollection", "features": []}}
+    map_instance.add_heatmap_layer("heat", source)
+    layer = map_instance.layers[0]["definition"]
+    assert layer["type"] == "heatmap"
+    assert layer["paint"]["heatmap-radius"] == 20
+
+    map_instance.add_heatmap_layer("heat_custom", source, paint={"heatmap-radius": 5})
+    custom = map_instance.layers[1]["definition"]
+    assert custom["paint"]["heatmap-radius"] == 5
+    assert custom["paint"]["heatmap-opacity"] == 1
+
+
 def test_popups(map_instance):
     map_instance.add_popup("<b>Hi</b>", coordinates=[1, 2])
     assert len(map_instance.popups) == 1

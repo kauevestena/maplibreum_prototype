@@ -14,6 +14,7 @@
         #map {
             width: 100%;
             height: 500px;
+            position: relative;
         }
 
         .maplibreum-legend {
@@ -45,9 +46,9 @@
 </head>
 <body>
     <div id="map">
-    {% if legend_html %}
-        <div class="maplibreum-legend">{{ legend_html | safe }}</div>
-    {% endif %}
+        {% for legend in legends %}
+        <div class="maplibreum-legend">{{ legend | safe }}</div>
+        {% endfor %}
     </div>
     <script src="https://unpkg.com/maplibre-gl@latest/dist/maplibre-gl.js"></script>
     <script>
@@ -131,6 +132,23 @@ map.on('load', function() {
     });
     map.getContainer().appendChild(layerControl);
     {% endif %}
+
+    {% for cl in cluster_layers %}
+    map.on('click', '{{ cl.cluster_layer }}', function(e) {
+        var features = map.queryRenderedFeatures(e.point, { layers: ['{{ cl.cluster_layer }}'] });
+        var clusterId = features[0].properties.cluster_id;
+        map.getSource('{{ cl.source }}').getClusterExpansionZoom(clusterId, function(err, zoom) {
+            if (err) return;
+            map.easeTo({ center: features[0].geometry.coordinates, zoom: zoom });
+        });
+    });
+    map.on('mouseenter', '{{ cl.cluster_layer }}', function() {
+        map.getCanvas().style.cursor = 'pointer';
+    });
+    map.on('mouseleave', '{{ cl.cluster_layer }}', function() {
+        map.getCanvas().style.cursor = '';
+    });
+    {% endfor %}
 });
 
     {{ extra_js | safe }}
