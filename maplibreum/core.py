@@ -728,6 +728,67 @@ class PolyLine:
             map_instance.add_popup(html=self.popup, layer_id=layer_id)
 
 
+class Polygon:
+    def __init__(
+        self,
+        locations,
+        color="#3388ff",
+        weight=2,
+        fill=True,
+        fill_color=None,
+        fill_opacity=0.5,
+        popup=None,
+    ):
+        self.locations = locations
+        self.color = color
+        self.weight = weight
+        self.fill = fill
+        self.fill_color = fill_color if fill_color else color
+        self.fill_opacity = fill_opacity
+        self.popup = popup
+
+    def add_to(self, map_instance):
+        layer_id = f"polygon_{uuid.uuid4().hex}"
+        coords = self.locations
+        if coords[0] != coords[-1]:
+            coords = coords + [coords[0]]
+        source = {
+            "type": "geojson",
+            "data": {
+                "type": "FeatureCollection",
+                "features": [
+                    {
+                        "type": "Feature",
+                        "geometry": {"type": "Polygon", "coordinates": [coords]},
+                        "properties": {},
+                    }
+                ],
+            },
+        }
+        paint = {
+            "fill-color": self.fill_color if self.fill else "rgba(0,0,0,0)",
+            "fill-opacity": self.fill_opacity if self.fill else 0,
+            "fill-outline-color": self.color,
+        }
+        fill_layer = {
+            "id": layer_id,
+            "type": "fill",
+            "source": layer_id,
+            "paint": paint,
+        }
+        map_instance.add_layer(fill_layer, source=source)
+        if self.weight:
+            outline_layer = {
+                "id": f"{layer_id}_outline",
+                "type": "line",
+                "source": layer_id,
+                "paint": {"line-color": self.color, "line-width": self.weight},
+            }
+            map_instance.add_layer(outline_layer, source=layer_id)
+        if self.popup:
+            map_instance.add_popup(html=self.popup, layer_id=layer_id)
+
+
 class LayerControl:
     """Simple layer control to toggle tile layers."""
 

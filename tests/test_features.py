@@ -6,6 +6,7 @@ from maplibreum.core import (
     Circle,
     CircleMarker,
     PolyLine,
+    Polygon,
     LayerControl,
 )
 
@@ -166,4 +167,20 @@ def test_shapes():
     Circle([0, 0], radius=1000).add_to(m)
     CircleMarker([1, 1], radius=5).add_to(m)
     PolyLine([[0, 0], [1, 1]]).add_to(m)
-    assert len(m.layers) == 3
+    Polygon([[0, 0], [0, 1], [1, 1], [1, 0]], color="red", weight=3, fill_color="blue").add_to(m)
+    assert len(m.layers) == 5
+    polygon_fill = next(
+        l
+        for l in m.layers
+        if l["definition"]["id"].startswith("polygon_")
+        and l["definition"]["type"] == "fill"
+    )
+    polygon_outline = next(
+        l
+        for l in m.layers
+        if l["definition"]["id"].startswith("polygon_")
+        and l["definition"]["type"] == "line"
+    )
+    assert polygon_fill["definition"]["paint"]["fill-color"] == "blue"
+    assert polygon_outline["definition"]["paint"]["line-color"] == "red"
+    assert polygon_outline["definition"]["paint"]["line-width"] == 3
