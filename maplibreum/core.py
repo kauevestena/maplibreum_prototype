@@ -793,6 +793,50 @@ class Polygon:
             map_instance.add_popup(html=self.popup, layer_id=layer_id)
 
 
+class Rectangle:
+    """Axis-aligned rectangle defined by southwest and northeast corners."""
+
+    def __init__(
+        self,
+        southwest,
+        northeast,
+        color="#3388ff",
+        weight=2,
+        fill=True,
+        fill_color=None,
+        fill_opacity=0.5,
+        popup=None,
+    ):
+        self.southwest = southwest
+        self.northeast = northeast
+        self.color = color
+        self.weight = weight
+        self.fill = fill
+        self.fill_color = fill_color if fill_color else color
+        self.fill_opacity = fill_opacity
+        self.popup = popup
+
+    def add_to(self, map_instance):
+        sw_lng, sw_lat = self.southwest
+        ne_lng, ne_lat = self.northeast
+        coords = [
+            [sw_lng, sw_lat],
+            [sw_lng, ne_lat],
+            [ne_lng, ne_lat],
+            [ne_lng, sw_lat],
+        ]
+        polygon = Polygon(
+            coords,
+            color=self.color,
+            weight=self.weight,
+            fill=self.fill,
+            fill_color=self.fill_color,
+            fill_opacity=self.fill_opacity,
+            popup=self.popup,
+        )
+        polygon.add_to(map_instance)
+
+
 class LayerControl:
     """Simple layer control to toggle tile layers."""
 
