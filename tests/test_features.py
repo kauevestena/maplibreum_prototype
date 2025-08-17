@@ -7,6 +7,7 @@ from maplibreum.core import (
     CircleMarker,
     PolyLine,
     Polygon,
+    Rectangle,
     LayerControl,
 )
 
@@ -184,3 +185,27 @@ def test_shapes():
     assert polygon_fill["definition"]["paint"]["fill-color"] == "blue"
     assert polygon_outline["definition"]["paint"]["line-color"] == "red"
     assert polygon_outline["definition"]["paint"]["line-width"] == 3
+
+
+def test_rectangle():
+    m = Map()
+    Rectangle([0, 0], [1, 1], color="red", weight=3, fill_color="blue").add_to(m)
+    assert len(m.layers) == 2
+    rect_fill = next(
+        l
+        for l in m.layers
+        if l["definition"]["id"].startswith("polygon_")
+        and l["definition"]["type"] == "fill"
+    )
+    rect_outline = next(
+        l
+        for l in m.layers
+        if l["definition"]["type"] == "line"
+    )
+    assert (
+        rect_outline["definition"]["id"]
+        == f"{rect_fill['definition']['id']}_outline"
+    )
+    assert rect_fill["definition"]["paint"]["fill-color"] == "blue"
+    assert rect_outline["definition"]["paint"]["line-color"] == "red"
+
