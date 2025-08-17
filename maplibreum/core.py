@@ -793,6 +793,62 @@ class Polygon:
             map_instance.add_popup(html=self.popup, layer_id=layer_id)
 
 
+class ImageOverlay:
+    """Overlay an image over a geographic bounds."""
+
+    def __init__(
+        self,
+        image,
+        bounds=None,
+        coordinates=None,
+        opacity=1.0,
+        attribution=None,
+    ):
+        """Initialize an image overlay.
+
+        Parameters
+        ----------
+        image : str
+            URL or path to the image.
+        bounds : list, optional
+            [[west, south], [east, north]] bounding box. If provided,
+            ``coordinates`` is ignored.
+        coordinates : list, optional
+            Four corner coordinates in the order [top-left, top-right,
+            bottom-right, bottom-left].
+        opacity : float, optional
+            Opacity of the overlay between 0 and 1.
+        attribution : str, optional
+            Attribution text for the image.
+        """
+
+        if bounds is None and coordinates is None:
+            raise ValueError("Either bounds or coordinates must be provided")
+        self.image = image
+        self.bounds = bounds
+        self.coordinates = coordinates
+        self.opacity = opacity
+        self.attribution = attribution
+        self.name = f"imageoverlay_{uuid.uuid4().hex}"
+
+    def _bounds_to_coordinates(self):
+        (west, south), (east, north) = self.bounds
+        return [[west, north], [east, north], [east, south], [west, south]]
+
+    def add_to(self, map_instance):
+        coords = self.coordinates or self._bounds_to_coordinates()
+        source = {"type": "raster", "url": self.image, "coordinates": coords}
+        if self.attribution:
+            source["attribution"] = self.attribution
+        layer = {
+            "id": self.name,
+            "type": "raster",
+            "paint": {"raster-opacity": self.opacity},
+        }
+        map_instance.add_layer(layer, source=source)
+        return self
+
+
 class LayerControl:
     """Simple layer control to toggle tile layers."""
 
