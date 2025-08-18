@@ -209,3 +209,17 @@ def test_rectangle():
     assert rect_fill["definition"]["paint"]["fill-color"] == "blue"
     assert rect_outline["definition"]["paint"]["line-color"] == "red"
 
+
+def test_circle_opacity():
+    m = Map()
+    Circle([0, 0], radius=1000, fill_opacity=0.3).add_to(m)
+    layer = m.layers[0]
+    assert layer["definition"]["paint"]["fill-opacity"] == 0.3
+
+
+def test_circlemarker_opacity():
+    m = Map()
+    CircleMarker([1, 1], radius=5, fill_opacity=0.7).add_to(m)
+    layer = m.layers[0]
+    assert layer["definition"]["paint"]["circle-opacity"] == 0.7
+

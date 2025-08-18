@@ -649,6 +649,7 @@ class Circle:
         color="#3388ff",
         fill=True,
         fill_color=None,
+        fill_opacity=0.5,
         popup=None,
     ):
         self.location = location
@@ -656,6 +657,7 @@ class Circle:
         self.color = color
         self.fill = fill
         self.fill_color = fill_color if fill_color else color
+        self.fill_opacity = fill_opacity
         self.popup = popup
 
     def _circle_polygon(self, center, radius, num_sides=64):
@@ -689,7 +691,7 @@ class Circle:
         }
         paint = {
             "fill-color": self.fill_color if self.fill else "rgba(0,0,0,0)",
-            "fill-opacity": 0.5 if self.fill else 0,
+            "fill-opacity": self.fill_opacity if self.fill else 0,
             "fill-outline-color": self.color,
         }
         layer = {"id": layer_id, "type": "fill", "source": layer_id, "paint": paint}
@@ -708,6 +710,7 @@ class CircleMarker:
         color="#3388ff",
         fill=True,
         fill_color=None,
+        fill_opacity=1.0,
         popup=None,
     ):
         self.location = location
@@ -715,6 +718,7 @@ class CircleMarker:
         self.color = color
         self.fill = fill
         self.fill_color = fill_color if fill_color else color
+        self.fill_opacity = fill_opacity
         self.popup = popup
 
     def add_to(self, map_instance):
@@ -735,6 +739,7 @@ class CircleMarker:
         paint = {
             "circle-radius": self.radius,
             "circle-color": self.fill_color if self.fill else "rgba(0,0,0,0)",
+            "circle-opacity": self.fill_opacity if self.fill else 0,
             "circle-stroke-color": self.color,
             "circle-stroke-width": 1,
         }
