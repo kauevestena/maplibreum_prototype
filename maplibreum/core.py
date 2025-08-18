@@ -1,10 +1,12 @@
-import os
 import json
-import uuid
 import math
+import os
+import uuid
+from urllib.parse import quote
+
+from IPython.display import IFrame, display
 from jinja2 import Environment, FileSystemLoader
 from markupsafe import Markup
-from IPython.display import IFrame, display
 
 
 # Predefined map styles
@@ -137,6 +139,68 @@ class Map:
         layer = {"id": layer_id, "type": "raster", "source": layer_id}
         self.add_layer(layer, source=source)
         self.tile_layers.append({"id": layer_id, "name": name or layer_id})
+
+    def add_wms_layer(
+        self,
+        base_url,
+        layers,
+        name=None,
+        styles="",
+        version="1.1.1",
+        format="image/png",
+        transparent=True,
+        attribution=None,
+        extra_params=None,
+    ):
+        """Add a WMS layer to the map as raster tiles.
+
+        Parameters
+        ----------
+        base_url : str
+            Base URL of the WMS service without query parameters.
+        layers : str
+            Comma-separated layer names to request.
+        name : str, optional
+            Name of the layer. If omitted, a unique ID is generated.
+        styles : str, optional
+            Comma-separated style names.
+        version : str, optional
+            WMS version, defaults to ``1.1.1``.
+        format : str, optional
+            Image format for tiles, defaults to ``image/png``.
+        transparent : bool, optional
+            Whether the background should be transparent.
+        attribution : str, optional
+            Attribution text for the layer.
+        extra_params : dict, optional
+            Additional query parameters for the WMS request.
+        """
+
+        params = {
+            "service": "WMS",
+            "request": "GetMap",
+            "version": version,
+            "layers": layers,
+            "styles": styles,
+            "format": format,
+            "transparent": str(transparent).lower(),
+            "width": 256,
+            "height": 256,
+            "bbox": "{bbox-epsg-3857}",
+        }
+
+        crs_param = "crs" if version == "1.3.0" else "srs"
+        params[crs_param] = "EPSG:3857"
+
+        if extra_params:
+            params.update(extra_params)
+
+        query = "&".join(
+            f"{k}={quote(str(v), safe='{}')}" for k, v in params.items()
+        )
+        url = f"{base_url}?{query}"
+
+        self.add_tile_layer(url, name=name, attribution=attribution)
 
     def add_popup(
         self, html, coordinates=None, layer_id=None, events=None, options=None
