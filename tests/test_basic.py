@@ -37,6 +37,15 @@ def test_add_tile_layer(map_instance):
     )
 
 
+def test_add_wms_layer(map_instance):
+    map_instance.add_wms_layer("https://example.com/wms", layers="basic")
+    tiles_url = map_instance.sources[0]["definition"]["tiles"][0]
+    assert "service=WMS" in tiles_url
+    assert "layers=basic" in tiles_url
+    assert "bbox={bbox-epsg-3857}" in tiles_url
+    assert map_instance.layers[0]["definition"]["type"] == "raster"
+
+
 def test_add_layer_control(map_instance):
     map_instance.add_control("navigation", "top-left")
     assert map_instance.controls == [
