@@ -1,5 +1,5 @@
-import uuid
 import math
+import uuid
 
 
 class Choropleth:
