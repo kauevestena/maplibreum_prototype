@@ -163,7 +163,9 @@ class Map:
             }
         )
 
-    def add_marker(self, coordinates=None, popup=None, color="#007cbf", cluster=None):
+    def add_marker(
+        self, coordinates=None, popup=None, color="#007cbf", cluster=None, icon=None
+    ):
 
         """Add a marker to the map.
 
@@ -176,11 +178,15 @@ class Map:
             HTML content for a popup bound to the marker.
         color : str, optional
             Color of the marker, defaults to MapLibre blue.
+        icon : Icon, optional
+            Custom icon for the marker. If provided, ``color`` is ignored.
         """
         if coordinates is None:
             coordinates = self.center
 
-        marker = Marker(coordinates=coordinates, popup=popup, color=color)
+        marker = Marker(
+            coordinates=coordinates, popup=popup, color=color, icon=icon
+        )
         if cluster:
             cluster.add_marker(marker)
             return marker
@@ -448,11 +454,32 @@ class MarkerCluster:
         return self
 
 
+class Icon:
+    """Representation of a map icon used for symbol markers.
+
+    Parameters
+    ----------
+    icon_image : str
+        Name of the image to use for the icon.
+    icon_size : float, optional
+        Size of the icon relative to its original resolution.
+    icon_anchor : str, optional
+        Part of the icon that should be placed at the marker's geographical
+        location (e.g. ``"bottom"``).
+    """
+
+    def __init__(self, icon_image, icon_size=None, icon_anchor=None):
+        self.icon_image = icon_image
+        self.icon_size = icon_size
+        self.icon_anchor = icon_anchor
+
+
 class Marker:
-    def __init__(self, coordinates, popup=None, color="#007cbf"):
+    def __init__(self, coordinates, popup=None, color="#007cbf", icon=None):
         self.coordinates = coordinates
         self.popup = popup
         self.color = color
+        self.icon = icon
 
     def add_to(self, map_instance):
         if isinstance(map_instance, MarkerCluster):
@@ -476,17 +503,31 @@ class Marker:
                 ],
             },
         }
-        layer = {
-            "id": layer_id,
-            "type": "circle",
-            "source": layer_id,
-            "paint": {
-                "circle-radius": 8,
-                "circle-color": self.color,
-                "circle-stroke-width": 1,
-                "circle-stroke-color": "#fff",
-            },
-        }
+        if self.icon:
+            layer = {
+                "id": layer_id,
+                "type": "symbol",
+                "source": layer_id,
+                "layout": {
+                    "icon-image": self.icon.icon_image,
+                },
+            }
+            if self.icon.icon_size is not None:
+                layer["layout"]["icon-size"] = self.icon.icon_size
+            if self.icon.icon_anchor is not None:
+                layer["layout"]["icon-anchor"] = self.icon.icon_anchor
+        else:
+            layer = {
+                "id": layer_id,
+                "type": "circle",
+                "source": layer_id,
+                "paint": {
+                    "circle-radius": 8,
+                    "circle-color": self.color,
+                    "circle-stroke-width": 1,
+                    "circle-stroke-color": "#fff",
+                },
+            }
         map_instance.add_layer(layer, source=source)
 
         if self.popup:
