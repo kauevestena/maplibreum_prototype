@@ -6,7 +6,6 @@ from urllib.parse import quote
 
 from IPython.display import IFrame, display
 from jinja2 import Environment, FileSystemLoader
-from markupsafe import Markup
 
 
 # Predefined map styles
