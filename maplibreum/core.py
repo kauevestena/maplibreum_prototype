@@ -1,8 +1,8 @@
 import json
 import math
 import os
-import uuid
 from urllib.parse import quote
+import uuid
 
 from IPython.display import IFrame, display
 from jinja2 import Environment, FileSystemLoader
