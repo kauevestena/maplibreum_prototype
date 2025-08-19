@@ -19,6 +19,14 @@ MAP_STYLES = {
 }
 
 
+class Tooltip:
+    """Simple representation of a tooltip bound to a layer."""
+
+    def __init__(self, text, options=None):
+        self.text = text
+        self.options = options or {}
+
+
 class Map:
     def __init__(
         self,
@@ -31,6 +39,7 @@ class Map:
         controls=None,
         layers=None,
         popups=None,
+        tooltips=None,
         extra_js="",
         custom_css="",
     ):
@@ -48,6 +57,7 @@ class Map:
         self.layers = layers if layers is not None else []
         self.tile_layers = []
         self.popups = popups if popups is not None else []
+        self.tooltips = tooltips if tooltips is not None else []
         self.legends = []
         self.extra_js = extra_js
         self.custom_css = custom_css
@@ -226,8 +236,25 @@ class Map:
             }
         )
 
+    def add_tooltip(self, tooltip, layer_id=None, options=None):
+        """Add a tooltip to the map."""
+        if isinstance(tooltip, Tooltip):
+            text = tooltip.text
+            opts = tooltip.options
+        else:
+            text = tooltip
+            opts = options or {}
+        opts.setdefault("closeButton", False)
+        self.tooltips.append({"text": text, "layer_id": layer_id, "options": opts})
+
     def add_marker(
-        self, coordinates=None, popup=None, color="#007cbf", cluster=None, icon=None
+        self,
+        coordinates=None,
+        popup=None,
+        color="#007cbf",
+        cluster=None,
+        icon=None,
+        tooltip=None,
     ):
 
         """Add a marker to the map.
@@ -239,6 +266,8 @@ class Map:
             map's center if not provided.
         popup : str, optional
             HTML content for a popup bound to the marker.
+        tooltip : str or Tooltip, optional
+            Text for a tooltip bound to the marker.
         color : str, optional
             Color of the marker, defaults to MapLibre blue.
         icon : Icon, optional
@@ -248,7 +277,11 @@ class Map:
             coordinates = self.center
 
         marker = Marker(
-            coordinates=coordinates, popup=popup, color=color, icon=icon
+            coordinates=coordinates,
+            popup=popup,
+            color=color,
+            icon=icon,
+            tooltip=tooltip,
         )
         if cluster:
             cluster.add_marker(marker)
@@ -390,6 +423,7 @@ class Map:
             tile_layers=self.tile_layers,
             layer_control=self.layer_control,
             popups=self.popups,
+            tooltips=self.tooltips,
             legends=[legend.render() for legend in self.legends],
             cluster_layers=self.cluster_layers,
             extra_js=self.extra_js,
@@ -538,11 +572,19 @@ class Icon:
 
 
 class Marker:
-    def __init__(self, coordinates, popup=None, color="#007cbf", icon=None):
+    def __init__(
+        self,
+        coordinates,
+        popup=None,
+        color="#007cbf",
+        icon=None,
+        tooltip=None,
+    ):
         self.coordinates = coordinates
         self.popup = popup
         self.color = color
         self.icon = icon
+        self.tooltip = tooltip
 
     def add_to(self, map_instance):
         if isinstance(map_instance, MarkerCluster):
@@ -595,6 +637,8 @@ class Marker:
 
         if self.popup:
             map_instance.add_popup(html=self.popup, layer_id=layer_id)
+        if self.tooltip:
+            map_instance.add_tooltip(self.tooltip, layer_id=layer_id)
         
 
 class GeoJson:
@@ -714,6 +758,7 @@ class Circle:
         fill_color=None,
         fill_opacity=0.5,
         popup=None,
+        tooltip=None,
     ):
         self.location = location
         self.radius = radius
@@ -722,6 +767,7 @@ class Circle:
         self.fill_color = fill_color if fill_color else color
         self.fill_opacity = fill_opacity
         self.popup = popup
+        self.tooltip = tooltip
 
     def _circle_polygon(self, center, radius, num_sides=64):
         lng, lat = center
@@ -761,6 +807,8 @@ class Circle:
         map_instance.add_layer(layer, source=source)
         if self.popup:
             map_instance.add_popup(html=self.popup, layer_id=layer_id)
+        if self.tooltip:
+            map_instance.add_tooltip(self.tooltip, layer_id=layer_id)
 
 
 class CircleMarker:
@@ -775,6 +823,7 @@ class CircleMarker:
         fill_color=None,
         fill_opacity=1.0,
         popup=None,
+        tooltip=None,
     ):
         self.location = location
         self.radius = radius
@@ -783,6 +832,7 @@ class CircleMarker:
         self.fill_color = fill_color if fill_color else color
         self.fill_opacity = fill_opacity
         self.popup = popup
+        self.tooltip = tooltip
 
     def add_to(self, map_instance):
         layer_id = f"circlemarker_{uuid.uuid4().hex}"
@@ -810,14 +860,17 @@ class CircleMarker:
         map_instance.add_layer(layer, source=source)
         if self.popup:
             map_instance.add_popup(html=self.popup, layer_id=layer_id)
+        if self.tooltip:
+            map_instance.add_tooltip(self.tooltip, layer_id=layer_id)
 
 
 class PolyLine:
-    def __init__(self, locations, color="#3388ff", weight=2, popup=None):
+    def __init__(self, locations, color="#3388ff", weight=2, popup=None, tooltip=None):
         self.locations = locations
         self.color = color
         self.weight = weight
         self.popup = popup
+        self.tooltip = tooltip
 
     def add_to(self, map_instance):
         layer_id = f"polyline_{uuid.uuid4().hex}"
@@ -839,6 +892,8 @@ class PolyLine:
         map_instance.add_layer(layer, source=source)
         if self.popup:
             map_instance.add_popup(html=self.popup, layer_id=layer_id)
+        if self.tooltip:
+            map_instance.add_tooltip(self.tooltip, layer_id=layer_id)
 
 
 class Polygon:
@@ -851,6 +906,7 @@ class Polygon:
         fill_color=None,
         fill_opacity=0.5,
         popup=None,
+        tooltip=None,
     ):
         self.locations = locations
         self.color = color
@@ -859,6 +915,7 @@ class Polygon:
         self.fill_color = fill_color if fill_color else color
         self.fill_opacity = fill_opacity
         self.popup = popup
+        self.tooltip = tooltip
 
     def add_to(self, map_instance):
         layer_id = f"polygon_{uuid.uuid4().hex}"
@@ -900,6 +957,8 @@ class Polygon:
             map_instance.add_layer(outline_layer, source=layer_id)
         if self.popup:
             map_instance.add_popup(html=self.popup, layer_id=layer_id)
+        if self.tooltip:
+            map_instance.add_tooltip(self.tooltip, layer_id=layer_id)
 
 
 class Rectangle:
@@ -915,6 +974,7 @@ class Rectangle:
         fill_color=None,
         fill_opacity=0.5,
         popup=None,
+        tooltip=None,
     ):
         self.southwest = southwest
         self.northeast = northeast
@@ -924,6 +984,7 @@ class Rectangle:
         self.fill_color = fill_color if fill_color else color
         self.fill_opacity = fill_opacity
         self.popup = popup
+        self.tooltip = tooltip
 
     def add_to(self, map_instance):
         sw_lng, sw_lat = self.southwest
@@ -942,6 +1003,7 @@ class Rectangle:
             fill_color=self.fill_color,
             fill_opacity=self.fill_opacity,
             popup=self.popup,
+            tooltip=self.tooltip,
         )
         polygon.add_to(map_instance)
 
