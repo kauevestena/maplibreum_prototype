@@ -163,6 +163,45 @@ def test_tile_layer_and_control():
     assert m.layer_control
 
 
+def test_overlay_layer_control():
+    m = Map()
+    m.add_tile_layer(
+        "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
+        name="OSM",
+        attribution="© OpenStreetMap contributors",
+    )
+
+    source = {
+        "type": "geojson",
+        "data": {
+            "type": "FeatureCollection",
+            "features": [
+                {
+                    "type": "Feature",
+                    "geometry": {"type": "Point", "coordinates": [0, 0]},
+                    "properties": {},
+                }
+            ],
+        },
+    }
+    layer_id = m.add_layer(
+        {
+            "id": "points",
+            "type": "circle",
+            "paint": {"circle-radius": 5, "circle-color": "red"},
+        },
+        source=source,
+    )
+    lc = LayerControl()
+    lc.add_overlay(layer_id, "Points")
+    lc.add_to(m)
+    html = m.render()
+    assert "overlayLayers" in html
+    assert "Points" in html
+    assert "checkbox" in html
+    assert "setLayoutProperty(ol.id" in html
+
+
 def test_shapes():
     m = Map()
     Circle([0, 0], radius=1000).add_to(m)
