@@ -1,4 +1,4 @@
-from .core import Map, Marker, GeoJson, Legend, Icon, ImageOverlay
+from .core import Map, Marker, GeoJson, Legend, Icon, ImageOverlay, Tooltip
 from .choropleth import Choropleth
 
 __all__ = [
@@ -9,6 +9,7 @@ __all__ = [
     "Choropleth",
     "Icon",
     "ImageOverlay",
+    "Tooltip",
 ]
 
 

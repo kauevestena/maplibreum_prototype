@@ -100,6 +100,19 @@ map.on('load', function() {
     {% endif %}
     {% endfor %}
 
+    // Tooltips
+    {% for tooltip in tooltips %}
+    var tooltip_{{ loop.index }} = new maplibregl.Popup({{ tooltip.options | tojson }});
+    map.on('mouseenter', '{{ tooltip.layer_id }}', function(e) {
+        tooltip_{{ loop.index }}
+            .setLngLat(e.lngLat)
+            .setHTML(`{{ tooltip.text }}`)
+            .addTo(map);
+    });
+    map.on('mouseleave', '{{ tooltip.layer_id }}', function() {
+        tooltip_{{ loop.index }}.remove();
+    });
+    {% endfor %}
 
     // Tile Layers
     var tileLayers = [
