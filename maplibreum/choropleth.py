@@ -1,5 +1,5 @@
 import math
-import uuid
+import uuid  # for generating unique layer/source identifiers
 
 
 class Choropleth:
