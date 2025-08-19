@@ -121,6 +121,13 @@ map.on('load', function() {
     {% endfor %}
     ];
 
+    // Overlay Layers
+    var overlayLayers = [
+    {% for ov in overlays %}
+        { id: "{{ ov.id }}", name: "{{ ov.name }}" },
+    {% endfor %}
+    ];
+
     {% if tile_layers %}
     // Hide all but the first tile layer
     tileLayers.forEach(function(tl, idx) {
@@ -143,6 +150,19 @@ map.on('load', function() {
             });
         });
         layerControl.appendChild(link);
+    });
+
+    overlayLayers.forEach(function(ol) {
+        var label = document.createElement('label');
+        var checkbox = document.createElement('input');
+        checkbox.type = 'checkbox';
+        checkbox.checked = true;
+        checkbox.addEventListener('change', function(e) {
+            map.setLayoutProperty(ol.id, 'visibility', e.target.checked ? 'visible' : 'none');
+        });
+        label.appendChild(checkbox);
+        label.appendChild(document.createTextNode(' ' + ol.name));
+        layerControl.appendChild(label);
     });
     map.getContainer().appendChild(layerControl);
     {% endif %}

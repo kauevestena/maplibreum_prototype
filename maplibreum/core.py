@@ -56,6 +56,7 @@ class Map:
         self.sources = []
         self.layers = layers if layers is not None else []
         self.tile_layers = []
+        self.overlays = []
         self.popups = popups if popups is not None else []
         self.tooltips = tooltips if tooltips is not None else []
         self.legends = []
@@ -125,6 +126,8 @@ class Map:
             {"id": layer_id, "definition": layer_definition, "before": before}
         )
 
+        return layer_id
+
     def add_tile_layer(self, url, name=None, attribution=None):
         """Add a raster tile layer to the map.
 
@@ -148,6 +151,10 @@ class Map:
         layer = {"id": layer_id, "type": "raster", "source": layer_id}
         self.add_layer(layer, source=source)
         self.tile_layers.append({"id": layer_id, "name": name or layer_id})
+
+    def register_overlay(self, layer_id, name=None):
+        """Register a non-tile overlay layer for the layer control."""
+        self.overlays.append({"id": layer_id, "name": name or layer_id})
 
     def add_wms_layer(
         self,
@@ -421,6 +428,7 @@ class Map:
             controls=self.controls,
             layers=self.layers,
             tile_layers=self.tile_layers,
+            overlays=self.overlays,
             layer_control=self.layer_control,
             popups=self.popups,
             tooltips=self.tooltips,
@@ -1081,10 +1089,21 @@ class ImageOverlay:
 
 
 class LayerControl:
-    """Simple layer control to toggle tile layers."""
+    """Simple layer control to toggle tile and overlay layers."""
+
+    def __init__(self):
+        self.overlays = []
+
+    def add_overlay(self, layer_id, name=None):
+        """Register an overlay layer by its ID and display name."""
+        self.overlays.append({"id": layer_id, "name": name or layer_id})
+        return self
 
     def add_to(self, map_instance):
         map_instance.layer_control = True
+        if self.overlays:
+            for ov in self.overlays:
+                map_instance.register_overlay(ov["id"], ov["name"])
         return self
 
 
