@@ -28,6 +28,7 @@ class Tooltip:
 
 
 class Map:
+    _drawn_data = {}
     def __init__(
         self,
         title="MapLibreum Map",
@@ -66,6 +67,9 @@ class Map:
         self.cluster_layers = []
         self.bounds = None
         self.bounds_padding = None
+        self.draw_control = False
+        self.draw_control_options = {}
+
 
         template_dir = os.path.join(os.path.dirname(__file__), "templates")
         self.env = Environment(loader=FileSystemLoader(template_dir))
@@ -102,6 +106,13 @@ class Map:
         self.controls.append(
             {"type": control_type, "position": position, "options": options}
         )
+
+    def add_draw_control(self, options=None):
+        """Enable a draw control on the map."""
+        if options is None:
+            options = {}
+        self.draw_control = True
+        self.draw_control_options = options
 
     def add_legend(self, legend):
         """Add a legend to the map."""
@@ -145,22 +156,32 @@ class Map:
 
         return layer_id
 
-    def add_tile_layer(self, url, name=None, attribution=None):
+    def add_tile_layer(self, url, name=None, attribution=None, subdomains=None):
         """Add a raster tile layer to the map.
 
         Parameters
         ----------
         url : str
-            Tile URL template.
+            Tile URL template. May contain ``{s}`` as a placeholder for
+            subdomains.
         name : str, optional
             Name of the layer. If omitted, a unique ID is generated.
         attribution : str, optional
             Attribution text for the layer.
+        subdomains : list of str, optional
+            Subdomains to replace ``{s}`` in the URL. If provided and ``{s}``
+            exists in ``url``, multiple tile URLs will be generated.
         """
         layer_id = name or f"tilelayer_{uuid.uuid4().hex}"
+
+        if "{s}" in url and subdomains:
+            tiles = [url.replace("{s}", s) for s in subdomains]
+        else:
+            tiles = [url]
+
         source = {
             "type": "raster",
-            "tiles": [url],
+            "tiles": tiles,
             "tileSize": 256,
         }
         if attribution:
@@ -458,6 +479,9 @@ class Map:
             cluster_layers=self.cluster_layers,
             extra_js=self.extra_js,
             custom_css=final_custom_css,
+            draw_control=self.draw_control,
+            draw_control_options=self.draw_control_options,
+            map_id=self.map_id,
         )
 
     def _repr_html_(self):
@@ -484,6 +508,14 @@ class Map:
     def save(self, filepath):
         with open(filepath, "w", encoding="utf-8") as f:
             f.write(self.render())
+
+    @classmethod
+    def _store_drawn_features(cls, map_id, geojson_str):
+        cls._drawn_data[map_id] = json.loads(geojson_str)
+
+    @property
+    def drawn_features(self):
+        return self._drawn_data.get(self.map_id)
 
 
 class MarkerCluster:

@@ -5,6 +5,9 @@
     <title>{{ title }}</title>
     <meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no" />
     <link href="https://unpkg.com/maplibre-gl@latest/dist/maplibre-gl.css" rel="stylesheet" />
+    {% if draw_control %}
+    <link href="https://unpkg.com/@mapbox/mapbox-gl-draw@latest/dist/mapbox-gl-draw.css" rel="stylesheet" />
+    {% endif %}
     <style>
         body {
             margin: 0;
@@ -52,6 +55,9 @@
         {% endfor %}
     </div>
     <script src="https://unpkg.com/maplibre-gl@latest/dist/maplibre-gl.js"></script>
+    {% if draw_control %}
+    <script src="https://unpkg.com/@mapbox/mapbox-gl-draw@latest/dist/mapbox-gl-draw.js"></script>
+    {% endif %}
     <script>
         // Initialize map
         var map = new maplibregl.Map({
@@ -72,6 +78,21 @@ map.addControl(new maplibregl.ScaleControl({{ ctrl.options | tojson }}), "{{ ctr
 map.addControl(new maplibregl.FullscreenControl(), "{{ ctrl.position }}");
 {% endif %}
 {% endfor %}
+
+{% if draw_control %}
+var draw = new MapboxDraw({{ draw_control_options | tojson }});
+map.addControl(draw);
+function updateDrawn() {
+    var data = draw.getAll();
+    if (window.Jupyter && Jupyter.notebook && Jupyter.notebook.kernel) {
+        var cmd = "from maplibreum.core import Map; Map._store_drawn_features('" + "{{ map_id }}" + "', '" + JSON.stringify(data).replace(/'/g, "\\'") + "')";
+        Jupyter.notebook.kernel.execute(cmd);
+    }
+}
+map.on('draw.create', updateDrawn);
+map.on('draw.update', updateDrawn);
+map.on('draw.delete', updateDrawn);
+{% endif %}
 
 map.on('load', function() {
     {% if bounds %}
