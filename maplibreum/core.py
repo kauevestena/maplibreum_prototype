@@ -65,8 +65,11 @@ class Map:
         self.custom_css = custom_css
         self.layer_control = False
         self.cluster_layers = []
+        self.bounds = None
+        self.bounds_padding = None
         self.draw_control = False
         self.draw_control_options = {}
+
 
         template_dir = os.path.join(os.path.dirname(__file__), "templates")
         self.env = Environment(loader=FileSystemLoader(template_dir))
@@ -75,6 +78,21 @@ class Map:
 
         # Unique ID for the map (important if multiple maps displayed in a notebook)
         self.map_id = f"maplibreum_{uuid.uuid4().hex}"
+
+    def fit_bounds(self, bounds, padding=None):
+        """Store bounds and optional padding for later rendering.
+
+        Parameters
+        ----------
+        bounds : list
+            Bounds in the form ``[[west, south], [east, north]]``.
+        padding : int or dict, optional
+            Padding to apply in pixels. Can be a number or an options
+            dictionary accepted by ``map.fitBounds``.
+        """
+
+        self.bounds = bounds
+        self.bounds_padding = padding
 
     def add_control(self, control_type, position="top-right", options=None):
         """
@@ -447,6 +465,8 @@ class Map:
             map_style=self.map_style,
             center=self.center,
             zoom=self.zoom,
+            bounds=self.bounds,
+            bounds_padding=self.bounds_padding,
             sources=self.sources,
             controls=self.controls,
             layers=self.layers,

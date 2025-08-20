@@ -62,9 +62,9 @@
         // Initialize map
         var map = new maplibregl.Map({
             container: 'map',
-            style: {{ map_style | tojson }},
+            style: {{ map_style | tojson }}{% if not bounds %},
             center: {{ center | tojson }},
-            zoom: {{ zoom }}
+            zoom: {{ zoom }}{% endif %}
         });
 
 
@@ -95,6 +95,9 @@ map.on('draw.delete', updateDrawn);
 {% endif %}
 
 map.on('load', function() {
+    {% if bounds %}
+    map.fitBounds({{ bounds | tojson }}{% if bounds_padding is not none %}, {padding: {{ bounds_padding | tojson }}}{% endif %});
+    {% endif %}
     // Add sources
     {% for source in sources %}
     map.addSource("{{ source.name }}", {{ source.definition | tojson | safe }});
