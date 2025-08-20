@@ -28,6 +28,7 @@ class Tooltip:
 
 
 class Map:
+    _drawn_data = {}
     def __init__(
         self,
         title="MapLibreum Map",
@@ -64,6 +65,8 @@ class Map:
         self.custom_css = custom_css
         self.layer_control = False
         self.cluster_layers = []
+        self.draw_control = False
+        self.draw_control_options = {}
 
         template_dir = os.path.join(os.path.dirname(__file__), "templates")
         self.env = Environment(loader=FileSystemLoader(template_dir))
@@ -85,6 +88,13 @@ class Map:
         self.controls.append(
             {"type": control_type, "position": position, "options": options}
         )
+
+    def add_draw_control(self, options=None):
+        """Enable a draw control on the map."""
+        if options is None:
+            options = {}
+        self.draw_control = True
+        self.draw_control_options = options
 
     def add_legend(self, legend):
         """Add a legend to the map."""
@@ -439,6 +449,9 @@ class Map:
             cluster_layers=self.cluster_layers,
             extra_js=self.extra_js,
             custom_css=final_custom_css,
+            draw_control=self.draw_control,
+            draw_control_options=self.draw_control_options,
+            map_id=self.map_id,
         )
 
     def _repr_html_(self):
@@ -465,6 +478,14 @@ class Map:
     def save(self, filepath):
         with open(filepath, "w", encoding="utf-8") as f:
             f.write(self.render())
+
+    @classmethod
+    def _store_drawn_features(cls, map_id, geojson_str):
+        cls._drawn_data[map_id] = json.loads(geojson_str)
+
+    @property
+    def drawn_features(self):
+        return self._drawn_data.get(self.map_id)
 
 
 class MarkerCluster:
