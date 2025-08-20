@@ -152,9 +152,12 @@ class Map:
         self.add_layer(layer, source=source)
         self.tile_layers.append({"id": layer_id, "name": name or layer_id})
 
-    def register_overlay(self, layer_id, name=None):
-        """Register a non-tile overlay layer for the layer control."""
-        self.overlays.append({"id": layer_id, "name": name or layer_id})
+    def register_overlay(self, layer_id, name=None, layers=None):
+        """Register a non-tile overlay layer or group for the layer control."""
+        overlay = {"id": layer_id, "name": name or layer_id}
+        if layers:
+            overlay["layers"] = layers
+        self.overlays.append(overlay)
 
     def add_wms_layer(
         self,
@@ -1088,22 +1091,96 @@ class ImageOverlay:
         return self
 
 
+class FeatureGroup:
+    """Group multiple layers so they can be toggled together."""
+
+    def __init__(self, name=None):
+        self.name = name or f"featuregroup_{uuid.uuid4().hex}"
+        self.sources = []
+        self.layers = []
+        self.popups = []
+        self.tooltips = []
+        self.layer_ids = []
+
+    def add_source(self, name, definition):
+        self.sources.append({"name": name, "definition": definition})
+
+    def add_layer(self, layer_definition, source=None, before=None):
+        if isinstance(source, str):
+            layer_definition["source"] = source
+        elif source is not None:
+            source_name = f"source_{uuid.uuid4().hex}"
+            self.add_source(source_name, source)
+            layer_definition["source"] = source_name
+
+        layer_id = layer_definition.get("id", f"layer_{uuid.uuid4().hex}")
+        layer_definition["id"] = layer_id
+        self.layers.append(
+            {"id": layer_id, "definition": layer_definition, "before": before}
+        )
+        self.layer_ids.append(layer_id)
+        return layer_id
+
+    def add_popup(self, html, coordinates=None, layer_id=None, events=None, options=None):
+        if options is None:
+            options = {}
+        if events is None:
+            events = ["click"]
+        self.popups.append(
+            {
+                "html": html,
+                "coordinates": coordinates,
+                "layer_id": layer_id,
+                "events": events,
+                "options": options,
+            }
+        )
+
+    def add_tooltip(self, tooltip, layer_id=None, options=None):
+        if isinstance(tooltip, Tooltip):
+            text = tooltip.text
+            opts = tooltip.options
+        else:
+            text = tooltip
+            opts = options or {}
+        opts.setdefault("closeButton", False)
+        self.tooltips.append({"text": text, "layer_id": layer_id, "options": opts})
+
+    def add_to(self, map_instance):
+        for src in self.sources:
+            map_instance.add_source(src["name"], src["definition"])
+        for layer in self.layers:
+            map_instance.add_layer(layer["definition"], before=layer["before"])
+        for popup in self.popups:
+            map_instance.add_popup(**popup)
+        for tooltip in self.tooltips:
+            map_instance.add_tooltip(
+                tooltip["text"], layer_id=tooltip["layer_id"], options=tooltip["options"]
+            )
+        return self
+
+
 class LayerControl:
     """Simple layer control to toggle tile and overlay layers."""
 
     def __init__(self):
         self.overlays = []
 
-    def add_overlay(self, layer_id, name=None):
-        """Register an overlay layer by its ID and display name."""
-        self.overlays.append({"id": layer_id, "name": name or layer_id})
+    def add_overlay(self, layer, name=None):
+        """Register an overlay layer or group by ID and display name."""
+        if isinstance(layer, FeatureGroup):
+            self.overlays.append(
+                {"id": layer.name, "name": name or layer.name, "layers": layer.layer_ids}
+            )
+        else:
+            self.overlays.append({"id": layer, "name": name or layer})
         return self
 
     def add_to(self, map_instance):
         map_instance.layer_control = True
         if self.overlays:
             for ov in self.overlays:
-                map_instance.register_overlay(ov["id"], ov["name"])
+                map_instance.register_overlay(ov["id"], ov["name"], ov.get("layers"))
         return self
 
 

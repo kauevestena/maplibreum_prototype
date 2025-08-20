@@ -124,7 +124,7 @@ map.on('load', function() {
     // Overlay Layers
     var overlayLayers = [
     {% for ov in overlays %}
-        { id: "{{ ov.id }}", name: "{{ ov.name }}" },
+        { id: "{{ ov.id }}", name: "{{ ov.name }}"{% if ov.layers %}, layers: [{% for lid in ov.layers %}"{{ lid }}"{% if not loop.last %}, {% endif %}{% endfor %}]{% endif %} },
     {% endfor %}
     ];
 
@@ -158,7 +158,13 @@ map.on('load', function() {
         checkbox.type = 'checkbox';
         checkbox.checked = true;
         checkbox.addEventListener('change', function(e) {
-            map.setLayoutProperty(ol.id, 'visibility', e.target.checked ? 'visible' : 'none');
+            if (ol.layers) {
+                ol.layers.forEach(function(id) {
+                    map.setLayoutProperty(id, 'visibility', e.target.checked ? 'visible' : 'none');
+                });
+            } else {
+                map.setLayoutProperty(ol.id, 'visibility', e.target.checked ? 'visible' : 'none');
+            }
         });
         label.appendChild(checkbox);
         label.appendChild(document.createTextNode(' ' + ol.name));
