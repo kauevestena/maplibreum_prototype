@@ -151,6 +151,7 @@ def test_tile_layer_and_control():
         "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
         name="OSM",
         attribution="© OpenStreetMap contributors",
+        subdomains=["a", "b", "c"],
     )
     html_no_control = m.render()
     assert "OSM" in html_no_control
@@ -163,12 +164,33 @@ def test_tile_layer_and_control():
     assert m.layer_control
 
 
+def test_tile_layer_subdomains():
+    m = Map()
+    m.add_tile_layer(
+        "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
+        name="OSM",
+        attribution="© OpenStreetMap contributors",
+        subdomains=["a", "b", "c"],
+    )
+    tiles = m.sources[0]["definition"]["tiles"]
+    assert len(tiles) == 3
+    assert (
+        "https://a.tile.openstreetmap.org/{z}/{x}/{y}.png" in tiles
+        and "https://b.tile.openstreetmap.org/{z}/{x}/{y}.png" in tiles
+        and "https://c.tile.openstreetmap.org/{z}/{x}/{y}.png" in tiles
+    )
+    html = m.render()
+    assert "https://a.tile.openstreetmap.org/{z}/{x}/{y}.png" in html
+    assert "https://b.tile.openstreetmap.org/{z}/{x}/{y}.png" in html
+    assert "https://c.tile.openstreetmap.org/{z}/{x}/{y}.png" in html
+
 def test_overlay_layer_control():
     m = Map()
     m.add_tile_layer(
         "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
         name="OSM",
         attribution="© OpenStreetMap contributors",
+        subdomains=["a", "b", "c"],
     )
 
     source = {

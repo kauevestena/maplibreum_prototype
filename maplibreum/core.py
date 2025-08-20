@@ -128,22 +128,32 @@ class Map:
 
         return layer_id
 
-    def add_tile_layer(self, url, name=None, attribution=None):
+    def add_tile_layer(self, url, name=None, attribution=None, subdomains=None):
         """Add a raster tile layer to the map.
 
         Parameters
         ----------
         url : str
-            Tile URL template.
+            Tile URL template. May contain ``{s}`` as a placeholder for
+            subdomains.
         name : str, optional
             Name of the layer. If omitted, a unique ID is generated.
         attribution : str, optional
             Attribution text for the layer.
+        subdomains : list of str, optional
+            Subdomains to replace ``{s}`` in the URL. If provided and ``{s}``
+            exists in ``url``, multiple tile URLs will be generated.
         """
         layer_id = name or f"tilelayer_{uuid.uuid4().hex}"
+
+        if "{s}" in url and subdomains:
+            tiles = [url.replace("{s}", s) for s in subdomains]
+        else:
+            tiles = [url]
+
         source = {
             "type": "raster",
-            "tiles": [url],
+            "tiles": tiles,
             "tileSize": 256,
         }
         if attribution:
