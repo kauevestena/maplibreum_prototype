@@ -367,6 +367,27 @@ class Map:
             layer_definition["filter"] = filter
         self.add_layer(layer_definition, source=source, before=before)
 
+    def add_fill_extrusion_layer(
+        self, name, source, paint=None, layout=None, before=None, filter=None
+    ):
+        """Add a fill-extrusion layer to the map."""
+        if paint is None:
+            paint = {
+                "fill-extrusion-height": 10,
+                "fill-extrusion-color": "#007cbf",
+                "fill-extrusion-opacity": 0.6,
+            }
+        layer_definition = {
+            "id": name,
+            "type": "fill-extrusion",
+            "paint": paint,
+        }
+        if layout:
+            layer_definition["layout"] = layout
+        if filter:
+            layer_definition["filter"] = filter
+        self.add_layer(layer_definition, source=source, before=before)
+
     def add_line_layer(
         self, name, source, paint=None, layout=None, before=None, filter=None
     ):
