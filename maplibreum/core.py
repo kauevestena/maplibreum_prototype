@@ -108,11 +108,21 @@ class Map:
         self.bounds_padding = padding
 
     def add_control(self, control_type, position="top-right", options=None):
-        """
-        Add a control to the map.
-        control_type: str, one of ['navigation', 'scale', 'fullscreen']
-        position: str, e.g. 'top-right', 'top-left', etc.
-        options: dict, e.g. for scale control { "maxWidth": 80, "unit": "imperial" }
+        """Add a UI control to the map.
+
+        Parameters
+        ----------
+        control_type : str
+            Type of control to add. Supported values are ``'navigation'``,
+            ``'scale'``, ``'fullscreen'``, ``'geolocate'`` and
+            ``'attribution'``.
+        position : str, optional
+            Position on the map (e.g. ``'top-right'`` or ``'bottom-left'``).
+        options : dict, optional
+            Options forwarded to the underlying MapLibre GL control
+            constructor. For example ``{"maxWidth": 80, "unit": "imperial"}``
+            for the scale control or ``{"trackUserLocation": true}`` for the
+            geolocate control.
         """
         if options is None:
             options = {}

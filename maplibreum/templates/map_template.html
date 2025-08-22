@@ -71,6 +71,10 @@ map.addControl(new maplibregl.NavigationControl(), "{{ ctrl.position }}");
 map.addControl(new maplibregl.ScaleControl({{ ctrl.options | tojson }}), "{{ ctrl.position }}");
 {% elif ctrl.type == "fullscreen" %}
 map.addControl(new maplibregl.FullscreenControl(), "{{ ctrl.position }}");
+{% elif ctrl.type == "geolocate" %}
+map.addControl(new maplibregl.GeolocateControl({{ ctrl.options | tojson }}), "{{ ctrl.position }}");
+{% elif ctrl.type == "attribution" %}
+map.addControl(new maplibregl.AttributionControl({{ ctrl.options | tojson }}), "{{ ctrl.position }}");
 {% endif %}
 {% endfor %}
 

@@ -30,9 +30,11 @@ geojson = {"type": "FeatureCollection", "features": []}
 source = {"type": "geojson", "data": geojson}
 m.add_heatmap_layer("heat", source)
 
-# Add a 3D fill-extrusion layer
-buildings = {"type": "geojson", "data": {"type": "FeatureCollection", "features": []}}
-m.add_fill_extrusion_layer("buildings", buildings)
+# Enable built-in controls
+m.add_control("geolocate", "top-right", options={"trackUserLocation": True})
+m.add_control(
+    "attribution", "bottom-right", options={"customAttribution": "My Data"}
+)
 
 # Save the map to an HTML file
 m.save("my_map.html")
