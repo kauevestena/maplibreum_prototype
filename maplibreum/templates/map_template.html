@@ -4,7 +4,7 @@
     <meta charset="utf-8" />
     <title>{{ title }}</title>
     <meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no" />
-    <link href="https://unpkg.com/maplibre-gl@latest/dist/maplibre-gl.css" rel="stylesheet" />
+    <link href="https://unpkg.com/maplibre-gl@{{ maplibre_version }}/dist/maplibre-gl.css" rel="stylesheet" />
     {% if draw_control %}
     <link href="https://unpkg.com/@mapbox/mapbox-gl-draw@latest/dist/mapbox-gl-draw.css" rel="stylesheet" />
     {% endif %}
@@ -54,7 +54,7 @@
         <div class="maplibreum-legend">{{ legend | safe }}</div>
         {% endfor %}
     </div>
-    <script src="https://unpkg.com/maplibre-gl@latest/dist/maplibre-gl.js"></script>
+    <script src="https://unpkg.com/maplibre-gl@{{ maplibre_version }}/dist/maplibre-gl.js"></script>
     {% if draw_control %}
     <script src="https://unpkg.com/@mapbox/mapbox-gl-draw@latest/dist/mapbox-gl-draw.js"></script>
     {% endif %}

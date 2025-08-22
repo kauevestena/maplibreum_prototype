@@ -43,7 +43,15 @@ class Map:
         tooltips=None,
         extra_js="",
         custom_css="",
+        maplibre_version="3.4.0",
     ):
+        """Initialize a map instance.
+
+        Parameters
+        ----------
+        maplibre_version : str, optional
+            Version of MapLibre GL JS to load. Defaults to "3.4.0".
+        """
         self.title = title
         if map_style in MAP_STYLES:
             self.map_style = MAP_STYLES[map_style]
@@ -63,6 +71,7 @@ class Map:
         self.legends = []
         self.extra_js = extra_js
         self.custom_css = custom_css
+        self.maplibre_version = maplibre_version
         self.layer_control = False
         self.cluster_layers = []
         self.bounds = None
@@ -481,6 +490,7 @@ class Map:
             custom_css=final_custom_css,
             draw_control=self.draw_control,
             draw_control_options=self.draw_control_options,
+            maplibre_version=self.maplibre_version,
             map_id=self.map_id,
         )
 
