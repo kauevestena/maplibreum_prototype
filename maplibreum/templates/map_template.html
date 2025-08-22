@@ -60,12 +60,7 @@
     {% endif %}
     <script>
         // Initialize map
-        var map = new maplibregl.Map({
-            container: 'map',
-            style: {{ map_style | tojson }}{% if not bounds %},
-            center: {{ center | tojson }},
-            zoom: {{ zoom }}{% endif %}
-        });
+        var map = new maplibregl.Map({{ map_options | tojson }});
 
 
 // Add controls

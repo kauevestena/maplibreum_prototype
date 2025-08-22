@@ -35,6 +35,8 @@ class Map:
         map_style="basic",
         center=[0, 0],
         zoom=2,
+        pitch=None,
+        bearing=None,
         width="100%",
         height="500px",
         controls=None,
@@ -59,6 +61,8 @@ class Map:
             self.map_style = map_style
         self.center = center
         self.zoom = zoom
+        self.pitch = pitch
+        self.bearing = bearing
         self.width = width
         self.height = height
         self.controls = controls if controls is not None else []
@@ -489,12 +493,21 @@ class Map:
         # The template expects #map { width: ..., height: ... } to be set via custom_css if desired.
         dimension_css = f"#map {{ width: {self.width}; height: {self.height}; }}"
         final_custom_css = dimension_css + "\n" + self.custom_css
+        map_options = {
+            "container": "map",
+            "style": self.map_style,
+        }
+        if self.bounds is None:
+            map_options["center"] = self.center
+            map_options["zoom"] = self.zoom
+        if self.pitch is not None:
+            map_options["pitch"] = self.pitch
+        if self.bearing is not None:
+            map_options["bearing"] = self.bearing
 
         return self.template.render(
             title=self.title,
-            map_style=self.map_style,
-            center=self.center,
-            zoom=self.zoom,
+            map_options=map_options,
             bounds=self.bounds,
             bounds_padding=self.bounds_padding,
             sources=self.sources,
