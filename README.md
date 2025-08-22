@@ -16,6 +16,9 @@ from maplibreum import Map
 # Create a map centered at a specific location
 m = Map(center=[-23.5505, -46.6333], zoom=10)
 
+# Pin a specific MapLibre GL JS version (defaults to 3.4.0)
+m_custom = Map(maplibre_version="2.4.0")
+
 # Add a marker at the map center
 m.add_marker(popup="Hello, MapLibre!")
 
