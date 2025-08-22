@@ -72,6 +72,15 @@ def test_shape_layers(map_instance):
     assert types == ["circle", "line", "fill"]
 
 
+def test_fill_extrusion_layer(map_instance):
+    source = {"type": "geojson", "data": {"type": "FeatureCollection", "features": []}}
+    map_instance.add_fill_extrusion_layer("extrusion", source)
+    layer = map_instance.layers[0]["definition"]
+    assert layer["type"] == "fill-extrusion"
+    assert layer["paint"]["fill-extrusion-height"] == 10
+    assert layer["paint"]["fill-extrusion-color"] == "#007cbf"
+
+
 def test_heatmap_layer(map_instance):
     source = {"type": "geojson", "data": {"type": "FeatureCollection", "features": []}}
     map_instance.add_heatmap_layer("heat", source)

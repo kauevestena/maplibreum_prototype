@@ -35,6 +35,8 @@ class Map:
         map_style="basic",
         center=[0, 0],
         zoom=2,
+        pitch=None,
+        bearing=None,
         width="100%",
         height="500px",
         controls=None,
@@ -43,7 +45,15 @@ class Map:
         tooltips=None,
         extra_js="",
         custom_css="",
+        maplibre_version="3.4.0",
     ):
+        """Initialize a map instance.
+
+        Parameters
+        ----------
+        maplibre_version : str, optional
+            Version of MapLibre GL JS to load. Defaults to "3.4.0".
+        """
         self.title = title
         if map_style in MAP_STYLES:
             self.map_style = MAP_STYLES[map_style]
@@ -51,6 +61,8 @@ class Map:
             self.map_style = map_style
         self.center = center
         self.zoom = zoom
+        self.pitch = pitch
+        self.bearing = bearing
         self.width = width
         self.height = height
         self.controls = controls if controls is not None else []
@@ -63,6 +75,7 @@ class Map:
         self.legends = []
         self.extra_js = extra_js
         self.custom_css = custom_css
+        self.maplibre_version = maplibre_version
         self.layer_control = False
         self.cluster_layers = []
         self.bounds = None
@@ -377,6 +390,27 @@ class Map:
             layer_definition["filter"] = filter
         self.add_layer(layer_definition, source=source, before=before)
 
+    def add_fill_extrusion_layer(
+        self, name, source, paint=None, layout=None, before=None, filter=None
+    ):
+        """Add a fill-extrusion layer to the map."""
+        if paint is None:
+            paint = {
+                "fill-extrusion-height": 10,
+                "fill-extrusion-color": "#007cbf",
+                "fill-extrusion-opacity": 0.6,
+            }
+        layer_definition = {
+            "id": name,
+            "type": "fill-extrusion",
+            "paint": paint,
+        }
+        if layout:
+            layer_definition["layout"] = layout
+        if filter:
+            layer_definition["filter"] = filter
+        self.add_layer(layer_definition, source=source, before=before)
+
     def add_line_layer(
         self, name, source, paint=None, layout=None, before=None, filter=None
     ):
@@ -469,12 +503,21 @@ class Map:
         # The template expects #map { width: ..., height: ... } to be set via custom_css if desired.
         dimension_css = f"#map {{ width: {self.width}; height: {self.height}; }}"
         final_custom_css = dimension_css + "\n" + self.custom_css
+        map_options = {
+            "container": "map",
+            "style": self.map_style,
+        }
+        if self.bounds is None:
+            map_options["center"] = self.center
+            map_options["zoom"] = self.zoom
+        if self.pitch is not None:
+            map_options["pitch"] = self.pitch
+        if self.bearing is not None:
+            map_options["bearing"] = self.bearing
 
         return self.template.render(
             title=self.title,
-            map_style=self.map_style,
-            center=self.center,
-            zoom=self.zoom,
+            map_options=map_options,
             bounds=self.bounds,
             bounds_padding=self.bounds_padding,
             sources=self.sources,
@@ -491,6 +534,7 @@ class Map:
             custom_css=final_custom_css,
             draw_control=self.draw_control,
             draw_control_options=self.draw_control_options,
+            maplibre_version=self.maplibre_version,
             map_id=self.map_id,
         )
 
