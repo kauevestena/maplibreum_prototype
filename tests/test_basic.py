@@ -53,6 +53,16 @@ def test_add_layer_control(map_instance):
     ]
 
 
+def test_geolocate_and_attribution_controls(map_instance):
+    map_instance.add_control("geolocate", "top-right")
+    map_instance.add_control(
+        "attribution", "bottom-right", options={"customAttribution": "Test"}
+    )
+    html = map_instance.render()
+    assert "GeolocateControl" in html
+    assert "AttributionControl" in html
+
+
 def test_shape_layers(map_instance):
     source = {"type": "geojson", "data": {"type": "FeatureCollection", "features": []}}
     map_instance.add_circle_layer("circle", source)
