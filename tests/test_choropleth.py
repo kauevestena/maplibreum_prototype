@@ -49,3 +49,38 @@ def test_choropleth_legend_rendered(sample_geojson):
     html = m.render()
     assert "maplibreum-legend" in html
     assert "My Legend" in html
+
+
+def test_choropleth_quantile_bins():
+    features = []
+    for i, fid in enumerate(["A", "B", "C", "D"]):
+        coords = [
+            [i, i],
+            [i, i + 1],
+            [i + 1, i + 1],
+            [i + 1, i],
+            [i, i],
+        ]
+        features.append(
+            {
+                "type": "Feature",
+                "id": fid,
+                "properties": {},
+                "geometry": {"type": "Polygon", "coordinates": [coords]},
+            }
+        )
+
+    geojson = {"type": "FeatureCollection", "features": features}
+    m = Map()
+    data = {"A": 1, "B": 2, "C": 3, "D": 100}
+    colors = ["#111111", "#222222", "#333333", "#444444"]
+    Choropleth(geojson, data, colors=colors, color_scale="quantile").add_to(m)
+
+    feature_colors = {
+        f["id"]: f["properties"]["fillColor"]
+        for f in m.sources[0]["definition"]["data"]["features"]
+    }
+    assert feature_colors["A"] == "#111111"
+    assert feature_colors["B"] == "#222222"
+    assert feature_colors["C"] == "#333333"
+    assert feature_colors["D"] == "#444444"
