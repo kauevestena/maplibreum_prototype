@@ -8,6 +8,13 @@ A Python library for creating interactive MapLibre maps, like Folium but for Map
 pip install maplibreum
 ```
 
+## Development
+
+```bash
+pip install -e .
+pytest
+```
+
 ## Usage
 
 ```python
@@ -38,6 +45,36 @@ m.add_control(
 
 # Save the map to an HTML file
 m.save("my_map.html")
+```
+
+## Feature Demonstrations
+
+```python
+from maplibreum import (
+    Map,
+    Choropleth,
+    Marker,
+    MarkerCluster,
+    LayerControl,
+)
+
+m = Map()
+
+# Choropleth
+Choropleth(geojson_data).add_to(m)
+
+# Marker clusters
+cluster = MarkerCluster().add_to(m)
+Marker(coordinates=[0, 0]).add_to(cluster)
+
+# Layer controls
+LayerControl().add_to(m)
+```
+
+## Example Notebooks
+
+```bash
+jupyter notebook examples
 ```
 
 ## Contributing
