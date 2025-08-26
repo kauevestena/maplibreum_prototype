@@ -500,11 +500,13 @@ class Map:
 
     def render(self):
         # Inject custom CSS to adjust the map div if needed
-        # The template expects #map { width: ..., height: ... } to be set via custom_css if desired.
-        dimension_css = f"#map {{ width: {self.width}; height: {self.height}; }}"
+        # The template expects a selector for the map container to set width/height.
+        dimension_css = (
+            f"#{self.map_id} {{ width: {self.width}; height: {self.height}; }}"
+        )
         final_custom_css = dimension_css + "\n" + self.custom_css
         map_options = {
-            "container": "map",
+            "container": self.map_id,
             "style": self.map_style,
         }
         if self.bounds is None:
