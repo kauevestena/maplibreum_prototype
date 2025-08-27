@@ -82,6 +82,7 @@ class Map:
         self.bounds_padding = None
         self.draw_control = False
         self.draw_control_options = {}
+        self.lat_lng_popup = False
 
 
         template_dir = os.path.join(os.path.dirname(__file__), "templates")
@@ -318,6 +319,10 @@ class Map:
         opts.setdefault("closeButton", False)
         self.tooltips.append({"text": text, "layer_id": layer_id, "options": opts})
 
+    def add_lat_lng_popup(self):
+        """Enable a popup showing latitude and longitude on click."""
+        self.lat_lng_popup = True
+
     def add_marker(
         self,
         coordinates=None,
@@ -539,6 +544,7 @@ class Map:
             draw_control_options=self.draw_control_options,
             maplibre_version=self.maplibre_version,
             map_id=self.map_id,
+            lat_lng_popup=self.lat_lng_popup,
         )
 
     def _repr_html_(self):
@@ -1311,5 +1317,13 @@ class Legend:
 
     def add_to(self, map_instance):
         map_instance.add_legend(self)
+        return self
+
+
+class LatLngPopup:
+    """Display a popup with latitude and longitude when the map is clicked."""
+
+    def add_to(self, map_instance):
+        map_instance.add_lat_lng_popup()
         return self
 
