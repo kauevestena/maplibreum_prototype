@@ -7,6 +7,8 @@ import uuid
 from IPython.display import IFrame, display
 from jinja2 import Environment, FileSystemLoader
 
+from .expressions import get as expr_get, interpolate, var
+
 
 # Predefined map styles
 MAP_STYLES = {
@@ -487,23 +489,18 @@ class Map:
             "heatmap-radius": 20,
             "heatmap-intensity": 1,
             "heatmap-opacity": 1,
-            "heatmap-color": [
-                "interpolate",
-                ["linear"],
-                ["heatmap-density"],
-                0,
-                "rgba(0,0,255,0)",
-                0.2,
-                "blue",
-                0.4,
-                "cyan",
-                0.6,
-                "lime",
-                0.8,
-                "yellow",
-                1,
-                "red",
-            ],
+            "heatmap-color": interpolate(
+                "linear",
+                var("heatmap-density"),
+                [
+                    (0, "rgba(0,0,255,0)"),
+                    (0.2, "blue"),
+                    (0.4, "cyan"),
+                    (0.6, "lime"),
+                    (0.8, "yellow"),
+                    (1, "red"),
+                ],
+            ),
         }
         if paint:
             default_paint.update(paint)
@@ -659,7 +656,7 @@ class MarkerCluster:
                 "circle-color": "#51bbd6",
                 "circle-radius": [
                     "step",
-                    ["get", "point_count"],
+                    expr_get("point_count"),
                     20,
                     100,
                     30,
@@ -677,7 +674,7 @@ class MarkerCluster:
             "source": self.source_name,
             "filter": ["has", "point_count"],
             "layout": {
-                "text-field": ["get", "point_count_abbreviated"],
+                "text-field": expr_get("point_count_abbreviated"),
                 "text-font": ["Arial Unicode MS Bold"],
                 "text-size": 12,
             },
@@ -691,7 +688,7 @@ class MarkerCluster:
             "source": self.source_name,
             "filter": ["!", ["has", "point_count"]],
             "paint": {
-                "circle-color": ["coalesce", ["get", "color"], "#007cbf"],
+                "circle-color": ["coalesce", expr_get("color"), "#007cbf"],
                 "circle-radius": 8,
                 "circle-stroke-width": 1,
                 "circle-stroke-color": "#fff",
@@ -853,7 +850,7 @@ class GeoJson:
         map_instance.add_source(source_id, source)
 
         def _get(prop):
-            return ["get", prop, ["properties"]]
+            return expr_get(prop, ["properties"])
 
         geometry_types = [
             f.get("geometry", {}).get("type") for f in features if f.get("geometry")

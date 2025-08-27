@@ -77,6 +77,22 @@ Marker(coordinates=[0, 0]).add_to(cluster)
 LayerControl().add_to(m)
 ```
 
+## Expressions
+
+MapLibre uses array-based expressions for data-driven styling. The
+``maplibreum.expressions`` module provides helpers to construct and
+validate these expressions:
+
+```python
+from maplibreum.expressions import get, interpolate, var
+
+color = interpolate(
+    "linear",
+    var("heatmap-density"),
+    [(0, "blue"), (1, "red")],
+)
+```
+
 ## Example Notebooks
 
 ```bash

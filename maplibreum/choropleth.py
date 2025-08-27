@@ -1,6 +1,8 @@
 import math
 import uuid  # for generating unique layer/source identifiers
 
+from .expressions import get as expr_get
+
 
 class Choropleth:
     """Simple choropleth renderer for GeoJSON data.
@@ -108,7 +110,7 @@ class Choropleth:
             "type": "fill",
             "source": source_id,
             "paint": {
-                "fill-color": ["get", "fillColor", ["properties"]],
+                "fill-color": expr_get("fillColor", ["properties"]),
                 "fill-opacity": 0.7,
             },
         }
