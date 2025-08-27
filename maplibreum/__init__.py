@@ -5,6 +5,7 @@ from .core import (
     Legend,
     Icon,
     ImageOverlay,
+    VideoOverlay,
     Tooltip,
     LatLngPopup,
 )
@@ -18,6 +19,7 @@ __all__ = [
     "Choropleth",
     "Icon",
     "ImageOverlay",
+    "VideoOverlay",
     "Tooltip",
     "LatLngPopup",
 ]
