@@ -37,6 +37,16 @@ geojson = {"type": "FeatureCollection", "features": []}
 source = {"type": "geojson", "data": geojson}
 m.add_heatmap_layer("heat", source)
 
+# Add background, hillshade, and sky layers
+dem = {
+    "type": "raster-dem",
+    "tiles": ["https://example.com/dem/{z}/{x}/{y}.png"],
+    "tileSize": 256,
+}
+m.add_background_layer("background")
+m.add_hillshade_layer("hillshade", dem)
+m.add_sky_layer("sky", paint={"sky-atmosphere-color": "#88c"})
+
 # Enable built-in controls
 m.add_control("geolocate", "top-right", options={"trackUserLocation": True})
 m.add_control(

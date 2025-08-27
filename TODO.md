@@ -9,3 +9,6 @@
 - [ ] Advanced popup class with templating
 
 - [ ] Floating image overlays similar to Folium's FloatImage plugin
+- [ ] Background layer helper enhancements
+- [ ] Hillshade layer customization
+- [ ] Sky layer animation effects

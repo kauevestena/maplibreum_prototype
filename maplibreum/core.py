@@ -383,6 +383,33 @@ class Map:
             layer_definition["filter"] = filter
         self.add_layer(layer_definition, source=source, before=before)
 
+    def add_background_layer(self, name, paint=None, layout=None, before=None):
+        """Add a background layer to the map."""
+        if paint is None:
+            paint = {"background-color": "#ffffff"}
+        layer_definition = {"id": name, "type": "background", "paint": paint}
+        if layout:
+            layer_definition["layout"] = layout
+        self.add_layer(layer_definition, before=before)
+
+    def add_hillshade_layer(self, name, source, paint=None, layout=None, before=None):
+        """Add a hillshade layer to the map."""
+        if paint is None:
+            paint = {"hillshade-exaggeration": 0.5}
+        layer_definition = {"id": name, "type": "hillshade", "paint": paint}
+        if layout:
+            layer_definition["layout"] = layout
+        self.add_layer(layer_definition, source=source, before=before)
+
+    def add_sky_layer(self, name, paint=None, layout=None, before=None):
+        """Add a sky layer to the map."""
+        if paint is None:
+            paint = {"sky-atmosphere-sun-intensity": 15}
+        if layout is None:
+            layout = {"sky-type": "atmosphere"}
+        layer_definition = {"id": name, "type": "sky", "paint": paint, "layout": layout}
+        self.add_layer(layer_definition, before=before)
+
     def add_fill_layer(
         self, name, source, paint=None, layout=None, before=None, filter=None
     ):

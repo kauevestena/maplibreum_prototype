@@ -94,6 +94,55 @@ def test_heatmap_layer(map_instance):
     assert custom["paint"]["heatmap-opacity"] == 1
 
 
+def test_background_layer(map_instance):
+    map_instance.add_background_layer("bg")
+    layer = map_instance.layers[0]
+    assert layer["definition"]["type"] == "background"
+    assert layer["definition"]["paint"]["background-color"] == "#ffffff"
+
+    map_instance.add_background_layer(
+        "bg_custom", paint={"background-color": "#000000"}, before="bg"
+    )
+    custom = map_instance.layers[1]
+    assert custom["definition"]["paint"]["background-color"] == "#000000"
+    assert custom["before"] == "bg"
+
+
+def test_hillshade_layer(map_instance):
+    source = {
+        "type": "raster-dem",
+        "tiles": ["https://example.com/dem/{z}/{x}/{y}.png"],
+        "tileSize": 256,
+    }
+    map_instance.add_hillshade_layer("shade", source)
+    layer = map_instance.layers[0]["definition"]
+    assert layer["type"] == "hillshade"
+    assert layer["paint"]["hillshade-exaggeration"] == 0.5
+
+    map_instance.add_hillshade_layer(
+        "shade_custom", source, paint={"hillshade-exaggeration": 1}
+    )
+    custom = map_instance.layers[1]["definition"]
+    assert custom["paint"]["hillshade-exaggeration"] == 1
+
+
+def test_sky_layer(map_instance):
+    map_instance.add_sky_layer("sky")
+    layer = map_instance.layers[0]["definition"]
+    assert layer["type"] == "sky"
+    assert layer["layout"]["sky-type"] == "atmosphere"
+    assert layer["paint"]["sky-atmosphere-sun-intensity"] == 15
+
+    map_instance.add_sky_layer(
+        "sky_custom",
+        paint={"sky-atmosphere-color": "#000"},
+        layout={"sky-type": "gradient"},
+    )
+    custom = map_instance.layers[1]["definition"]
+    assert custom["paint"]["sky-atmosphere-color"] == "#000"
+    assert custom["layout"]["sky-type"] == "gradient"
+
+
 def test_popups(map_instance):
     map_instance.add_popup("<b>Hi</b>", coordinates=[1, 2])
     assert len(map_instance.popups) == 1
