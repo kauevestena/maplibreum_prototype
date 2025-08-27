@@ -43,6 +43,10 @@ m.add_control(
     "attribution", "bottom-right", options={"customAttribution": "My Data"}
 )
 
+# Update layer style or layout after creation
+m.set_paint_property("heat", "heatmap-radius", 40)
+m.set_layout_property("heat", "visibility", "none")
+
 # Save the map to an HTML file
 m.save("my_map.html")
 ```

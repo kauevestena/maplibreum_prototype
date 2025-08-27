@@ -62,6 +62,23 @@
         // Initialize map
         var map = new maplibregl.Map({{ map_options | tojson }});
 
+        window.maplibreum_maps = window.maplibreum_maps || {};
+        window.maplibreum_maps["{{ map_id }}"] = map;
+
+        function setPaintProperty(mapId, layerId, property, value) {
+            var m = window.maplibreum_maps[mapId];
+            if (m) {
+                m.setPaintProperty(layerId, property, value);
+            }
+        }
+
+        function setLayoutProperty(mapId, layerId, property, value) {
+            var m = window.maplibreum_maps[mapId];
+            if (m) {
+                m.setLayoutProperty(layerId, property, value);
+            }
+        }
+
 
 // Add controls
 {% for ctrl in controls %}

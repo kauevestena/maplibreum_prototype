@@ -180,6 +180,48 @@ class Map:
 
         return layer_id
 
+    def set_paint_property(self, layer_id, property_name, value):
+        """Update the paint property of a layer and sync to the front-end."""
+        for layer in self.layers:
+            if layer["id"] == layer_id:
+                paint = layer["definition"].setdefault("paint", {})
+                paint[property_name] = value
+                break
+
+        try:
+            from IPython.display import Javascript, display
+
+            js_value = json.dumps(value)
+            display(
+                Javascript(
+                    f"setPaintProperty('{self.map_id}', '{layer_id}', "
+                    f"'{property_name}', {js_value});"
+                )
+            )
+        except Exception:
+            pass
+
+    def set_layout_property(self, layer_id, property_name, value):
+        """Update the layout property of a layer and sync to the front-end."""
+        for layer in self.layers:
+            if layer["id"] == layer_id:
+                layout = layer["definition"].setdefault("layout", {})
+                layout[property_name] = value
+                break
+
+        try:
+            from IPython.display import Javascript, display
+
+            js_value = json.dumps(value)
+            display(
+                Javascript(
+                    f"setLayoutProperty('{self.map_id}', '{layer_id}', "
+                    f"'{property_name}', {js_value});"
+                )
+            )
+        except Exception:
+            pass
+
     def add_tile_layer(self, url, name=None, attribution=None, subdomains=None):
         """Add a raster tile layer to the map.
 

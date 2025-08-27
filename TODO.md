@@ -8,4 +8,6 @@
 - [x] Video overlay support
 - [ ] Advanced popup class with templating
 
+- [x] Dynamic paint and layout property updates
+
 - [ ] Floating image overlays similar to Folium's FloatImage plugin
