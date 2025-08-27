@@ -6,3 +6,4 @@
 - [ ] Search control for geocoding and feature lookup
 - [x] Video overlay support
 - [ ] Advanced popup class with templating
+- [ ] Parsing and rendering TopoJSON files
