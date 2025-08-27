@@ -12,3 +12,4 @@
 - [ ] Background layer helper enhancements
 - [ ] Hillshade layer customization
 - [ ] Sky layer animation effects
+- [ ] Expression builder and inspector
