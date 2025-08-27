@@ -1,4 +1,13 @@
-from .core import Map, Marker, GeoJson, Legend, Icon, ImageOverlay, Tooltip
+from .core import (
+    Map,
+    Marker,
+    GeoJson,
+    Legend,
+    Icon,
+    ImageOverlay,
+    Tooltip,
+    LatLngPopup,
+)
 from .choropleth import Choropleth
 
 __all__ = [
@@ -10,6 +19,7 @@ __all__ = [
     "Icon",
     "ImageOverlay",
     "Tooltip",
+    "LatLngPopup",
 ]
 
 

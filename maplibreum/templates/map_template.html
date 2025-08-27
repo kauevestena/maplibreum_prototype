@@ -214,6 +214,15 @@ map.on('load', function() {
     {% endfor %}
 });
 
+    {% if lat_lng_popup %}
+    map.on('click', function(e) {
+        new maplibregl.Popup()
+            .setLngLat(e.lngLat)
+            .setHTML('Lat: ' + e.lngLat.lat.toFixed(5) + '<br>Lng: ' + e.lngLat.lng.toFixed(5))
+            .addTo(map);
+    });
+    {% endif %}
+
     {{ extra_js | safe }}
     </script>
 </body>
