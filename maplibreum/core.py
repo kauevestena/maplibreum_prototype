@@ -55,8 +55,7 @@ class Map:
             Version of MapLibre GL JS to load. Defaults to "3.4.0".
         """
         self.title = title
-        if isinstance(map_style, dict):
-            self.map_style = map_style
+            self.map_style = None
             self.style_json = map_style
         elif map_style in MAP_STYLES:
             self.map_style = MAP_STYLES[map_style]
