@@ -105,9 +105,7 @@ class Map:
         style : str or dict
             URL to a style JSON or a full style dictionary.
         """
-        if isinstance(style, dict):
-            self.style_json = style
-            self.map_style = style
+            self.map_style = None
         elif isinstance(style, str):
             # Allow shorthand names defined in MAP_STYLES
             if style in MAP_STYLES:
