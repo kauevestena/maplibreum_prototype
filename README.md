@@ -43,6 +43,9 @@ m.add_control(
     "attribution", "bottom-right", options={"customAttribution": "My Data"}
 )
 
+# Load an external style
+m.load_style("https://demotiles.maplibre.org/style.json")
+
 # Save the map to an HTML file
 m.save("my_map.html")
 ```

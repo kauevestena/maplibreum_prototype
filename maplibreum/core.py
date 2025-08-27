@@ -55,10 +55,15 @@ class Map:
             Version of MapLibre GL JS to load. Defaults to "3.4.0".
         """
         self.title = title
-        if map_style in MAP_STYLES:
+        if isinstance(map_style, dict):
+            self.map_style = map_style
+            self.style_json = map_style
+        elif map_style in MAP_STYLES:
             self.map_style = MAP_STYLES[map_style]
+            self.style_json = None
         else:
             self.map_style = map_style
+            self.style_json = None
         self.center = center
         self.zoom = zoom
         self.pitch = pitch
@@ -92,6 +97,27 @@ class Map:
 
         # Unique ID for the map (important if multiple maps displayed in a notebook)
         self.map_id = f"maplibreum_{uuid.uuid4().hex}"
+
+    def load_style(self, style):
+        """Load a MapLibre style from a URL or style definition.
+
+        Parameters
+        ----------
+        style : str or dict
+            URL to a style JSON or a full style dictionary.
+        """
+        if isinstance(style, dict):
+            self.style_json = style
+            self.map_style = style
+        elif isinstance(style, str):
+            # Allow shorthand names defined in MAP_STYLES
+            if style in MAP_STYLES:
+                style = MAP_STYLES[style]
+            self.style_json = None
+            self.map_style = style
+        else:
+            raise TypeError("style must be a URL string or a style dictionary")
+        return self
 
     def fit_bounds(self, bounds, padding=None):
         """Store bounds and optional padding for later rendering.
@@ -513,8 +539,8 @@ class Map:
         final_custom_css = dimension_css + "\n" + self.custom_css
         map_options = {
             "container": "map",
-            "style": self.map_style,
         }
+        style = self.style_json if self.style_json is not None else self.map_style
         if self.bounds is None:
             map_options["center"] = self.center
             map_options["zoom"] = self.zoom
@@ -526,6 +552,7 @@ class Map:
         return self.template.render(
             title=self.title,
             map_options=map_options,
+            style=style,
             bounds=self.bounds,
             bounds_padding=self.bounds_padding,
             sources=self.sources,

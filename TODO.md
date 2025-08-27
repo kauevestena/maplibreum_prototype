@@ -6,6 +6,7 @@
 - [ ] Search control for geocoding and feature lookup
 - [ ] Optimized marker clustering for large datasets
 - [x] Video overlay support
+- [x] External style loading from URL or JSON
 - [ ] Advanced popup class with templating
 
 - [ ] Floating image overlays similar to Folium's FloatImage plugin

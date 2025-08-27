@@ -60,7 +60,9 @@
     {% endif %}
     <script>
         // Initialize map
-        var map = new maplibregl.Map({{ map_options | tojson }});
+        var mapOptions = {{ map_options | tojson }};
+        mapOptions.style = {{ style | tojson | safe }};
+        var map = new maplibregl.Map(mapOptions);
 
 
 // Add controls
