@@ -67,6 +67,7 @@ class Map:
         self.height = height
         self.controls = controls if controls is not None else []
         self.sources = []
+        self.canvas_sources = []
         self.layers = layers if layers is not None else []
         self.tile_layers = []
         self.overlays = []
@@ -153,6 +154,55 @@ class Map:
         definition: dict, the source definition
         """
         self.sources.append({"name": name, "definition": definition})
+
+    def add_image_source(self, name, url, coordinates, **kwargs):
+        """Add an image source to the map.
+
+        Parameters
+        ----------
+        name : str
+            Name of the source.
+        url : str
+            URL of the image.
+        coordinates : list
+            Four corner coordinates of the image specified as
+            ``[[west, north], [east, north], [east, south], [west, south]]``.
+        **kwargs : dict, optional
+            Additional properties such as ``attribution``.
+        """
+
+        source = {"type": "image", "url": url, "coordinates": coordinates}
+        if kwargs:
+            source.update(kwargs)
+        self.add_source(name, source)
+        return name
+
+    def add_canvas_source(self, name, canvas_id, coordinates, **kwargs):
+        """Add a canvas source to the map.
+
+        Parameters
+        ----------
+        name : str
+            Name of the source.
+        canvas_id : str
+            ID of the canvas element to use.
+        coordinates : list
+            Four corner coordinates of the canvas specified as
+            ``[[west, north], [east, north], [east, south], [west, south]]``.
+        **kwargs : dict, optional
+            Additional properties for the source (e.g. ``animate=True``).
+        """
+
+        source = {
+            "type": "canvas",
+            "canvas": canvas_id,
+            "coordinates": coordinates,
+        }
+        if kwargs:
+            source.update(kwargs)
+        self.add_source(name, source)
+        self.canvas_sources.append(canvas_id)
+        return name
 
     def add_layer(self, layer_definition, source=None, before=None):
         """
@@ -529,6 +579,7 @@ class Map:
             bounds=self.bounds,
             bounds_padding=self.bounds_padding,
             sources=self.sources,
+            canvas_sources=self.canvas_sources,
             controls=self.controls,
             layers=self.layers,
             tile_layers=self.tile_layers,

@@ -54,6 +54,9 @@
         <div class="maplibreum-legend">{{ legend | safe }}</div>
         {% endfor %}
     </div>
+    {% for cid in canvas_sources %}
+    <canvas id="{{ cid }}" style="display:none;"></canvas>
+    {% endfor %}
     <script src="https://unpkg.com/maplibre-gl@{{ maplibre_version }}/dist/maplibre-gl.js"></script>
     {% if draw_control %}
     <script src="https://unpkg.com/@mapbox/mapbox-gl-draw@latest/dist/mapbox-gl-draw.js"></script>
