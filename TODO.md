@@ -7,5 +7,5 @@
 - [ ] Optimized marker clustering for large datasets
 - [x] Video overlay support
 - [ ] Advanced popup class with templating
-
 - [ ] Floating image overlays similar to Folium's FloatImage plugin
+- [x] Event callbacks for map interactions

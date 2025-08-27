@@ -29,6 +29,7 @@ class Tooltip:
 
 class Map:
     _drawn_data = {}
+    _event_callbacks = {}
     def __init__(
         self,
         title="MapLibreum Map",
@@ -83,6 +84,7 @@ class Map:
         self.draw_control = False
         self.draw_control_options = {}
         self.lat_lng_popup = False
+        self.events = []
 
 
         template_dir = os.path.join(os.path.dirname(__file__), "templates")
@@ -323,6 +325,20 @@ class Map:
         """Enable a popup showing latitude and longitude on click."""
         self.lat_lng_popup = True
 
+    def on(self, event, callback):
+        """Register a callback for a given map event."""
+        if event not in self.events:
+            self.events.append(event)
+        self._event_callbacks.setdefault(self.map_id, {})[event] = callback
+
+    def on_click(self, callback):
+        """Convenience method for click events."""
+        self.on("click", callback)
+
+    def on_move(self, callback):
+        """Convenience method for move events."""
+        self.on("move", callback)
+
     def add_marker(
         self,
         coordinates=None,
@@ -545,6 +561,7 @@ class Map:
             maplibre_version=self.maplibre_version,
             map_id=self.map_id,
             lat_lng_popup=self.lat_lng_popup,
+            events=self.events,
         )
 
     def _repr_html_(self):
@@ -575,6 +592,13 @@ class Map:
     @classmethod
     def _store_drawn_features(cls, map_id, geojson_str):
         cls._drawn_data[map_id] = json.loads(geojson_str)
+
+    @classmethod
+    def _handle_event(cls, map_id, event, data_json):
+        callback = cls._event_callbacks.get(map_id, {}).get(event)
+        if callback:
+            data = json.loads(data_json)
+            callback(data)
 
     @property
     def drawn_features(self):
