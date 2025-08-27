@@ -337,12 +337,15 @@ class Map:
             map's center if not provided.
         popup : str, optional
             HTML content for a popup bound to the marker.
-        tooltip : str or Tooltip, optional
-            Text for a tooltip bound to the marker.
         color : str, optional
             Color of the marker, defaults to MapLibre blue.
+        cluster : MarkerCluster, optional
+            Marker cluster to which the marker will be added. When provided,
+            the marker is added to the cluster instead of directly to the map.
         icon : Icon, optional
             Custom icon for the marker. If provided, ``color`` is ignored.
+        tooltip : str or Tooltip, optional
+            Text for a tooltip bound to the marker.
         """
         if coordinates is None:
             coordinates = self.center
