@@ -55,6 +55,7 @@ class Map:
             Version of MapLibre GL JS to load. Defaults to "3.4.0".
         """
         self.title = title
+        if isinstance(map_style, dict):
             self.map_style = None
             self.style_json = map_style
         elif map_style in MAP_STYLES:
@@ -105,6 +106,8 @@ class Map:
         style : str or dict
             URL to a style JSON or a full style dictionary.
         """
+        if isinstance(style, dict):
+            self.style_json = style
             self.map_style = None
         elif isinstance(style, str):
             # Allow shorthand names defined in MAP_STYLES
