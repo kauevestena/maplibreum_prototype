@@ -43,6 +43,12 @@ m.add_control(
     "attribution", "bottom-right", options={"customAttribution": "My Data"}
 )
 
+# Enable terrain and atmospheric effects
+m.add_dem_source("terrain", "https://example.com/dem.png")
+m.set_terrain("terrain")
+m.add_sky_layer()
+m.set_fog()
+
 # Save the map to an HTML file
 m.save("my_map.html")
 ```

@@ -102,6 +102,13 @@ map.on('load', function() {
     map.addSource("{{ source.name }}", {{ source.definition | tojson | safe }});
     {% endfor %}
 
+    {% if terrain %}
+    map.setTerrain({{ terrain | tojson | safe }});
+    {% endif %}
+    {% if fog is not none %}
+    map.setFog({{ fog | tojson | safe }});
+    {% endif %}
+
     // Add layers
     {% for layer in layers %}
     map.addLayer({{ layer.definition | tojson | safe }}{% if layer.before %}, "{{ layer.before }}"{% endif %});

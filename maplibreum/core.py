@@ -83,6 +83,8 @@ class Map:
         self.draw_control = False
         self.draw_control_options = {}
         self.lat_lng_popup = False
+        self.terrain = None
+        self.fog = None
 
 
         template_dir = os.path.join(os.path.dirname(__file__), "templates")
@@ -282,6 +284,31 @@ class Map:
         url = f"{base_url}?{query}"
 
         self.add_tile_layer(url, name=name, attribution=attribution)
+
+    def add_dem_source(self, name, url, tile_size=512, attribution=None):
+        """Add a raster-dem source for terrain rendering."""
+        source = {"type": "raster-dem", "tiles": [url], "tileSize": tile_size}
+        if attribution:
+            source["attribution"] = attribution
+        self.add_source(name, source)
+        return name
+
+    def set_terrain(self, source_name, exaggeration=1.0):
+        """Enable 3D terrain using the given raster-dem source."""
+        self.terrain = {"source": source_name, "exaggeration": exaggeration}
+
+    def add_sky_layer(self, name="sky", paint=None, layout=None, before=None):
+        """Add a sky layer to the map."""
+        if paint is None:
+            paint = {"sky-type": "atmosphere"}
+        layer_definition = {"id": name, "type": "sky", "paint": paint}
+        if layout:
+            layer_definition["layout"] = layout
+        self.add_layer(layer_definition, before=before)
+
+    def set_fog(self, options=None):
+        """Set global fog options for the map."""
+        self.fog = options if options is not None else {}
 
     def add_popup(
         self, html, coordinates=None, layer_id=None, events=None, options=None
@@ -545,6 +572,8 @@ class Map:
             maplibre_version=self.maplibre_version,
             map_id=self.map_id,
             lat_lng_popup=self.lat_lng_popup,
+            terrain=self.terrain,
+            fog=self.fog,
         )
 
     def _repr_html_(self):
