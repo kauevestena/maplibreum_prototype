@@ -203,6 +203,37 @@ map.on('load', function() {
     map.getContainer().appendChild(layerControl);
     {% endif %}
 
+    // Markers
+    {% for marker in markers %}
+    var marker_{{ marker.id }} = new maplibregl.Marker({{ {'color': marker.color, 'draggable': marker.draggable} | tojson | safe }})
+        .setLngLat({{ marker.coordinates | tojson }})
+        .addTo(map);
+    {% if marker.popup %}
+    marker_{{ marker.id }}.setPopup(new maplibregl.Popup().setHTML(`{{ marker.popup }}`));
+    {% endif %}
+    {% if marker.tooltip %}
+    var tooltip_{{ marker.id }} = new maplibregl.Popup({closeButton: false});
+    marker_{{ marker.id }}.getElement().addEventListener('mouseenter', function() {
+        tooltip_{{ marker.id }}
+            .setLngLat(marker_{{ marker.id }}.getLngLat())
+            .setHTML(`{{ marker.tooltip }}`)
+            .addTo(map);
+    });
+    marker_{{ marker.id }}.getElement().addEventListener('mouseleave', function() {
+        tooltip_{{ marker.id }}.remove();
+    });
+    {% endif %}
+    {% if marker.draggable %}
+    marker_{{ marker.id }}.on('dragend', function() {
+        var lngLat = marker_{{ marker.id }}.getLngLat();
+        if (window.Jupyter && Jupyter.notebook && Jupyter.notebook.kernel) {
+            var cmd = "from maplibreum.core import Map; Map._update_marker_coords('" + "{{ map_id }}" + "', '" + "{{ marker.id }}" + "', " + lngLat.lng + ", " + lngLat.lat + ")";
+            Jupyter.notebook.kernel.execute(cmd);
+        }
+    });
+    {% endif %}
+    {% endfor %}
+
     {% for cl in cluster_layers %}
     map.on('click', '{{ cl.cluster_layer }}', function(e) {
         var features = map.queryRenderedFeatures(e.point, { layers: ['{{ cl.cluster_layer }}'] });
