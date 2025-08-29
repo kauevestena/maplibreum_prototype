@@ -48,6 +48,12 @@ m.add_control(
     "attribution", "bottom-right", options={"customAttribution": "My Data"}
 )
 
+# Enable terrain and atmospheric effects
+m.add_dem_source("terrain", "https://example.com/dem.png")
+m.set_terrain("terrain")
+m.add_sky_layer()
+m.set_fog()
+
 # Save the map to an HTML file
 m.save("my_map.html")
 ```
@@ -74,6 +80,22 @@ Marker(coordinates=[0, 0]).add_to(cluster)
 
 # Layer controls
 LayerControl().add_to(m)
+```
+
+## Expressions
+
+MapLibre uses array-based expressions for data-driven styling. The
+``maplibreum.expressions`` module provides helpers to construct and
+validate these expressions:
+
+```python
+from maplibreum.expressions import get, interpolate, var
+
+color = interpolate(
+    "linear",
+    var("heatmap-density"),
+    [(0, "blue"), (1, "red")],
+)
 ```
 
 ## Example Notebooks

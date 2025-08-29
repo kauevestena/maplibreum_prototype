@@ -7,6 +7,8 @@ import uuid
 from IPython.display import IFrame, display
 from jinja2 import Environment, FileSystemLoader
 
+from .expressions import get as expr_get, interpolate, var
+
 
 # Predefined map styles
 MAP_STYLES = {
@@ -30,6 +32,7 @@ class Tooltip:
 class Map:
     _drawn_data = {}
     _event_callbacks = {}
+    _marker_registry = {}
     def __init__(
         self,
         title="MapLibreum Map",
@@ -73,6 +76,7 @@ class Map:
         self.overlays = []
         self.popups = popups if popups is not None else []
         self.tooltips = tooltips if tooltips is not None else []
+        self.markers = []
         self.legends = []
         self.extra_js = extra_js
         self.custom_css = custom_css
@@ -85,6 +89,8 @@ class Map:
         self.draw_control_options = {}
         self.lat_lng_popup = False
         self.events = []
+        self.terrain = None
+        self.fog = None
 
 
         template_dir = os.path.join(os.path.dirname(__file__), "templates")
@@ -285,6 +291,31 @@ class Map:
 
         self.add_tile_layer(url, name=name, attribution=attribution)
 
+    def add_dem_source(self, name, url, tile_size=512, attribution=None):
+        """Add a raster-dem source for terrain rendering."""
+        source = {"type": "raster-dem", "tiles": [url], "tileSize": tile_size}
+        if attribution:
+            source["attribution"] = attribution
+        self.add_source(name, source)
+        return name
+
+    def set_terrain(self, source_name, exaggeration=1.0):
+        """Enable 3D terrain using the given raster-dem source."""
+        self.terrain = {"source": source_name, "exaggeration": exaggeration}
+
+    def add_sky_layer(self, name="sky", paint=None, layout=None, before=None):
+        """Add a sky layer to the map."""
+        if paint is None:
+            paint = {"sky-type": "atmosphere"}
+        layer_definition = {"id": name, "type": "sky", "paint": paint}
+        if layout:
+            layer_definition["layout"] = layout
+        self.add_layer(layer_definition, before=before)
+
+    def set_fog(self, options=None):
+        """Set global fog options for the map."""
+        self.fog = options if options is not None else {}
+
     def add_popup(
         self, html, coordinates=None, layer_id=None, events=None, options=None
     ):
@@ -347,6 +378,7 @@ class Map:
         cluster=None,
         icon=None,
         tooltip=None,
+        draggable=False,
     ):
 
         """Add a marker to the map.
@@ -367,6 +399,8 @@ class Map:
             Custom icon for the marker. If provided, ``color`` is ignored.
         tooltip : str or Tooltip, optional
             Text for a tooltip bound to the marker.
+        draggable : bool, optional
+            Whether the marker should be draggable.
         """
         if coordinates is None:
             coordinates = self.center
@@ -377,6 +411,7 @@ class Map:
             color=color,
             icon=icon,
             tooltip=tooltip,
+            draggable=draggable,
         )
         if cluster:
             cluster.add_marker(marker)
@@ -476,23 +511,18 @@ class Map:
             "heatmap-radius": 20,
             "heatmap-intensity": 1,
             "heatmap-opacity": 1,
-            "heatmap-color": [
-                "interpolate",
-                ["linear"],
-                ["heatmap-density"],
-                0,
-                "rgba(0,0,255,0)",
-                0.2,
-                "blue",
-                0.4,
-                "cyan",
-                0.6,
-                "lime",
-                0.8,
-                "yellow",
-                1,
-                "red",
-            ],
+            "heatmap-color": interpolate(
+                "linear",
+                var("heatmap-density"),
+                [
+                    (0, "rgba(0,0,255,0)"),
+                    (0.2, "blue"),
+                    (0.4, "cyan"),
+                    (0.6, "lime"),
+                    (0.8, "yellow"),
+                    (1, "red"),
+                ],
+            ),
         }
         if paint:
             default_paint.update(paint)
@@ -552,6 +582,7 @@ class Map:
             layer_control=self.layer_control,
             popups=self.popups,
             tooltips=self.tooltips,
+            markers=self.markers,
             legends=[legend.render() for legend in self.legends],
             cluster_layers=self.cluster_layers,
             extra_js=self.extra_js,
@@ -562,6 +593,8 @@ class Map:
             map_id=self.map_id,
             lat_lng_popup=self.lat_lng_popup,
             events=self.events,
+            terrain=self.terrain,
+            fog=self.fog,
         )
 
     def _repr_html_(self):
@@ -599,6 +632,14 @@ class Map:
         if callback:
             data = json.loads(data_json)
             callback(data)
+    def _register_marker(cls, map_id, marker):
+        cls._marker_registry.setdefault(map_id, {})[marker.id] = marker
+
+    @classmethod
+    def _update_marker_coords(cls, map_id, marker_id, lng, lat):
+        marker = cls._marker_registry.get(map_id, {}).get(marker_id)
+        if marker:
+            marker.coordinates = [lng, lat]
 
     @property
     def drawn_features(self):
@@ -654,7 +695,7 @@ class MarkerCluster:
                 "circle-color": "#51bbd6",
                 "circle-radius": [
                     "step",
-                    ["get", "point_count"],
+                    expr_get("point_count"),
                     20,
                     100,
                     30,
@@ -672,7 +713,7 @@ class MarkerCluster:
             "source": self.source_name,
             "filter": ["has", "point_count"],
             "layout": {
-                "text-field": ["get", "point_count_abbreviated"],
+                "text-field": expr_get("point_count_abbreviated"),
                 "text-font": ["Arial Unicode MS Bold"],
                 "text-size": 12,
             },
@@ -686,7 +727,7 @@ class MarkerCluster:
             "source": self.source_name,
             "filter": ["!", ["has", "point_count"]],
             "paint": {
-                "circle-color": ["coalesce", ["get", "color"], "#007cbf"],
+                "circle-color": ["coalesce", expr_get("color"), "#007cbf"],
                 "circle-radius": 8,
                 "circle-stroke-width": 1,
                 "circle-stroke-color": "#fff",
@@ -728,16 +769,36 @@ class Marker:
         color="#007cbf",
         icon=None,
         tooltip=None,
+        draggable=False,
     ):
         self.coordinates = coordinates
         self.popup = popup
         self.color = color
         self.icon = icon
         self.tooltip = tooltip
+        self.draggable = draggable
+        self.id = None
 
     def add_to(self, map_instance):
         if isinstance(map_instance, MarkerCluster):
+            if self.draggable:
+                raise ValueError("Draggable markers cannot be added to a cluster")
             map_instance.add_marker(self)
+            return self
+
+        if self.draggable:
+            self.id = f"marker_{uuid.uuid4().hex}"
+            map_instance.markers.append(
+                {
+                    "id": self.id,
+                    "coordinates": self.coordinates,
+                    "color": self.color,
+                    "popup": self.popup,
+                    "tooltip": self.tooltip,
+                    "draggable": True,
+                }
+            )
+            Map._register_marker(map_instance.map_id, self)
             return self
 
         layer_id = f"marker_{uuid.uuid4().hex}"
@@ -848,7 +909,7 @@ class GeoJson:
         map_instance.add_source(source_id, source)
 
         def _get(prop):
-            return ["get", prop, ["properties"]]
+            return expr_get(prop, ["properties"])
 
         geometry_types = [
             f.get("geometry", {}).get("type") for f in features if f.get("geometry")
