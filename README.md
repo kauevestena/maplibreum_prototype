@@ -37,6 +37,11 @@ geojson = {"type": "FeatureCollection", "features": []}
 source = {"type": "geojson", "data": geojson}
 m.add_heatmap_layer("heat", source)
 
+# Register event callbacks (Jupyter notebooks)
+def handle_click(evt):
+    print("Clicked at", evt["lngLat"])
+m.on_click(handle_click)
+
 # Enable built-in controls
 m.add_control("geolocate", "top-right", options={"trackUserLocation": True})
 m.add_control(

@@ -8,8 +8,8 @@
 - [x] Video overlay support
 - [x] Terrain, sky, and fog helpers
 - [ ] Advanced popup class with templating
-- [x] Draggable markers with coordinate updates
-
 - [ ] Floating image overlays similar to Folium's FloatImage plugin
+- [x] Event callbacks for map interactions
+- [x] Draggable markers with coordinate updates
 - [x] Expression builder and validation utilities
 
