@@ -91,6 +91,7 @@ class Map:
         self.events = []
         self.terrain = None
         self.fog = None
+        self.float_images = []
 
 
         template_dir = os.path.join(os.path.dirname(__file__), "templates")
@@ -595,6 +596,7 @@ class Map:
             events=self.events,
             terrain=self.terrain,
             fog=self.fog,
+            float_images=self.float_images,
         )
 
     def _repr_html_(self):
@@ -632,6 +634,8 @@ class Map:
         if callback:
             data = json.loads(data_json)
             callback(data)
+
+    @classmethod
     def _register_marker(cls, map_id, marker):
         cls._marker_registry.setdefault(map_id, {})[marker.id] = marker
 
@@ -1287,6 +1291,20 @@ class ImageOverlay:
             layer["paint"] = {"raster-opacity": self.opacity}
 
         map_instance.add_layer(layer, source=source)
+        return self
+
+
+class FloatImage:
+    """Add a floating image to the map."""
+
+    def __init__(self, image_url, bottom=None, left=None, width=None):
+        self.image_url = image_url
+        self.bottom = bottom
+        self.left = left
+        self.width = width
+
+    def add_to(self, map_instance):
+        map_instance.float_images.append(self)
         return self
 
 
