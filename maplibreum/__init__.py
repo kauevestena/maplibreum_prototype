@@ -4,12 +4,12 @@ from .core import (
     GeoJson,
     Legend,
     MiniMapControl,
-    Icon,
     ImageOverlay,
     VideoOverlay,
     Tooltip,
     LatLngPopup,
 )
+from .markers import Icon, DivIcon, BeautifyIcon
 from .choropleth import Choropleth
 
 __all__ = [
@@ -20,6 +20,8 @@ __all__ = [
     "MiniMapControl",
     "Choropleth",
     "Icon",
+    "DivIcon",
+    "BeautifyIcon",
     "ImageOverlay",
     "VideoOverlay",
     "Tooltip",

@@ -9,6 +9,7 @@ from IPython.display import IFrame, display
 from jinja2 import Environment, FileSystemLoader
 
 from .expressions import get as expr_get, interpolate, var
+from .markers import Icon, DivIcon, BeautifyIcon
 
 
 # Predefined map styles
@@ -93,6 +94,7 @@ class Map:
         self.popups = popups if popups is not None else []
         self.tooltips = tooltips if tooltips is not None else []
         self.markers = []
+        self.marker_css = []
         self.legends = []
         self.extra_js = extra_js
         self.custom_css = custom_css
@@ -604,7 +606,10 @@ class Map:
         # Inject custom CSS to adjust the map div if needed
         # The template expects #map { width: ..., height: ... } to be set via custom_css if desired.
         dimension_css = f"#map {{ width: {self.width}; height: {self.height}; }}"
-        final_custom_css = dimension_css + "\n" + self.custom_css
+        marker_css = "\n".join(self.marker_css)
+        final_custom_css = "\n".join(
+            [dimension_css, marker_css, self.custom_css]
+        )
         map_options = {
             "container": "map",
             "style": self.map_style,
@@ -831,26 +836,6 @@ class MarkerCluster:
         return self
 
 
-class Icon:
-    """Representation of a map icon used for symbol markers.
-
-    Parameters
-    ----------
-    icon_image : str
-        Name of the image to use for the icon.
-    icon_size : float, optional
-        Size of the icon relative to its original resolution.
-    icon_anchor : str, optional
-        Part of the icon that should be placed at the marker's geographical
-        location (e.g. ``"bottom"``).
-    """
-
-    def __init__(self, icon_image, icon_size=None, icon_anchor=None):
-        self.icon_image = icon_image
-        self.icon_size = icon_size
-        self.icon_anchor = icon_anchor
-
-
 class Marker:
     def __init__(
         self,
@@ -876,19 +861,26 @@ class Marker:
             map_instance.add_marker(self)
             return self
 
-        if self.draggable:
+        if isinstance(self.icon, (DivIcon, BeautifyIcon)) or self.draggable:
             self.id = f"marker_{uuid.uuid4().hex}"
-            map_instance.markers.append(
-                {
-                    "id": self.id,
-                    "coordinates": self.coordinates,
-                    "color": self.color,
-                    "popup": self.popup,
-                    "tooltip": self.tooltip,
-                    "draggable": True,
-                }
-            )
-            Map._register_marker(map_instance.map_id, self)
+            marker_data = {
+                "id": self.id,
+                "coordinates": self.coordinates,
+                "popup": self.popup,
+                "tooltip": self.tooltip,
+                "draggable": self.draggable,
+            }
+            if isinstance(self.icon, (DivIcon, BeautifyIcon)):
+                marker_data["html"] = self.icon.html
+                marker_data["class_name"] = self.icon.class_name
+                if getattr(self.icon, "css", None):
+                    if self.icon.css not in map_instance.marker_css:
+                        map_instance.marker_css.append(self.icon.css)
+            else:
+                marker_data["color"] = self.color
+            map_instance.markers.append(marker_data)
+            if self.draggable:
+                Map._register_marker(map_instance.map_id, self)
             return self
 
         layer_id = f"marker_{uuid.uuid4().hex}"
