@@ -216,9 +216,18 @@ map.on('load', function() {
 
     // Markers
     {% for marker in markers %}
+    {% if marker.html %}
+    var el_{{ marker.id }} = document.createElement('div');
+    el_{{ marker.id }}.className = "{{ marker.class_name }}";
+    el_{{ marker.id }}.innerHTML = `{{ marker.html | safe }}`;
+    var marker_{{ marker.id }} = new maplibregl.Marker({ element: el_{{ marker.id }}{% if marker.draggable %}, draggable: true{% endif %} })
+        .setLngLat({{ marker.coordinates | tojson }})
+        .addTo(map);
+    {% else %}
     var marker_{{ marker.id }} = new maplibregl.Marker({{ {'color': marker.color, 'draggable': marker.draggable} | tojson | safe }})
         .setLngLat({{ marker.coordinates | tojson }})
         .addTo(map);
+    {% endif %}
     {% if marker.popup %}
     marker_{{ marker.id }}.setPopup(new maplibregl.Popup().setHTML(`{{ marker.popup }}`));
     {% endif %}
