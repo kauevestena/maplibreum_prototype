@@ -1,6 +1,7 @@
 import json
 import math
 import os
+import subprocess
 from urllib.parse import quote
 import uuid
 
@@ -107,6 +108,7 @@ class Map:
         self.terrain = None
         self.fog = None
         self.float_images = []
+        self.camera_actions = []
 
 
         template_dir = os.path.join(os.path.dirname(__file__), "templates")
@@ -402,6 +404,20 @@ class Map:
         """Convenience method for move events."""
         self.on("move", callback)
 
+    # Camera control methods
+    def fly_to(self, **options):
+        """Queue a MapLibre ``flyTo`` camera animation."""
+        self.camera_actions.append({"method": "flyTo", "options": options})
+
+    def ease_to(self, **options):
+        """Queue a MapLibre ``easeTo`` camera animation."""
+        self.camera_actions.append({"method": "easeTo", "options": options})
+
+    def pan_to(self, center, **options):
+        """Queue a MapLibre ``panTo`` camera movement."""
+        action = {"method": "panTo", "center": center, "options": options}
+        self.camera_actions.append(action)
+
     def add_marker(
         self,
         coordinates=None,
@@ -631,6 +647,7 @@ class Map:
             terrain=self.terrain,
             fog=self.fog,
             float_images=self.float_images,
+            camera_actions=self.camera_actions,
         )
 
     def _repr_html_(self):
@@ -657,6 +674,41 @@ class Map:
     def save(self, filepath):
         with open(filepath, "w", encoding="utf-8") as f:
             f.write(self.render())
+
+    def export_png(self, filepath, width=None, height=None):
+        """Export the map to a PNG image using the MapLibre export CLI.
+
+        Parameters
+        ----------
+        filepath : str
+            Destination path for the PNG file.
+        width, height : int, optional
+            Dimensions for the exported image in pixels.
+        """
+        from tempfile import NamedTemporaryFile
+
+        html = self.render()
+        tmp = NamedTemporaryFile("w", suffix=".html", delete=False, encoding="utf-8")
+        tmp.write(html)
+        tmp.close()
+
+        cmd = [
+            "npx",
+            "@maplibre/maplibre-gl-export",
+            "--input",
+            tmp.name,
+            "--output",
+            filepath,
+        ]
+        if width:
+            cmd.extend(["--width", str(width)])
+        if height:
+            cmd.extend(["--height", str(height)])
+
+        try:
+            subprocess.run(cmd, check=True)
+        finally:
+            os.remove(tmp.name)
 
     @classmethod
     def _store_drawn_features(cls, map_id, geojson_str):
