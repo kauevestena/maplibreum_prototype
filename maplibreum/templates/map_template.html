@@ -8,6 +8,9 @@
     {% if draw_control %}
     <link href="https://unpkg.com/@mapbox/mapbox-gl-draw@latest/dist/mapbox-gl-draw.css" rel="stylesheet" />
     {% endif %}
+    {% if include_minimap %}
+    <link href="https://unpkg.com/maplibregl-minimap/dist/minimap-control.css" rel="stylesheet" />
+    {% endif %}
     <style>
         body {
             margin: 0;
@@ -58,6 +61,9 @@
         {% endfor %}
     </div>
     <script src="https://unpkg.com/maplibre-gl@{{ maplibre_version }}/dist/maplibre-gl.js"></script>
+    {% if include_minimap %}
+    <script src="https://unpkg.com/maplibregl-minimap/dist/minimap-control.js"></script>
+    {% endif %}
     {% if draw_control %}
     <script src="https://unpkg.com/@mapbox/mapbox-gl-draw@latest/dist/mapbox-gl-draw.js"></script>
     {% endif %}
@@ -78,6 +84,8 @@ map.addControl(new maplibregl.FullscreenControl(), "{{ ctrl.position }}");
 map.addControl(new maplibregl.GeolocateControl({{ ctrl.options | tojson }}), "{{ ctrl.position }}");
 {% elif ctrl.type == "attribution" %}
 map.addControl(new maplibregl.AttributionControl({{ ctrl.options | tojson }}), "{{ ctrl.position }}");
+{% elif ctrl.type == "minimap" %}
+map.addControl(new MinimapControl({{ ctrl.options | tojson }}), "{{ ctrl.position }}");
 {% endif %}
 {% endfor %}
 

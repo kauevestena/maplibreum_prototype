@@ -29,6 +29,21 @@ class Tooltip:
         self.options = options or {}
 
 
+class MiniMapControl:
+    """Configuration object for the MiniMap plugin control."""
+
+    def __init__(self, style="basic", zoom_level=6):
+        if style in MAP_STYLES:
+            self.style = MAP_STYLES[style]
+        else:
+            self.style = style
+        self.zoom_level = zoom_level
+
+    def to_dict(self):
+        """Serialize configuration for template usage."""
+        return {"style": self.style, "zoomLevelOffset": self.zoom_level}
+
+
 class Map:
     _drawn_data = {}
     _event_callbacks = {}
@@ -122,18 +137,34 @@ class Map:
 
         Parameters
         ----------
-        control_type : str
-            Type of control to add. Supported values are ``'navigation'``,
-            ``'scale'``, ``'fullscreen'``, ``'geolocate'`` and
-            ``'attribution'``.
+        control_type : str or MiniMapControl
+            Type of control to add. Supported string values are ``'navigation'``,
+            ``'scale'``, ``'fullscreen'``, ``'geolocate'``, ``'attribution'`` and
+            ``'minimap'``. A :class:`MiniMapControl` instance can also be passed
+            for the minimap control.
         position : str, optional
             Position on the map (e.g. ``'top-right'`` or ``'bottom-left'``).
-        options : dict, optional
+        options : dict or MiniMapControl, optional
             Options forwarded to the underlying MapLibre GL control
             constructor. For example ``{"maxWidth": 80, "unit": "imperial"}``
             for the scale control or ``{"trackUserLocation": true}`` for the
-            geolocate control.
+            geolocate control. For the minimap control, either provide a
+            ``MiniMapControl`` instance or a dictionary with ``style`` and
+            ``zoomLevelOffset``.
         """
+        if isinstance(control_type, MiniMapControl):
+            self.controls.append(
+                {
+                    "type": "minimap",
+                    "position": position,
+                    "options": control_type.to_dict(),
+                }
+            )
+            return
+
+        if control_type == "minimap" and isinstance(options, MiniMapControl):
+            options = options.to_dict()
+
         if options is None:
             options = {}
         self.controls.append(
@@ -570,6 +601,8 @@ class Map:
         if self.bearing is not None:
             map_options["bearing"] = self.bearing
 
+        include_minimap = any(c["type"] == "minimap" for c in self.controls)
+
         return self.template.render(
             title=self.title,
             map_options=map_options,
@@ -577,6 +610,7 @@ class Map:
             bounds_padding=self.bounds_padding,
             sources=self.sources,
             controls=self.controls,
+            include_minimap=include_minimap,
             layers=self.layers,
             tile_layers=self.tile_layers,
             overlays=self.overlays,
