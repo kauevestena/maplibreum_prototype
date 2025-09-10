@@ -261,6 +261,15 @@ map.on('load', function() {
         map.getCanvas().style.cursor = '';
     });
     {% endfor %}
+
+    // Queued camera actions
+    {% for action in camera_actions %}
+    {% if action.method == 'panTo' %}
+    map.panTo({{ action.center | tojson }}, {{ action.options | tojson }});
+    {% else %}
+    map.{{ action.method }}({{ action.options | tojson }});
+    {% endif %}
+    {% endfor %}
 });
 
     {% for evt in events %}
