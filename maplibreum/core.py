@@ -111,6 +111,8 @@ class Map:
         self.fog = None
         self.float_images = []
         self.camera_actions = []
+        self.time_dimension_data = None
+        self.time_dimension_options = {}
 
 
         template_dir = os.path.join(os.path.dirname(__file__), "templates")
@@ -484,6 +486,22 @@ class Map:
             layer_definition["filter"] = filter
         self.add_layer(layer_definition, source=source, before=before)
 
+    def add_time_dimension(self, data, options=None):
+        """Store timestamped GeoJSON data for simple animation playback.
+
+        Parameters
+        ----------
+        data : dict
+            GeoJSON ``FeatureCollection`` whose features include a ``time``
+            property.
+        options : dict, optional
+            Configuration dictionary. Supports ``interval`` in milliseconds
+            for playback speed.
+        """
+
+        self.time_dimension_data = data
+        self.time_dimension_options = options or {}
+
     def add_fill_layer(
         self, name, source, paint=None, layout=None, before=None, filter=None
     ):
@@ -653,6 +671,9 @@ class Map:
             fog=self.fog,
             float_images=self.float_images,
             camera_actions=self.camera_actions,
+            time_dimension=self.time_dimension_data is not None,
+            time_dimension_data=self.time_dimension_data,
+            time_dimension_options=self.time_dimension_options,
         )
 
     def _repr_html_(self):

@@ -11,6 +11,7 @@ from .core import (
 )
 from .markers import Icon, DivIcon, BeautifyIcon
 from .choropleth import Choropleth
+from .timedimension import TimeDimension
 
 __all__ = [
     "Map",
@@ -26,6 +27,7 @@ __all__ = [
     "VideoOverlay",
     "Tooltip",
     "LatLngPopup",
+    "TimeDimension",
 ]
 
 
