@@ -3,6 +3,8 @@ from maplibreum.core import (
     Map,
     Marker,
     GeoJson,
+    GeoJsonPopup,
+    GeoJsonTooltip,
     Circle,
     CircleMarker,
     PolyLine,
@@ -283,4 +285,24 @@ def test_circlemarker_opacity():
     CircleMarker([1, 1], radius=5, fill_opacity=0.7).add_to(m)
     layer = m.layers[0]
     assert layer["definition"]["paint"]["circle-opacity"] == 0.7
+
+
+def test_geojson_popup_tooltip_properties():
+    m = Map()
+    data = {
+        "type": "FeatureCollection",
+        "features": [
+            {
+                "type": "Feature",
+                "properties": {"name": "First", "desc": "A tip"},
+                "geometry": {"type": "Point", "coordinates": [0, 0]},
+            }
+        ],
+    }
+    popup = GeoJsonPopup(fields=["name"])
+    tooltip = GeoJsonTooltip(fields=["desc"])
+    GeoJson(data, popup=popup, tooltip=tooltip).add_to(m)
+    html = m.render()
+    assert "First" in html
+    assert "A tip" in html
 

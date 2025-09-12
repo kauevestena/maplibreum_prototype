@@ -133,7 +133,10 @@ map.on('load', function() {
 
     // Popups
     {% for popup in popups %}
-    var popup_{{ loop.index }} = new maplibregl.Popup({{ popup.options | tojson }}).setHTML(`{{ popup.html }}`);
+    var popup_{{ loop.index }} = new maplibregl.Popup({{ popup.options | tojson }});
+    {% if popup.html %}
+    popup_{{ loop.index }}.setHTML(`{{ popup.html }}`);
+    {% endif %}
     {% if popup.coordinates %}
     popup_{{ loop.index }}.setLngLat({{ popup.coordinates | tojson }}).addTo(map);
     {% endif %}
@@ -141,7 +144,7 @@ map.on('load', function() {
     map.on('{{ popup.events|first }}', '{{ popup.layer_id }}', function(e) {
         popup_{{ loop.index }}
             .setLngLat(e.lngLat)
-            .setHTML(`{{ popup.html }}`)
+            {% if popup.prop %}.setHTML(e.features[0].properties['{{ popup.prop }}']){% else %}.setHTML(`{{ popup.html }}`){% endif %}
             .addTo(map);
     });
     {% endif %}
@@ -153,7 +156,7 @@ map.on('load', function() {
     map.on('mouseenter', '{{ tooltip.layer_id }}', function(e) {
         tooltip_{{ loop.index }}
             .setLngLat(e.lngLat)
-            .setHTML(`{{ tooltip.text }}`)
+            {% if tooltip.prop %}.setHTML(e.features[0].properties['{{ tooltip.prop }}']){% else %}.setHTML(`{{ tooltip.text }}`){% endif %}
             .addTo(map);
     });
     map.on('mouseleave', '{{ tooltip.layer_id }}', function() {

@@ -7,6 +7,8 @@ from .core import (
     ImageOverlay,
     VideoOverlay,
     Tooltip,
+    GeoJsonPopup,
+    GeoJsonTooltip,
     LatLngPopup,
 )
 from .markers import Icon, DivIcon, BeautifyIcon
@@ -26,6 +28,8 @@ __all__ = [
     "ImageOverlay",
     "VideoOverlay",
     "Tooltip",
+    "GeoJsonPopup",
+    "GeoJsonTooltip",
     "LatLngPopup",
     "TimeDimension",
 ]
