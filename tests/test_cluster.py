@@ -1,6 +1,7 @@
 import pytest
 
-from maplibreum.core import Map, Marker, MarkerCluster
+from maplibreum.core import Map, Marker
+from maplibreum.cluster import MarkerCluster
 
 
 def test_marker_cluster_source_and_layers():
@@ -37,4 +38,26 @@ def test_marker_cluster_source_and_layers():
         "!",
         ["has", "point_count"],
     ]
+
+
+def test_add_clustered_geojson():
+    m = Map()
+    data = {
+        "type": "FeatureCollection",
+        "features": [
+            {
+                "type": "Feature",
+                "geometry": {"type": "Point", "coordinates": [0, 0]},
+            },
+            {
+                "type": "Feature",
+                "geometry": {"type": "Point", "coordinates": [1, 1]},
+            },
+        ],
+    }
+    cluster = m.add_clustered_geojson(data, radius=40, max_zoom=12)
+    source = next(s for s in m.sources if s["name"] == cluster.source_name)
+    assert source["definition"]["clusterRadius"] == 40
+    assert source["definition"]["clusterMaxZoom"] == 12
+    assert len(m.layers) == 3
 
