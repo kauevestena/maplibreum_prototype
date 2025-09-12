@@ -11,6 +11,9 @@
     {% if include_minimap %}
     <link href="https://unpkg.com/maplibregl-minimap/dist/minimap-control.css" rel="stylesheet" />
     {% endif %}
+    {% if include_search %}
+    <link href="https://unpkg.com/@maplibre/maplibre-gl-geocoder@latest/dist/maplibre-gl-geocoder.css" rel="stylesheet" />
+    {% endif %}
     {% if time_dimension %}
     <link href="https://cdn.jsdelivr.net/npm/leaflet-timedimension@1.1.0/dist/leaflet.timedimension.control.min.css" rel="stylesheet" />
     {% endif %}
@@ -73,6 +76,9 @@
     {% if time_dimension %}
     <script src="https://cdn.jsdelivr.net/npm/leaflet-timedimension@1.1.0/dist/leaflet.timedimension.min.js"></script>
     {% endif %}
+    {% if include_search %}
+    <script src="https://unpkg.com/@maplibre/maplibre-gl-geocoder@latest/dist/maplibre-gl-geocoder.js"></script>
+    {% endif %}
     <script>
         // Initialize map
         var map = new maplibregl.Map({{ map_options | tojson }});
@@ -92,6 +98,16 @@ map.addControl(new maplibregl.GeolocateControl({{ ctrl.options | tojson }}), "{{
 map.addControl(new maplibregl.AttributionControl({{ ctrl.options | tojson }}), "{{ ctrl.position }}");
 {% elif ctrl.type == "minimap" %}
 map.addControl(new MinimapControl({{ ctrl.options | tojson }}), "{{ ctrl.position }}");
+{% elif ctrl.type == "search" %}
+var geocoder = new MaplibreGeocoder(Object.assign({ maplibregl: maplibregl }, {{ ctrl.options | tojson }}));
+geocoder.on('result', function(e) {
+    var coords = e.result.geometry.coordinates;
+    if (window.Jupyter && Jupyter.notebook && Jupyter.notebook.kernel) {
+        var cmd = "from maplibreum.core import Map; Map._store_search_result('" + "{{ map_id }}" + "', " + coords[0] + ", " + coords[1] + ")";
+        Jupyter.notebook.kernel.execute(cmd);
+    }
+});
+map.addControl(geocoder, "{{ ctrl.position }}");
 {% endif %}
 {% endfor %}
 

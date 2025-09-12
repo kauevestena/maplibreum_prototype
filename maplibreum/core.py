@@ -46,10 +46,27 @@ class MiniMapControl:
         return {"style": self.style, "zoomLevelOffset": self.zoom_level}
 
 
+class SearchControl:
+    """Configuration for a search/geocoder control."""
+
+    def __init__(self, provider="maptiler", api_key=None, **options):
+        self.provider = provider
+        self.api_key = api_key
+        self.options = options
+
+    def to_dict(self):
+        data = {"provider": self.provider}
+        if self.api_key is not None:
+            data["apiKey"] = self.api_key
+        data.update(self.options)
+        return data
+
+
 class Map:
     _drawn_data = {}
     _event_callbacks = {}
     _marker_registry = {}
+    _search_data = {}
     def __init__(
         self,
         title="MapLibreum Map",
@@ -176,6 +193,24 @@ class Map:
         self.controls.append(
             {"type": control_type, "position": position, "options": options}
         )
+
+    def add_search_control(self, options=None, position="top-left"):
+        """Add a search/geocoder control to the map.
+
+        Parameters
+        ----------
+        options : dict or SearchControl, optional
+            Configuration for the control including ``provider`` and
+            ``apiKey``. If a :class:`SearchControl` instance is provided, its
+            ``to_dict`` representation will be used.
+        position : str, optional
+            Position on the map where the control will be placed.
+        """
+        if isinstance(options, SearchControl):
+            opts = options.to_dict()
+        else:
+            opts = options or {}
+        self.controls.append({"type": "search", "position": position, "options": opts})
 
     def add_draw_control(self, options=None):
         """Enable a draw control on the map."""
@@ -641,6 +676,7 @@ class Map:
             map_options["bearing"] = self.bearing
 
         include_minimap = any(c["type"] == "minimap" for c in self.controls)
+        include_search = any(c["type"] == "search" for c in self.controls)
 
         return self.template.render(
             title=self.title,
@@ -650,6 +686,7 @@ class Map:
             sources=self.sources,
             controls=self.controls,
             include_minimap=include_minimap,
+            include_search=include_search,
             layers=self.layers,
             tile_layers=self.tile_layers,
             overlays=self.overlays,
@@ -757,9 +794,17 @@ class Map:
         if marker:
             marker.coordinates = [lng, lat]
 
+    @classmethod
+    def _store_search_result(cls, map_id, lng, lat):
+        cls._search_data[map_id] = [lng, lat]
+
     @property
     def drawn_features(self):
         return self._drawn_data.get(self.map_id)
+
+    @property
+    def search_result(self):
+        return self._search_data.get(self.map_id)
 
 
 class MarkerCluster:
