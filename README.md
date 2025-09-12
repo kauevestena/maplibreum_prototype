@@ -78,6 +78,9 @@ Choropleth(geojson_data).add_to(m)
 cluster = MarkerCluster().add_to(m)
 Marker(coordinates=[0, 0]).add_to(cluster)
 
+# Clustered GeoJSON
+m.add_clustered_geojson(geojson_data)
+
 # Layer controls
 LayerControl().add_to(m)
 ```

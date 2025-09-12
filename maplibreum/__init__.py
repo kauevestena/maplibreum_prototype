@@ -16,6 +16,7 @@ from .core import (
 from .markers import Icon, DivIcon, BeautifyIcon
 from .choropleth import Choropleth
 from .timedimension import TimeDimension
+from .cluster import MarkerCluster, ClusteredGeoJson, cluster_features
 
 __all__ = [
     "Map",
@@ -36,6 +37,9 @@ __all__ = [
     "LatLngPopup",
     "Popup",
     "TimeDimension",
+    "MarkerCluster",
+    "ClusteredGeoJson",
+    "cluster_features",
 ]
 
 
