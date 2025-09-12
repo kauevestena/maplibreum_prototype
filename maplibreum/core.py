@@ -31,6 +31,37 @@ class Tooltip:
         self.options = options or {}
 
 
+class GeoJsonPopup:
+    """Generate HTML popups from GeoJSON feature properties."""
+
+    def __init__(self, fields, aliases=None, labels=True, style=""):
+        self.fields = fields
+        self.aliases = aliases or fields
+        self.labels = labels
+        self.style = style
+
+    def render(self, feature):
+        props = feature.get("properties", {})
+        parts = []
+        for field, alias in zip(self.fields, self.aliases):
+            value = props.get(field, "")
+            if self.labels:
+                parts.append(f"<b>{alias}</b>: {value}")
+            else:
+                parts.append(str(value))
+        html = "<br>".join(parts)
+        if self.style:
+            html = f'<div style="{self.style}">{html}</div>'
+        return html
+
+
+class GeoJsonTooltip(GeoJsonPopup):
+    """Generate tooltips from GeoJSON feature properties."""
+
+    def render(self, feature):  # pragma: no cover - same as popup rendering
+        return super().render(feature)
+
+
 class MiniMapControl:
     """Configuration object for the MiniMap plugin control."""
 
@@ -355,7 +386,13 @@ class Map:
         self.fog = options if options is not None else {}
 
     def add_popup(
-        self, html, coordinates=None, layer_id=None, events=None, options=None
+        self,
+        html=None,
+        coordinates=None,
+        layer_id=None,
+        events=None,
+        options=None,
+        prop=None,
     ):
         """
         Add a popup to the map.
@@ -376,10 +413,11 @@ class Map:
                 "layer_id": layer_id,
                 "events": events,
                 "options": options,
+                "prop": prop,
             }
         )
 
-    def add_tooltip(self, tooltip, layer_id=None, options=None):
+    def add_tooltip(self, tooltip=None, layer_id=None, options=None, prop=None):
         """Add a tooltip to the map."""
         if isinstance(tooltip, Tooltip):
             text = tooltip.text
@@ -388,7 +426,9 @@ class Map:
             text = tooltip
             opts = options or {}
         opts.setdefault("closeButton", False)
-        self.tooltips.append({"text": text, "layer_id": layer_id, "options": opts})
+        self.tooltips.append(
+            {"text": text, "layer_id": layer_id, "options": opts, "prop": prop}
+        )
 
     def add_lat_lng_popup(self):
         """Enable a popup showing latitude and longitude on click."""
@@ -955,28 +995,20 @@ class Marker:
         
 
 class GeoJson:
-    """
-    Representation of a GeoJSON overlay.
+    """Representation of a GeoJSON overlay."""
 
-    Parameters
-    ----------
-    data : dict
-        A GeoJSON ``FeatureCollection``.
-    style_function : callable, optional
-        Function called for each feature. It should return a dictionary with
-        style properties similar to the Leaflet style specification. Supported
-        keys include ``stroke`` (bool), ``color`` (stroke color), ``weight``
-        (stroke width), ``opacity`` (stroke opacity), ``fill`` (bool),
-        ``fillColor`` (fill color), ``fillOpacity`` (fill opacity) and
-        ``radius`` (circle radius for point features). Missing keys fall back to
-        sensible defaults.
-    name : str, optional
-        Base name for generated source and layer identifiers.
-    """
-
-    def __init__(self, data, style_function=None, name=None):
+    def __init__(
+        self,
+        data,
+        style_function=None,
+        name=None,
+        popup=None,
+        tooltip=None,
+    ):
         self.data = data
         self.name = name if name else f"geojson_{uuid.uuid4().hex}"
+        self.popup = popup
+        self.tooltip = tooltip
 
         if style_function:
             self.style_function = style_function
@@ -1006,6 +1038,10 @@ class GeoJson:
         for feature in features:
             style = self.style_function(feature)
             feature.setdefault("properties", {}).update(style)
+            if self.popup:
+                feature["properties"]["_popup"] = self.popup.render(feature)
+            if self.tooltip:
+                feature["properties"]["_tooltip"] = self.tooltip.render(feature)
 
         source_id = f"{self.name}_source"
         source = {"type": "geojson", "data": self.data}
@@ -1018,6 +1054,8 @@ class GeoJson:
             f.get("geometry", {}).get("type") for f in features if f.get("geometry")
         ]
 
+        layer_ids = []
+
         if any(t in ("Polygon", "MultiPolygon") for t in geometry_types):
             fill_layer = {
                 "id": f"{self.name}_fill",
@@ -1029,6 +1067,7 @@ class GeoJson:
                 },
             }
             map_instance.add_layer(fill_layer, source=source_id)
+            layer_ids.append(fill_layer["id"])
 
         if any(t in ("LineString", "MultiLineString") for t in geometry_types):
             line_layer = {
@@ -1041,6 +1080,7 @@ class GeoJson:
                 },
             }
             map_instance.add_layer(line_layer, source=source_id)
+            layer_ids.append(line_layer["id"])
 
         if any(t in ("Point", "MultiPoint") for t in geometry_types):
             circle_layer = {
@@ -1056,6 +1096,14 @@ class GeoJson:
                 },
             }
             map_instance.add_layer(circle_layer, source=source_id)
+            layer_ids.append(circle_layer["id"])
+
+        if self.popup:
+            for lid in layer_ids:
+                map_instance.add_popup(layer_id=lid, prop="_popup")
+        if self.tooltip:
+            for lid in layer_ids:
+                map_instance.add_tooltip(layer_id=lid, prop="_tooltip")
 
 
 
@@ -1513,7 +1561,15 @@ class FeatureGroup:
         self.layer_ids.append(layer_id)
         return layer_id
 
-    def add_popup(self, html, coordinates=None, layer_id=None, events=None, options=None):
+    def add_popup(
+        self,
+        html=None,
+        coordinates=None,
+        layer_id=None,
+        events=None,
+        options=None,
+        prop=None,
+    ):
         if options is None:
             options = {}
         if events is None:
@@ -1525,10 +1581,11 @@ class FeatureGroup:
                 "layer_id": layer_id,
                 "events": events,
                 "options": options,
+                "prop": prop,
             }
         )
 
-    def add_tooltip(self, tooltip, layer_id=None, options=None):
+    def add_tooltip(self, tooltip=None, layer_id=None, options=None, prop=None):
         if isinstance(tooltip, Tooltip):
             text = tooltip.text
             opts = tooltip.options
@@ -1536,7 +1593,9 @@ class FeatureGroup:
             text = tooltip
             opts = options or {}
         opts.setdefault("closeButton", False)
-        self.tooltips.append({"text": text, "layer_id": layer_id, "options": opts})
+        self.tooltips.append(
+            {"text": text, "layer_id": layer_id, "options": opts, "prop": prop}
+        )
 
     def add_to(self, map_instance):
         for src in self.sources:
