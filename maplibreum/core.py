@@ -117,6 +117,17 @@ class SearchControl:
         return data
 
 
+class MeasureControl:
+    """Configuration for the map measure tool."""
+
+    def __init__(self, **options):
+        self.options = options
+
+    def to_dict(self):
+        """Serialize configuration for template usage."""
+        return self.options
+
+
 class Map:
     _drawn_data = {}
     _event_callbacks = {}
@@ -177,6 +188,8 @@ class Map:
         self.bounds_padding = None
         self.draw_control = False
         self.draw_control_options = {}
+        self.measure_control = False
+        self.measure_control_options = {}
         self.lat_lng_popup = False
         self.events = []
         self.terrain = None
@@ -273,6 +286,15 @@ class Map:
             options = {}
         self.draw_control = True
         self.draw_control_options = options
+
+    def add_measure_control(self, options=None):
+        """Enable a measure control on the map."""
+        if isinstance(options, MeasureControl):
+            opts = options.to_dict()
+        else:
+            opts = options or {}
+        self.measure_control = True
+        self.measure_control_options = opts
 
     def add_legend(self, legend):
         """Add a legend to the map."""
@@ -806,6 +828,8 @@ class Map:
             custom_css=final_custom_css,
             draw_control=self.draw_control,
             draw_control_options=self.draw_control_options,
+            measure_control=self.measure_control,
+            measure_control_options=self.measure_control_options,
             maplibre_version=self.maplibre_version,
             map_id=self.map_id,
             lat_lng_popup=self.lat_lng_popup,

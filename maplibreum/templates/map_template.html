@@ -5,7 +5,7 @@
     <title>{{ title }}</title>
     <meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no" />
     <link href="https://unpkg.com/maplibre-gl@{{ maplibre_version }}/dist/maplibre-gl.css" rel="stylesheet" />
-    {% if draw_control %}
+    {% if draw_control or measure_control %}
     <link href="https://unpkg.com/@mapbox/mapbox-gl-draw@latest/dist/mapbox-gl-draw.css" rel="stylesheet" />
     {% endif %}
     {% if include_minimap %}
@@ -73,6 +73,9 @@
     {% if draw_control %}
     <script src="https://unpkg.com/@mapbox/mapbox-gl-draw@latest/dist/mapbox-gl-draw.js"></script>
     {% endif %}
+    {% if measure_control %}
+    <script src="https://unpkg.com/maplibre-gl-measures@latest/dist/maplibre-gl-measures.js"></script>
+    {% endif %}
     {% if time_dimension %}
     <script src="https://cdn.jsdelivr.net/npm/leaflet-timedimension@1.1.0/dist/leaflet.timedimension.min.js"></script>
     {% endif %}
@@ -124,6 +127,17 @@ function updateDrawn() {
 map.on('draw.create', updateDrawn);
 map.on('draw.update', updateDrawn);
 map.on('draw.delete', updateDrawn);
+{% endif %}
+
+{% if measure_control %}
+function _storeMeasure(data) {
+    if (window.Jupyter && Jupyter.notebook && Jupyter.notebook.kernel) {
+        var cmd = "from maplibreum.core import Map; Map._store_drawn_features('" + "{{ map_id }}" + "', '" + JSON.stringify(data).replace(/'/g, "\\'") + "')";
+        Jupyter.notebook.kernel.execute(cmd);
+    }
+}
+var measure = new maplibreGLMeasures(Object.assign({{ measure_control_options | tojson }}, {onCreate: _storeMeasure, onRender: _storeMeasure}));
+map.addControl(measure, 'top-left');
 {% endif %}
 
 map.on('load', function() {
