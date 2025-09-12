@@ -135,7 +135,7 @@ map.on('load', function() {
     {% for popup in popups %}
     var popup_{{ loop.index }} = new maplibregl.Popup({{ popup.options | tojson }});
     {% if popup.html %}
-    popup_{{ loop.index }}.setHTML(`{{ popup.html }}`);
+    popup_{{ loop.index }}.setHTML(`{{ popup.html | safe }}`);
     {% endif %}
     {% if popup.coordinates %}
     popup_{{ loop.index }}.setLngLat({{ popup.coordinates | tojson }}).addTo(map);
@@ -144,7 +144,7 @@ map.on('load', function() {
     map.on('{{ popup.events|first }}', '{{ popup.layer_id }}', function(e) {
         popup_{{ loop.index }}
             .setLngLat(e.lngLat)
-            {% if popup.prop %}.setHTML(e.features[0].properties['{{ popup.prop }}']){% else %}.setHTML(`{{ popup.html }}`){% endif %}
+            {% if popup.prop %}.setHTML(e.features[0].properties['{{ popup.prop }}']){% else %}.setHTML(`{{ popup.html | safe }}`){% endif %}
             .addTo(map);
     });
     {% endif %}

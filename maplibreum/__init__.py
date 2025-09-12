@@ -10,6 +10,7 @@ from .core import (
     GeoJsonPopup,
     GeoJsonTooltip,
     LatLngPopup,
+    Popup,
 )
 from .markers import Icon, DivIcon, BeautifyIcon
 from .choropleth import Choropleth
@@ -31,6 +32,7 @@ __all__ = [
     "GeoJsonPopup",
     "GeoJsonTooltip",
     "LatLngPopup",
+    "Popup",
     "TimeDimension",
 ]
 

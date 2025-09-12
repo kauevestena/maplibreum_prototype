@@ -31,6 +31,22 @@ class Tooltip:
         self.options = options or {}
 
 
+class Popup:
+    """Representation of a popup with optional Jinja2 templating."""
+
+    _env = Environment(autoescape=True)
+
+    def __init__(self, html=None, template=None):
+        self.html = html
+        self.template = template
+
+    def render(self, context=None):
+        if self.template is not None:
+            tmpl = self._env.from_string(self.template)
+            return tmpl.render(context or {})
+        return self.html or ""
+
+
 class GeoJsonPopup:
     """Generate HTML popups from GeoJSON feature properties."""
 
@@ -393,10 +409,14 @@ class Map:
         events=None,
         options=None,
         prop=None,
+        template=None,
+        context=None,
     ):
         """
         Add a popup to the map.
-        html: HTML content of the popup
+        html: HTML content of the popup or an object with ``render``.
+        template: Jinja2 template string for the popup content.
+        context: Rendering context for templates or objects with ``render``.
         coordinates: [lng, lat] for a fixed popup position
         layer_id: if popup is triggered by clicking a feature in a given layer
         events: list of events that trigger the popup (e.g. ['click'])
@@ -406,9 +426,18 @@ class Map:
             options = {}
         if events is None:
             events = ["click"]  # default event
+
+        if template is not None:
+            popup_obj = Popup(template=template)
+            html_content = popup_obj.render(context)
+        elif hasattr(html, "render"):
+            html_content = html.render(context or {})
+        else:
+            html_content = html
+
         self.popups.append(
             {
-                "html": html,
+                "html": html_content,
                 "coordinates": coordinates,
                 "layer_id": layer_id,
                 "events": events,
@@ -1569,6 +1598,8 @@ class FeatureGroup:
         events=None,
         options=None,
         prop=None,
+        template=None,
+        context=None,
     ):
         if options is None:
             options = {}
@@ -1582,6 +1613,8 @@ class FeatureGroup:
                 "events": events,
                 "options": options,
                 "prop": prop,
+                "template": template,
+                "context": context,
             }
         )
 
