@@ -299,10 +299,11 @@ def test_geojson_popup_tooltip_properties():
             }
         ],
     }
-    popup = GeoJsonPopup(fields=["name"])
-    tooltip = GeoJsonTooltip(fields=["desc"])
+    popup = GeoJsonPopup(fields=["name"], aliases=["Title"])
+    tooltip = GeoJsonTooltip(fields=["desc"], labels=False)
     GeoJson(data, popup=popup, tooltip=tooltip).add_to(m)
     html = m.render()
-    assert "First" in html
+    assert "<b>Title</b>: First" in html
     assert "A tip" in html
+    assert "<b>desc</b>" not in html
 

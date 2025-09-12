@@ -48,11 +48,18 @@ class Popup:
 
 
 class GeoJsonPopup:
-    """Generate HTML popups from GeoJSON feature properties."""
+    """Generate HTML snippets from GeoJSON feature properties."""
 
     def __init__(self, fields, aliases=None, labels=True, style=""):
-        self.fields = fields
-        self.aliases = aliases or fields
+        self.fields = (
+            list(fields) if isinstance(fields, (list, tuple)) else [fields]
+        )
+        if aliases is None:
+            self.aliases = self.fields
+        else:
+            self.aliases = (
+                list(aliases) if isinstance(aliases, (list, tuple)) else [aliases]
+            )
         self.labels = labels
         self.style = style
 
