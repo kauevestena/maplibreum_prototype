@@ -379,6 +379,24 @@ class Map:
             overlay["layers"] = layers
         self.overlays.append(overlay)
 
+    def add_float_image(self, image_url, position="top-left", width=None):
+        """Add a floating image anchored to a map corner.
+
+        Parameters
+        ----------
+        image_url : str
+            URL of the image to display.
+        position : str, optional
+            One of ``'top-left'``, ``'top-right'``, ``'bottom-left'`` or
+            ``'bottom-right'``. Defaults to ``'top-left'``.
+        width : int, optional
+            Width of the image in pixels.
+        """
+
+        img = FloatImage(image_url, position=position, width=width)
+        self.float_images.append(img)
+        return img
+
     def add_wms_layer(
         self,
         base_url,
@@ -1482,13 +1500,26 @@ class ImageOverlay:
 
 
 class FloatImage:
-    """Add a floating image to the map."""
+    """Add an image floating above the map at a fixed position."""
 
-    def __init__(self, image_url, bottom=None, left=None, width=None):
+    _POSITION_STYLES = {
+        "top-left": "top: 0px; left: 0px;",
+        "top-right": "top: 0px; right: 0px;",
+        "bottom-left": "bottom: 0px; left: 0px;",
+        "bottom-right": "bottom: 0px; right: 0px;",
+    }
+
+    def __init__(self, image_url, position="top-left", width=None):
         self.image_url = image_url
-        self.bottom = bottom
-        self.left = left
+        self.position = position
         self.width = width
+
+    @property
+    def style(self):
+        base = self._POSITION_STYLES.get(self.position, "")
+        if self.width is not None:
+            base += f" width: {self.width}px;"
+        return base
 
     def add_to(self, map_instance):
         map_instance.float_images.append(self)

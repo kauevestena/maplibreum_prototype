@@ -60,7 +60,7 @@
 <body>
     <div id="map">
         {% for image in float_images %}
-        <img src="{{ image.image_url }}" style="position: absolute; bottom: {{ image.bottom }}px; left: {{ image.left }}px; width: {{ image.width }}px; z-index: 999;">
+        <img src="{{ image.image_url }}" style="position: absolute; {{ image.style }} z-index: 999;">
         {% endfor %}
         {% for legend in legends %}
         <div class="maplibreum-legend">{{ legend | safe }}</div>
