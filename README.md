@@ -107,6 +107,10 @@ color = interpolate(
 jupyter notebook examples
 ```
 
+## Changelog
+
+See the [CHANGELOG](CHANGELOG.md) for a detailed list of updates in each release.
+
 ## Contributing
 
 Contributions are welcome! Please see the [issues page](https://github.com/kauevestena/maplibreum_prototype/issues) to see what needs to be done.

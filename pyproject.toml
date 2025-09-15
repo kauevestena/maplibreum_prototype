@@ -1,24 +1,34 @@
 [build-system]
-requires = ["setuptools>=62", "wheel"]
+requires = ["setuptools>=77", "wheel"]
 build-backend = "setuptools.build_meta"
 
 [project]
 name = "maplibreum"
-version = "0.1.0"
+dynamic = ["version"]
 description = "A Python library for creating interactive MapLibre maps, like Folium but for MapLibre."
-readme = "README.md"
+readme = {file = "README.md", content-type = "text/markdown"}
 license = "MIT"
+license-files = ["LICENSE"]
+requires-python = ">=3.8"
 authors = [
   {name = "Kauê de Moraes Vestena", email = "kauemv2@gmail.com"}
 ]
 keywords = ["map", "mapping", "geospatial", "GIS", "MapLibre", "Jupyter"]
 classifiers = [
-  "Programming Language :: Python :: 3",
+  "Development Status :: 3 - Alpha",
+  "Intended Audience :: Developers",
   "Operating System :: OS Independent",
+  "Programming Language :: Python :: 3",
+  "Programming Language :: Python :: 3.8",
+  "Programming Language :: Python :: 3.9",
+  "Programming Language :: Python :: 3.10",
+  "Programming Language :: Python :: 3.11",
+  "Programming Language :: Python :: 3.12",
+  "Topic :: Scientific/Engineering :: GIS",
+  "Framework :: Jupyter",
 ]
 dependencies = [
   "Jinja2>=3.0",
-
   "MarkupSafe>=2.0",
   "ipython>=8.0",
 ]
@@ -26,6 +36,7 @@ dependencies = [
 [project.urls]
 "Source" = "https://github.com/kauevestena/maplibreum_prototype"
 "Issues" = "https://github.com/kauevestena/maplibreum_prototype/issues"
+"Changelog" = "https://github.com/kauevestena/maplibreum_prototype/blob/main/CHANGELOG.md"
 
 [tool.setuptools]
 packages = ["maplibreum"]
@@ -33,6 +44,9 @@ include-package-data = false
 
 [tool.setuptools.package-data]
 maplibreum = ["templates/*.html"]
+
+[tool.setuptools.dynamic]
+version = {attr = "maplibreum._version.__version__"}
 
 [tool.pytest.ini_options]
 testpaths = [
