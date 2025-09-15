@@ -1,3 +1,4 @@
+from ._version import __version__
 from .core import (
     Map,
     Marker,
@@ -42,6 +43,7 @@ __all__ = [
     "MarkerCluster",
     "ClusteredGeoJson",
     "cluster_features",
+    "__version__",
 ]
 
 
