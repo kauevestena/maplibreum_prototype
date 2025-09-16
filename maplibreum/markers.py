@@ -18,6 +18,7 @@ class Icon:
     """
 
     def __init__(self, icon_image, icon_size=None, icon_anchor=None):
+        """Initialize an Icon."""
         self.icon_image = icon_image
         self.icon_size = icon_size
         self.icon_anchor = icon_anchor
@@ -27,6 +28,15 @@ class DivIcon:
     """HTML/CSS based icon rendered with a DOM element."""
 
     def __init__(self, html="", class_name="maplibreum-div-icon"):
+        """Initialize a DivIcon.
+
+        Parameters
+        ----------
+        html : str, optional
+            The HTML content of the icon.
+        class_name : str, optional
+            The CSS class name of the icon.
+        """
         self.html = html
         self.class_name = class_name
         # Basic display rules so the element is visible
@@ -58,6 +68,7 @@ class BeautifyIcon(DivIcon):
         text_color="white",
         background_color="#2a81cb",
     ):
+        """Initialize a BeautifyIcon."""
         class_name = f"beautify-marker beautify-marker-{icon_shape}"
         html = f"<i class='{icon}'></i>"
         super().__init__(html=html, class_name=class_name)

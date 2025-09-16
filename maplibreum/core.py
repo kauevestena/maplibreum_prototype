@@ -28,6 +28,15 @@ class Tooltip:
     """Simple representation of a tooltip bound to a layer."""
 
     def __init__(self, text, options=None):
+        """Initialize a Tooltip.
+
+        Parameters
+        ----------
+        text : str
+            The text content of the tooltip.
+        options : dict, optional
+            A dictionary of tooltip options.
+        """
         self.text = text
         self.options = options or {}
 
@@ -38,10 +47,34 @@ class Popup:
     _env = Environment(autoescape=True)
 
     def __init__(self, html=None, template=None):
+        """Initialize a Popup.
+
+        Parameters
+        ----------
+        html : str, optional
+            The HTML content of the popup.
+        template : str, optional
+            A Jinja2 template string for the popup content.
+        """
         self.html = html
         self.template = template
 
     def render(self, context=None):
+        """Render the popup content.
+
+        If a template is provided, it is rendered with the given context.
+        Otherwise, the plain HTML is returned.
+
+        Parameters
+        ----------
+        context : dict, optional
+            Context for rendering the template.
+
+        Returns
+        -------
+        str
+            The rendered HTML content.
+        """
         if self.template is not None:
             tmpl = self._env.from_string(self.template)
             return tmpl.render(context or {})
@@ -52,6 +85,19 @@ class GeoJsonPopup:
     """Generate HTML snippets from GeoJSON feature properties."""
 
     def __init__(self, fields, aliases=None, labels=True, style=""):
+        """Initialize a GeoJsonPopup.
+
+        Parameters
+        ----------
+        fields : list or str
+            A list of field names to display.
+        aliases : list or str, optional
+            A list of aliases for the field names.
+        labels : bool, optional
+            Whether to display labels for the fields.
+        style : str, optional
+            A CSS style string to apply to the popup.
+        """
         self.fields = (
             list(fields) if isinstance(fields, (list, tuple)) else [fields]
         )
@@ -65,6 +111,18 @@ class GeoJsonPopup:
         self.style = style
 
     def render(self, feature):
+        """Render the popup content from a GeoJSON feature.
+
+        Parameters
+        ----------
+        feature : dict
+            A GeoJSON feature.
+
+        Returns
+        -------
+        str
+            The rendered HTML content.
+        """
         props = feature.get("properties", {})
         parts = []
         for field, alias in zip(self.fields, self.aliases):
@@ -83,6 +141,18 @@ class GeoJsonTooltip(GeoJsonPopup):
     """Generate tooltips from GeoJSON feature properties."""
 
     def render(self, feature):  # pragma: no cover - same as popup rendering
+        """Render the tooltip content from a GeoJSON feature.
+
+        Parameters
+        ----------
+        feature : dict
+            A GeoJSON feature.
+
+        Returns
+        -------
+        str
+            The rendered HTML content.
+        """
         return super().render(feature)
 
 
@@ -90,6 +160,15 @@ class MiniMapControl:
     """Configuration object for the MiniMap plugin control."""
 
     def __init__(self, style="basic", zoom_level=6):
+        """Initialize a MiniMapControl.
+
+        Parameters
+        ----------
+        style : str, optional
+            The map style to use for the minimap.
+        zoom_level : int, optional
+            The zoom level offset for the minimap.
+        """
         if style in MAP_STYLES:
             self.style = MAP_STYLES[style]
         else:
@@ -105,11 +184,29 @@ class SearchControl:
     """Configuration for a search/geocoder control."""
 
     def __init__(self, provider="maptiler", api_key=None, **options):
+        """Initialize a SearchControl.
+
+        Parameters
+        ----------
+        provider : str, optional
+            The search provider to use.
+        api_key : str, optional
+            The API key for the search provider.
+        options : dict, optional
+            Additional options for the search control.
+        """
         self.provider = provider
         self.api_key = api_key
         self.options = options
 
     def to_dict(self):
+        """Serialize configuration for template usage.
+
+        Returns
+        -------
+        dict
+            The dictionary representation of the search control options.
+        """
         data = {"provider": self.provider}
         if self.api_key is not None:
             data["apiKey"] = self.api_key
@@ -121,6 +218,13 @@ class MeasureControl:
     """Configuration for the map measure tool."""
 
     def __init__(self, **options):
+        """Initialize a MeasureControl.
+
+        Parameters
+        ----------
+        options : dict, optional
+            Options for the measure control.
+        """
         self.options = options
 
     def to_dict(self):
@@ -129,6 +233,7 @@ class MeasureControl:
 
 
 class Map:
+    """The main Map class."""
     _drawn_data = {}
     _event_callbacks = {}
     _marker_registry = {}
@@ -305,19 +410,35 @@ class Map:
 
 
     def add_source(self, name, definition):
-        """
-        Add a source to the map.
-        name: str, the name of the source
-        definition: dict, the source definition
+        """Add a source to the map.
+
+        Parameters
+        ----------
+        name : str
+            The name of the source.
+        definition : dict
+            The source definition.
         """
         self.sources.append({"name": name, "definition": definition})
 
     def add_layer(self, layer_definition, source=None, before=None):
-        """
-        Add a layer to the map.
-        layer_definition: dict describing a MapLibre GL style layer
-        source: dict describing a MapLibre source (optional)
-        before: the ID of an existing layer before which this layer should be placed
+        """Add a layer to the map.
+
+        Parameters
+        ----------
+        layer_definition : dict
+            A dictionary describing a MapLibre GL style layer.
+        source : dict or str, optional
+            A dictionary describing a MapLibre source, or a string
+            referencing an existing source.
+        before : str, optional
+            The ID of an existing layer before which this layer should be
+            placed.
+
+        Returns
+        -------
+        str
+            The ID of the added layer.
         """
         if isinstance(source, str):
             # Source is a string, so we assume it's a source name
@@ -495,15 +616,26 @@ class Map:
         template=None,
         context=None,
     ):
-        """
-        Add a popup to the map.
-        html: HTML content of the popup or an object with ``render``.
-        template: Jinja2 template string for the popup content.
-        context: Rendering context for templates or objects with ``render``.
-        coordinates: [lng, lat] for a fixed popup position
-        layer_id: if popup is triggered by clicking a feature in a given layer
-        events: list of events that trigger the popup (e.g. ['click'])
-        options: dict of popup options (e.g. { "closeButton": true })
+        """Add a popup to the map.
+
+        Parameters
+        ----------
+        html : str or object with render method
+            HTML content of the popup.
+        coordinates : list, optional
+            [lng, lat] for a fixed popup position.
+        layer_id : str, optional
+            The ID of the layer to which the popup is bound.
+        events : list, optional
+            List of events that trigger the popup (e.g., ``['click']``).
+        options : dict, optional
+            A dictionary of popup options.
+        prop : str, optional
+            The name of a feature property to use as the popup content.
+        template : str, optional
+            A Jinja2 template string for the popup content.
+        context : dict, optional
+            The rendering context for templates.
         """
         if options is None:
             options = {}
@@ -655,8 +787,22 @@ class Map:
     def add_circle_layer(
         self, name, source, paint=None, layout=None, before=None, filter=None
     ):
-        """
-        Add a circle layer to the map.
+        """Add a circle layer to the map.
+
+        Parameters
+        ----------
+        name : str
+            The name of the layer.
+        source : str or dict
+            The source for the layer.
+        paint : dict, optional
+            The paint properties for the layer.
+        layout : dict, optional
+            The layout properties for the layer.
+        before : str, optional
+            The ID of an existing layer to insert this layer before.
+        filter : list, optional
+            A MapLibre GL filter expression.
         """
         if paint is None:
             paint = {"circle-radius": 6, "circle-color": "#007cbf"}
@@ -686,8 +832,22 @@ class Map:
     def add_fill_layer(
         self, name, source, paint=None, layout=None, before=None, filter=None
     ):
-        """
-        Add a fill layer to the map.
+        """Add a fill layer to the map.
+
+        Parameters
+        ----------
+        name : str
+            The name of the layer.
+        source : str or dict
+            The source for the layer.
+        paint : dict, optional
+            The paint properties for the layer.
+        layout : dict, optional
+            The layout properties for the layer.
+        before : str, optional
+            The ID of an existing layer to insert this layer before.
+        filter : list, optional
+            A MapLibre GL filter expression.
         """
         if paint is None:
             paint = {"fill-color": "#007cbf", "fill-opacity": 0.5}
@@ -722,8 +882,22 @@ class Map:
     def add_line_layer(
         self, name, source, paint=None, layout=None, before=None, filter=None
     ):
-        """
-        Add a line layer to the map.
+        """Add a line layer to the map.
+
+        Parameters
+        ----------
+        name : str
+            The name of the layer.
+        source : str or dict
+            The source for the layer.
+        paint : dict, optional
+            The paint properties for the layer.
+        layout : dict, optional
+            The layout properties for the layer.
+        before : str, optional
+            The ID of an existing layer to insert this layer before.
+        filter : list, optional
+            A MapLibre GL filter expression.
         """
         if paint is None:
             paint = {"line-color": "#007cbf", "line-width": 2}
@@ -737,8 +911,7 @@ class Map:
     def add_heatmap_layer(
         self, name, source, paint=None, layout=None, before=None, filter=None
     ):
-        """
-        Add a heatmap layer to the map.
+        """Add a heatmap layer to the map.
 
         Parameters
         ----------
@@ -789,8 +962,22 @@ class Map:
     def add_symbol_layer(
         self, name, source, paint=None, layout=None, before=None, filter=None
     ):
-        """
-        Add a symbol layer to the map.
+        """Add a symbol layer to the map.
+
+        Parameters
+        ----------
+        name : str
+            The name of the layer.
+        source : str or dict
+            The source for the layer.
+        paint : dict, optional
+            The paint properties for the layer.
+        layout : dict, optional
+            The layout properties for the layer.
+        before : str, optional
+            The ID of an existing layer to insert this layer before.
+        filter : list, optional
+            A MapLibre GL filter expression.
         """
         if layout is None:
             layout = {"icon-image": "marker-15"}
@@ -802,6 +989,13 @@ class Map:
         self.add_layer(layer_definition, source=source, before=before)
 
     def render(self):
+        """Render the map to an HTML string.
+
+        Returns
+        -------
+        str
+            The rendered HTML.
+        """
         # Inject custom CSS to adjust the map div if needed
         # The template expects #map { width: ..., height: ... } to be set via custom_css if desired.
         dimension_css = f"#map {{ width: {self.width}; height: {self.height}; }}"
@@ -862,18 +1056,22 @@ class Map:
         )
 
     def _repr_html_(self):
-        # Jupyter Notebook display method
-        # We'll save the HTML in a temp file and use an iframe, or directly return HTML as a raw iframe.
-        html = self.render()
-        # Note: Directly returning HTML strings is allowed in Jupyter,
-        # but to avoid iframe sandboxing issues, we can just return the raw HTML.
-        # However, returning raw HTML might not always display properly if it contains scripts.
-        # A more stable approach is to write to a temporary file and display it in an IFrame.
-
-        # For simplicity, just return the HTML:
-        return html
+        """Jupyter Notebook display method."""
+        return self.render()
 
     def display_in_notebook(self, width="100%", height="500px"):
+        """Display the map in a Jupyter Notebook with a specific size.
+
+        This method writes the map to a temporary HTML file and displays it
+        in an IFrame.
+
+        Parameters
+        ----------
+        width : str, optional
+            The width of the IFrame.
+        height : str, optional
+            The height of the IFrame.
+        """
         # More controlled display using IFrame approach
         from tempfile import NamedTemporaryFile
 
@@ -883,6 +1081,13 @@ class Map:
         return display(IFrame(src=f.name, width=width, height=height))
 
     def save(self, filepath):
+        """Save the map to an HTML file.
+
+        Parameters
+        ----------
+        filepath : str
+            The path to the output HTML file.
+        """
         with open(filepath, "w", encoding="utf-8") as f:
             f.write(self.render())
 
@@ -923,10 +1128,12 @@ class Map:
 
     @classmethod
     def _store_drawn_features(cls, map_id, geojson_str):
+        """Store features drawn on the map."""
         cls._drawn_data[map_id] = json.loads(geojson_str)
 
     @classmethod
     def _handle_event(cls, map_id, event, data_json):
+        """Handle a map event by invoking a registered callback."""
         callback = cls._event_callbacks.get(map_id, {}).get(event)
         if callback:
             data = json.loads(data_json)
@@ -934,28 +1141,47 @@ class Map:
 
     @classmethod
     def _register_marker(cls, map_id, marker):
+        """Register a marker to track its state."""
         cls._marker_registry.setdefault(map_id, {})[marker.id] = marker
 
     @classmethod
     def _update_marker_coords(cls, map_id, marker_id, lng, lat):
+        """Update the coordinates of a draggable marker."""
         marker = cls._marker_registry.get(map_id, {}).get(marker_id)
         if marker:
             marker.coordinates = [lng, lat]
 
     @classmethod
     def _store_search_result(cls, map_id, lng, lat):
+        """Store the result of a geocoder search."""
         cls._search_data[map_id] = [lng, lat]
 
     @property
     def drawn_features(self):
+        """Get the features drawn on the map.
+
+        Returns
+        -------
+        dict
+            A GeoJSON FeatureCollection of the drawn features.
+        """
         return self._drawn_data.get(self.map_id)
 
     @property
     def search_result(self):
+        """Get the result of the last geocoder search.
+
+        Returns
+        -------
+        list
+            A ``[lng, lat]`` coordinate pair.
+        """
         return self._search_data.get(self.map_id)
 
 
 class Marker:
+    """A marker on the map."""
+
     def __init__(
         self,
         coordinates,
@@ -965,6 +1191,23 @@ class Marker:
         tooltip=None,
         draggable=False,
     ):
+        """Initialize a Marker.
+
+        Parameters
+        ----------
+        coordinates : list or tuple
+            The ``[lng, lat]`` coordinates of the marker.
+        popup : str, optional
+            The HTML content of the marker's popup.
+        color : str, optional
+            The color of the marker.
+        icon : Icon, optional
+            The icon to use for the marker.
+        tooltip : str or Tooltip, optional
+            The text content of the marker's tooltip.
+        draggable : bool, optional
+            Whether the marker is draggable.
+        """
         self.coordinates = coordinates
         self.popup = popup
         self.color = color
@@ -974,6 +1217,17 @@ class Marker:
         self.id = None
 
     def add_to(self, map_instance):
+        """Add the marker to a map or marker cluster.
+
+        Parameters
+        ----------
+        map_instance : maplibreum.Map or maplibreum.MarkerCluster
+            The map or marker cluster to which the marker will be added.
+
+        Returns
+        -------
+        self
+        """
         if isinstance(map_instance, MarkerCluster):
             if self.draggable:
                 raise ValueError("Draggable markers cannot be added to a cluster")
@@ -1063,6 +1317,21 @@ class GeoJson:
         popup=None,
         tooltip=None,
     ):
+        """Initialize a GeoJson overlay.
+
+        Parameters
+        ----------
+        data : dict
+            The GeoJSON data.
+        style_function : callable, optional
+            A function that takes a feature and returns a style dictionary.
+        name : str, optional
+            The name of the GeoJSON layer.
+        popup : str or GeoJsonPopup, optional
+            A popup to display when a feature is clicked.
+        tooltip : str or GeoJsonTooltip, optional
+            A tooltip to display when hovering over a feature.
+        """
         self.data = data
         self.name = name if name else f"geojson_{uuid.uuid4().hex}"
         self.popup = popup
@@ -1179,6 +1448,27 @@ class Circle:
         popup=None,
         tooltip=None,
     ):
+        """Initialize a Circle.
+
+        Parameters
+        ----------
+        location : list or tuple
+            The ``[lng, lat]`` center of the circle.
+        radius : int, optional
+            The radius of the circle in meters.
+        color : str, optional
+            The color of the circle's outline.
+        fill : bool, optional
+            Whether to fill the circle.
+        fill_color : str, optional
+            The fill color of the circle.
+        fill_opacity : float, optional
+            The fill opacity of the circle.
+        popup : str, optional
+            A popup to display when the circle is clicked.
+        tooltip : str, optional
+            A tooltip to display when hovering over the circle.
+        """
         self.location = location
         self.radius = radius
         self.color = color
@@ -1189,6 +1479,7 @@ class Circle:
         self.tooltip = tooltip
 
     def _circle_polygon(self, center, radius, num_sides=64):
+        """Create a GeoJSON polygon for a circle."""
         lng, lat = center
         coords = []
         for i in range(num_sides):
@@ -1202,6 +1493,13 @@ class Circle:
         return [coords]
 
     def add_to(self, map_instance):
+        """Add the circle to a map instance.
+
+        Parameters
+        ----------
+        map_instance : maplibreum.Map
+            The map instance to which the circle will be added.
+        """
         layer_id = f"circle_{uuid.uuid4().hex}"
         polygon = self._circle_polygon(self.location, self.radius)
         source = {
@@ -1244,6 +1542,27 @@ class CircleMarker:
         popup=None,
         tooltip=None,
     ):
+        """Initialize a CircleMarker.
+
+        Parameters
+        ----------
+        location : list or tuple
+            The ``[lng, lat]`` center of the circle marker.
+        radius : int, optional
+            The radius of the circle marker in pixels.
+        color : str, optional
+            The color of the circle marker's outline.
+        fill : bool, optional
+            Whether to fill the circle marker.
+        fill_color : str, optional
+            The fill color of the circle marker.
+        fill_opacity : float, optional
+            The fill opacity of the circle marker.
+        popup : str, optional
+            A popup to display when the circle marker is clicked.
+        tooltip : str, optional
+            A tooltip to display when hovering over the circle marker.
+        """
         self.location = location
         self.radius = radius
         self.color = color
@@ -1254,6 +1573,13 @@ class CircleMarker:
         self.tooltip = tooltip
 
     def add_to(self, map_instance):
+        """Add the circle marker to a map instance.
+
+        Parameters
+        ----------
+        map_instance : maplibreum.Map
+            The map instance to which the circle marker will be added.
+        """
         layer_id = f"circlemarker_{uuid.uuid4().hex}"
         source = {
             "type": "geojson",
@@ -1284,7 +1610,24 @@ class CircleMarker:
 
 
 class PolyLine:
+    """A polyline on the map."""
+
     def __init__(self, locations, color="#3388ff", weight=2, popup=None, tooltip=None):
+        """Initialize a PolyLine.
+
+        Parameters
+        ----------
+        locations : list
+            A list of ``[lng, lat]`` coordinates.
+        color : str, optional
+            The color of the polyline.
+        weight : int, optional
+            The width of the polyline.
+        popup : str, optional
+            A popup to display when the polyline is clicked.
+        tooltip : str, optional
+            A tooltip to display when hovering over the polyline.
+        """
         self.locations = locations
         self.color = color
         self.weight = weight
@@ -1292,6 +1635,13 @@ class PolyLine:
         self.tooltip = tooltip
 
     def add_to(self, map_instance):
+        """Add the polyline to a map instance.
+
+        Parameters
+        ----------
+        map_instance : maplibreum.Map
+            The map instance to which the polyline will be added.
+        """
         layer_id = f"polyline_{uuid.uuid4().hex}"
         source = {
             "type": "geojson",
@@ -1316,6 +1666,8 @@ class PolyLine:
 
 
 class Polygon:
+    """A polygon on the map."""
+
     def __init__(
         self,
         locations,
@@ -1327,6 +1679,27 @@ class Polygon:
         popup=None,
         tooltip=None,
     ):
+        """Initialize a Polygon.
+
+        Parameters
+        ----------
+        locations : list
+            A list of ``[lng, lat]`` coordinates.
+        color : str, optional
+            The color of the polygon's outline.
+        weight : int, optional
+            The width of the polygon's outline.
+        fill : bool, optional
+            Whether to fill the polygon.
+        fill_color : str, optional
+            The fill color of the polygon.
+        fill_opacity : float, optional
+            The fill opacity of the polygon.
+        popup : str, optional
+            A popup to display when the polygon is clicked.
+        tooltip : str, optional
+            A tooltip to display when hovering over the polygon.
+        """
         self.locations = locations
         self.color = color
         self.weight = weight
@@ -1337,6 +1710,13 @@ class Polygon:
         self.tooltip = tooltip
 
     def add_to(self, map_instance):
+        """Add the polygon to a map instance.
+
+        Parameters
+        ----------
+        map_instance : maplibreum.Map
+            The map instance to which the polygon will be added.
+        """
         layer_id = f"polygon_{uuid.uuid4().hex}"
         coords = self.locations
         if coords[0] != coords[-1]:
@@ -1395,6 +1775,29 @@ class Rectangle:
         popup=None,
         tooltip=None,
     ):
+        """Initialize a Rectangle.
+
+        Parameters
+        ----------
+        southwest : list or tuple
+            The southwest corner of the rectangle as ``[lng, lat]``.
+        northeast : list or tuple
+            The northeast corner of the rectangle as ``[lng, lat]``.
+        color : str, optional
+            The color of the rectangle's outline.
+        weight : int, optional
+            The width of the rectangle's outline.
+        fill : bool, optional
+            Whether to fill the rectangle.
+        fill_color : str, optional
+            The fill color of the rectangle.
+        fill_opacity : float, optional
+            The fill opacity of the rectangle.
+        popup : str, optional
+            A popup to display when the rectangle is clicked.
+        tooltip : str, optional
+            A tooltip to display when hovering over the rectangle.
+        """
         self.southwest = southwest
         self.northeast = northeast
         self.color = color
@@ -1406,6 +1809,13 @@ class Rectangle:
         self.tooltip = tooltip
 
     def add_to(self, map_instance):
+        """Add the rectangle to a map instance.
+
+        Parameters
+        ----------
+        map_instance : maplibreum.Map
+            The map instance to which the rectangle will be added.
+        """
         sw_lng, sw_lat = self.southwest
         ne_lng, ne_lat = self.northeast
         coords = [
@@ -1483,6 +1893,17 @@ class ImageOverlay:
             raise ValueError("Either coordinates or bounds must be provided")
 
     def add_to(self, map_instance):
+        """Add the image overlay to a map instance.
+
+        Parameters
+        ----------
+        map_instance : maplibreum.Map
+            The map instance to which the image overlay will be added.
+
+        Returns
+        -------
+        self
+        """
         source = {
             "type": "image",
             "url": self.image,
@@ -1510,18 +1931,41 @@ class FloatImage:
     }
 
     def __init__(self, image_url, position="top-left", width=None):
+        """Initialize a FloatImage.
+
+        Parameters
+        ----------
+        image_url : str
+            The URL of the image.
+        position : str, optional
+            The position of the image on the map.
+        width : int, optional
+            The width of the image in pixels.
+        """
         self.image_url = image_url
         self.position = position
         self.width = width
 
     @property
     def style(self):
+        """Get the CSS style for the floating image."""
         base = self._POSITION_STYLES.get(self.position, "")
         if self.width is not None:
             base += f" width: {self.width}px;"
         return base
 
     def add_to(self, map_instance):
+        """Add the floating image to a map instance.
+
+        Parameters
+        ----------
+        map_instance : maplibreum.Map
+            The map instance to which the floating image will be added.
+
+        Returns
+        -------
+        self
+        """
         map_instance.float_images.append(self)
         return self
 
@@ -1586,6 +2030,17 @@ class VideoOverlay:
             raise ValueError("Either coordinates or bounds must be provided")
 
     def add_to(self, map_instance):
+        """Add the video overlay to a map instance.
+
+        Parameters
+        ----------
+        map_instance : maplibreum.Map
+            The map instance to which the video overlay will be added.
+
+        Returns
+        -------
+        self
+        """
         source = {
             "type": "video",
             "urls": self.urls,
@@ -1606,6 +2061,13 @@ class FeatureGroup:
     """Group multiple layers so they can be toggled together."""
 
     def __init__(self, name=None):
+        """Initialize a FeatureGroup.
+
+        Parameters
+        ----------
+        name : str, optional
+            The name of the feature group.
+        """
         self.name = name or f"featuregroup_{uuid.uuid4().hex}"
         self.sources = []
         self.layers = []
@@ -1614,9 +2076,36 @@ class FeatureGroup:
         self.layer_ids = []
 
     def add_source(self, name, definition):
+        """Add a source to the feature group.
+
+        Parameters
+        ----------
+        name : str
+            The name of the source.
+        definition : dict
+            The source definition.
+        """
         self.sources.append({"name": name, "definition": definition})
 
     def add_layer(self, layer_definition, source=None, before=None):
+        """Add a layer to the feature group.
+
+        Parameters
+        ----------
+        layer_definition : dict
+            A dictionary describing a MapLibre GL style layer.
+        source : dict or str, optional
+            A dictionary describing a MapLibre source, or a string
+            referencing an existing source.
+        before : str, optional
+            The ID of an existing layer before which this layer should be
+            placed.
+
+        Returns
+        -------
+        str
+            The ID of the added layer.
+        """
         if isinstance(source, str):
             layer_definition["source"] = source
         elif source is not None:
@@ -1643,6 +2132,27 @@ class FeatureGroup:
         template=None,
         context=None,
     ):
+        """Add a popup to the feature group.
+
+        Parameters
+        ----------
+        html : str or object with render method
+            HTML content of the popup.
+        coordinates : list, optional
+            [lng, lat] for a fixed popup position.
+        layer_id : str, optional
+            The ID of the layer to which the popup is bound.
+        events : list, optional
+            List of events that trigger the popup (e.g., ``['click']``).
+        options : dict, optional
+            A dictionary of popup options.
+        prop : str, optional
+            The name of a feature property to use as the popup content.
+        template : str, optional
+            A Jinja2 template string for the popup content.
+        context : dict, optional
+            The rendering context for templates.
+        """
         if options is None:
             options = {}
         if events is None:
@@ -1661,6 +2171,19 @@ class FeatureGroup:
         )
 
     def add_tooltip(self, tooltip=None, layer_id=None, options=None, prop=None):
+        """Add a tooltip to the feature group.
+
+        Parameters
+        ----------
+        tooltip : str or Tooltip
+            The tooltip content.
+        layer_id : str, optional
+            The ID of the layer to which the tooltip is bound.
+        options : dict, optional
+            A dictionary of tooltip options.
+        prop : str, optional
+            The name of a feature property to use as the tooltip content.
+        """
         if isinstance(tooltip, Tooltip):
             text = tooltip.text
             opts = tooltip.options
@@ -1673,6 +2196,17 @@ class FeatureGroup:
         )
 
     def add_to(self, map_instance):
+        """Add the feature group to a map instance.
+
+        Parameters
+        ----------
+        map_instance : maplibreum.Map
+            The map instance to which the feature group will be added.
+
+        Returns
+        -------
+        self
+        """
         for src in self.sources:
             map_instance.add_source(src["name"], src["definition"])
         for layer in self.layers:
@@ -1690,6 +2224,7 @@ class LayerControl:
     """Simple layer control to toggle tile and overlay layers."""
 
     def __init__(self):
+        """Initialize a LayerControl."""
         self.overlays = []
 
     def add_overlay(self, layer, name=None):
@@ -1703,6 +2238,17 @@ class LayerControl:
         return self
 
     def add_to(self, map_instance):
+        """Add the layer control to a map instance.
+
+        Parameters
+        ----------
+        map_instance : maplibreum.Map
+            The map instance to which the layer control will be added.
+
+        Returns
+        -------
+        self
+        """
         map_instance.layer_control = True
         if self.overlays:
             for ov in self.overlays:
@@ -1714,6 +2260,14 @@ class Legend:
     """Map legend supporting raw HTML or label/color pairs."""
 
     def __init__(self, content):
+        """Initialize a Legend.
+
+        Parameters
+        ----------
+        content : str or list
+            If a string, it is used as raw HTML. If a list, it should
+            contain ``(label, color)`` tuples.
+        """
         if isinstance(content, str):
             self._html = content
         else:
@@ -1725,9 +2279,21 @@ class Legend:
             self._html = "".join(items)
 
     def render(self):
+        """Render the legend to HTML."""
         return self._html
 
     def add_to(self, map_instance):
+        """Add the legend to a map instance.
+
+        Parameters
+        ----------
+        map_instance : maplibreum.Map
+            The map instance to which the legend will be added.
+
+        Returns
+        -------
+        self
+        """
         map_instance.add_legend(self)
         return self
 
@@ -1736,6 +2302,16 @@ class LatLngPopup:
     """Display a popup with latitude and longitude when the map is clicked."""
 
     def add_to(self, map_instance):
+        """Add the LatLngPopup to a map instance.
+
+        Parameters
+        ----------
+        map_instance : maplibreum.Map
+            The map instance to which the LatLngPopup will be added.
+
+        Returns
+        -------
+        self
+        """
         map_instance.add_lat_lng_popup()
         return self
-

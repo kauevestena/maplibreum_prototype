@@ -1,0 +1,27 @@
+name: "Docs"
+on:
+  release:
+    types: [created]
+jobs:
+  build-deploy-docs:
+    runs-on: ubuntu-latest
+    steps:
+      - name: "Checkout"
+        uses: actions/checkout@v3
+      - name: "Set up Python"
+        uses: actions/setup-python@v4
+        with:
+          python-version: 3.11
+      - name: "Install dependencies"
+        run: |
+          pip install -r docs/requirements.txt
+          pip install .
+      - name: "Build docs"
+        run: |
+          cd docs
+          make html
+      - name: "Deploy docs"
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: docs/build/html
