@@ -1,3 +1,4 @@
+import html
 import json
 import math
 import os
@@ -992,13 +993,14 @@ class Map:
             The rendered HTML.
         """
         # Inject custom CSS to adjust the map div if needed
-        # The template expects #map { width: ..., height: ... } to be set via
-        # custom_css if desired.
-        dimension_css = f"#map {{ width: {self.width}; height: {self.height}; }}"
+        # The template expects the unique map container ID to control sizing.
+        dimension_css = (
+            f"#{self.map_id} {{ width: {self.width}; height: {self.height}; }}"
+        )
         marker_css = "\n".join(self.marker_css)
         final_custom_css = "\n".join([dimension_css, marker_css, self.custom_css])
         map_options = {
-            "container": "map",
+            "container": self.map_id,
             "style": self.map_style,
         }
         if self.bounds is None:
@@ -1051,7 +1053,13 @@ class Map:
 
     def _repr_html_(self):
         """Jupyter Notebook display method."""
-        return self.render()
+        iframe_id = f"{self.map_id}_iframe"
+        escaped_html = html.escape(self.render(), quote=True)
+        style = f"width: {self.width}; height: {self.height}; border: none;"
+        return (
+            f'<iframe id="{iframe_id}" srcdoc="{escaped_html}" '
+            f'style="{style}" loading="lazy"></iframe>'
+        )
 
     def display_in_notebook(self, width="100%", height="500px"):
         """Display the map in a Jupyter Notebook with a specific size.
