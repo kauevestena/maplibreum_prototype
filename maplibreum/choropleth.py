@@ -32,6 +32,7 @@ class Choropleth:
         color_scale="linear",
         legend_title="",
     ):
+        """Initialize a Choropleth layer."""
         self.geojson = geojson
         self.data = data
         self.key_on = key_on
@@ -84,6 +85,21 @@ class Choropleth:
         return self.colors[-1]
 
     def add_to(self, map_instance):
+        """Add the choropleth layer to a map instance.
+
+        This method calculates bins, assigns colors to features, and adds the
+        necessary source and fill layer to the map. It also generates and adds
+        a legend.
+
+        Parameters
+        ----------
+        map_instance : maplibreum.Map
+            The map instance to which the choropleth will be added.
+
+        Returns
+        -------
+        self
+        """
         features = self.geojson.get("features", [])
         values = []
         for feat in features:

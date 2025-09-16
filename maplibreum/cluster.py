@@ -7,6 +7,17 @@ class MarkerCluster:
     """Group markers into clusters using MapLibre's built-in clustering."""
 
     def __init__(self, name=None, cluster_radius=50, cluster_max_zoom=14):
+        """Initialize a MarkerCluster.
+
+        Parameters
+        ----------
+        name : str, optional
+            The name of the marker cluster.
+        cluster_radius : int, optional
+            The radius of each cluster in pixels.
+        cluster_max_zoom : int, optional
+            The maximum zoom level at which to cluster points.
+        """
         self.name = name or f"markercluster_{uuid.uuid4().hex}"
         self.cluster_radius = cluster_radius
         self.cluster_max_zoom = cluster_max_zoom
@@ -18,6 +29,13 @@ class MarkerCluster:
         self.unclustered_layer_id = None
 
     def add_marker(self, marker):
+        """Add a marker to the cluster.
+
+        Parameters
+        ----------
+        marker : maplibreum.Marker
+            The marker to add to the cluster.
+        """
         feature = {
             "type": "Feature",
             "geometry": {"type": "Point", "coordinates": marker.coordinates},
@@ -31,6 +49,20 @@ class MarkerCluster:
                     break
 
     def add_to(self, map_instance):
+        """Add the marker cluster to a map instance.
+
+        This method creates the GeoJSON source and layers for clustering
+        markers and adds them to the map.
+
+        Parameters
+        ----------
+        map_instance : maplibreum.Map
+            The map instance to which the cluster will be added.
+
+        Returns
+        -------
+        self
+        """
         self.map = map_instance
         self.source_name = f"{self.name}_source"
         source = {
@@ -102,6 +134,19 @@ class ClusteredGeoJson:
     """Cluster arbitrary GeoJSON features using MapLibre's clustering."""
 
     def __init__(self, data, name=None, cluster_radius=50, cluster_max_zoom=14):
+        """Initialize a ClusteredGeoJson.
+
+        Parameters
+        ----------
+        data : dict
+            The GeoJSON data to cluster.
+        name : str, optional
+            The name of the clustered GeoJSON layer.
+        cluster_radius : int, optional
+            The radius of each cluster in pixels.
+        cluster_max_zoom : int, optional
+            The maximum zoom level at which to cluster points.
+        """
         self.data = data
         self.name = name or f"clustered_geojson_{uuid.uuid4().hex}"
         self.cluster_radius = cluster_radius
@@ -113,6 +158,20 @@ class ClusteredGeoJson:
         self.unclustered_layer_id = None
 
     def add_to(self, map_instance):
+        """Add the clustered GeoJSON to a map instance.
+
+        This method creates the GeoJSON source and layers for clustering
+        features and adds them to the map.
+
+        Parameters
+        ----------
+        map_instance : maplibreum.Map
+            The map instance to which the clustered GeoJSON will be added.
+
+        Returns
+        -------
+        self
+        """
         self.map = map_instance
         self.source_name = f"{self.name}_source"
         source = {
@@ -187,15 +246,47 @@ def cluster_features(features, radius=40, max_zoom=16):
     and benchmarking purposes."""
 
     class SimpleSupercluster:
+        """A very simple grid-based clustering algorithm."""
+
         def __init__(self, radius, max_zoom):
+            """Initialize the SimpleSupercluster.
+
+            Parameters
+            ----------
+            radius : int
+                Cluster radius in pixels.
+            max_zoom : int
+                Maximum zoom level at which to cluster.
+            """
             self.radius = radius
             self.max_zoom = max_zoom
             self.points = []
 
         def load(self, features):
+            """Load features into the clusterer.
+
+            Parameters
+            ----------
+            features : list
+                A list of GeoJSON features to cluster.
+            """
             self.points = [f["geometry"]["coordinates"] for f in features]
 
         def get_clusters(self, bbox, zoom):
+            """Get clusters for a given bounding box and zoom level.
+
+            Parameters
+            ----------
+            bbox : tuple
+                Bounding box in the form ``(west, south, east, north)``.
+            zoom : int
+                The current zoom level.
+
+            Returns
+            -------
+            list
+                A list of clustered GeoJSON features.
+            """
             cell_x = (bbox[2] - bbox[0]) / max(self.radius, 1)
             cell_y = (bbox[3] - bbox[1]) / max(self.radius, 1)
             clusters = {}

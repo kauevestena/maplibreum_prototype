@@ -15,6 +15,7 @@ class TimeDimension:
     """
 
     def __init__(self, data, options=None):
+        """Initialize a TimeDimension."""
         self.data = data
         self.options = options or {}
         self.name = f"timedimension_{uuid.uuid4().hex}"
