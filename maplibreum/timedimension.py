@@ -1,4 +1,5 @@
 import uuid
+from typing import Any, Dict, Optional
 
 
 class TimeDimension:
@@ -14,13 +15,15 @@ class TimeDimension:
         milliseconds.
     """
 
-    def __init__(self, data, options=None):
+    def __init__(
+        self, data: Dict[str, Any], options: Optional[Dict[str, Any]] = None
+    ) -> None:
         """Initialize a TimeDimension."""
         self.data = data
         self.options = options or {}
         self.name = f"timedimension_{uuid.uuid4().hex}"
 
-    def add_to(self, map_instance):
+    def add_to(self, map_instance: Any) -> "TimeDimension":
         """Add this time dimension data to a map instance."""
         map_instance.add_time_dimension(self.data, self.options)
         return self
