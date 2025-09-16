@@ -19,7 +19,7 @@ def test_map_render_contains_style(map_instance):
     html = map_instance.render()
     assert isinstance(html, str)
     assert map_instance.map_style in html
-    assert '<div id="map"' in html
+    assert f'<div id="{map_instance.map_id}"' in html
 
 
 def test_add_tile_layer(map_instance):

@@ -1,0 +1,9 @@
+# Examples
+
+This directory contains example notebooks and rendered HTML outputs that showcase MapLibreum features.
+
+## Displaying maps inside notebooks
+
+Simply creating a `Map` instance (for example `m = Map(...)`) and evaluating `m` in a notebook cell now renders the map inside an embedded `<iframe>` thanks to the object's `_repr_html_` implementation.
+
+If you need to control the size or other iframe attributes explicitly, call `m.display_in_notebook(width="100%", height="500px")` (or with your preferred dimensions) to use the dedicated helper instead.
