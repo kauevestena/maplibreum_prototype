@@ -90,7 +90,7 @@ map.on('load', function() {
     
     // Add sources
     
-    map.addSource("source_3f9a31b076ac4e8489ff433b8e5bb08b", {"type": "geojson", "data": {"type": "FeatureCollection", "features": [{"type": "Feature", "properties": {"description": "A nice place"}, "geometry": {"type": "Point", "coordinates": [-74.5, 40]}}]}});
+    map.addSource("points-source", {"type": "geojson", "data": {"type": "FeatureCollection", "features": [{"type": "Feature", "properties": {"description": "A nice place"}, "geometry": {"type": "Point", "coordinates": [-74.5, 40]}}]}});
     
 
     
@@ -98,7 +98,7 @@ map.on('load', function() {
 
     // Add layers
     
-    map.addLayer({"id": "points", "type": "circle", "source": "source_3f9a31b076ac4e8489ff433b8e5bb08b", "paint": {"circle-radius": 6, "circle-color": "#007cbf"}});
+    map.addLayer({"id": "points-layer", "type": "circle", "paint": {"circle-radius": 6, "circle-color": "#007cbf"}, "source": "points-source"});
     
 
     // Popups
@@ -109,7 +109,7 @@ map.on('load', function() {
     
     
     
-    map.on('click', 'points', function(e) {
+    map.on('click', 'points-layer', function(e) {
         popup_1
             .setLngLat(e.lngLat)
             .setHTML(`<strong>Hello!</strong><br>This is a popup.`)
