@@ -1,0 +1,416 @@
+name: Deploy Unified Site to GitHub Pages
+
+on:
+  workflow_dispatch:
+    inputs:
+      debug:
+        description: 'Enable debug mode'
+        required: false
+        default: false
+        type: boolean
+  push:
+    branches:
+      - main
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: "pages"
+  cancel-in-progress: false
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          cache: pip
+          cache-dependency-path: |
+            **/pyproject.toml
+            **/setup.cfg
+            **/requirements.txt
+            
+      - name: Install dependencies
+        run: |
+          pip install -e .
+          pip install jupyter nbconvert
+          pip install -r docs/requirements.txt
+          
+      - name: Create unified output directory
+        run: |
+          mkdir -p site
+          
+      # Build Sphinx documentation
+      - name: Build documentation
+        run: |
+          cd docs
+          make html
+          
+      # Execute and convert notebooks to HTML
+      - name: Execute and convert notebooks to HTML
+        run: |
+          cd examples
+          mkdir -p ../site/examples
+          for notebook in *.ipynb; do
+            echo "Processing $notebook..."
+            if jupyter nbconvert --to html --execute "$notebook" --output-dir ../site/examples/ --allow-errors --ExecutePreprocessor.timeout=300; then
+              echo "Successfully executed and converted $notebook"
+            else
+              echo "Warning: Failed to execute $notebook, converting without execution"
+              jupyter nbconvert --to html "$notebook" --output-dir ../site/examples/
+            fi
+          done
+          
+      # Copy documentation to site
+      - name: Copy documentation to site
+        run: |
+          cp -r docs/_build/html/* site/docs/ || mkdir -p site/docs && cp -r docs/_build/html/* site/docs/
+          
+      # Create examples index page
+      - name: Create examples index page
+        run: |
+          cat > site/examples/index.html << 'EOF'
+          <!DOCTYPE html>
+          <html lang="en">
+          <head>
+              <meta charset="UTF-8">
+              <meta name="viewport" content="width=device-width, initial-scale=1.0">
+              <title>MapLibreum Examples</title>
+              <style>
+                  body {
+                      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+                      max-width: 800px;
+                      margin: 0 auto;
+                      padding: 20px;
+                      line-height: 1.6;
+                      color: #333;
+                  }
+                  h1 {
+                      color: #2c3e50;
+                      border-bottom: 2px solid #3498db;
+                      padding-bottom: 10px;
+                  }
+                  .nav-links {
+                      margin: 20px 0;
+                      padding: 10px;
+                      background: #f8f9fa;
+                      border-radius: 8px;
+                  }
+                  .nav-links a {
+                      color: #3498db;
+                      text-decoration: none;
+                      margin-right: 15px;
+                      font-weight: 500;
+                  }
+                  .nav-links a:hover {
+                      text-decoration: underline;
+                  }
+                  .example-list {
+                      list-style: none;
+                      padding: 0;
+                  }
+                  .example-item {
+                      background: #f8f9fa;
+                      margin: 10px 0;
+                      padding: 15px;
+                      border-radius: 8px;
+                      border-left: 4px solid #3498db;
+                  }
+                  .example-item a {
+                      text-decoration: none;
+                      color: #2c3e50;
+                      font-weight: 500;
+                  }
+                  .example-item a:hover {
+                      color: #3498db;
+                  }
+                  .description {
+                      color: #666;
+                      font-size: 0.9em;
+                      margin-top: 5px;
+                  }
+                  .footer {
+                      margin-top: 40px;
+                      padding-top: 20px;
+                      border-top: 1px solid #eee;
+                      text-align: center;
+                      color: #666;
+                  }
+              </style>
+          </head>
+          <body>
+              <div class="nav-links">
+                  <a href="../">← Back to Main</a>
+                  <a href="../docs/">📚 Documentation</a>
+                  <a href="./">📊 Examples</a>
+              </div>
+              
+              <h1>MapLibreum Examples Gallery</h1>
+              <p>Interactive MapLibre maps created with MapLibreum - a Python library for building beautiful, interactive maps.</p>
+              
+              <ul class="example-list">
+                  <li class="example-item">
+                      <a href="creative_maplibreum_examples.html">Creative MapLibreum Examples & Tutorials</a>
+                      <div class="description">Comprehensive collection of creative examples showcasing MapLibreum's features including markers, styling, and interactive elements.</div>
+                  </li>
+                  <li class="example-item">
+                      <a href="usage.html">Basic Usage Examples</a>
+                      <div class="description">Fundamental usage patterns for creating maps with controls, GeoJSON layers, and popups.</div>
+                  </li>
+                  <li class="example-item">
+                      <a href="new_features.html">New Features Demo</a>
+                      <div class="description">Demonstration of the latest MapLibreum features including sources, layers, and advanced controls.</div>
+                  </li>
+                  <li class="example-item">
+                      <a href="event_handling.html">Event Handling</a>
+                      <div class="description">Interactive examples showing how to handle map events like clicks and movements with callback functions.</div>
+                  </li>
+              </ul>
+              
+              <div class="footer">
+                  <p>Built with ❤️ using <a href="https://github.com/kauevestena/maplibreum_prototype">MapLibreum</a></p>
+                  <p>Generated from Jupyter notebooks</p>
+              </div>
+          </body>
+          </html>
+          EOF
+          
+      # Create main landing page
+      - name: Create main landing page
+        run: |
+          cat > site/index.html << 'EOF'
+          <!DOCTYPE html>
+          <html lang="en">
+          <head>
+              <meta charset="UTF-8">
+              <meta name="viewport" content="width=device-width, initial-scale=1.0">
+              <title>MapLibreum - Python Library for Interactive MapLibre Maps</title>
+              <style>
+                  body {
+                      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+                      margin: 0;
+                      padding: 0;
+                      line-height: 1.6;
+                      color: #333;
+                      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+                      min-height: 100vh;
+                  }
+                  .container {
+                      max-width: 1200px;
+                      margin: 0 auto;
+                      padding: 20px;
+                  }
+                  header {
+                      text-align: center;
+                      color: white;
+                      padding: 60px 0;
+                  }
+                  h1 {
+                      font-size: 3.5rem;
+                      margin: 0;
+                      font-weight: 300;
+                      text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+                  }
+                  .subtitle {
+                      font-size: 1.3rem;
+                      margin: 20px 0;
+                      opacity: 0.9;
+                  }
+                  .main-content {
+                      background: white;
+                      border-radius: 20px;
+                      padding: 60px 40px;
+                      margin: 40px 0;
+                      box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+                  }
+                  .section-grid {
+                      display: grid;
+                      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+                      gap: 30px;
+                      margin: 40px 0;
+                  }
+                  .section-card {
+                      background: #f8f9fa;
+                      padding: 30px;
+                      border-radius: 15px;
+                      text-align: center;
+                      transition: transform 0.3s ease, box-shadow 0.3s ease;
+                      border: 2px solid transparent;
+                  }
+                  .section-card:hover {
+                      transform: translateY(-5px);
+                      box-shadow: 0 15px 30px rgba(0,0,0,0.1);
+                      border-color: #3498db;
+                  }
+                  .section-card h2 {
+                      color: #2c3e50;
+                      margin-bottom: 15px;
+                      font-size: 1.5rem;
+                  }
+                  .section-card p {
+                      color: #666;
+                      margin-bottom: 20px;
+                      font-size: 1rem;
+                  }
+                  .section-card .icon {
+                      font-size: 3rem;
+                      margin-bottom: 20px;
+                      display: block;
+                  }
+                  .btn {
+                      display: inline-block;
+                      padding: 12px 30px;
+                      background: #3498db;
+                      color: white;
+                      text-decoration: none;
+                      border-radius: 25px;
+                      font-weight: 500;
+                      transition: background 0.3s ease;
+                  }
+                  .btn:hover {
+                      background: #2980b9;
+                  }
+                  .btn.secondary {
+                      background: #95a5a6;
+                  }
+                  .btn.secondary:hover {
+                      background: #7f8c8d;
+                  }
+                  .footer {
+                      text-align: center;
+                      color: white;
+                      padding: 40px 0;
+                      opacity: 0.8;
+                  }
+                  .footer a {
+                      color: white;
+                      text-decoration: none;
+                  }
+                  .footer a:hover {
+                      text-decoration: underline;
+                  }
+                  .intro {
+                      font-size: 1.1rem;
+                      color: #555;
+                      text-align: center;
+                      margin-bottom: 40px;
+                      max-width: 800px;
+                      margin-left: auto;
+                      margin-right: auto;
+                  }
+                  .features {
+                      margin: 50px 0;
+                  }
+                  .features h3 {
+                      text-align: center;
+                      color: #2c3e50;
+                      margin-bottom: 30px;
+                      font-size: 2rem;
+                  }
+                  .feature-list {
+                      display: grid;
+                      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+                      gap: 20px;
+                      list-style: none;
+                      padding: 0;
+                  }
+                  .feature-list li {
+                      background: #ecf0f1;
+                      padding: 15px 20px;
+                      border-radius: 10px;
+                      border-left: 4px solid #3498db;
+                  }
+                  @media (max-width: 768px) {
+                      h1 {
+                          font-size: 2.5rem;
+                      }
+                      .main-content {
+                          padding: 40px 20px;
+                          margin: 20px 10px;
+                      }
+                      .section-grid {
+                          grid-template-columns: 1fr;
+                      }
+                  }
+              </style>
+          </head>
+          <body>
+              <div class="container">
+                  <header>
+                      <h1>MapLibreum</h1>
+                      <p class="subtitle">A Python library for creating interactive MapLibre maps</p>
+                  </header>
+                  
+                  <div class="main-content">
+                      <div class="intro">
+                          <p>MapLibreum is a Python library that makes it easy to create beautiful, interactive maps using MapLibre GL JS. 
+                          Think of it as Folium for MapLibre - bringing the power of modern web mapping to Python developers.</p>
+                      </div>
+                      
+                      <div class="section-grid">
+                          <div class="section-card">
+                              <span class="icon">📚</span>
+                              <h2>Documentation</h2>
+                              <p>Complete API reference, guides, and tutorials to get you started with MapLibreum. Learn about all features, methods, and best practices.</p>
+                              <a href="docs/" class="btn">View Documentation</a>
+                          </div>
+                          
+                          <div class="section-card">
+                              <span class="icon">🗺️</span>
+                              <h2>Interactive Examples</h2>
+                              <p>Explore live examples and tutorials showcasing MapLibreum's capabilities. From basic maps to advanced features like clustering and styling.</p>
+                              <a href="examples/" class="btn">Explore Examples</a>
+                          </div>
+                      </div>
+                      
+                      <div class="features">
+                          <h3>Key Features</h3>
+                          <ul class="feature-list">
+                              <li>🎯 <strong>Easy to Use:</strong> Pythonic API similar to Folium</li>
+                              <li>🌍 <strong>Interactive Maps:</strong> Built on MapLibre GL JS</li>
+                              <li>🎨 <strong>Customizable:</strong> Full control over styling and layers</li>
+                              <li>📊 <strong>Data Visualization:</strong> Choropleth maps, markers, and more</li>
+                              <li>⚡ <strong>Performance:</strong> Vector tiles and WebGL acceleration</li>
+                              <li>🔧 <strong>Extensible:</strong> Plugin system and custom controls</li>
+                              <li>📱 <strong>Mobile Ready:</strong> Responsive design for all devices</li>
+                              <li>🎮 <strong>Interactive:</strong> Event handling and user interactions</li>
+                          </ul>
+                      </div>
+                      
+                      <div style="text-align: center; margin-top: 40px;">
+                          <a href="https://github.com/kauevestena/maplibreum_prototype" class="btn secondary">View on GitHub</a>
+                      </div>
+                  </div>
+              </div>
+              
+              <footer class="footer">
+                  <p>Built with ❤️ using <a href="https://github.com/kauevestena/maplibreum_prototype">MapLibreum</a></p>
+                  <p>© 2025 MapLibreum Project. Licensed under the MIT License.</p>
+              </footer>
+          </body>
+          </html>
+          EOF
+          
+      - name: Setup Pages
+        uses: actions/configure-pages@v4
+        
+      - name: Upload artifacts
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: './site'
+          
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
