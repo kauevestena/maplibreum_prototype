@@ -1,24 +1,11 @@
 from ._version import __version__
-from .core import (
-    Map,
-    Marker,
-    GeoJson,
-    Legend,
-    MiniMapControl,
-    MeasureControl,
-    SearchControl,
-    ImageOverlay,
-    VideoOverlay,
-    Tooltip,
-    GeoJsonPopup,
-    GeoJsonTooltip,
-    LatLngPopup,
-    Popup,
-)
-from .markers import Icon, DivIcon, BeautifyIcon
 from .choropleth import Choropleth
+from .cluster import ClusteredGeoJson, MarkerCluster, cluster_features
+from .core import (GeoJson, GeoJsonPopup, GeoJsonTooltip, ImageOverlay,
+                   LatLngPopup, Legend, Map, Marker, MeasureControl,
+                   MiniMapControl, Popup, SearchControl, Tooltip, VideoOverlay)
+from .markers import BeautifyIcon, DivIcon, Icon
 from .timedimension import TimeDimension
-from .cluster import MarkerCluster, ClusteredGeoJson, cluster_features
 
 __all__ = [
     "Map",
@@ -45,5 +32,3 @@ __all__ = [
     "cluster_features",
     "__version__",
 ]
-
-

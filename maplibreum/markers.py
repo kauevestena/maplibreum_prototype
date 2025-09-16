@@ -75,9 +75,12 @@ class BeautifyIcon(DivIcon):
         base_css = (
             ".beautify-marker {display:flex;align-items:center;justify-content:center;"
             "width:26px;height:26px;line-height:26px;}"
-            ".beautify-marker-marker {border-radius:13px 13px 13px 0;transform:rotate(-45deg);"
+            ".beautify-marker-marker {border-radius:13px 13px 13px 0;"
+            "transform:rotate(-45deg);"
             f"background-color:{background_color};border:2px solid {border_color};}}"
-            ".beautify-marker-marker i {transform:rotate(45deg);color:" + text_color + ";}"
+            ".beautify-marker-marker i {transform:rotate(45deg);color:"
+            + text_color
+            + ";}"
         )
         self.css = base_css
         self.background_color = background_color

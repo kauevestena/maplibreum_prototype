@@ -4,6 +4,7 @@ MapLibre expressions are represented as nested lists following the
 MapLibre GL JS style specification.  This module provides small helper
 functions to create these lists while ensuring they are well formed.
 """
+
 from __future__ import annotations
 
 from typing import Any, Iterable, List, Sequence, Tuple
