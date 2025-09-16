@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+from typing import Optional
+
 
 class Icon:
     """Representation of an image-based icon used for symbol markers.
@@ -17,7 +19,12 @@ class Icon:
         location (e.g. ``"bottom"``).
     """
 
-    def __init__(self, icon_image, icon_size=None, icon_anchor=None):
+    def __init__(
+        self,
+        icon_image: str,
+        icon_size: Optional[float] = None,
+        icon_anchor: Optional[str] = None,
+    ) -> None:
         """Initialize an Icon."""
         self.icon_image = icon_image
         self.icon_size = icon_size
@@ -27,7 +34,9 @@ class Icon:
 class DivIcon:
     """HTML/CSS based icon rendered with a DOM element."""
 
-    def __init__(self, html="", class_name="maplibreum-div-icon"):
+    def __init__(
+        self, html: str = "", class_name: str = "maplibreum-div-icon"
+    ) -> None:
         """Initialize a DivIcon.
 
         Parameters
@@ -62,12 +71,12 @@ class BeautifyIcon(DivIcon):
 
     def __init__(
         self,
-        icon="",
-        icon_shape="marker",
-        border_color="#b8b8b8",
-        text_color="white",
-        background_color="#2a81cb",
-    ):
+        icon: str = "",
+        icon_shape: str = "marker",
+        border_color: str = "#b8b8b8",
+        text_color: str = "white",
+        background_color: str = "#2a81cb",
+    ) -> None:
         """Initialize a BeautifyIcon."""
         class_name = f"beautify-marker beautify-marker-{icon_shape}"
         html = f"<i class='{icon}'></i>"
@@ -75,9 +84,12 @@ class BeautifyIcon(DivIcon):
         base_css = (
             ".beautify-marker {display:flex;align-items:center;justify-content:center;"
             "width:26px;height:26px;line-height:26px;}"
-            ".beautify-marker-marker {border-radius:13px 13px 13px 0;transform:rotate(-45deg);"
+            ".beautify-marker-marker {border-radius:13px 13px 13px 0;"
+            "transform:rotate(-45deg);"
             f"background-color:{background_color};border:2px solid {border_color};}}"
-            ".beautify-marker-marker i {transform:rotate(45deg);color:" + text_color + ";}"
+            ".beautify-marker-marker i {transform:rotate(45deg);color:"
+            + text_color
+            + ";}"
         )
         self.css = base_css
         self.background_color = background_color

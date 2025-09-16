@@ -140,7 +140,9 @@ class Choropleth:
             legend_rows.append(
                 f"<div><i style='background:{self.colors[i]}'></i>{label}</div>"
             )
-        legend_html = f"<div><strong>{self.legend_title}</strong><br>{''.join(legend_rows)}</div>"
+        legend_html = (
+            f"<div><strong>{self.legend_title}</strong><br>{''.join(legend_rows)}</div>"
+        )
         map_instance.add_legend(legend_html)
 
         return self

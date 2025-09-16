@@ -2,16 +2,16 @@ import json
 import math
 import os
 import subprocess
-from urllib.parse import quote
 import uuid
+from urllib.parse import quote
 
 from IPython.display import IFrame, display
 from jinja2 import Environment, FileSystemLoader
 
-from .expressions import get as expr_get, interpolate, var
-from .markers import Icon, DivIcon, BeautifyIcon
-from .cluster import MarkerCluster, ClusteredGeoJson
-
+from .cluster import ClusteredGeoJson, MarkerCluster
+from .expressions import get as expr_get
+from .expressions import interpolate, var
+from .markers import BeautifyIcon, DivIcon, Icon  # noqa: F401
 
 # Predefined map styles
 MAP_STYLES = {
@@ -98,9 +98,7 @@ class GeoJsonPopup:
         style : str, optional
             A CSS style string to apply to the popup.
         """
-        self.fields = (
-            list(fields) if isinstance(fields, (list, tuple)) else [fields]
-        )
+        self.fields = list(fields) if isinstance(fields, (list, tuple)) else [fields]
         if aliases is None:
             self.aliases = self.fields
         else:
@@ -234,10 +232,12 @@ class MeasureControl:
 
 class Map:
     """The main Map class."""
+
     _drawn_data = {}
     _event_callbacks = {}
     _marker_registry = {}
     _search_data = {}
+
     def __init__(
         self,
         title="MapLibreum Map",
@@ -303,7 +303,6 @@ class Map:
         self.camera_actions = []
         self.time_dimension_data = None
         self.time_dimension_options = {}
-
 
         template_dir = os.path.join(os.path.dirname(__file__), "templates")
         self.env = Environment(loader=FileSystemLoader(template_dir))
@@ -407,7 +406,6 @@ class Map:
             self.legends.append(legend)
         else:
             self.legends.append(Legend(legend))
-
 
     def add_source(self, name, definition):
         """Add a source to the map.
@@ -573,9 +571,7 @@ class Map:
         if extra_params:
             params.update(extra_params)
 
-        query = "&".join(
-            f"{k}={quote(str(v), safe='{}')}" for k, v in params.items()
-        )
+        query = "&".join(f"{k}={quote(str(v), safe='{}')}" for k, v in params.items())
         url = f"{base_url}?{query}"
 
         self.add_tile_layer(url, name=name, attribution=attribution)
@@ -716,7 +712,6 @@ class Map:
         tooltip=None,
         draggable=False,
     ):
-
         """Add a marker to the map.
 
         Parameters
@@ -997,12 +992,11 @@ class Map:
             The rendered HTML.
         """
         # Inject custom CSS to adjust the map div if needed
-        # The template expects #map { width: ..., height: ... } to be set via custom_css if desired.
+        # The template expects #map { width: ..., height: ... } to be set via
+        # custom_css if desired.
         dimension_css = f"#map {{ width: {self.width}; height: {self.height}; }}"
         marker_css = "\n".join(self.marker_css)
-        final_custom_css = "\n".join(
-            [dimension_css, marker_css, self.custom_css]
-        )
+        final_custom_css = "\n".join([dimension_css, marker_css, self.custom_css])
         map_options = {
             "container": "map",
             "style": self.map_style,
@@ -1304,7 +1298,7 @@ class Marker:
             map_instance.add_popup(html=self.popup, layer_id=layer_id)
         if self.tooltip:
             map_instance.add_tooltip(self.tooltip, layer_id=layer_id)
-        
+
 
 class GeoJson:
     """Representation of a GeoJSON overlay."""
@@ -1431,7 +1425,6 @@ class GeoJson:
         if self.tooltip:
             for lid in layer_ids:
                 map_instance.add_tooltip(layer_id=lid, prop="_tooltip")
-
 
 
 class Circle:
@@ -1650,7 +1643,10 @@ class PolyLine:
                 "features": [
                     {
                         "type": "Feature",
-                        "geometry": {"type": "LineString", "coordinates": self.locations},
+                        "geometry": {
+                            "type": "LineString",
+                            "coordinates": self.locations,
+                        },
                         "properties": {},
                     }
                 ],
@@ -2215,7 +2211,9 @@ class FeatureGroup:
             map_instance.add_popup(**popup)
         for tooltip in self.tooltips:
             map_instance.add_tooltip(
-                tooltip["text"], layer_id=tooltip["layer_id"], options=tooltip["options"]
+                tooltip["text"],
+                layer_id=tooltip["layer_id"],
+                options=tooltip["options"],
             )
         return self
 
@@ -2231,7 +2229,11 @@ class LayerControl:
         """Register an overlay layer or group by ID and display name."""
         if isinstance(layer, FeatureGroup):
             self.overlays.append(
-                {"id": layer.name, "name": name or layer.name, "layers": layer.layer_ids}
+                {
+                    "id": layer.name,
+                    "name": name or layer.name,
+                    "layers": layer.layer_ids,
+                }
             )
         else:
             self.overlays.append({"id": layer, "name": name or layer})
