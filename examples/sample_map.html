@@ -4,7 +4,7 @@
     <meta charset="utf-8" />
     <title>NYC Area</title>
     <meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no" />
-    <link href="https://unpkg.com/maplibre-gl@3.4.0/dist/maplibre-gl.css" rel="stylesheet" />
+    <link href="https://unpkg.com/maplibre-gl@3.4.0/dist/maplibre-gl.css" rel="stylesheet" onerror="this.onerror=null;this.href='https://cdn.jsdelivr.net/npm/maplibre-gl@3.4.0/dist/maplibre-gl.css';" />
     
     
     
@@ -56,13 +56,79 @@
         
         
     </div>
-    <script src="https://unpkg.com/maplibre-gl@3.4.0/dist/maplibre-gl.js"></script>
-    
-    
-    
-    
-    
+    <!-- MapLibre GL JS with CDN fallbacks -->
     <script>
+        // Function to load MapLibre GL JS with fallbacks
+        function loadMapLibreGL() {
+            return new Promise((resolve, reject) => {
+                // Try loading from unpkg.com first
+                const script1 = document.createElement('script');
+                script1.src = 'https://unpkg.com/maplibre-gl@3.4.0/dist/maplibre-gl.js';
+                script1.onload = () => resolve();
+                script1.onerror = () => {
+                    // Fallback to jsDelivr
+                    const script2 = document.createElement('script');
+                    script2.src = 'https://cdn.jsdelivr.net/npm/maplibre-gl@3.4.0/dist/maplibre-gl.js';
+                    script2.onload = () => resolve();
+                    script2.onerror = () => {
+                        // Last fallback to cdnjs
+                        const script3 = document.createElement('script');
+                        script3.src = 'https://cdnjs.cloudflare.com/ajax/libs/maplibre-gl/3.4.0/maplibre-gl.min.js';
+                        script3.onload = () => resolve();
+                        script3.onerror = () => reject(new Error('Failed to load MapLibre GL JS from all CDNs'));
+                        document.head.appendChild(script3);
+                    };
+                    document.head.appendChild(script2);
+                };
+                document.head.appendChild(script1);
+            });
+        }
+
+        // Function to show error message when MapLibre fails to load
+        function showMapError(message) {
+            const mapDiv = document.getElementById('map');
+            if (mapDiv) {
+                mapDiv.innerHTML = `
+                    <div style="
+                        display: flex;
+                        align-items: center;
+                        justify-content: center;
+                        height: 100%;
+                        background-color: #f8f9fa;
+                        border: 2px dashed #dee2e6;
+                        border-radius: 8px;
+                        text-align: center;
+                        padding: 20px;
+                        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+                    ">
+                        <div>
+                            <div style="font-size: 48px; color: #6c757d; margin-bottom: 16px;">🗺️</div>
+                            <div style="font-size: 18px; color: #495057; margin-bottom: 8px;">Map Loading Error</div>
+                            <div style="font-size: 14px; color: #6c757d; margin-bottom: 16px;">${message}</div>
+                            <div style="font-size: 12px; color: #6c757d;">
+                                This may be due to network restrictions or CDN availability issues.
+                                <br>Try refreshing the page or check your internet connection.
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }
+        }
+
+        // Load MapLibre and initialize map
+        loadMapLibreGL().then(() => {
+            // MapLibre loaded successfully, check if it's available
+            if (typeof maplibregl === 'undefined') {
+                throw new Error('MapLibre GL JS loaded but not available');
+            }
+            initializeMap();
+        }).catch(error => {
+            console.error('Failed to load MapLibre GL JS:', error);
+            showMapError('Failed to load MapLibre GL JavaScript library');
+        });
+
+        function initializeMap() {
+            try {
         // Initialize map
         var map = new maplibregl.Map({"container": "map", "style": "https://demotiles.maplibre.org/style.json", "center": [-74.5, 40], "zoom": 9});
 
@@ -90,7 +156,7 @@ map.on('load', function() {
     
     // Add sources
     
-    map.addSource("source_a18c920106804a1eb0e684bbe90317ba", {"type": "geojson", "data": {"type": "FeatureCollection", "features": [{"type": "Feature", "properties": {"description": "A nice place"}, "geometry": {"type": "Point", "coordinates": [-74.5, 40]}}]}});
+    map.addSource("source_86164bf73a7a45d79c3e6f01d01b760f", {"type": "geojson", "data": {"type": "FeatureCollection", "features": [{"type": "Feature", "properties": {"description": "A nice place"}, "geometry": {"type": "Point", "coordinates": [-74.5, 40]}}]}});
     
 
     
@@ -98,7 +164,7 @@ map.on('load', function() {
 
     // Add layers
     
-    map.addLayer({"id": "points", "type": "circle", "source": "source_a18c920106804a1eb0e684bbe90317ba", "paint": {"circle-radius": 6, "circle-color": "#007cbf"}});
+    map.addLayer({"id": "points", "type": "circle", "source": "source_86164bf73a7a45d79c3e6f01d01b760f", "paint": {"circle-radius": 6, "circle-color": "#007cbf"}});
     
 
     // Popups
@@ -151,7 +217,20 @@ map.on('load', function() {
     
 
     
+
+            } catch (error) {
+                console.error('Error initializing map:', error);
+                showMapError('Error initializing the map: ' + error.message);
+            }
+        }
     </script>
+    
+    <!-- Load additional libraries with fallbacks -->
+    
+    
+    
+    
+    
 </body>
 
 </html>
