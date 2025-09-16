@@ -107,6 +107,18 @@ color = interpolate(
 jupyter notebook examples
 ```
 
+### Live Examples Gallery
+
+View interactive examples deployed to GitHub Pages: [MapLibreum Examples Gallery](https://kauevestena.github.io/maplibreum_prototype/)
+
+The examples gallery is automatically generated from Jupyter notebooks in the `examples/` folder and showcases:
+- Creative MapLibreum examples and tutorials
+- Basic usage patterns
+- New features demonstrations  
+- Event handling and interactions
+
+To deploy examples to GitHub Pages, see [GitHub Pages Documentation](docs/GITHUB_PAGES.md).
+
 ## Changelog
 
 See the [CHANGELOG](CHANGELOG.md) for a detailed list of updates in each release.
