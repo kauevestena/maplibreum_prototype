@@ -138,7 +138,7 @@ class Choropleth:
             end = bins[i + 1]
             label = f"{start:.2f} – {end:.2f}"
             legend_rows.append(
-                f"<div><i style='background:{self.colors[i]}'></i>{label}</div>"
+                f"<div><span style='background:{self.colors[i]}'></span>{label}</div>"
             )
         legend_html = (
             f"<div><strong>{self.legend_title}</strong><br>{''.join(legend_rows)}</div>"
