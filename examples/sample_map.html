@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8" />
-    <title>NYC Area</title>
+    <title>São Paulo Highlights</title>
     <meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no" />
     <link href="https://unpkg.com/maplibre-gl@3.4.0/dist/maplibre-gl.css" rel="stylesheet" onerror="this.onerror=null;this.href='https://cdn.jsdelivr.net/npm/maplibre-gl@3.4.0/dist/maplibre-gl.css';" />
     
@@ -15,7 +15,7 @@
             padding: 0;
         }
 
-        #map {
+        #maplibreum_11c4f21a309c41b483b50dcc45caa83d {
             width: 100%;
             height: 500px;
             position: relative;
@@ -45,14 +45,14 @@
 
         }
 
-        #map { width: 100%; height: 500px; }
+        #maplibreum_11c4f21a309c41b483b50dcc45caa83d { width: 100%; height: 500px; }
 
 
 
     </style>
 </head>
 <body>
-    <div id="map">
+    <div id="maplibreum_11c4f21a309c41b483b50dcc45caa83d">
         
         
     </div>
@@ -86,7 +86,7 @@
 
         // Function to show error message when MapLibre fails to load
         function showMapError(message) {
-            const mapDiv = document.getElementById('map');
+            const mapDiv = document.getElementById('maplibreum_11c4f21a309c41b483b50dcc45caa83d');
             if (mapDiv) {
                 mapDiv.innerHTML = `
                     <div style="
@@ -130,7 +130,7 @@
         function initializeMap() {
             try {
         // Initialize map
-        var map = new maplibregl.Map({"container": "map", "style": "https://demotiles.maplibre.org/style.json", "center": [-74.5, 40], "zoom": 9});
+        var map = new maplibregl.Map({"container": "maplibreum_11c4f21a309c41b483b50dcc45caa83d", "style": "https://demotiles.maplibre.org/style.json", "center": [-46.65, -23.56], "zoom": 12});
 
 
 // Add controls
@@ -156,7 +156,7 @@ map.on('load', function() {
     
     // Add sources
     
-    map.addSource("source_86164bf73a7a45d79c3e6f01d01b760f", {"type": "geojson", "data": {"type": "FeatureCollection", "features": [{"type": "Feature", "properties": {"description": "A nice place"}, "geometry": {"type": "Point", "coordinates": [-74.5, 40]}}]}});
+    map.addSource("city-tour", {"type": "geojson", "data": {"type": "FeatureCollection", "features": [{"type": "Feature", "properties": {"name": "S\u00e3o Paulo Cathedral", "category": "Landmark", "popup_html": "<strong>S\u00e3o Paulo Cathedral</strong><br>Historic heart of the city."}, "geometry": {"type": "Point", "coordinates": [-46.6339, -23.5503]}}, {"type": "Feature", "properties": {"name": "Municipal Market", "category": "Market", "popup_html": "<strong>Municipal Market</strong><br>Famous for gourmet snacks."}, "geometry": {"type": "Point", "coordinates": [-46.6275, -23.5412]}}, {"type": "Feature", "properties": {"name": "Museum of Modern Art", "category": "Museum", "popup_html": "<strong>MAM</strong><br>Art museum inside Ibirapuera Park."}, "geometry": {"type": "Point", "coordinates": [-46.6557, -23.5874]}}, {"type": "Feature", "properties": {"name": "Historic Day Tour", "popup_html": "<strong>Historic Day Tour</strong><br>Suggested route connecting city highlights."}, "geometry": {"type": "LineString", "coordinates": [[-46.6339, -23.5503], [-46.629, -23.553], [-46.628, -23.5565], [-46.6415, -23.564], [-46.6505, -23.573], [-46.6557, -23.5874]]}}, {"type": "Feature", "properties": {"name": "Ibirapuera Park", "popup_html": "<strong>Ibirapuera Park</strong><br>Green oasis perfect for an afternoon stroll."}, "geometry": {"type": "Polygon", "coordinates": [[[-46.6643, -23.5888], [-46.6588, -23.598], [-46.6498, -23.5965], [-46.6463, -23.5897], [-46.6538, -23.5838], [-46.6643, -23.5888]]]}}]}});
     
 
     
@@ -164,27 +164,64 @@ map.on('load', function() {
 
     // Add layers
     
-    map.addLayer({"id": "points", "type": "circle", "source": "source_86164bf73a7a45d79c3e6f01d01b760f", "paint": {"circle-radius": 6, "circle-color": "#007cbf"}});
+    map.addLayer({"id": "city-tour-points", "type": "circle", "filter": ["==", ["geometry-type"], "Point"], "paint": {"circle-radius": ["interpolate", ["linear"], ["zoom"], 10, 6, 14, 14], "circle-color": ["match", ["get", "category"], "Landmark", "#e76f51", "Market", "#f4a261", "Museum", "#2a9d8f", "#007cbf"], "circle-stroke-color": "#ffffff", "circle-stroke-width": 1.5}, "source": "city-tour"});
+    
+    map.addLayer({"id": "city-tour-route", "type": "line", "filter": ["==", ["geometry-type"], "LineString"], "layout": {"line-cap": "round", "line-join": "round"}, "paint": {"line-color": "#264653", "line-width": 4, "line-opacity": 0.8, "line-dasharray": [1.2, 1]}, "source": "city-tour"});
+    
+    map.addLayer({"id": "city-tour-park", "type": "fill", "filter": ["==", ["geometry-type"], "Polygon"], "paint": {"fill-color": "#2a9d8f", "fill-opacity": 0.35}, "source": "city-tour"});
     
 
     // Popups
     
     var popup_1 = new maplibregl.Popup({});
     
-    popup_1.setHTML(`<strong>Hello!</strong><br>This is a popup.`);
     
     
-    
-    map.on('click', 'points', function(e) {
+    map.on('click', 'city-tour-points', function(e) {
         popup_1
             .setLngLat(e.lngLat)
-            .setHTML(`<strong>Hello!</strong><br>This is a popup.`)
+            .setHTML(e.features[0].properties['popup_html'])
+            .addTo(map);
+    });
+    
+    
+    var popup_2 = new maplibregl.Popup({});
+    
+    
+    
+    map.on('click', 'city-tour-route', function(e) {
+        popup_2
+            .setLngLat(e.lngLat)
+            .setHTML(e.features[0].properties['popup_html'])
+            .addTo(map);
+    });
+    
+    
+    var popup_3 = new maplibregl.Popup({});
+    
+    
+    
+    map.on('click', 'city-tour-park', function(e) {
+        popup_3
+            .setLngLat(e.lngLat)
+            .setHTML(e.features[0].properties['popup_html'])
             .addTo(map);
     });
     
     
 
     // Tooltips
+    
+    var tooltip_1 = new maplibregl.Popup({"closeButton": false});
+    map.on('mouseenter', 'city-tour-points', function(e) {
+        tooltip_1
+            .setLngLat(e.lngLat)
+            .setHTML(e.features[0].properties['name'])
+            .addTo(map);
+    });
+    map.on('mouseleave', 'city-tour-points', function() {
+        tooltip_1.remove();
+    });
     
 
     // Tile Layers
