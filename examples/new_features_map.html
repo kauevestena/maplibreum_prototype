@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8" />
-    <title>NYC Area</title>
+    <title>Exploring NYC Layers</title>
     <meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no" />
     <link href="https://unpkg.com/maplibre-gl@3.4.0/dist/maplibre-gl.css" rel="stylesheet" onerror="this.onerror=null;this.href='https://cdn.jsdelivr.net/npm/maplibre-gl@3.4.0/dist/maplibre-gl.css';" />
     
@@ -15,7 +15,7 @@
             padding: 0;
         }
 
-        #map {
+        #maplibreum_6b26d50360fc4e3098d47d408472ab0b {
             width: 100%;
             height: 500px;
             position: relative;
@@ -45,14 +45,14 @@
 
         }
 
-        #map { width: 100%; height: 500px; }
+        #maplibreum_6b26d50360fc4e3098d47d408472ab0b { width: 100%; height: 500px; }
 
 
 
     </style>
 </head>
 <body>
-    <div id="map">
+    <div id="maplibreum_6b26d50360fc4e3098d47d408472ab0b">
         
         
     </div>
@@ -86,7 +86,7 @@
 
         // Function to show error message when MapLibre fails to load
         function showMapError(message) {
-            const mapDiv = document.getElementById('map');
+            const mapDiv = document.getElementById('maplibreum_6b26d50360fc4e3098d47d408472ab0b');
             if (mapDiv) {
                 mapDiv.innerHTML = `
                     <div style="
@@ -130,7 +130,7 @@
         function initializeMap() {
             try {
         // Initialize map
-        var map = new maplibregl.Map({"container": "map", "style": "https://demotiles.maplibre.org/style.json", "center": [-74.5, 40], "zoom": 9});
+        var map = new maplibregl.Map({"container": "maplibreum_6b26d50360fc4e3098d47d408472ab0b", "style": "https://demotiles.maplibre.org/style.json", "center": [-73.985, 40.75], "zoom": 11});
 
 
 // Add controls
@@ -156,7 +156,9 @@ map.on('load', function() {
     
     // Add sources
     
-    map.addSource("points-source", {"type": "geojson", "data": {"type": "FeatureCollection", "features": [{"type": "Feature", "properties": {"description": "A nice place"}, "geometry": {"type": "Point", "coordinates": [-74.5, 40]}}]}});
+    map.addSource("nyc-highlights_source", {"type": "geojson", "data": {"type": "FeatureCollection", "features": [{"type": "Feature", "properties": {"name": "Statue of Liberty", "popup_html": "<strong>Statue of Liberty</strong><br>Iconic harbor monument accessible by ferry."}, "geometry": {"type": "Point", "coordinates": [-74.0445, 40.6892]}}, {"type": "Feature", "properties": {"name": "Central Park", "popup_html": "<strong>Central Park</strong><br>Vast green space with bike paths and lakes."}, "geometry": {"type": "Point", "coordinates": [-73.968, 40.7812]}}, {"type": "Feature", "properties": {"name": "Times Square", "popup_html": "<strong>Times Square</strong><br>Broadway lights, shows, and street performers."}, "geometry": {"type": "Point", "coordinates": [-73.9851, 40.758]}}, {"type": "Feature", "properties": {"name": "Brooklyn Bridge Park", "popup_html": "<strong>Brooklyn Bridge Park</strong><br>Waterfront views back toward Manhattan."}, "geometry": {"type": "Point", "coordinates": [-73.9969, 40.7003]}}, {"type": "Feature", "properties": {"name": "The High Line", "popup_html": "<strong>The High Line</strong><br>Elevated park with art installations."}, "geometry": {"type": "Point", "coordinates": [-74.0048, 40.7479]}}, {"type": "Feature", "properties": {"name": "Museum of Modern Art", "popup_html": "<strong>MoMA</strong><br>World-class collection of modern art."}, "geometry": {"type": "Point", "coordinates": [-73.9776, 40.7614]}}]}, "cluster": true, "clusterRadius": 60, "clusterMaxZoom": 12});
+    
+    map.addSource("nyc-context", {"type": "geojson", "data": {"type": "FeatureCollection", "features": [{"type": "Feature", "properties": {"name": "Hudson River Greenway", "popup_html": "<strong>Hudson River Greenway</strong><br>Scenic bike route along Manhattan's west side."}, "geometry": {"type": "LineString", "coordinates": [[-74.018, 40.7045], [-74.017, 40.7113], [-74.015, 40.7208], [-74.012, 40.7316], [-74.01, 40.742], [-74.0083, 40.7509], [-74.007, 40.7588], [-74.0055, 40.7689], [-74.004, 40.779]]}}, {"type": "Feature", "properties": {"name": "Midtown Cultural Core", "popup_html": "<strong>Midtown Cultural Core</strong><br>Theaters, museums, and iconic skyline views."}, "geometry": {"type": "Polygon", "coordinates": [[[-74.0025, 40.7425], [-73.98, 40.7425], [-73.9705, 40.7595], [-73.9845, 40.773], [-74.0025, 40.769], [-74.0025, 40.7425]]]}}]}});
     
 
     
@@ -164,27 +166,68 @@ map.on('load', function() {
 
     // Add layers
     
-    map.addLayer({"id": "points-layer", "type": "circle", "paint": {"circle-radius": 6, "circle-color": "#007cbf"}, "source": "points-source"});
+    map.addLayer({"id": "nyc-highlights_clusters", "type": "circle", "source": "nyc-highlights_source", "filter": ["has", "point_count"], "paint": {"circle-color": "#51bbd6", "circle-radius": ["step", ["get", "point_count"], 20, 100, 30, 750, 40]}});
+    
+    map.addLayer({"id": "nyc-highlights_cluster-count", "type": "symbol", "source": "nyc-highlights_source", "filter": ["has", "point_count"], "layout": {"text-field": ["get", "point_count_abbreviated"], "text-font": ["Arial Unicode MS Bold"], "text-size": 12}});
+    
+    map.addLayer({"id": "nyc-highlights_unclustered", "type": "circle", "source": "nyc-highlights_source", "filter": ["!", ["has", "point_count"]], "paint": {"circle-color": "#007cbf", "circle-radius": 8, "circle-stroke-width": 1, "circle-stroke-color": "#fff"}});
+    
+    map.addLayer({"id": "hudson-greenway", "type": "line", "filter": ["==", ["geometry-type"], "LineString"], "layout": {"line-cap": "round", "line-join": "round"}, "paint": {"line-color": "#1d6996", "line-width": 4, "line-opacity": 0.7}, "source": "nyc-context"});
+    
+    map.addLayer({"id": "midtown-cultural-core", "type": "fill", "filter": ["==", ["geometry-type"], "Polygon"], "paint": {"fill-color": "#edc948", "fill-opacity": 0.25, "fill-outline-color": "#c28e0e"}, "source": "nyc-context"});
     
 
     // Popups
     
     var popup_1 = new maplibregl.Popup({});
     
-    popup_1.setHTML(`<strong>Hello!</strong><br>This is a popup.`);
     
     
-    
-    map.on('click', 'points-layer', function(e) {
+    map.on('click', 'nyc-highlights_unclustered', function(e) {
         popup_1
             .setLngLat(e.lngLat)
-            .setHTML(`<strong>Hello!</strong><br>This is a popup.`)
+            .setHTML(e.features[0].properties['popup_html'])
+            .addTo(map);
+    });
+    
+    
+    var popup_2 = new maplibregl.Popup({});
+    
+    
+    
+    map.on('click', 'hudson-greenway', function(e) {
+        popup_2
+            .setLngLat(e.lngLat)
+            .setHTML(e.features[0].properties['popup_html'])
+            .addTo(map);
+    });
+    
+    
+    var popup_3 = new maplibregl.Popup({});
+    
+    
+    
+    map.on('click', 'midtown-cultural-core', function(e) {
+        popup_3
+            .setLngLat(e.lngLat)
+            .setHTML(e.features[0].properties['popup_html'])
             .addTo(map);
     });
     
     
 
     // Tooltips
+    
+    var tooltip_1 = new maplibregl.Popup({"closeButton": false});
+    map.on('mouseenter', 'nyc-highlights_unclustered', function(e) {
+        tooltip_1
+            .setLngLat(e.lngLat)
+            .setHTML(e.features[0].properties['name'])
+            .addTo(map);
+    });
+    map.on('mouseleave', 'nyc-highlights_unclustered', function() {
+        tooltip_1.remove();
+    });
     
 
     // Tile Layers
@@ -204,6 +247,21 @@ map.on('load', function() {
     // Markers
     
 
+    
+    map.on('click', 'nyc-highlights_clusters', function(e) {
+        var features = map.queryRenderedFeatures(e.point, { layers: ['nyc-highlights_clusters'] });
+        var clusterId = features[0].properties.cluster_id;
+        map.getSource('nyc-highlights_source').getClusterExpansionZoom(clusterId, function(err, zoom) {
+            if (err) return;
+            map.easeTo({ center: features[0].geometry.coordinates, zoom: zoom });
+        });
+    });
+    map.on('mouseenter', 'nyc-highlights_clusters', function() {
+        map.getCanvas().style.cursor = 'pointer';
+    });
+    map.on('mouseleave', 'nyc-highlights_clusters', function() {
+        map.getCanvas().style.cursor = '';
+    });
     
 
     
