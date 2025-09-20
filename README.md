@@ -123,6 +123,77 @@ To deploy examples to GitHub Pages, see [GitHub Pages Documentation](docs/GITHUB
 
 See the [CHANGELOG](CHANGELOG.md) for a detailed list of updates in each release.
 
+## Testing MapLibreum Functionality
+
+### Basic Testing
+
+Run the core test suite to verify MapLibreum's basic functionality:
+
+```bash
+# Install development dependencies
+pip install -e .
+pip install pytest jupyter
+
+# Run all basic tests
+pytest tests/ -v
+```
+
+### Advanced Testing: MapLibre Examples Validation
+
+To verify that MapLibreum is working properly and to check feature coverage against MapLibre GL JS, use the comprehensive testing suite in `misc/maplibre_examples/`:
+
+#### MapLibre Examples Testing Suite
+
+The `misc/maplibre_examples/` directory contains a systematic testing system that validates MapLibreum's capability to reproduce all official MapLibre GL JS examples. This provides:
+
+- **Automated validation** of feature coverage  
+- **Regression testing** for new releases
+- **Example conversion** from JavaScript to Python
+- **Performance benchmarking** against reference implementations
+
+#### Quick Status Check
+
+```bash
+# Install dependencies for the testing suite
+pip install requests beautifulsoup4
+
+# Check current implementation progress
+python -c "
+import json
+with open('misc/maplibre_examples/status.json') as f:
+    data = json.load(f)
+total = len(data)
+implemented = sum(1 for v in data.values() if list(v.values())[0]['task_status'])
+print(f'MapLibreum Feature Coverage: {implemented}/{total} ({implemented/total*100:.1f}%)')
+print(f'Total MapLibre examples available: {total}')
+print(f'Examples successfully implemented: {implemented}')
+"
+```
+
+#### Running Example Tests
+
+```bash
+# Run all implemented example tests (when available)
+pytest tests/test_examples/ -v
+
+# Refresh examples from MapLibre.org (optional)
+python misc/maplibre_examples/scrapping.py
+
+# Find next example to implement
+python -c "
+import json
+with open('misc/maplibre_examples/status.json') as f:
+    data = json.load(f)
+for name, info in data.items():
+    if not list(info.values())[0]['task_status']:
+        print(f'Next unimplemented example: {name}')
+        print(f'MapLibre URL: {list(info.values())[0][\"url\"]}')
+        break
+"
+```
+
+For detailed information about the testing suite, see [misc/maplibre_examples/README.md](misc/maplibre_examples/README.md).
+
 ## Contributing
 
 Contributions are welcome! Please see the [issues page](https://github.com/kauevestena/maplibreum_prototype/issues) to see what needs to be done.
