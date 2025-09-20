@@ -84,7 +84,7 @@
       "url": "https://maplibre.org/maplibre-gl-js/docs/examples/add-a-default-marker/",
       "source_status": true,
       "file_path": "misc/maplibre_examples/pages/add-a-default-marker.html",
-      "task_status": false
+      "task_status": true
     }
   },
   "add-a-generated-icon-to-the-map": {
@@ -100,7 +100,7 @@
       "url": "https://maplibre.org/maplibre-gl-js/docs/examples/add-a-geojson-line/",
       "source_status": true,
       "file_path": "misc/maplibre_examples/pages/add-a-geojson-line.html",
-      "task_status": false
+      "task_status": true
     }
   },
   "add-a-geojson-polygon": {
@@ -204,7 +204,7 @@
       "url": "https://maplibre.org/maplibre-gl-js/docs/examples/add-an-icon-to-the-map/",
       "source_status": true,
       "file_path": "misc/maplibre_examples/pages/add-an-icon-to-the-map.html",
-      "task_status": false
+      "task_status": true
     }
   },
   "add-contour-lines": {
@@ -516,7 +516,7 @@
       "url": "https://maplibre.org/maplibre-gl-js/docs/examples/display-a-map/",
       "source_status": true,
       "file_path": "misc/maplibre_examples/pages/display-a-map.html",
-      "task_status": false
+      "task_status": true
     }
   },
   "display-a-non-interactive-map": {
@@ -532,7 +532,7 @@
       "url": "https://maplibre.org/maplibre-gl-js/docs/examples/display-a-popup-on-click/",
       "source_status": true,
       "file_path": "misc/maplibre_examples/pages/display-a-popup-on-click.html",
-      "task_status": false
+      "task_status": true
     }
   },
   "display-a-popup-on-hover": {
@@ -548,7 +548,7 @@
       "url": "https://maplibre.org/maplibre-gl-js/docs/examples/display-a-popup/",
       "source_status": true,
       "file_path": "misc/maplibre_examples/pages/display-a-popup.html",
-      "task_status": false
+      "task_status": true
     }
   },
   "display-a-remote-svg-symbol": {
