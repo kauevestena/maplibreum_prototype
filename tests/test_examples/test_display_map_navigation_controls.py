@@ -2,6 +2,7 @@
 
 import pytest
 
+from maplibreum import controls
 from maplibreum.core import Map
 
 
@@ -27,13 +28,6 @@ def test_display_map_navigation_controls():
     ```
     """
 
-    control_options = {
-        "visualizePitch": True,
-        "visualizeRoll": True,
-        "showZoom": True,
-        "showCompass": True,
-    }
-
     m = Map(
         map_style="https://demotiles.maplibre.org/style.json",
         center=[-74.5, 40],
@@ -41,7 +35,15 @@ def test_display_map_navigation_controls():
         map_options={"rollEnabled": True},
     )
 
-    m.add_control("navigation", position="top-right", options=control_options)
+    nav_control = controls.NavigationControl(
+        visualizePitch=True,
+        showZoom=True,
+        showCompass=True,
+    )
+    nav_control.options["visualizeRoll"] = True
+    expected_options = dict(nav_control.to_dict())
+
+    m.add_control(nav_control, position="top-right")
 
     assert m.center[0] == pytest.approx(-74.5)
     assert m.center[1] == pytest.approx(40)
@@ -53,10 +55,10 @@ def test_display_map_navigation_controls():
     nav_control = m.controls[0]
     assert nav_control["type"] == "navigation"
     assert nav_control["position"] == "top-right"
-    assert nav_control["options"] == control_options
+    assert nav_control["options"] == expected_options
 
     html = m.render()
     assert "rollEnabled" in html
-    for option_key in control_options:
+    for option_key in expected_options:
         assert option_key in html
 

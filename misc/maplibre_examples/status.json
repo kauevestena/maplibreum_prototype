@@ -236,7 +236,7 @@
       "url": "https://maplibre.org/maplibre-gl-js/docs/examples/add-multiple-geometries-from-one-geojson-source/",
       "source_status": true,
       "file_path": "misc/maplibre_examples/pages/add-multiple-geometries-from-one-geojson-source.html",
-      "task_status": false
+      "task_status": true
     }
   },
   "add-support-for-right-to-left-scripts": {
@@ -420,7 +420,7 @@
       "url": "https://maplibre.org/maplibre-gl-js/docs/examples/create-a-heatmap-layer/",
       "source_status": true,
       "file_path": "misc/maplibre_examples/pages/create-a-heatmap-layer.html",
-      "task_status": false
+      "task_status": true
     }
   },
   "create-a-hover-effect": {
@@ -444,7 +444,7 @@
       "url": "https://maplibre.org/maplibre-gl-js/docs/examples/create-and-style-clusters/",
       "source_status": true,
       "file_path": "misc/maplibre_examples/pages/create-and-style-clusters.html",
-      "task_status": false
+      "task_status": true
     }
   },
   "create-deckgl-layer-using-rest-api": {
@@ -684,7 +684,7 @@
       "url": "https://maplibre.org/maplibre-gl-js/docs/examples/fit-a-map-to-a-bounding-box/",
       "source_status": true,
       "file_path": "misc/maplibre_examples/pages/fit-a-map-to-a-bounding-box.html",
-      "task_status": false
+      "task_status": true
     }
   },
   "fit-to-the-bounds-of-a-linestring": {

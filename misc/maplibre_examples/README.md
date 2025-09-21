@@ -137,24 +137,30 @@ When converting JavaScript examples to Python:
 
 This roadmap tracks the systematic implementation of all 123 official MapLibre GL JS examples to ensure comprehensive feature coverage and compatibility. This shall be updated every iteration.
 
-#### Phase 1: Core Functionality (6/123 completed - 4.9%)
+#### Phase 1: Core Functionality (13/123 completed - 10.6%)
 
 **✅ Completed Examples:**
 - `add-a-default-marker` - Basic marker placement
 - `display-a-map` - Map initialization and basic configuration
 - `display-a-popup` - Static popup functionality
-- `add-a-geojson-line` - GeoJSON LineString layers with styling
-- `add-an-icon-to-the-map` - Custom icon symbol layers
 - `display-a-popup-on-click` - Interactive popups with event handling
-- `3d-terrain` - 3D terrain rendering
-
-**🎯 Next Priority Examples (Phase 1 continuation):**
-- `add-a-geojson-polygon` - GeoJSON polygon rendering and styling
 - `display-map-navigation-controls` - Built-in navigation controls
+- `add-a-geojson-line` - GeoJSON LineString layers with styling
+- `add-a-geojson-polygon` - GeoJSON polygon rendering and styling
+- `add-an-icon-to-the-map` - Custom icon symbol layers
+- `add-multiple-geometries-from-one-geojson-source` - Complex GeoJSON datasets
 - `create-a-heatmap-layer` - Heatmap visualization for point data
 - `create-and-style-clusters` - Marker clustering for performance
 - `fit-a-map-to-a-bounding-box` - Viewport and bounds management
-- `add-multiple-geometries-from-one-geojson-source` - Complex GeoJSON datasets
+- `3d-terrain` - 3D terrain rendering
+
+**🎯 Next Priority Examples (Phase 1 continuation):**
+- `display-a-popup-on-hover` - Hover-based popup interactivity
+- `display-html-clusters-with-custom-properties` - Rich cluster labelling
+- `display-a-non-interactive-map` - Static map rendering patterns
+- `draw-a-circle` - Client-side drawing primitives
+- `draw-geojson-points` - Styling raw GeoJSON points
+- `display-a-remote-svg-symbol` - External asset symbol usage
 
 #### Phase 2: Advanced Styling & Layers (Target: 20% coverage)
 
