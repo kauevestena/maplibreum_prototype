@@ -108,7 +108,7 @@
       "url": "https://maplibre.org/maplibre-gl-js/docs/examples/add-a-geojson-polygon/",
       "source_status": true,
       "file_path": "misc/maplibre_examples/pages/add-a-geojson-polygon.html",
-      "task_status": false
+      "task_status": true
     }
   },
   "add-a-hillshade-layer": {
@@ -604,7 +604,7 @@
       "url": "https://maplibre.org/maplibre-gl-js/docs/examples/display-map-navigation-controls/",
       "source_status": true,
       "file_path": "misc/maplibre_examples/pages/display-map-navigation-controls.html",
-      "task_status": false
+      "task_status": true
     }
   },
   "draw-a-circle": {

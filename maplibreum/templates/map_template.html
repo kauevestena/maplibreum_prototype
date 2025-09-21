@@ -146,7 +146,7 @@
 // Add controls
 {% for ctrl in controls %}
 {% if ctrl.type == "navigation" %}
-map.addControl(new maplibregl.NavigationControl(), "{{ ctrl.position }}");
+map.addControl(new maplibregl.NavigationControl({{ ctrl.options | tojson }}), "{{ ctrl.position }}");
 {% elif ctrl.type == "scale" %}
 map.addControl(new maplibregl.ScaleControl({{ ctrl.options | tojson }}), "{{ ctrl.position }}");
 {% elif ctrl.type == "fullscreen" %}

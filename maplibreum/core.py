@@ -256,6 +256,7 @@ class Map:
         extra_js="",
         custom_css="",
         maplibre_version="3.4.0",
+        map_options=None,
     ):
         """Initialize a map instance.
 
@@ -288,6 +289,7 @@ class Map:
         self.extra_js = extra_js
         self.custom_css = custom_css
         self.maplibre_version = maplibre_version
+        self.additional_map_options = dict(map_options) if map_options else {}
         self.layer_control = False
         self.cluster_layers = []
         self.bounds = None
@@ -1010,6 +1012,8 @@ class Map:
             map_options["pitch"] = self.pitch
         if self.bearing is not None:
             map_options["bearing"] = self.bearing
+        if self.additional_map_options:
+            map_options.update(self.additional_map_options)
 
         include_minimap = any(c["type"] == "minimap" for c in self.controls)
         include_search = any(c["type"] == "search" for c in self.controls)
