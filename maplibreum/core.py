@@ -13,16 +13,8 @@ from .cluster import ClusteredGeoJson, MarkerCluster
 from .expressions import get as expr_get
 from .expressions import interpolate, var
 from .markers import BeautifyIcon, DivIcon, Icon  # noqa: F401
-
-# Predefined map styles
-MAP_STYLES = {
-    "basic": "https://demotiles.maplibre.org/style.json",
-    "streets": "https://api.maptiler.com/maps/streets/style.json?key=YOUR_API_KEY",
-    "satellite": "https://api.maptiler.com/maps/satellite/style.json?key=YOUR_API_KEY",
-    "topo": "https://api.maptiler.com/maps/topo/style.json?key=YOUR_API_KEY",
-    "dark": "https://api.maptiler.com/maps/darkmatter/style.json?key=YOUR_API_KEY",
-    "light": "https://api.maptiler.com/maps/positron/style.json?key=YOUR_API_KEY",
-}
+from . import controls
+from .styles import MAP_STYLES
 
 
 class Tooltip:
@@ -155,80 +147,6 @@ class GeoJsonTooltip(GeoJsonPopup):
         return super().render(feature)
 
 
-class MiniMapControl:
-    """Configuration object for the MiniMap plugin control."""
-
-    def __init__(self, style="basic", zoom_level=6):
-        """Initialize a MiniMapControl.
-
-        Parameters
-        ----------
-        style : str, optional
-            The map style to use for the minimap.
-        zoom_level : int, optional
-            The zoom level offset for the minimap.
-        """
-        if style in MAP_STYLES:
-            self.style = MAP_STYLES[style]
-        else:
-            self.style = style
-        self.zoom_level = zoom_level
-
-    def to_dict(self):
-        """Serialize configuration for template usage."""
-        return {"style": self.style, "zoomLevelOffset": self.zoom_level}
-
-
-class SearchControl:
-    """Configuration for a search/geocoder control."""
-
-    def __init__(self, provider="maptiler", api_key=None, **options):
-        """Initialize a SearchControl.
-
-        Parameters
-        ----------
-        provider : str, optional
-            The search provider to use.
-        api_key : str, optional
-            The API key for the search provider.
-        options : dict, optional
-            Additional options for the search control.
-        """
-        self.provider = provider
-        self.api_key = api_key
-        self.options = options
-
-    def to_dict(self):
-        """Serialize configuration for template usage.
-
-        Returns
-        -------
-        dict
-            The dictionary representation of the search control options.
-        """
-        data = {"provider": self.provider}
-        if self.api_key is not None:
-            data["apiKey"] = self.api_key
-        data.update(self.options)
-        return data
-
-
-class MeasureControl:
-    """Configuration for the map measure tool."""
-
-    def __init__(self, **options):
-        """Initialize a MeasureControl.
-
-        Parameters
-        ----------
-        options : dict, optional
-            Options for the measure control.
-        """
-        self.options = options
-
-    def to_dict(self):
-        """Serialize configuration for template usage."""
-        return self.options
 
 
 class Map:
@@ -266,7 +184,7 @@ class Map:
             Version of MapLibre GL JS to load. Defaults to "3.4.0".
         """
         self.title = title
-        if map_style in MAP_STYLES:
+        if isinstance(map_style, str) and map_style in MAP_STYLES:
             self.map_style = MAP_STYLES[map_style]
         else:
             self.map_style = map_style
@@ -330,62 +248,22 @@ class Map:
         self.bounds = bounds
         self.bounds_padding = padding
 
-    def add_control(self, control_type, position="top-right", options=None):
+    def add_control(self, control, position="top-right"):
         """Add a UI control to the map.
-
         Parameters
         ----------
-        control_type : str or MiniMapControl
-            Type of control to add. Supported string values are ``'navigation'``,
-            ``'scale'``, ``'fullscreen'``, ``'geolocate'``, ``'attribution'`` and
-            ``'minimap'``. A :class:`MiniMapControl` instance can also be passed
-            for the minimap control.
+        control : object
+            A control object instance.
         position : str, optional
             Position on the map (e.g. ``'top-right'`` or ``'bottom-left'``).
-        options : dict or MiniMapControl, optional
-            Options forwarded to the underlying MapLibre GL control
-            constructor. For example ``{"maxWidth": 80, "unit": "imperial"}``
-            for the scale control or ``{"trackUserLocation": true}`` for the
-            geolocate control. For the minimap control, either provide a
-            ``MiniMapControl`` instance or a dictionary with ``style`` and
-            ``zoomLevelOffset``.
         """
-        if isinstance(control_type, MiniMapControl):
-            self.controls.append(
-                {
-                    "type": "minimap",
-                    "position": position,
-                    "options": control_type.to_dict(),
-                }
-            )
-            return
-
-        if control_type == "minimap" and isinstance(options, MiniMapControl):
-            options = options.to_dict()
-
-        if options is None:
-            options = {}
+        control_type = control.__class__.__name__.lower().replace("control", "")
         self.controls.append(
-            {"type": control_type, "position": position, "options": options}
+            {"type": control_type, "position": position, "options": control.to_dict()}
         )
 
-    def add_search_control(self, options=None, position="top-left"):
-        """Add a search/geocoder control to the map.
-
-        Parameters
-        ----------
-        options : dict or SearchControl, optional
-            Configuration for the control including ``provider`` and
-            ``apiKey``. If a :class:`SearchControl` instance is provided, its
-            ``to_dict`` representation will be used.
-        position : str, optional
-            Position on the map where the control will be placed.
-        """
-        if isinstance(options, SearchControl):
-            opts = options.to_dict()
-        else:
-            opts = options or {}
-        self.controls.append({"type": "search", "position": position, "options": opts})
+    def add_search_control(self, control, position="top-left"):
+        self.add_control(control, position)
 
     def add_draw_control(self, options=None):
         """Enable a draw control on the map."""
@@ -394,14 +272,8 @@ class Map:
         self.draw_control = True
         self.draw_control_options = options
 
-    def add_measure_control(self, options=None):
-        """Enable a measure control on the map."""
-        if isinstance(options, MeasureControl):
-            opts = options.to_dict()
-        else:
-            opts = options or {}
-        self.measure_control = True
-        self.measure_control_options = opts
+    def add_measure_control(self, control, position="top-right"):
+        self.add_control(control, position)
 
     def add_legend(self, legend):
         """Add a legend to the map."""
