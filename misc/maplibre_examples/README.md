@@ -146,6 +146,7 @@ This roadmap tracks the systematic implementation of all 123 official MapLibre G
 - `add-a-geojson-line` - GeoJSON LineString layers with styling
 - `add-an-icon-to-the-map` - Custom icon symbol layers
 - `display-a-popup-on-click` - Interactive popups with event handling
+- `3d-terrain` - 3D terrain rendering
 
 **🎯 Next Priority Examples (Phase 1 continuation):**
 - `add-a-geojson-polygon` - GeoJSON polygon rendering and styling

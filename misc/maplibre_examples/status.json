@@ -4,7 +4,7 @@
       "url": "https://maplibre.org/maplibre-gl-js/docs/examples/3d-terrain/",
       "source_status": true,
       "file_path": "misc/maplibre_examples/pages/3d-terrain.html",
-      "task_status": false
+      "task_status": true
     }
   },
   "add-a-3d-model-to-globe-using-threejs": {
