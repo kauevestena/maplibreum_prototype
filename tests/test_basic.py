@@ -1,4 +1,6 @@
 import pytest
+
+from maplibreum import sources
 from maplibreum.core import Map, GeoJson, Legend
 
 
@@ -23,18 +25,36 @@ def test_map_render_contains_style(map_instance):
 
 
 def test_add_tile_layer(map_instance):
-    source = {
-        "type": "raster",
-        "tiles": ["https://example.com/{z}/{x}/{y}.png"],
-        "tileSize": 256,
-    }
     layer = {"id": "raster", "type": "raster"}
-    map_instance.add_layer(layer, source=source)
-    assert map_instance.layers[0]["definition"]["type"] == "raster"
-    assert (
-        map_instance.sources[0]["definition"]["tiles"][0]
-        == "https://example.com/{z}/{x}/{y}.png"
+    raster_source = sources.RasterSource(
+        tiles="https://example.com/{z}/{x}/{y}.png",
+        tile_size=256,
+        attribution="Example Imagery",
+        min_zoom=3,
     )
+    map_instance.add_layer(layer, source=raster_source)
+
+    assert map_instance.layers[0]["definition"]["type"] == "raster"
+    source_def = map_instance.sources[0]["definition"]
+    assert source_def["tiles"][0] == "https://example.com/{z}/{x}/{y}.png"
+    assert source_def["tileSize"] == 256
+    assert source_def["attribution"] == "Example Imagery"
+    assert source_def["minzoom"] == 3
+
+
+def test_add_source_wrapper(map_instance):
+    raster = sources.RasterSource(
+        tiles=["https://tiles.example.com/{z}/{x}/{y}.png"],
+        tile_size=512,
+        max_zoom=18,
+        scheme="tms",
+    )
+    map_instance.add_source("custom", raster)
+
+    stored = map_instance.sources[0]["definition"]
+    assert stored["tileSize"] == 512
+    assert stored["maxzoom"] == 18
+    assert stored["scheme"] == "tms"
 
 
 def test_add_wms_layer(map_instance):

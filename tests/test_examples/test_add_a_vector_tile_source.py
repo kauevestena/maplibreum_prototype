@@ -1,6 +1,6 @@
 """Test for add-a-vector-tile-source MapLibre example."""
 
-from maplibreum import Map, layers
+from maplibreum import Map, layers, sources
 
 
 def test_add_a_vector_tile_source():
@@ -12,12 +12,12 @@ def test_add_a_vector_tile_source():
         zoom=12,
     )
 
-    vector_source = {
-        "type": "vector",
-        "tiles": ["https://demotiles.maplibre.org/tiles/{z}/{x}/{y}.pbf"],
-        "minzoom": 0,
-        "maxzoom": 14,
-    }
+    vector_source = sources.VectorSource(
+        tiles="https://demotiles.maplibre.org/tiles/{z}/{x}/{y}.pbf",
+        min_zoom=0,
+        max_zoom=14,
+        attribution="Demo",
+    )
     m.add_source("custom-vector", vector_source)
 
     vector_layer = layers.LineLayer(
@@ -34,3 +34,5 @@ def test_add_a_vector_tile_source():
     assert "ff69b4" in html
     assert "tiles" in html
     assert len(m.layers) == 1
+    definition = m.sources[0]["definition"]
+    assert definition["attribution"] == "Demo"

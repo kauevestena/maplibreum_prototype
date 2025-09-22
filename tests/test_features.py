@@ -154,10 +154,22 @@ def test_tile_layer_and_control():
         name="OSM",
         attribution="© OpenStreetMap contributors",
         subdomains=["a", "b", "c"],
+        tile_size=512,
+        min_zoom=2,
+        max_zoom=16,
+        bounds=[-180.0, -85.0, 180.0, 85.0],
+        volatile=True,
     )
     html_no_control = m.render()
     assert "OSM" in html_no_control
     assert "layer-control" not in html_no_control
+
+    source_def = m.sources[0]["definition"]
+    assert source_def["tileSize"] == 512
+    assert source_def["minzoom"] == 2
+    assert source_def["maxzoom"] == 16
+    assert source_def["bounds"] == [-180.0, -85.0, 180.0, 85.0]
+    assert source_def["volatile"] is True
 
     LayerControl().add_to(m)
     html_with_control = m.render()
@@ -185,6 +197,7 @@ def test_tile_layer_subdomains():
     assert "https://a.tile.openstreetmap.org/{z}/{x}/{y}.png" in html
     assert "https://b.tile.openstreetmap.org/{z}/{x}/{y}.png" in html
     assert "https://c.tile.openstreetmap.org/{z}/{x}/{y}.png" in html
+    assert m.sources[0]["definition"]["tileSize"] == 256
 
 def test_overlay_layer_control():
     m = Map()

@@ -137,7 +137,20 @@ When converting JavaScript examples to Python:
 
 This roadmap tracks the systematic implementation of all 123 official MapLibre GL JS examples to ensure comprehensive feature coverage and compatibility. This shall be updated every iteration.
 
-**Current Coverage:** 44/123 examples completed (35.8%).
+**Current Coverage:** 64/123 examples completed (52.0%). The new source
+wrappers unblock a sizeable portion of the remaining catalog, putting the
+roadmap on track to pass the 70% mark once the remaining protocol-driven
+examples are adapted.
+
+### Specialized Source & Performance Alignment
+
+| Example | Python Mapping | Notes |
+| --- | --- | --- |
+| `add-a-canvas-source` | `sources.CanvasSource` + `RasterLayer` | Animation of the HTML canvas still relies on the browser event loop; pytest asserts the serialized configuration only. |
+| `add-a-cog-raster-source` | `sources.RasterSource` with a `cog://` URL | The dictionary matches MapLibre GL JS. Loading requires adding the `cog` fetch protocol in front-end JavaScript. |
+| `cluster-performance` utility | `cluster_features` performance test | 100k point clustering completes under 5s, documenting current Python performance characteristics. |
+| `pmtiles-source-and-protocol` | _Planned_ | Needs a JS-side `pmtiles://` protocol shim; tracked for follow-up after protocol injection helper lands. |
+| `use-a-fallback-image` | _Planned_ | Template lacks the fourth `fallback` argument to `map.addImage`; blocked pending template extension. |
 
 #### Phase 1: Core Functionality (13/123 completed - 10.6%)
 

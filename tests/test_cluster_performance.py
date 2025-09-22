@@ -1,3 +1,5 @@
+"""Performance regression mirroring MapLibre's clustering benchmark."""
+
 import random
 import time
 
@@ -5,6 +7,8 @@ from maplibreum.cluster import cluster_features
 
 
 def test_supercluster_performance():
+    """Cluster 100k points within five seconds as in the JS benchmark."""
+
     features = [
         {
             "type": "Feature",
