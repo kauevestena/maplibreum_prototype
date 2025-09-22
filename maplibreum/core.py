@@ -232,6 +232,9 @@ MiniMapControl = controls.MiniMapControl
 SearchControl = controls.SearchControl
 
 
+_RTL_CALLBACK_UNSET = object()
+
+
 class Map:
     """The main Map class."""
 
@@ -313,6 +316,7 @@ class Map:
         self.time_dimension_options = {}
         self._on_load_callbacks: List[str] = []
         self.animations: List[str] = []
+        self.rtl_text_plugin: Optional[Dict[str, Any]] = None
 
         template_dir = os.path.join(os.path.dirname(__file__), "templates")
         self.env = Environment(loader=FileSystemLoader(template_dir))
@@ -728,11 +732,138 @@ class Map:
     ):
         """Switch the map projection to globe and optionally add a control."""
 
+        self.set_projection(
+            projection,
+            add_globe_control=add_control,
+            control_position=control_position,
+            control_options=control_options,
+        )
+
+    def set_projection(
+        self,
+        projection,
+        *,
+        add_globe_control=False,
+        control_position="top-left",
+        control_options=None,
+    ):
+        """Set the map projection used by MapLibre.
+
+        Parameters
+        ----------
+        projection : str or mapping
+            Either the name of the projection (e.g. ``"globe"`` or
+            ``"mercator"``) or a mapping describing projection parameters.
+            The mapping is passed straight through to MapLibre allowing
+            custom projections such as Albers.
+        add_globe_control : bool, optional
+            When ``True`` and ``projection`` is ``"globe"``, the globe
+            control is added to the map UI.
+        control_position : str, optional
+            Position for the optional globe control.
+        control_options : dict, optional
+            Additional options forwarded to the globe control.
+        """
+
+        if projection is None:
+            raise ValueError("projection is required")
+        if not isinstance(projection, (str, dict)):
+            raise TypeError("projection must be a string or mapping")
+
         self.additional_map_options["projection"] = projection
-        if add_control:
+
+        if add_globe_control:
+            is_globe_projection = False
+            if isinstance(projection, str):
+                is_globe_projection = projection == "globe"
+            elif isinstance(projection, dict):
+                is_globe_projection = projection.get("name") == "globe"
+            if not is_globe_projection:
+                raise ValueError(
+                    "Globe control can only be added when projection is 'globe'"
+                )
             if control_options is None:
                 control_options = {}
-            self.add_control("globe", position=control_position, options=control_options)
+            self.add_control(
+                "globe", position=control_position, options=control_options
+            )
+
+    def set_mobile_behavior(
+        self,
+        *,
+        cooperative_gestures=None,
+        touch_zoom_rotate=None,
+        touch_pitch=None,
+        pitch_with_rotate=None,
+    ):
+        """Toggle mobile-friendly MapLibre constructor flags.
+
+        Parameters
+        ----------
+        cooperative_gestures : bool, optional
+            Enable ``cooperativeGestures`` for friendlier embedded mobile maps.
+        touch_zoom_rotate : bool, optional
+            Toggle ``touchZoomRotate`` which controls pinch gestures.
+        touch_pitch : bool, optional
+            Toggle ``touchPitch`` to enable two-finger pitch gestures.
+        pitch_with_rotate : bool, optional
+            Toggle ``pitchWithRotate`` to control pitch during rotation.
+        """
+
+        flag_map = {
+            "cooperativeGestures": cooperative_gestures,
+            "touchZoomRotate": touch_zoom_rotate,
+            "touchPitch": touch_pitch,
+            "pitchWithRotate": pitch_with_rotate,
+        }
+
+        for flag, value in flag_map.items():
+            if value is None:
+                continue
+            if not isinstance(value, bool):
+                raise TypeError(f"{flag} expects a boolean value")
+            self.additional_map_options[flag] = value
+
+    def enable_rtl_text_plugin(
+        self,
+        url="https://unpkg.com/maplibre-gl-rtl-text@latest/dist/maplibre-gl-rtl-text.js",
+        *,
+        callback=_RTL_CALLBACK_UNSET,
+        lazy=False,
+        force=False,
+    ):
+        """Register the MapLibre RTL text plugin.
+
+        Parameters
+        ----------
+        url : str, optional
+            URL for the ``maplibre-gl-rtl-text`` plugin script.
+        callback : str or None, optional
+            JavaScript callback invoked once the plugin is loaded. Pass
+            ``None`` to emit ``null`` and ``lazy=True`` when replicating the
+            official example snippet.
+        lazy : bool, optional
+            When ``True`` the plugin is only fetched on demand, matching the
+            third argument of ``maplibregl.setRTLTextPlugin``.
+        force : bool, optional
+            Force re-registering the plugin even if MapLibre reports that it
+            has already been loaded.
+        """
+
+        if not isinstance(url, str) or not url:
+            raise ValueError("A plugin URL is required")
+        plugin_config: Dict[str, Any] = {
+            "url": url,
+            "lazy": bool(lazy),
+            "force": bool(force),
+        }
+
+        if callback is not _RTL_CALLBACK_UNSET:
+            if callback is not None and not isinstance(callback, str):
+                raise TypeError("callback must be JavaScript code or None")
+            plugin_config["callback"] = callback
+
+        self.rtl_text_plugin = plugin_config
 
     def add_sky_layer(self, name="sky", paint=None, layout=None, before=None):
         """Add a sky layer to the map."""
@@ -1391,6 +1522,7 @@ class Map:
             time_dimension_options=self.time_dimension_options,
             on_load_callbacks=self._on_load_callbacks,
             animations=self.animations,
+            rtl_text_plugin=self.rtl_text_plugin,
         )
 
     def _repr_html_(self):

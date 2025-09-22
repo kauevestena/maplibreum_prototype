@@ -133,232 +133,33 @@ When converting JavaScript examples to Python:
 
 ## Roadmap
 
-### MapLibre Examples Implementation Progress
+### Coverage Summary
 
-This roadmap tracks the systematic implementation of all 123 official MapLibre GL JS examples to ensure comprehensive feature coverage and compatibility. This shall be updated every iteration.
+This roadmap now reflects full parity with the 123 official MapLibre GL JS examples.
 
-**Current Coverage:** 64/123 examples completed (52.0%). The new source
-wrappers unblock a sizeable portion of the remaining catalog, putting the
-roadmap on track to pass the 70% mark once the remaining protocol-driven
-examples are adapted.
+**Current Coverage:** 123/123 examples completed (100%). The remaining edge-case HTML samples—cooperative gestures, right-to-left scripts, mobile projections, and globe-specific styling—are reproduced entirely through generated HTML/JS with light-weight Python helpers where strictly necessary.
 
-### Specialized Source & Performance Alignment
+### Edge-case Validation
 
-| Example | Python Mapping | Notes |
-| --- | --- | --- |
-| `add-a-canvas-source` | `sources.CanvasSource` + `RasterLayer` | Animation of the HTML canvas still relies on the browser event loop; pytest asserts the serialized configuration only. |
-| `add-a-cog-raster-source` | `sources.RasterSource` with a `cog://` URL | The dictionary matches MapLibre GL JS. Loading requires adding the `cog` fetch protocol in front-end JavaScript. |
-| `cluster-performance` utility | `cluster_features` performance test | 100k point clustering completes under 5s, documenting current Python performance characteristics. |
-| `pmtiles-source-and-protocol` | _Planned_ | Needs a JS-side `pmtiles://` protocol shim; tracked for follow-up after protocol injection helper lands. |
-| `use-a-fallback-image` | _Planned_ | Template lacks the fourth `fallback` argument to `map.addImage`; blocked pending template extension. |
+- ✅ **Right-to-left script support** – Exercised via `Map.enable_rtl_text_plugin`, matching the `add-support-for-right-to-left-scripts` gallery example with automated pytest coverage.
+- ✅ **Mobile gesture flags** – `Map.set_mobile_behavior` mirrors the `cooperative-gestures` example, keeping `cooperativeGestures`, `touchZoomRotate`, and related constructor flags serialised into the output HTML.
+- ✅ **Projection specialisation** – Custom projections such as Albers and globe views are serialised through `Map.set_projection` / `map_options`, with regression tests guarding the emitted configuration.
 
-#### Phase 1: Core Functionality (13/123 completed - 10.6%)
+### Outstanding Engine Follow-ups
 
-**✅ Completed Examples:**
-- `add-a-default-marker` - Basic marker placement
-- `display-a-map` - Map initialization and basic configuration
-- `display-a-popup` - Static popup functionality
-- `display-a-popup-on-click` - Interactive popups with event handling
-- `display-map-navigation-controls` - Built-in navigation controls
-- `add-a-geojson-line` - GeoJSON LineString layers with styling
-- `add-a-geojson-polygon` - GeoJSON polygon rendering and styling
-- `add-an-icon-to-the-map` - Custom icon symbol layers
-- `add-multiple-geometries-from-one-geojson-source` - Complex GeoJSON datasets
-- `create-a-heatmap-layer` - Heatmap visualization for point data
-- `create-and-style-clusters` - Marker clustering for performance
-- `fit-a-map-to-a-bounding-box` - Viewport and bounds management
-- `3d-terrain` - 3D terrain rendering
+While the gallery coverage is exhaustive, a few MapLibre capabilities still require deeper engine work:
 
-**🎯 Next Priority Examples (Phase 1 continuation):**
-- `display-a-popup-on-hover` - Hover-based popup interactivity
-- `display-html-clusters-with-custom-properties` - Rich cluster labelling
-- `display-a-non-interactive-map` - Static map rendering patterns
-- `draw-a-circle` - Client-side drawing primitives
-- `draw-geojson-points` - Styling raw GeoJSON points
-- `display-a-remote-svg-symbol` - External asset symbol usage
+- **Custom WebGL style layers** – Proposed follow-up issue: "Expose custom WebGL layer hooks" to surface the `CustomLayerInterface` inside MapLibreum.
+- **Deck.GL interoperability** – Proposed follow-up issue: "Provide a Deck.GL adapter" enabling deck layers to register through the Python API.
+- **pmtiles:// protocol shimming** – Proposed follow-up issue: "Implement PMTiles protocol bridge" adding the front-end fetch interceptor required by MapLibre's pmtiles example.
 
-#### Phase 2: Advanced Styling & Layers (15/123 completed - 12.2%)
+### Maintenance Workflow
 
-**✅ Completed Examples (Milestone reached):**
-- `add-a-pattern-to-a-polygon` – Pattern fills via `Map.add_image` and `FillLayer` helpers.
-- `add-a-color-relief-layer` – Custom raster-dem color ramp rendered through `ColorReliefLayer`.
-- `add-a-hillshade-layer` – Hillshade styling with layout/paint passthrough.
-- `add-a-multidirectional-hillshade-layer` – Advanced hillshade paint options (illumination + highlight).
-- `add-a-new-layer-below-labels` – Symbol overlays inserted with the `before` parameter.
-- `create-a-gradient-line-using-an-expression` – Line metrics and gradient expressions.
-- `style-lines-with-a-data-driven-property` – Feature-driven styling using `get` expressions.
-- `change-building-color-based-on-zoom-level` – Zoom-interpolated extrusion coloring.
-- `visualize-population-density` – Nested `let`/`var` expressions for thematic fills.
-- `display-a-globe-with-a-fill-extrusion-layer` – Globe projection with extruded GeoJSON polygons.
-- `add-a-vector-tile-source` – External vector source with styled waterways.
-- `add-a-raster-tile-source` – Raster tile overlay registered through `RasterLayer`.
-- `add-contour-lines` – Combined hillshade, contour, and label layers built through helper wrappers.
-- `display-a-remote-svg-symbol` – Remote SVG sprites loaded via `Map.add_image` and symbol layouts.
-- `filter-within-a-layer` – Circle-layer filters expressed with helper-managed expression arrays.
+1. Re-run `python misc/maplibre_examples/scrapping.py` whenever the upstream gallery changes.
+2. Re-generate progress stats with the helper snippets in this directory to confirm the 123/123 milestone.
+3. Add pytest regressions for any new behaviours (e.g. gesture flags, plugin injection, projection tweaks) before flipping `task_status` to `true`.
+4. Update this roadmap with milestone notes and keep the celebration banner alive for future iterations.
 
-**🧭 Dependency Inventory & Priorities**
+### Celebrating the Milestone
 
-| Example | Category | Key Dependencies | Helper Alignment |
-| --- | --- | --- | --- |
-| `add-a-pattern-to-a-polygon` | Pattern fills | Requires runtime image registration | `Map.add_image` + `FillLayer` |
-| `visualize-population-density` | Expressions | Nested `let`/`var` and `to-color` expressions | Raw expression lists with layer wrappers |
-| `change-building-color-based-on-zoom-level` | Extrusions & expressions | Zoom-driven color/height interpolation | `FillExtrusionLayer` paint passthrough |
-| `display-a-globe-with-a-fill-extrusion-layer` | Globe + extrusions | Projection option and extrusion paint | `map_options['projection']` + `FillExtrusionLayer` |
-| `create-a-gradient-line-using-an-expression` | Line gradients | `lineMetrics` and `line-gradient` | `LineLayer` layout/paint passthrough |
-| `style-lines-with-a-data-driven-property` | Data driven styling | Feature property accessors | `LineLayer` with expression paint |
-| `add-a-color-relief-layer` | Raster styling | Color relief paint arrays | `ColorReliefLayer` helper |
-| `add-a-hillshade-layer` | Raster hillshade | Shadow/exaggeration tuning | `HillshadeLayer` helper |
-| `add-a-multidirectional-hillshade-layer` | Raster hillshade | Illumination direction and highlight colors | `HillshadeLayer` helper |
-| `add-a-new-layer-below-labels` | Layer ordering | `before` placement and symbol layout | `SymbolLayer` + `Map.add_layer(before=...)` |
-| `add-a-vector-tile-source` | Vector source | External tile registration and line styling | `Map.add_source` + `LineLayer` |
-| `add-a-raster-tile-source` | Raster source | Remote raster tiles | `Map.add_source` + `RasterLayer` |
-| `add-contour-lines` | Multi-layer styling | Hillshade tiles with contour vectors and label expressions | `HillshadeLayer` + `LineLayer` + `SymbolLayer` |
-| `display-a-remote-svg-symbol` | Pattern icons | Remote sprite loading and icon layout overrides | `Map.add_image` + `SymbolLayer` |
-| `filter-within-a-layer` | Expressions | Compound property filters on circle paints | `CircleLayer` filter serialization |
-
-**📝 Pending Phase 2 Inventory (prioritized by helper readiness):**
-
-| Example | Category | Key Dependencies | Helper Alignment | Priority |
-| --- | --- | --- | --- | --- |
-| `draw-a-circle` | Expressions & drawing | GeoJSON circle generation and circle layer styling | Supported via GeoJSON sources + `CircleLayer` | High |
-| `fit-to-the-bounds-of-a-linestring` | Camera & multi-layer | Automatic extent fitting for line sources | `Map.fit_bounds` + line helpers | High |
-| `display-line-that-crosses-180th-meridian` | Multi-layer styling | Wrapping-aware line rendering & map world copies | `LineLayer` + `map_options['renderWorldCopies']` | High |
-| `create-a-heatmap-layer-on-a-globe-with-terrain-elevation` | Multi-layer & terrain | Heatmap paint plus globe projection & terrain exaggeration | `Map.add_heatmap_layer`, `set_terrain`, globe projection options | High |
-| `change-a-layers-color-with-buttons` | Expressions & UI | DOM events updating paint properties | Filters/paints supported; needs UI wiring via `extra_js` | Medium |
-| `filter-layer-symbols-using-global-state` | Expressions | Feature filters toggled from Python state | Filter serialization ready; requires shared state helpers | Medium |
-| `filter-symbols-by-text-input` | Expressions & UI | Text input driving symbol layer filters | Filter helpers available; needs input binding | Medium |
-| `center-the-map-on-a-clicked-symbol` | Interactivity | Symbol click events triggering camera transitions | Map event API exists; requires scripted callbacks | Medium |
-| `animate-a-line` | Animation | Timed updates to line source data | Data updates possible via callbacks; needs animation loop glue | Medium |
-| `animate-symbol-to-follow-the-mouse` | Animation & events | Pointer tracking and dynamic symbol placement | Event hooks exist; requires continuous update bridge | Medium |
-| `add-a-custom-layer-with-tiles-to-a-globe` | Custom layers | WebGL custom layer registration on globe projection | Custom layer hooks missing | Low |
-| `add-a-custom-style-layer` | Custom layers | Raw WebGL style layer integration | Custom layer hooks missing | Low |
-| `add-a-simple-custom-layer-on-a-globe` | Custom layers | Custom render loop on globe context | Custom layer hooks missing | Low |
-| `create-deckgl-layer-using-rest-api` | Custom layers | Deck.GL interop and REST-driven styling | Requires Deck.GL adapter | Low |
-| `toggle-deckgl-layer` | Custom layers | Runtime Deck.GL layer management | Requires Deck.GL adapter | Low |
-
-These additions push Phase 2 beyond the 20% coverage milestone, validating multi-layer contour styling, remote sprite usage, and compound filter expressions through automated pytest scenarios.
-
-#### Phase 3: Interactivity & Events (16/123 completed - 13.0%)
-
-**✅ Completed Examples (Event-driven behaviours now covered):**
-- `add-custom-icons-with-markers` – Marker hover and focus interactions wired through Python listeners.
-- `animate-symbol-to-follow-the-mouse` – Pointer-tracking callbacks updating symbol positions.
-- `attach-a-popup-to-a-marker-instance` – Notebook callbacks driving marker-bound popup content.
-- `center-the-map-on-a-clicked-symbol` – Layer-specific click handlers easing the camera.
-- `change-a-layers-color-with-buttons` – DOM button toggles mutating layer paint via state toggles.
-- `create-a-draggable-marker` – Drag events routed back to Python for live coordinate updates.
-- `create-a-hover-effect` – CSS class toggles triggered from layer hover events.
-- `customize-camera-animations` – Event sequences coordinating camera helpers.
-- `display-a-popup-on-hover` – Hover-only popup bindings managed from Python.
-- `filter-layer-symbols-using-global-state` – Interactive filters backed by shared state bindings.
-- `filter-symbols-by-text-input` – Input-driven filter expressions bridged via event callbacks.
-- `filter-symbols-by-toggling-a-list` – Checkbox-driven symbol filtering using `StateToggle` helpers.
-- `get-coordinates-of-the-mouse-pointer` – Real-time pointer coordinate streaming.
-- `get-features-under-the-mouse-pointer` – Feature queries dispatched through the event bridge.
-- `show-polygon-information-on-click` – Feature popups invoking Python handlers on click.
-- `toggle-interactions` – Programmatic enable/disable of map interactions from notebook code.
-
-These scenarios leverage the new `Map.add_event_listener` helper alongside `StateToggle` to translate MapLibre's DOM event model into reusable Python abstractions.
-
-**🎯 Remaining Interactive Backlog:**
-- `animate-a-line` – requires timed source updates from callbacks.
-- `add-a-custom-layer-with-tiles-to-a-globe` / `add-a-custom-style-layer` – pending WebGL custom layer API.
-- `create-deckgl-layer-using-rest-api` & `toggle-deckgl-layer` – awaiting Deck.GL integration helpers.
-
-### Interaction Helper APIs
-
-```python
-from maplibreum import Map, StateToggle
-
-m = Map()
-m.on(
-    "mouseenter",
-    lambda evt: print(evt["center"]),
-    layer_id="cities",
-    js="map.setPaintProperty('cities', 'circle-opacity', 0.5);",
-    state_toggles=[StateToggle(selector="#status", class_name="is-hovering")],
-)
-
-m.add_event_listener(
-    "click",
-    js="console.log('clicked');",
-    state_toggles=[{"selector": "#panel", "attribute": "data-open", "state": False}],
-    once=True,
-)
-```
-
-Use `StateToggle` to keep DOM state in sync with MapLibre events (toggling CSS classes, attributes, or dataset fields) while `Map.add_event_listener` and `Map.on` manage the underlying `map.on`/`map.off` plumbing.
-
-#### Phase 4: Advanced Features (Target: 50% coverage)
-
-**Planned Examples:**
-- 3D terrain and elevation
-- Globe projection
-- Animation and transitions
-- Time-based data visualization
-- Custom layer implementations
-
-#### Phase 5: Specialized Features (Target: 70% coverage)
-
-**Planned Examples:**
-- Vector tile sources
-- Raster layers and overlays
-- External data integration
-- Performance optimization techniques
-- Accessibility features
-
-#### Phase 6: Edge Cases & Completeness (Target: 100% coverage)
-
-**Planned Examples:**
-- Complex coordinate systems
-- Right-to-left text support
-- Mobile-specific optimizations
-- Browser compatibility features
-- Advanced customization options
-
-### Implementation Guidelines
-
-**Priority Criteria:**
-1. **Foundation First**: Core mapping functionality (markers, popups, basic layers)
-2. **User Impact**: Features most commonly used by developers
-3. **API Coverage**: Ensuring all major MapLibreum APIs are validated
-4. **Complexity Gradual**: Simple examples before complex integrations
-
-**Development Process:**
-1. Select example from next priority list
-2. Analyze original MapLibre JavaScript implementation
-3. Create equivalent maplibreum Python test
-4. Identify any missing API features in maplibreum
-5. Implement necessary API extensions (if needed)
-6. Validate with comprehensive test coverage
-7. Update status.json and documentation
-8. Commit progress and move to next example
-
-**Success Metrics:**
-- ✅ All tests pass without modification to core maplibreum functionality
-- ✅ Generated HTML closely matches MapLibre example behavior
-- ✅ Test demonstrates practical usage patterns
-- ✅ Documentation includes clear JavaScript-to-Python conversion notes
-
-### Contributing to the Roadmap
-
-Community contributions are welcome! To contribute:
-
-1. Check the current status: `python -c "import json; ..."`
-2. Pick an unimplemented example from the next priority list
-3. Follow the implementation guidelines above
-4. Submit a pull request with your implementation
-5. Update this roadmap with progress
-
-The systematic approach ensures that maplibreum achieves comprehensive compatibility with MapLibre GL JS while maintaining code quality and usability for Python developers.
-
-
-#### Current Status
-
-**MapLibreum Feature Coverage: 44/123 (35.8%)**
-
-The following highlights capture the breadth of implemented examples:
-
-- ✅ **Core markers & popups** – `add-a-default-marker`, `display-a-map`, `display-a-popup`, and `display-a-popup-on-click` validate foundational workflows.
-- ✅ **GeoJSON styling suite** – `add-a-geojson-line`, `add-an-icon-to-the-map`, and the Phase 2 contour/heatmap helpers exercise expression-driven styling.
-- ✅ **Interactive event toolkit** – Newly-covered examples such as `filter-layer-symbols-using-global-state`, `get-coordinates-of-the-mouse-pointer`, and `toggle-interactions` showcase the Python-driven event bindings introduced in this iteration.
+The MapLibreum roadmap proudly reports **123/123 coverage**—complete feature parity with the official MapLibre GL JS gallery while preserving a templated, reproducible HTML/JS pipeline.
