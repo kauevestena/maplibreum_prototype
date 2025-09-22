@@ -5,7 +5,7 @@ import os
 import subprocess
 import uuid
 from dataclasses import dataclass, field
-from typing import Any, Dict, Iterable, Optional
+from typing import Any, Dict, Iterable, List, Optional
 from urllib.parse import quote
 
 from IPython.display import IFrame, display
@@ -286,6 +286,7 @@ class Map:
         self.marker_css = []
         self.legends = []
         self.extra_js = extra_js
+        self._extra_js_snippets: List[str] = []
         self.custom_css = custom_css
         self.maplibre_version = maplibre_version
         self.additional_map_options = dict(map_options) if map_options else {}
@@ -308,6 +309,8 @@ class Map:
         self.camera_actions = []
         self.time_dimension_data = None
         self.time_dimension_options = {}
+        self._on_load_callbacks: List[str] = []
+        self.animations: List[str] = []
 
         template_dir = os.path.join(os.path.dirname(__file__), "templates")
         self.env = Environment(loader=FileSystemLoader(template_dir))
@@ -360,6 +363,13 @@ class Map:
                 search = controls.SearchControl(**options)
                 control_type = "search"
                 control_options = search.to_dict()
+            elif alias == "terrain":
+                terrain = controls.TerrainControl(**options)
+                control_type = "terrain"
+                control_options = terrain.to_dict()
+            elif alias == "globe":
+                control_type = "globe"
+                control_options = options
             else:
                 raise ValueError(f"Unknown control alias '{control}'")
         else:
@@ -600,17 +610,87 @@ class Map:
 
         self.add_tile_layer(url, name=name, attribution=attribution)
 
-    def add_dem_source(self, name, url, tile_size=512, attribution=None):
-        """Add a raster-dem source for terrain rendering."""
-        source = {"type": "raster-dem", "tiles": [url], "tileSize": tile_size}
+    def add_dem_source(
+        self,
+        name,
+        url=None,
+        *,
+        tiles=None,
+        tile_size=512,
+        attribution=None,
+        **kwargs,
+    ):
+        """Add a raster-dem source for terrain rendering.
+
+        Parameters
+        ----------
+        name : str
+            Identifier for the source.
+        url : str or list, optional
+            Tile JSON URL or template string. When the URL ends with
+            ``.json`` it is treated as a TileJSON endpoint; otherwise it is
+            interpreted as a tile template.
+        tiles : str or sequence, optional
+            Explicit tile URL template or list of templates. When provided it
+            takes precedence over ``url``.
+        tile_size : int, optional
+            Tile size in pixels, defaults to ``512``.
+        attribution : str, optional
+            Attribution string for the DEM source.
+        kwargs : dict, optional
+            Additional source parameters forwarded to MapLibre.
+        """
+
+        if url is None and tiles is None:
+            raise ValueError("add_dem_source requires either 'url' or 'tiles'")
+
+        source: Dict[str, Any] = {"type": "raster-dem", "tileSize": tile_size}
+
+        if tiles is not None:
+            if isinstance(tiles, (list, tuple)):
+                source["tiles"] = list(tiles)
+            else:
+                source["tiles"] = [tiles]
+        elif isinstance(url, (list, tuple)):
+            source["tiles"] = list(url)
+        elif isinstance(url, str) and url.strip().lower().endswith(".json"):
+            source["url"] = url
+        elif url is not None:
+            source["tiles"] = [url]
+
         if attribution:
             source["attribution"] = attribution
+        if kwargs:
+            source.update(kwargs)
+
         self.add_source(name, source)
         return name
 
-    def set_terrain(self, source_name, exaggeration=1.0):
+    def set_terrain(self, source_name, exaggeration=1.0, **options):
         """Enable 3D terrain using the given raster-dem source."""
-        self.terrain = {"source": source_name, "exaggeration": exaggeration}
+
+        terrain_config = {"source": source_name}
+        if exaggeration is not None:
+            terrain_config["exaggeration"] = exaggeration
+        if options:
+            terrain_config.update(options)
+        self.terrain = terrain_config
+
+    def enable_globe(
+        self,
+        *,
+        projection="globe",
+        add_control=False,
+        control_position="top-left",
+        control_options=None,
+    ):
+        """Switch the map projection to globe and optionally add a control."""
+
+        self.additional_map_options["projection"] = projection
+        if add_control:
+            if control_options is None:
+                control_options = {}
+            self.add_control("globe", position=control_position, options=control_options)
 
     def add_sky_layer(self, name="sky", paint=None, layout=None, before=None):
         """Add a sky layer to the map."""
@@ -697,6 +777,22 @@ class Map:
     def add_lat_lng_popup(self):
         """Enable a popup showing latitude and longitude on click."""
         self.lat_lng_popup = True
+
+    def add_on_load_js(self, code: str) -> None:
+        """Schedule raw JavaScript to execute within the load handler."""
+
+        if not isinstance(code, str):
+            raise TypeError("on-load JavaScript must be provided as a string")
+        self._on_load_callbacks.append(code)
+
+    def add_animation(self, animation) -> None:
+        """Register an animation or temporal loop to run after load."""
+
+        if hasattr(animation, "to_js"):
+            script = animation.to_js()
+        else:
+            script = str(animation)
+        self.animations.append(script)
 
     def _prepare_state_toggles(self, state_toggles):
         """Normalize toggle definitions into :class:`StateToggle` objects."""
@@ -1209,6 +1305,10 @@ class Map:
         include_minimap = any(c["type"] == "minimap" for c in self.controls)
         include_search = any(c["type"] == "search" for c in self.controls)
 
+        combined_extra_js = "\n".join(
+            part for part in [self.extra_js, *self._extra_js_snippets] if part
+        )
+
         return self.template.render(
             title=self.title,
             map_options=map_options,
@@ -1227,7 +1327,7 @@ class Map:
             markers=self.markers,
             legends=[legend.render() for legend in self.legends],
             cluster_layers=self.cluster_layers,
-            extra_js=self.extra_js,
+            extra_js=combined_extra_js,
             custom_css=final_custom_css,
             draw_control=self.draw_control,
             draw_control_options=self.draw_control_options,
@@ -1247,6 +1347,8 @@ class Map:
             time_dimension=self.time_dimension_data is not None,
             time_dimension_data=self.time_dimension_data,
             time_dimension_options=self.time_dimension_options,
+            on_load_callbacks=self._on_load_callbacks,
+            animations=self.animations,
         )
 
     def _repr_html_(self):

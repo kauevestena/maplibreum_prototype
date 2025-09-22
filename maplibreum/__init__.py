@@ -5,6 +5,7 @@ from .core import (GeoJson, GeoJsonPopup, GeoJsonTooltip, ImageOverlay,
                    LatLngPopup, Legend, Map, Marker, Popup, StateToggle,
                    Tooltip, VideoOverlay)
 from .markers import BeautifyIcon, DivIcon, Icon
+from .animation import AnimationLoop, TemporalInterval
 from .timedimension import TimeDimension
 from . import controls
 from . import sources
@@ -35,4 +36,6 @@ __all__ = [
     "controls",
     "sources",
     "layers",
+    "AnimationLoop",
+    "TemporalInterval",
 ]
