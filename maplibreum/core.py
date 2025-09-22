@@ -16,6 +16,8 @@ from .expressions import get as expr_get
 from .expressions import interpolate, var
 from .markers import BeautifyIcon, DivIcon, Icon  # noqa: F401
 from . import controls
+from . import sources as source_wrappers
+from .sources import Source as SourceDefinition
 from .styles import MAP_STYLES
 
 
@@ -413,16 +415,26 @@ class Map:
             self.legends.append(Legend(legend))
 
     def add_source(self, name, definition):
-        """Add a source to the map.
+        """Add a source definition to the style.
 
         Parameters
         ----------
         name : str
             The name of the source.
-        definition : dict
-            The source definition.
+        definition : dict or :class:`maplibreum.sources.Source`
+            The source definition. Instances of :class:`~maplibreum.sources.Source`
+            are converted to the underlying dictionary automatically so both the
+            plain MapLibre dictionaries and the convenience wrappers are
+            supported.
         """
-        self.sources.append({"name": name, "definition": definition})
+
+        if isinstance(definition, SourceDefinition):
+            payload = definition.to_dict()
+        else:
+            payload = definition
+
+        self.sources.append({"name": name, "definition": payload})
+        return name
 
     def add_layer(self, layer_definition, source=None, before=None):
         """Add a layer to the map.
@@ -448,7 +460,7 @@ class Map:
             # that has already been added to the map.
             layer_definition["source"] = source
         elif source is not None:
-            # Source is a dict, so we add it to the map's sources.
+            # Source is a dict or Source wrapper, so we add it to the map.
             source_name = f"source_{uuid.uuid4().hex}"
             self.add_source(source_name, source)
             layer_definition["source"] = source_name
@@ -462,7 +474,21 @@ class Map:
 
         return layer_id
 
-    def add_tile_layer(self, url, name=None, attribution=None, subdomains=None):
+    def add_tile_layer(
+        self,
+        url,
+        name=None,
+        attribution=None,
+        subdomains=None,
+        *,
+        tile_size=256,
+        min_zoom=None,
+        max_zoom=None,
+        bounds=None,
+        scheme=None,
+        volatile=None,
+        **source_options,
+    ):
         """Add a raster tile layer to the map.
 
         Parameters
@@ -477,7 +503,23 @@ class Map:
         subdomains : list of str, optional
             Subdomains to replace ``{s}`` in the URL. If provided and ``{s}``
             exists in ``url``, multiple tile URLs will be generated.
+        tile_size : int, optional
+            Tile size in pixels. Defaults to ``256`` which matches the MapLibre
+            GL JS default for raster sources.
+        min_zoom, max_zoom : int, optional
+            Optional zoom constraints forwarded to the underlying source.
+        bounds : sequence of float, optional
+            Geographic bounds of the tile set as ``[west, south, east, north]``.
+        scheme : str, optional
+            Tile scheme (``'xyz'`` or ``'tms'``).
+        volatile : bool, optional
+            Whether tiles may change frequently.
+        **source_options
+            Additional keyword arguments forwarded to
+            :class:`maplibreum.sources.RasterSource` for advanced
+            configuration.
         """
+
         layer_id = name or f"tilelayer_{uuid.uuid4().hex}"
 
         if "{s}" in url and subdomains:
@@ -485,13 +527,21 @@ class Map:
         else:
             tiles = [url]
 
-        source = {
-            "type": "raster",
-            "tiles": tiles,
-            "tileSize": 256,
-        }
-        if attribution:
-            source["attribution"] = attribution
+        source_kwargs = dict(source_options)
+        if attribution is not None:
+            source_kwargs["attribution"] = attribution
+
+        source = source_wrappers.RasterSource(
+            tiles=tiles,
+            tile_size=tile_size,
+            min_zoom=min_zoom,
+            max_zoom=max_zoom,
+            bounds=bounds,
+            scheme=scheme,
+            volatile=volatile,
+            **source_kwargs,
+        )
+
         layer = {"id": layer_id, "type": "raster", "source": layer_id}
         self.add_layer(layer, source=source)
         self.tile_layers.append({"id": layer_id, "name": name or layer_id})
@@ -644,24 +694,16 @@ class Map:
         if url is None and tiles is None:
             raise ValueError("add_dem_source requires either 'url' or 'tiles'")
 
-        source: Dict[str, Any] = {"type": "raster-dem", "tileSize": tile_size}
+        source_kwargs = dict(kwargs)
+        if attribution is not None:
+            source_kwargs["attribution"] = attribution
 
-        if tiles is not None:
-            if isinstance(tiles, (list, tuple)):
-                source["tiles"] = list(tiles)
-            else:
-                source["tiles"] = [tiles]
-        elif isinstance(url, (list, tuple)):
-            source["tiles"] = list(url)
-        elif isinstance(url, str) and url.strip().lower().endswith(".json"):
-            source["url"] = url
-        elif url is not None:
-            source["tiles"] = [url]
-
-        if attribution:
-            source["attribution"] = attribution
-        if kwargs:
-            source.update(kwargs)
+        source = source_wrappers.RasterDemSource(
+            url=url,
+            tiles=tiles,
+            tile_size=tile_size,
+            **source_kwargs,
+        )
 
         self.add_source(name, source)
         return name
