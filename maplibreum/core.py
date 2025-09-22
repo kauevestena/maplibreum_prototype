@@ -147,6 +147,9 @@ class GeoJsonTooltip(GeoJsonPopup):
         return super().render(feature)
 
 
+# Re-export commonly used controls for convenience
+MiniMapControl = controls.MiniMapControl
+SearchControl = controls.SearchControl
 
 
 class Map:
@@ -216,11 +219,13 @@ class Map:
         self.draw_control_options = {}
         self.measure_control = False
         self.measure_control_options = {}
+        self.measure_control_position = "top-left"
         self.lat_lng_popup = False
         self.events = []
         self.terrain = None
         self.fog = None
         self.float_images = []
+        self.images = []
         self.camera_actions = []
         self.time_dimension_data = None
         self.time_dimension_options = {}
@@ -248,21 +253,51 @@ class Map:
         self.bounds = bounds
         self.bounds_padding = padding
 
-    def add_control(self, control, position="top-right"):
+    def add_control(self, control, position="top-right", options=None):
         """Add a UI control to the map.
         Parameters
         ----------
-        control : object
-            A control object instance.
+        control : object or str
+            Either a control instance or a known control alias such as ``"navigation"``.
         position : str, optional
             Position on the map (e.g. ``'top-right'`` or ``'bottom-left'``).
+        options : dict, optional
+            Additional configuration forwarded to the control when ``control``
+            is provided as a string alias.
         """
-        control_type = control.__class__.__name__.lower().replace("control", "")
+        options = options or {}
+
+        if isinstance(control, str):
+            alias = control.lower()
+            native = {"navigation", "scale", "fullscreen", "geolocate", "attribution"}
+            if alias in native:
+                control_type = alias
+                control_options = options
+            elif alias == "minimap":
+                minimap = controls.MiniMapControl(**options)
+                control_type = "minimap"
+                control_options = minimap.to_dict()
+            elif alias == "search":
+                search = controls.SearchControl(**options)
+                control_type = "search"
+                control_options = search.to_dict()
+            else:
+                raise ValueError(f"Unknown control alias '{control}'")
+        else:
+            control_type = control.__class__.__name__.lower().replace("control", "")
+            control_options = control.to_dict()
+            if options:
+                control_options.update(options)
+
         self.controls.append(
-            {"type": control_type, "position": position, "options": control.to_dict()}
+            {"type": control_type, "position": position, "options": control_options}
         )
 
-    def add_search_control(self, control, position="top-left"):
+    def add_search_control(self, control=None, position="top-left", **options):
+        if control is None:
+            control = controls.SearchControl(**options)
+        elif isinstance(control, dict):
+            control = controls.SearchControl(**control)
         self.add_control(control, position)
 
     def add_draw_control(self, options=None):
@@ -272,8 +307,14 @@ class Map:
         self.draw_control = True
         self.draw_control_options = options
 
-    def add_measure_control(self, control, position="top-right"):
-        self.add_control(control, position)
+    def add_measure_control(self, control=None, position="top-left", **options):
+        if control is None:
+            control = controls.MeasureControl(**options)
+        elif isinstance(control, dict):
+            control = controls.MeasureControl(**control)
+        self.measure_control = True
+        self.measure_control_options = control.to_dict()
+        self.measure_control_position = position
 
     def add_legend(self, legend):
         """Add a legend to the map."""
@@ -390,6 +431,35 @@ class Map:
         img = FloatImage(image_url, position=position, width=width)
         self.float_images.append(img)
         return img
+
+    def add_image(self, name, url=None, data=None, options=None):
+        """Register a style image so it can be referenced by layers.
+
+        Parameters
+        ----------
+        name : str
+            Identifier to use from layer ``icon-image`` or ``fill-pattern``.
+        url : str, optional
+            Remote image URL to be loaded via ``map.loadImage`` at runtime.
+        data : Any, optional
+            Direct image data to pass to ``map.addImage``.
+        options : dict, optional
+            Extra parameters forwarded to ``map.addImage`` (e.g. ``sdf`` or
+            ``pixelRatio``).
+        """
+
+        if url is None and data is None:
+            raise ValueError("add_image requires either 'url' or 'data'")
+
+        entry = {"id": name}
+        if url is not None:
+            entry["url"] = url
+        if data is not None:
+            entry["data"] = data
+        if options:
+            entry["options"] = options
+        self.images.append(entry)
+        return name
 
     def add_wms_layer(
         self,
@@ -914,6 +984,7 @@ class Map:
             draw_control_options=self.draw_control_options,
             measure_control=self.measure_control,
             measure_control_options=self.measure_control_options,
+            measure_control_position=self.measure_control_position,
             maplibre_version=self.maplibre_version,
             map_id=self.map_id,
             lat_lng_popup=self.lat_lng_popup,
@@ -921,6 +992,7 @@ class Map:
             terrain=self.terrain,
             fog=self.fog,
             float_images=self.float_images,
+            images=self.images,
             camera_actions=self.camera_actions,
             time_dimension=self.time_dimension_data is not None,
             time_dimension_data=self.time_dimension_data,

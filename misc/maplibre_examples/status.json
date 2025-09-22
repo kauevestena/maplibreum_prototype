@@ -60,7 +60,7 @@
       "url": "https://maplibre.org/maplibre-gl-js/docs/examples/add-a-color-relief-layer/",
       "source_status": true,
       "file_path": "misc/maplibre_examples/pages/add-a-color-relief-layer.html",
-      "task_status": false
+      "task_status": true
     }
   },
   "add-a-custom-layer-with-tiles-to-a-globe": {
@@ -116,7 +116,7 @@
       "url": "https://maplibre.org/maplibre-gl-js/docs/examples/add-a-hillshade-layer/",
       "source_status": true,
       "file_path": "misc/maplibre_examples/pages/add-a-hillshade-layer.html",
-      "task_status": false
+      "task_status": true
     }
   },
   "add-a-multidirectional-hillshade-layer": {
@@ -124,7 +124,7 @@
       "url": "https://maplibre.org/maplibre-gl-js/docs/examples/add-a-multidirectional-hillshade-layer/",
       "source_status": true,
       "file_path": "misc/maplibre_examples/pages/add-a-multidirectional-hillshade-layer.html",
-      "task_status": false
+      "task_status": true
     }
   },
   "add-a-new-layer-below-labels": {
@@ -132,7 +132,7 @@
       "url": "https://maplibre.org/maplibre-gl-js/docs/examples/add-a-new-layer-below-labels/",
       "source_status": true,
       "file_path": "misc/maplibre_examples/pages/add-a-new-layer-below-labels.html",
-      "task_status": false
+      "task_status": true
     }
   },
   "add-a-pattern-to-a-polygon": {
@@ -140,7 +140,7 @@
       "url": "https://maplibre.org/maplibre-gl-js/docs/examples/add-a-pattern-to-a-polygon/",
       "source_status": true,
       "file_path": "misc/maplibre_examples/pages/add-a-pattern-to-a-polygon.html",
-      "task_status": false
+      "task_status": true
     }
   },
   "add-a-raster-tile-source": {
@@ -148,7 +148,7 @@
       "url": "https://maplibre.org/maplibre-gl-js/docs/examples/add-a-raster-tile-source/",
       "source_status": true,
       "file_path": "misc/maplibre_examples/pages/add-a-raster-tile-source.html",
-      "task_status": false
+      "task_status": true
     }
   },
   "add-a-simple-custom-layer-on-a-globe": {
@@ -172,7 +172,7 @@
       "url": "https://maplibre.org/maplibre-gl-js/docs/examples/add-a-vector-tile-source/",
       "source_status": true,
       "file_path": "misc/maplibre_examples/pages/add-a-vector-tile-source.html",
-      "task_status": false
+      "task_status": true
     }
   },
   "add-a-video": {
@@ -212,7 +212,7 @@
       "url": "https://maplibre.org/maplibre-gl-js/docs/examples/add-contour-lines/",
       "source_status": true,
       "file_path": "misc/maplibre_examples/pages/add-contour-lines.html",
-      "task_status": false
+      "task_status": true
     }
   },
   "add-custom-icons-with-markers": {
@@ -348,7 +348,7 @@
       "url": "https://maplibre.org/maplibre-gl-js/docs/examples/change-building-color-based-on-zoom-level/",
       "source_status": true,
       "file_path": "misc/maplibre_examples/pages/change-building-color-based-on-zoom-level.html",
-      "task_status": false
+      "task_status": true
     }
   },
   "change-the-case-of-labels": {
@@ -404,7 +404,7 @@
       "url": "https://maplibre.org/maplibre-gl-js/docs/examples/create-a-gradient-line-using-an-expression/",
       "source_status": true,
       "file_path": "misc/maplibre_examples/pages/create-a-gradient-line-using-an-expression.html",
-      "task_status": false
+      "task_status": true
     }
   },
   "create-a-heatmap-layer-on-a-globe-with-terrain-elevation": {
@@ -484,7 +484,7 @@
       "url": "https://maplibre.org/maplibre-gl-js/docs/examples/display-a-globe-with-a-fill-extrusion-layer/",
       "source_status": true,
       "file_path": "misc/maplibre_examples/pages/display-a-globe-with-a-fill-extrusion-layer.html",
-      "task_status": false
+      "task_status": true
     }
   },
   "display-a-globe-with-a-vector-map": {
@@ -556,7 +556,7 @@
       "url": "https://maplibre.org/maplibre-gl-js/docs/examples/display-a-remote-svg-symbol/",
       "source_status": true,
       "file_path": "misc/maplibre_examples/pages/display-a-remote-svg-symbol.html",
-      "task_status": false
+      "task_status": true
     }
   },
   "display-a-satellite-map": {
@@ -676,7 +676,7 @@
       "url": "https://maplibre.org/maplibre-gl-js/docs/examples/filter-within-a-layer/",
       "source_status": true,
       "file_path": "misc/maplibre_examples/pages/filter-within-a-layer.html",
-      "task_status": false
+      "task_status": true
     }
   },
   "fit-a-map-to-a-bounding-box": {
@@ -868,7 +868,7 @@
       "url": "https://maplibre.org/maplibre-gl-js/docs/examples/style-lines-with-a-data-driven-property/",
       "source_status": true,
       "file_path": "misc/maplibre_examples/pages/style-lines-with-a-data-driven-property.html",
-      "task_status": false
+      "task_status": true
     }
   },
   "sync-movement-of-multiple-maps": {
@@ -972,7 +972,7 @@
       "url": "https://maplibre.org/maplibre-gl-js/docs/examples/visualize-population-density/",
       "source_status": true,
       "file_path": "misc/maplibre_examples/pages/visualize-population-density.html",
-      "task_status": false
+      "task_status": true
     }
   },
   "zoom-and-planet-size-relation-on-globe": {

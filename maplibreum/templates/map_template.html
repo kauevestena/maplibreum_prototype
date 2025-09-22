@@ -193,7 +193,7 @@ function _storeMeasure(data) {
     }
 }
 var measure = new maplibreGLMeasures(Object.assign({{ measure_control_options | tojson }}, {onCreate: _storeMeasure, onRender: _storeMeasure}));
-map.addControl(measure, 'top-left');
+map.addControl(measure, '{{ measure_control_position }}');
 {% endif %}
 
 map.on('load', function() {
@@ -203,6 +203,19 @@ map.on('load', function() {
     // Add sources
     {% for source in sources %}
     map.addSource("{{ source.name }}", {{ source.definition | tojson | safe }});
+    {% endfor %}
+
+    // Register images used by style layers
+    {% for image in images %}
+    {% if image.url %}
+    map.loadImage({{ image.url | tojson }}).then(function(loadedImage) {
+        map.addImage({{ image.id | tojson }}, loadedImage.data{% if image.options %}, {{ image.options | tojson | safe }}{% endif %});
+    }).catch(function(err) {
+        console.error('Failed to load image {{ image.id }}', err);
+    });
+    {% else %}
+    map.addImage({{ image.id | tojson }}, {{ image.data | tojson | safe }}{% if image.options %}, {{ image.options | tojson | safe }}{% endif %});
+    {% endif %}
     {% endfor %}
 
     {% if terrain %}
