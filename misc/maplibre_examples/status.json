@@ -220,7 +220,7 @@
       "url": "https://maplibre.org/maplibre-gl-js/docs/examples/add-custom-icons-with-markers/",
       "source_status": true,
       "file_path": "misc/maplibre_examples/pages/add-custom-icons-with-markers.html",
-      "task_status": false
+      "task_status": true
     }
   },
   "add-live-realtime-data": {
@@ -308,7 +308,7 @@
       "url": "https://maplibre.org/maplibre-gl-js/docs/examples/animate-symbol-to-follow-the-mouse/",
       "source_status": true,
       "file_path": "misc/maplibre_examples/pages/animate-symbol-to-follow-the-mouse.html",
-      "task_status": false
+      "task_status": true
     }
   },
   "attach-a-popup-to-a-marker-instance": {
@@ -316,7 +316,7 @@
       "url": "https://maplibre.org/maplibre-gl-js/docs/examples/attach-a-popup-to-a-marker-instance/",
       "source_status": true,
       "file_path": "misc/maplibre_examples/pages/attach-a-popup-to-a-marker-instance.html",
-      "task_status": false
+      "task_status": true
     }
   },
   "center-the-map-on-a-clicked-symbol": {
@@ -324,7 +324,7 @@
       "url": "https://maplibre.org/maplibre-gl-js/docs/examples/center-the-map-on-a-clicked-symbol/",
       "source_status": true,
       "file_path": "misc/maplibre_examples/pages/center-the-map-on-a-clicked-symbol.html",
-      "task_status": false
+      "task_status": true
     }
   },
   "change-a-layers-color-with-buttons": {
@@ -332,7 +332,7 @@
       "url": "https://maplibre.org/maplibre-gl-js/docs/examples/change-a-layers-color-with-buttons/",
       "source_status": true,
       "file_path": "misc/maplibre_examples/pages/change-a-layers-color-with-buttons.html",
-      "task_status": false
+      "task_status": true
     }
   },
   "change-a-maps-language": {
@@ -388,7 +388,7 @@
       "url": "https://maplibre.org/maplibre-gl-js/docs/examples/create-a-draggable-marker/",
       "source_status": true,
       "file_path": "misc/maplibre_examples/pages/create-a-draggable-marker.html",
-      "task_status": false
+      "task_status": true
     }
   },
   "create-a-draggable-point": {
@@ -428,7 +428,7 @@
       "url": "https://maplibre.org/maplibre-gl-js/docs/examples/create-a-hover-effect/",
       "source_status": true,
       "file_path": "misc/maplibre_examples/pages/create-a-hover-effect.html",
-      "task_status": false
+      "task_status": true
     }
   },
   "create-a-time-slider": {
@@ -460,7 +460,7 @@
       "url": "https://maplibre.org/maplibre-gl-js/docs/examples/customize-camera-animations/",
       "source_status": true,
       "file_path": "misc/maplibre_examples/pages/customize-camera-animations.html",
-      "task_status": false
+      "task_status": true
     }
   },
   "disable-map-rotation": {
@@ -540,7 +540,7 @@
       "url": "https://maplibre.org/maplibre-gl-js/docs/examples/display-a-popup-on-hover/",
       "source_status": true,
       "file_path": "misc/maplibre_examples/pages/display-a-popup-on-hover.html",
-      "task_status": false
+      "task_status": true
     }
   },
   "display-a-popup": {
@@ -652,7 +652,7 @@
       "url": "https://maplibre.org/maplibre-gl-js/docs/examples/filter-layer-symbols-using-global-state/",
       "source_status": true,
       "file_path": "misc/maplibre_examples/pages/filter-layer-symbols-using-global-state.html",
-      "task_status": false
+      "task_status": true
     }
   },
   "filter-symbols-by-text-input": {
@@ -660,7 +660,7 @@
       "url": "https://maplibre.org/maplibre-gl-js/docs/examples/filter-symbols-by-text-input/",
       "source_status": true,
       "file_path": "misc/maplibre_examples/pages/filter-symbols-by-text-input.html",
-      "task_status": false
+      "task_status": true
     }
   },
   "filter-symbols-by-toggling-a-list": {
@@ -668,7 +668,7 @@
       "url": "https://maplibre.org/maplibre-gl-js/docs/examples/filter-symbols-by-toggling-a-list/",
       "source_status": true,
       "file_path": "misc/maplibre_examples/pages/filter-symbols-by-toggling-a-list.html",
-      "task_status": false
+      "task_status": true
     }
   },
   "filter-within-a-layer": {
@@ -732,7 +732,7 @@
       "url": "https://maplibre.org/maplibre-gl-js/docs/examples/get-coordinates-of-the-mouse-pointer/",
       "source_status": true,
       "file_path": "misc/maplibre_examples/pages/get-coordinates-of-the-mouse-pointer.html",
-      "task_status": false
+      "task_status": true
     }
   },
   "get-features-under-the-mouse-pointer": {
@@ -740,7 +740,7 @@
       "url": "https://maplibre.org/maplibre-gl-js/docs/examples/get-features-under-the-mouse-pointer/",
       "source_status": true,
       "file_path": "misc/maplibre_examples/pages/get-features-under-the-mouse-pointer.html",
-      "task_status": false
+      "task_status": true
     }
   },
   "hash-routing": {
@@ -844,7 +844,7 @@
       "url": "https://maplibre.org/maplibre-gl-js/docs/examples/show-polygon-information-on-click/",
       "source_status": true,
       "file_path": "misc/maplibre_examples/pages/show-polygon-information-on-click.html",
-      "task_status": false
+      "task_status": true
     }
   },
   "sky-fog-terrain": {
@@ -892,7 +892,7 @@
       "url": "https://maplibre.org/maplibre-gl-js/docs/examples/toggle-interactions/",
       "source_status": true,
       "file_path": "misc/maplibre_examples/pages/toggle-interactions.html",
-      "task_status": false
+      "task_status": true
     }
   },
   "update-a-feature-in-realtime": {

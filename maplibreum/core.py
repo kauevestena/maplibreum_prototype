@@ -4,6 +4,8 @@ import math
 import os
 import subprocess
 import uuid
+from dataclasses import dataclass, field
+from typing import Any, Dict, Iterable, Optional
 from urllib.parse import quote
 
 from IPython.display import IFrame, display
@@ -147,6 +149,82 @@ class GeoJsonTooltip(GeoJsonPopup):
         return super().render(feature)
 
 
+@dataclass
+class StateToggle:
+    """Describe DOM state changes that should occur when an event fires."""
+
+    selector: str
+    class_name: Optional[str] = None
+    state: Optional[bool] = None
+    attribute: Optional[str] = None
+    value: Any = None
+    dataset: Optional[Dict[str, Any]] = None
+    text: Any = None
+
+    def __post_init__(self):
+        if not self.selector:
+            raise ValueError("StateToggle requires a CSS selector")
+        if (
+            self.class_name is None
+            and self.attribute is None
+            and self.dataset is None
+            and self.text is None
+        ):
+            raise ValueError(
+                "StateToggle needs a class_name, attribute, dataset, or text update"
+            )
+        if self.dataset is not None:
+            if not isinstance(self.dataset, dict):
+                raise TypeError("dataset must be a mapping of keys to values")
+            self.dataset = {str(k): v for k, v in self.dataset.items()}
+        if self.state is not None and not isinstance(self.state, bool):
+            self.state = bool(self.state)
+
+    def to_dict(self):
+        """Return a JSON-serialisable representation."""
+
+        payload = {"selector": self.selector}
+        if self.class_name:
+            payload["className"] = self.class_name
+        if self.state is not None:
+            payload["state"] = self.state
+        if self.attribute:
+            payload["attribute"] = self.attribute
+        if self.value is not None:
+            payload["value"] = self.value
+        if self.dataset:
+            payload["dataset"] = {k: str(v) for k, v in self.dataset.items()}
+        if self.text is not None:
+            payload["text"] = str(self.text)
+        return payload
+
+
+@dataclass
+class EventBinding:
+    """Representation of a MapLibre event binding produced from Python."""
+
+    id: str
+    event: str
+    layer_id: Optional[str] = None
+    js: Optional[str] = None
+    send_to_python: bool = False
+    toggles: list[StateToggle] = field(default_factory=list)
+    once: bool = False
+
+    def to_render_dict(self):
+        """Convert to the structure used by the template."""
+
+        return {
+            "id": self.id,
+            "event": self.event,
+            "layer_id": self.layer_id,
+            "js": self.js,
+            "send_to_python": self.send_to_python,
+            "state_toggles": [toggle.to_dict() for toggle in self.toggles],
+            "once": self.once,
+        }
+
+
 # Re-export commonly used controls for convenience
 MiniMapControl = controls.MiniMapControl
 SearchControl = controls.SearchControl
@@ -222,6 +300,7 @@ class Map:
         self.measure_control_position = "top-left"
         self.lat_lng_popup = False
         self.events = []
+        self.event_bindings = []
         self.terrain = None
         self.fog = None
         self.float_images = []
@@ -619,19 +698,189 @@ class Map:
         """Enable a popup showing latitude and longitude on click."""
         self.lat_lng_popup = True
 
-    def on(self, event, callback):
-        """Register a callback for a given map event."""
-        if event not in self.events:
-            self.events.append(event)
-        self._event_callbacks.setdefault(self.map_id, {})[event] = callback
+    def _prepare_state_toggles(self, state_toggles):
+        """Normalize toggle definitions into :class:`StateToggle` objects."""
 
-    def on_click(self, callback):
+        if not state_toggles:
+            return []
+
+        if isinstance(state_toggles, StateToggle):
+            candidates = [state_toggles]
+        elif isinstance(state_toggles, dict):
+            candidates = [StateToggle(**state_toggles)]
+        elif isinstance(state_toggles, Iterable) and not isinstance(
+            state_toggles, (str, bytes)
+        ):
+            candidates = state_toggles
+        else:
+            raise TypeError(
+                "state_toggles must be a StateToggle, dict, or iterable of these"
+            )
+
+        toggles = []
+        for toggle in candidates:
+            if isinstance(toggle, StateToggle):
+                toggles.append(toggle)
+            elif isinstance(toggle, dict):
+                toggles.append(StateToggle(**toggle))
+            else:
+                raise TypeError(
+                    "state_toggles entries must be mappings or StateToggle objects"
+                )
+        return toggles
+
+    def _register_event_binding(
+        self,
+        event,
+        *,
+        layer_id=None,
+        js=None,
+        state_toggles=None,
+        once=False,
+        event_id=None,
+        send_to_python=False,
+    ):
+        """Create or replace an :class:`EventBinding` for the map."""
+
+        toggles = self._prepare_state_toggles(state_toggles)
+        binding_id = event_id or (f"{event}@{layer_id}" if layer_id else event)
+        binding = EventBinding(
+            id=binding_id,
+            event=event,
+            layer_id=layer_id,
+            js=js,
+            send_to_python=send_to_python,
+            toggles=toggles,
+            once=once,
+        )
+        self.event_bindings = [b for b in self.event_bindings if b.id != binding.id]
+        self.event_bindings.append(binding)
+        if not send_to_python:
+            callbacks = self._event_callbacks.get(self.map_id)
+            if callbacks:
+                callbacks.pop(binding.id, None)
+            if binding.id in self.events:
+                self.events.remove(binding.id)
+        return binding
+
+    def add_event_listener(
+        self,
+        event,
+        *,
+        layer_id=None,
+        js=None,
+        state_toggles=None,
+        once=False,
+        event_id=None,
+    ):
+        """Attach a pure JavaScript handler for a MapLibre event.
+
+        Parameters
+        ----------
+        event : str
+            Name of the MapLibre event to listen for (e.g., ``'click'``).
+        layer_id : str, optional
+            If provided, the handler listens to events bound to the given
+            rendered layer ID.
+        js : str, optional
+            JavaScript snippet executed inside the handler. The snippet has
+            access to ``map`` (the map instance), ``event`` (the MapLibre
+            event object) and ``data`` (the payload sent to Python callbacks).
+        state_toggles : iterable, optional
+            Collection of :class:`StateToggle` objects or dictionaries that
+            describe DOM state changes (class toggles, attribute updates, etc.)
+            to execute alongside the handler.
+        once : bool, optional
+            When ``True`` the handler is registered with ``map.once`` instead of
+            ``map.on``.
+        event_id : str, optional
+            Explicit identifier for the handler. Defaults to ``"{event}@{layer}"``
+            when ``layer_id`` is provided or simply ``event`` otherwise.
+
+        Returns
+        -------
+        str
+            The identifier of the registered handler, useful for debugging or
+            manual inspection.
+        """
+
+        binding = self._register_event_binding(
+            event,
+            layer_id=layer_id,
+            js=js,
+            state_toggles=state_toggles,
+            once=once,
+            event_id=event_id,
+            send_to_python=False,
+        )
+        return binding.id
+
+    def on(
+        self,
+        event,
+        callback,
+        *,
+        layer_id=None,
+        js=None,
+        state_toggles=None,
+        once=False,
+        event_id=None,
+    ):
+        """Register a Python callback for a MapLibre event.
+
+        The callback receives a dictionary with ``lngLat`` (when available),
+        current ``center`` and ``zoom`` information. Extra JavaScript snippets
+        or DOM state toggles can be chained to the same event using the
+        ``js`` and ``state_toggles`` arguments.
+
+        Parameters
+        ----------
+        event : str
+            MapLibre event name.
+        callback : callable
+            Python callable invoked when the event fires. Executed via the
+            Jupyter kernel in notebook environments.
+        layer_id : str, optional
+            Restrict the listener to features rendered by this layer.
+        js : str, optional
+            JavaScript snippet executed after the callback payload is queued.
+        state_toggles : iterable, optional
+            DOM toggle definitions applied whenever the event fires.
+        once : bool, optional
+            Register a one-shot listener using ``map.once``.
+        event_id : str, optional
+            Explicit identifier for this handler. Defaults to ``"{event}@{layer}"``
+            for layer-bound handlers or ``event`` for map-wide listeners.
+
+        Returns
+        -------
+        str
+            The identifier associated with the handler.
+        """
+
+        binding = self._register_event_binding(
+            event,
+            layer_id=layer_id,
+            js=js,
+            state_toggles=state_toggles,
+            once=once,
+            event_id=event_id,
+            send_to_python=True,
+        )
+        if binding.id not in self.events:
+            self.events.append(binding.id)
+        self._event_callbacks.setdefault(self.map_id, {})[binding.id] = callback
+        return binding.id
+
+    def on_click(self, callback, **kwargs):
         """Convenience method for click events."""
-        self.on("click", callback)
 
-    def on_move(self, callback):
+        return self.on("click", callback, **kwargs)
+
+    def on_move(self, callback, **kwargs):
         """Convenience method for move events."""
-        self.on("move", callback)
+
+        return self.on("move", callback, **kwargs)
 
     # Camera control methods
     def fly_to(self, **options):
@@ -989,6 +1238,7 @@ class Map:
             map_id=self.map_id,
             lat_lng_popup=self.lat_lng_popup,
             events=self.events,
+            event_bindings=[b.to_render_dict() for b in self.event_bindings],
             terrain=self.terrain,
             fog=self.fog,
             float_images=self.float_images,

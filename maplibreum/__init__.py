@@ -2,7 +2,8 @@ from ._version import __version__
 from .choropleth import Choropleth
 from .cluster import ClusteredGeoJson, MarkerCluster, cluster_features
 from .core import (GeoJson, GeoJsonPopup, GeoJsonTooltip, ImageOverlay,
-                   LatLngPopup, Legend, Map, Marker, Popup, Tooltip, VideoOverlay)
+                   LatLngPopup, Legend, Map, Marker, Popup, StateToggle,
+                   Tooltip, VideoOverlay)
 from .markers import BeautifyIcon, DivIcon, Icon
 from .timedimension import TimeDimension
 from . import controls
@@ -12,7 +13,7 @@ from . import layers
 __all__ = [
     "Map",
     "Marker",
-    "GeoJson",
+    "GeoJson", 
     "Legend",
     "Choropleth",
     "Icon",
@@ -25,6 +26,7 @@ __all__ = [
     "GeoJsonTooltip",
     "LatLngPopup",
     "Popup",
+    "StateToggle",
     "TimeDimension",
     "MarkerCluster",
     "ClusteredGeoJson",

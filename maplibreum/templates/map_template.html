@@ -409,18 +409,67 @@ map.on('load', function() {
     {% endfor %}
 });
 
-    {% for evt in events %}
-    map.on('{{ evt }}', function(e) {
-        var data = {};
-        if (e.lngLat) { data.lngLat = e.lngLat; }
-        data.center = map.getCenter();
-        data.zoom = map.getZoom();
-        if (window.Jupyter && Jupyter.notebook && Jupyter.notebook.kernel) {
-            var cmd = "from maplibreum.core import Map; Map._handle_event('" + "{{ map_id }}" + "', '" + "{{ evt }}" + "', '" + JSON.stringify(data).replace(/'/g, "\\'") + "')";
-            Jupyter.notebook.kernel.execute(cmd);
-        }
-        
-    });
+    {% for binding in event_bindings %}
+    (function() {
+        var handler = function(e) {
+            var data = {};
+            if (e.lngLat) { data.lngLat = e.lngLat; }
+            if (e.features) { data.features = e.features; }
+            if (e.point) { data.point = e.point; }
+            data.center = map.getCenter();
+            data.zoom = map.getZoom();
+            {% if binding.send_to_python %}
+            if (window.Jupyter && Jupyter.notebook && Jupyter.notebook.kernel) {
+                var cmd = "from maplibreum.core import Map; Map._handle_event('" + "{{ map_id }}" + "', '" + "{{ binding.id }}" + "', '" + JSON.stringify(data).replace(/'/g, "\\'") + "')";
+                Jupyter.notebook.kernel.execute(cmd);
+            }
+            {% endif %}
+            {% if binding.state_toggles %}
+            (function() {
+                var toggles = {{ binding.state_toggles | tojson | safe }};
+                toggles.forEach(function(tgl) {
+                    var target = tgl.selector ? document.querySelector(tgl.selector) : null;
+                    if (!target) { return; }
+                    if (tgl.className) {
+                        if (tgl.state === true) {
+                            target.classList.add(tgl.className);
+                        } else if (tgl.state === false) {
+                            target.classList.remove(tgl.className);
+                        } else {
+                            target.classList.toggle(tgl.className);
+                        }
+                    }
+                    if (tgl.attribute) {
+                        var hasValue = Object.prototype.hasOwnProperty.call(tgl, 'value');
+                        if (tgl.state === false && !hasValue) {
+                            target.removeAttribute(tgl.attribute);
+                        } else {
+                            var attrValue = hasValue ? tgl.value : '';
+                            target.setAttribute(tgl.attribute, String(attrValue));
+                        }
+                    }
+                    if (tgl.dataset) {
+                        Object.keys(tgl.dataset).forEach(function(key) {
+                            target.dataset[key] = String(tgl.dataset[key]);
+                        });
+                    }
+                    if (Object.prototype.hasOwnProperty.call(tgl, 'text')) {
+                        target.textContent = String(tgl.text);
+                    }
+                });
+            })();
+            {% endif %}
+            {% if binding.js %}
+            (function(map, event, data) {
+                {{ binding.js | safe }}
+            })(map, e, data);
+            {% endif %}
+            {% if binding.once %}
+            map.off('{{ binding.event }}'{% if binding.layer_id %}, '{{ binding.layer_id }}'{% endif %}, handler);
+            {% endif %}
+        };
+        map.on('{{ binding.event }}'{% if binding.layer_id %}, '{{ binding.layer_id }}'{% endif %}, handler);
+    })();
     {% endfor %}
 
     {% if lat_lng_popup %}
