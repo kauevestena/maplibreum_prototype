@@ -180,7 +180,7 @@
       "url": "https://maplibre.org/maplibre-gl-js/docs/examples/add-a-video/",
       "source_status": true,
       "file_path": "misc/maplibre_examples/pages/add-a-video.html",
-      "task_status": false
+      "task_status": true
     }
   },
   "add-a-wms-source": {
@@ -188,7 +188,7 @@
       "url": "https://maplibre.org/maplibre-gl-js/docs/examples/add-a-wms-source/",
       "source_status": true,
       "file_path": "misc/maplibre_examples/pages/add-a-wms-source.html",
-      "task_status": false
+      "task_status": true
     }
   },
   "add-an-animated-icon-to-the-map": {
@@ -196,7 +196,7 @@
       "url": "https://maplibre.org/maplibre-gl-js/docs/examples/add-an-animated-icon-to-the-map/",
       "source_status": true,
       "file_path": "misc/maplibre_examples/pages/add-an-animated-icon-to-the-map.html",
-      "task_status": false
+      "task_status": true
     }
   },
   "add-an-icon-to-the-map": {
@@ -260,7 +260,7 @@
       "url": "https://maplibre.org/maplibre-gl-js/docs/examples/animate-a-line/",
       "source_status": true,
       "file_path": "misc/maplibre_examples/pages/animate-a-line.html",
-      "task_status": false
+      "task_status": true
     }
   },
   "animate-a-marker": {
@@ -268,7 +268,7 @@
       "url": "https://maplibre.org/maplibre-gl-js/docs/examples/animate-a-marker/",
       "source_status": true,
       "file_path": "misc/maplibre_examples/pages/animate-a-marker.html",
-      "task_status": false
+      "task_status": true
     }
   },
   "animate-a-point-along-a-route": {
@@ -276,7 +276,7 @@
       "url": "https://maplibre.org/maplibre-gl-js/docs/examples/animate-a-point-along-a-route/",
       "source_status": true,
       "file_path": "misc/maplibre_examples/pages/animate-a-point-along-a-route.html",
-      "task_status": false
+      "task_status": true
     }
   },
   "animate-a-point": {
@@ -284,7 +284,7 @@
       "url": "https://maplibre.org/maplibre-gl-js/docs/examples/animate-a-point/",
       "source_status": true,
       "file_path": "misc/maplibre_examples/pages/animate-a-point.html",
-      "task_status": false
+      "task_status": true
     }
   },
   "animate-a-series-of-images": {
@@ -292,7 +292,7 @@
       "url": "https://maplibre.org/maplibre-gl-js/docs/examples/animate-a-series-of-images/",
       "source_status": true,
       "file_path": "misc/maplibre_examples/pages/animate-a-series-of-images.html",
-      "task_status": false
+      "task_status": true
     }
   },
   "animate-map-camera-around-a-point": {
@@ -300,7 +300,7 @@
       "url": "https://maplibre.org/maplibre-gl-js/docs/examples/animate-map-camera-around-a-point/",
       "source_status": true,
       "file_path": "misc/maplibre_examples/pages/animate-map-camera-around-a-point.html",
-      "task_status": false
+      "task_status": true
     }
   },
   "animate-symbol-to-follow-the-mouse": {
@@ -412,7 +412,7 @@
       "url": "https://maplibre.org/maplibre-gl-js/docs/examples/create-a-heatmap-layer-on-a-globe-with-terrain-elevation/",
       "source_status": true,
       "file_path": "misc/maplibre_examples/pages/create-a-heatmap-layer-on-a-globe-with-terrain-elevation.html",
-      "task_status": false
+      "task_status": true
     }
   },
   "create-a-heatmap-layer": {
@@ -492,7 +492,7 @@
       "url": "https://maplibre.org/maplibre-gl-js/docs/examples/display-a-globe-with-a-vector-map/",
       "source_status": true,
       "file_path": "misc/maplibre_examples/pages/display-a-globe-with-a-vector-map.html",
-      "task_status": false
+      "task_status": true
     }
   },
   "display-a-globe-with-an-atmosphere": {
@@ -500,7 +500,7 @@
       "url": "https://maplibre.org/maplibre-gl-js/docs/examples/display-a-globe-with-an-atmosphere/",
       "source_status": true,
       "file_path": "misc/maplibre_examples/pages/display-a-globe-with-an-atmosphere.html",
-      "task_status": false
+      "task_status": true
     }
   },
   "display-a-hybrid-satellite-map-with-terrain-elevation": {
@@ -508,7 +508,7 @@
       "url": "https://maplibre.org/maplibre-gl-js/docs/examples/display-a-hybrid-satellite-map-with-terrain-elevation/",
       "source_status": true,
       "file_path": "misc/maplibre_examples/pages/display-a-hybrid-satellite-map-with-terrain-elevation.html",
-      "task_status": false
+      "task_status": true
     }
   },
   "display-a-map": {
@@ -700,7 +700,7 @@
       "url": "https://maplibre.org/maplibre-gl-js/docs/examples/fly-to-a-location-based-on-scroll-position/",
       "source_status": true,
       "file_path": "misc/maplibre_examples/pages/fly-to-a-location-based-on-scroll-position.html",
-      "task_status": false
+      "task_status": true
     }
   },
   "fly-to-a-location": {
@@ -708,7 +708,7 @@
       "url": "https://maplibre.org/maplibre-gl-js/docs/examples/fly-to-a-location/",
       "source_status": true,
       "file_path": "misc/maplibre_examples/pages/fly-to-a-location.html",
-      "task_status": false
+      "task_status": true
     }
   },
   "generate-and-add-a-missing-icon-to-the-map": {
@@ -852,7 +852,7 @@
       "url": "https://maplibre.org/maplibre-gl-js/docs/examples/sky-fog-terrain/",
       "source_status": true,
       "file_path": "misc/maplibre_examples/pages/sky-fog-terrain.html",
-      "task_status": false
+      "task_status": true
     }
   },
   "slowly-fly-to-a-location": {
@@ -860,7 +860,7 @@
       "url": "https://maplibre.org/maplibre-gl-js/docs/examples/slowly-fly-to-a-location/",
       "source_status": true,
       "file_path": "misc/maplibre_examples/pages/slowly-fly-to-a-location.html",
-      "task_status": false
+      "task_status": true
     }
   },
   "style-lines-with-a-data-driven-property": {
@@ -980,7 +980,7 @@
       "url": "https://maplibre.org/maplibre-gl-js/docs/examples/zoom-and-planet-size-relation-on-globe/",
       "source_status": true,
       "file_path": "misc/maplibre_examples/pages/zoom-and-planet-size-relation-on-globe.html",
-      "task_status": false
+      "task_status": true
     }
   }
 }

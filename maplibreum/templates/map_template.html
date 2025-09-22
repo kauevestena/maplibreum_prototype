@@ -167,6 +167,10 @@ geocoder.on('result', function(e) {
     }
 });
 map.addControl(geocoder, "{{ ctrl.position }}");
+{% elif ctrl.type == "terrain" %}
+map.addControl(new maplibregl.TerrainControl({{ ctrl.options | tojson }}), "{{ ctrl.position }}");
+{% elif ctrl.type == "globe" %}
+map.addControl(new maplibregl.GlobeControl({{ ctrl.options | tojson }}), "{{ ctrl.position }}");
 {% endif %}
 {% endfor %}
 
@@ -398,6 +402,18 @@ map.on('load', function() {
     tdStep();
     setInterval(tdStep, {{ time_dimension_options.interval | default(1000) }});
     {% endif %}
+
+    {% for callback in on_load_callbacks %}
+    (function(map) {
+        {{ callback | safe }}
+    })(map);
+    {% endfor %}
+
+    {% for animation in animations %}
+    (function(map) {
+        {{ animation | safe }}
+    })(map);
+    {% endfor %}
 
     // Queued camera actions
     {% for action in camera_actions %}

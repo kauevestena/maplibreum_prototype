@@ -21,6 +21,16 @@ class TerrainControl:
         return self.options
 
 
+class GlobeControl:
+    """Configuration wrapper for :class:`maplibregl.GlobeControl`."""
+
+    def __init__(self, **options):
+        self.options = options
+
+    def to_dict(self):
+        return self.options
+
+
 class MiniMapControl:
     """Configuration object for the MiniMap plugin control."""
 
