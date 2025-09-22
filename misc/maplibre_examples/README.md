@@ -137,6 +137,8 @@ When converting JavaScript examples to Python:
 
 This roadmap tracks the systematic implementation of all 123 official MapLibre GL JS examples to ensure comprehensive feature coverage and compatibility. This shall be updated every iteration.
 
+**Current Coverage:** 28/123 examples completed (22.8%).
+
 #### Phase 1: Core Functionality (13/123 completed - 10.6%)
 
 **✅ Completed Examples:**
@@ -162,14 +164,66 @@ This roadmap tracks the systematic implementation of all 123 official MapLibre G
 - `draw-geojson-points` - Styling raw GeoJSON points
 - `display-a-remote-svg-symbol` - External asset symbol usage
 
-#### Phase 2: Advanced Styling & Layers (Target: 20% coverage)
+#### Phase 2: Advanced Styling & Layers (15/123 completed - 12.2%)
 
-**Planned Examples:**
-- Polygon styling and patterns
-- Multiple layer types (fill, line, circle, heatmap)
-- Data-driven styling expressions
-- Layer filtering and querying
-- Custom style specifications
+**✅ Completed Examples (Milestone reached):**
+- `add-a-pattern-to-a-polygon` – Pattern fills via `Map.add_image` and `FillLayer` helpers.
+- `add-a-color-relief-layer` – Custom raster-dem color ramp rendered through `ColorReliefLayer`.
+- `add-a-hillshade-layer` – Hillshade styling with layout/paint passthrough.
+- `add-a-multidirectional-hillshade-layer` – Advanced hillshade paint options (illumination + highlight).
+- `add-a-new-layer-below-labels` – Symbol overlays inserted with the `before` parameter.
+- `create-a-gradient-line-using-an-expression` – Line metrics and gradient expressions.
+- `style-lines-with-a-data-driven-property` – Feature-driven styling using `get` expressions.
+- `change-building-color-based-on-zoom-level` – Zoom-interpolated extrusion coloring.
+- `visualize-population-density` – Nested `let`/`var` expressions for thematic fills.
+- `display-a-globe-with-a-fill-extrusion-layer` – Globe projection with extruded GeoJSON polygons.
+- `add-a-vector-tile-source` – External vector source with styled waterways.
+- `add-a-raster-tile-source` – Raster tile overlay registered through `RasterLayer`.
+- `add-contour-lines` – Combined hillshade, contour, and label layers built through helper wrappers.
+- `display-a-remote-svg-symbol` – Remote SVG sprites loaded via `Map.add_image` and symbol layouts.
+- `filter-within-a-layer` – Circle-layer filters expressed with helper-managed expression arrays.
+
+**🧭 Dependency Inventory & Priorities**
+
+| Example | Category | Key Dependencies | Helper Alignment |
+| --- | --- | --- | --- |
+| `add-a-pattern-to-a-polygon` | Pattern fills | Requires runtime image registration | `Map.add_image` + `FillLayer` |
+| `visualize-population-density` | Expressions | Nested `let`/`var` and `to-color` expressions | Raw expression lists with layer wrappers |
+| `change-building-color-based-on-zoom-level` | Extrusions & expressions | Zoom-driven color/height interpolation | `FillExtrusionLayer` paint passthrough |
+| `display-a-globe-with-a-fill-extrusion-layer` | Globe + extrusions | Projection option and extrusion paint | `map_options['projection']` + `FillExtrusionLayer` |
+| `create-a-gradient-line-using-an-expression` | Line gradients | `lineMetrics` and `line-gradient` | `LineLayer` layout/paint passthrough |
+| `style-lines-with-a-data-driven-property` | Data driven styling | Feature property accessors | `LineLayer` with expression paint |
+| `add-a-color-relief-layer` | Raster styling | Color relief paint arrays | `ColorReliefLayer` helper |
+| `add-a-hillshade-layer` | Raster hillshade | Shadow/exaggeration tuning | `HillshadeLayer` helper |
+| `add-a-multidirectional-hillshade-layer` | Raster hillshade | Illumination direction and highlight colors | `HillshadeLayer` helper |
+| `add-a-new-layer-below-labels` | Layer ordering | `before` placement and symbol layout | `SymbolLayer` + `Map.add_layer(before=...)` |
+| `add-a-vector-tile-source` | Vector source | External tile registration and line styling | `Map.add_source` + `LineLayer` |
+| `add-a-raster-tile-source` | Raster source | Remote raster tiles | `Map.add_source` + `RasterLayer` |
+| `add-contour-lines` | Multi-layer styling | Hillshade tiles with contour vectors and label expressions | `HillshadeLayer` + `LineLayer` + `SymbolLayer` |
+| `display-a-remote-svg-symbol` | Pattern icons | Remote sprite loading and icon layout overrides | `Map.add_image` + `SymbolLayer` |
+| `filter-within-a-layer` | Expressions | Compound property filters on circle paints | `CircleLayer` filter serialization |
+
+**📝 Pending Phase 2 Inventory (prioritized by helper readiness):**
+
+| Example | Category | Key Dependencies | Helper Alignment | Priority |
+| --- | --- | --- | --- | --- |
+| `draw-a-circle` | Expressions & drawing | GeoJSON circle generation and circle layer styling | Supported via GeoJSON sources + `CircleLayer` | High |
+| `fit-to-the-bounds-of-a-linestring` | Camera & multi-layer | Automatic extent fitting for line sources | `Map.fit_bounds` + line helpers | High |
+| `display-line-that-crosses-180th-meridian` | Multi-layer styling | Wrapping-aware line rendering & map world copies | `LineLayer` + `map_options['renderWorldCopies']` | High |
+| `create-a-heatmap-layer-on-a-globe-with-terrain-elevation` | Multi-layer & terrain | Heatmap paint plus globe projection & terrain exaggeration | `Map.add_heatmap_layer`, `set_terrain`, globe projection options | High |
+| `change-a-layers-color-with-buttons` | Expressions & UI | DOM events updating paint properties | Filters/paints supported; needs UI wiring via `extra_js` | Medium |
+| `filter-layer-symbols-using-global-state` | Expressions | Feature filters toggled from Python state | Filter serialization ready; requires shared state helpers | Medium |
+| `filter-symbols-by-text-input` | Expressions & UI | Text input driving symbol layer filters | Filter helpers available; needs input binding | Medium |
+| `center-the-map-on-a-clicked-symbol` | Interactivity | Symbol click events triggering camera transitions | Map event API exists; requires scripted callbacks | Medium |
+| `animate-a-line` | Animation | Timed updates to line source data | Data updates possible via callbacks; needs animation loop glue | Medium |
+| `animate-symbol-to-follow-the-mouse` | Animation & events | Pointer tracking and dynamic symbol placement | Event hooks exist; requires continuous update bridge | Medium |
+| `add-a-custom-layer-with-tiles-to-a-globe` | Custom layers | WebGL custom layer registration on globe projection | Custom layer hooks missing | Low |
+| `add-a-custom-style-layer` | Custom layers | Raw WebGL style layer integration | Custom layer hooks missing | Low |
+| `add-a-simple-custom-layer-on-a-globe` | Custom layers | Custom render loop on globe context | Custom layer hooks missing | Low |
+| `create-deckgl-layer-using-rest-api` | Custom layers | Deck.GL interop and REST-driven styling | Requires Deck.GL adapter | Low |
+| `toggle-deckgl-layer` | Custom layers | Runtime Deck.GL layer management | Requires Deck.GL adapter | Low |
+
+These additions push Phase 2 beyond the 20% coverage milestone, validating multi-layer contour styling, remote sprite usage, and compound filter expressions through automated pytest scenarios.
 
 #### Phase 3: Interactivity & Events (Target: 35% coverage)
 
