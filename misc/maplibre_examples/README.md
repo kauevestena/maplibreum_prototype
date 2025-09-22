@@ -137,7 +137,7 @@ When converting JavaScript examples to Python:
 
 This roadmap tracks the systematic implementation of all 123 official MapLibre GL JS examples to ensure comprehensive feature coverage and compatibility. This shall be updated every iteration.
 
-**Current Coverage:** 28/123 examples completed (22.8%).
+**Current Coverage:** 44/123 examples completed (35.8%).
 
 #### Phase 1: Core Functionality (13/123 completed - 10.6%)
 
@@ -225,14 +225,56 @@ This roadmap tracks the systematic implementation of all 123 official MapLibre G
 
 These additions push Phase 2 beyond the 20% coverage milestone, validating multi-layer contour styling, remote sprite usage, and compound filter expressions through automated pytest scenarios.
 
-#### Phase 3: Interactivity & Events (Target: 35% coverage)
+#### Phase 3: Interactivity & Events (16/123 completed - 13.0%)
 
-**Planned Examples:**
-- Mouse events (hover, click, move)
-- Feature selection and highlighting
-- Custom popup templates
-- Dynamic layer toggling
-- User interaction controls
+**✅ Completed Examples (Event-driven behaviours now covered):**
+- `add-custom-icons-with-markers` – Marker hover and focus interactions wired through Python listeners.
+- `animate-symbol-to-follow-the-mouse` – Pointer-tracking callbacks updating symbol positions.
+- `attach-a-popup-to-a-marker-instance` – Notebook callbacks driving marker-bound popup content.
+- `center-the-map-on-a-clicked-symbol` – Layer-specific click handlers easing the camera.
+- `change-a-layers-color-with-buttons` – DOM button toggles mutating layer paint via state toggles.
+- `create-a-draggable-marker` – Drag events routed back to Python for live coordinate updates.
+- `create-a-hover-effect` – CSS class toggles triggered from layer hover events.
+- `customize-camera-animations` – Event sequences coordinating camera helpers.
+- `display-a-popup-on-hover` – Hover-only popup bindings managed from Python.
+- `filter-layer-symbols-using-global-state` – Interactive filters backed by shared state bindings.
+- `filter-symbols-by-text-input` – Input-driven filter expressions bridged via event callbacks.
+- `filter-symbols-by-toggling-a-list` – Checkbox-driven symbol filtering using `StateToggle` helpers.
+- `get-coordinates-of-the-mouse-pointer` – Real-time pointer coordinate streaming.
+- `get-features-under-the-mouse-pointer` – Feature queries dispatched through the event bridge.
+- `show-polygon-information-on-click` – Feature popups invoking Python handlers on click.
+- `toggle-interactions` – Programmatic enable/disable of map interactions from notebook code.
+
+These scenarios leverage the new `Map.add_event_listener` helper alongside `StateToggle` to translate MapLibre's DOM event model into reusable Python abstractions.
+
+**🎯 Remaining Interactive Backlog:**
+- `animate-a-line` – requires timed source updates from callbacks.
+- `add-a-custom-layer-with-tiles-to-a-globe` / `add-a-custom-style-layer` – pending WebGL custom layer API.
+- `create-deckgl-layer-using-rest-api` & `toggle-deckgl-layer` – awaiting Deck.GL integration helpers.
+
+### Interaction Helper APIs
+
+```python
+from maplibreum import Map, StateToggle
+
+m = Map()
+m.on(
+    "mouseenter",
+    lambda evt: print(evt["center"]),
+    layer_id="cities",
+    js="map.setPaintProperty('cities', 'circle-opacity', 0.5);",
+    state_toggles=[StateToggle(selector="#status", class_name="is-hovering")],
+)
+
+m.add_event_listener(
+    "click",
+    js="console.log('clicked');",
+    state_toggles=[{"selector": "#panel", "attribute": "data-open", "state": False}],
+    once=True,
+)
+```
+
+Use `StateToggle` to keep DOM state in sync with MapLibre events (toggling CSS classes, attributes, or dataset fields) while `Map.add_event_listener` and `Map.on` manage the underlying `map.on`/`map.off` plumbing.
 
 #### Phase 4: Advanced Features (Target: 50% coverage)
 
@@ -300,13 +342,10 @@ The systematic approach ensures that maplibreum achieves comprehensive compatibi
 
 #### Current Status
 
-**MapLibreum Feature Coverage: 6/123 (4.9%)**
+**MapLibreum Feature Coverage: 44/123 (35.8%)**
 
-The following MapLibre GL JS examples have been successfully implemented and tested:
+The following highlights capture the breadth of implemented examples:
 
-- ✅ **add-a-default-marker** - Basic marker placement functionality
-- ✅ **display-a-map** - Simple map initialization with custom styles
-- ✅ **display-a-popup** - Static popup creation with custom HTML content
-- ✅ **add-a-geojson-line** - GeoJSON LineString rendering with custom styling
-- ✅ **add-an-icon-to-the-map** - Custom icon symbol layers with property expressions
-- ✅ **display-a-popup-on-click** - Interactive popups with GeoJSON feature properties
+- ✅ **Core markers & popups** – `add-a-default-marker`, `display-a-map`, `display-a-popup`, and `display-a-popup-on-click` validate foundational workflows.
+- ✅ **GeoJSON styling suite** – `add-a-geojson-line`, `add-an-icon-to-the-map`, and the Phase 2 contour/heatmap helpers exercise expression-driven styling.
+- ✅ **Interactive event toolkit** – Newly-covered examples such as `filter-layer-symbols-using-global-state`, `get-coordinates-of-the-mouse-pointer`, and `toggle-interactions` showcase the Python-driven event bindings introduced in this iteration.
