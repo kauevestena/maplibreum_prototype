@@ -131,6 +131,32 @@
             if (typeof maplibregl === 'undefined') {
                 throw new Error('MapLibre GL JS loaded but not available');
             }
+            {% if rtl_text_plugin %}
+            try {
+                var rtlStatus = typeof maplibregl.getRTLTextPluginStatus === 'function'
+                    ? maplibregl.getRTLTextPluginStatus()
+                    : 'unavailable';
+                if ({{ 'true' if rtl_text_plugin.force else 'false' }} || rtlStatus !== 'loaded') {
+                    var rtlPluginUrl = {{ rtl_text_plugin.url | tojson }};
+                    {% if rtl_text_plugin.lazy %}
+                    maplibregl.setRTLTextPlugin(
+                        rtlPluginUrl,
+                        {% if rtl_text_plugin.callback is defined %}{% if rtl_text_plugin.callback is none %}null{% else %}{{ rtl_text_plugin.callback | safe }}{% endif %}{% else %}null{% endif %},
+                        true
+                    );
+                    {% elif rtl_text_plugin.callback is defined %}
+                    maplibregl.setRTLTextPlugin(
+                        rtlPluginUrl,
+                        {% if rtl_text_plugin.callback is none %}null{% else %}{{ rtl_text_plugin.callback | safe }}{% endif %}
+                    );
+                    {% else %}
+                    maplibregl.setRTLTextPlugin(rtlPluginUrl);
+                    {% endif %}
+                }
+            } catch (rtlError) {
+                console.warn('Failed to configure RTL text plugin', rtlError);
+            }
+            {% endif %}
             initializeMap();
         }).catch(error => {
             console.error('Failed to load MapLibre GL JS:', error);

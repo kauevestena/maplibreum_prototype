@@ -56,6 +56,11 @@ m.set_fog()
 
 # Save the map to an HTML file
 m.save("my_map.html")
+
+# Switch to an Albers projection and enable RTL/mobile options
+m.set_projection({"name": "albers", "parallels": [29.5, 45.5], "center": [-96, 37.8]})
+m.enable_rtl_text_plugin()
+m.set_mobile_behavior(cooperative_gestures=True, touch_zoom_rotate=False)
 ```
 
 ## Feature Demonstrations
