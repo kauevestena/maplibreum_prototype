@@ -15,7 +15,7 @@
             padding: 0;
         }
 
-        #maplibreum_ade9296ab47d435f928c2130b64a8eac {
+        #maplibreum_3eb6f39c1d8d4676b88a5a32790fb6f4 {
             width: 100%;
             height: 500px;
             position: relative;
@@ -45,7 +45,7 @@
 
         }
 
-        #maplibreum_ade9296ab47d435f928c2130b64a8eac { width: 100%; height: 500px; }
+        #maplibreum_3eb6f39c1d8d4676b88a5a32790fb6f4 { width: 100%; height: 500px; }
 
 
 
@@ -58,7 +58,7 @@
   <p>Generated from test_change_building_color_based_on_zoom_level.py by the automated test suite.</p>
 </div>
 
-    <div id="maplibreum_ade9296ab47d435f928c2130b64a8eac">
+    <div id="maplibreum_3eb6f39c1d8d4676b88a5a32790fb6f4">
         
         
     </div>
@@ -92,7 +92,7 @@
 
         // Function to show error message when MapLibre fails to load
         function showMapError(message) {
-            const mapDiv = document.getElementById('maplibreum_ade9296ab47d435f928c2130b64a8eac');
+            const mapDiv = document.getElementById('maplibreum_3eb6f39c1d8d4676b88a5a32790fb6f4');
             if (mapDiv) {
                 mapDiv.innerHTML = `
                     <div style="
@@ -137,7 +137,13 @@
         function initializeMap() {
             try {
         // Initialize map
-        var map = new maplibregl.Map({"container": "maplibreum_ade9296ab47d435f928c2130b64a8eac", "style": "https://demotiles.maplibre.org/style.json", "center": [-73.985664, 40.748514], "zoom": 15});
+        var map = new maplibregl.Map({"container": "maplibreum_3eb6f39c1d8d4676b88a5a32790fb6f4", "style": "https://demotiles.maplibre.org/style.json", "center": [-73.985664, 40.748514], "zoom": 15});
+        window.maplibreumMaps = window.maplibreumMaps || {};
+        window.maplibreumMaps["maplibreum_3eb6f39c1d8d4676b88a5a32790fb6f4"] = map;
+        window.maplibreumMapsLoaded = window.maplibreumMapsLoaded || {};
+        map.once('load', function() {
+            window.maplibreumMapsLoaded["maplibreum_3eb6f39c1d8d4676b88a5a32790fb6f4"] = true;
+        });
 
 
 // Add controls

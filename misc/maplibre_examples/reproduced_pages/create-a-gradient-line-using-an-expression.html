@@ -15,7 +15,7 @@
             padding: 0;
         }
 
-        #maplibreum_d19321e8e4e64a83a369c4baf6a62d7c {
+        #maplibreum_23d064f8262147479b1cc0188ae25c8d {
             width: 100%;
             height: 500px;
             position: relative;
@@ -45,7 +45,7 @@
 
         }
 
-        #maplibreum_d19321e8e4e64a83a369c4baf6a62d7c { width: 100%; height: 500px; }
+        #maplibreum_23d064f8262147479b1cc0188ae25c8d { width: 100%; height: 500px; }
 
 
 
@@ -58,7 +58,7 @@
   <p>Generated from test_create_a_gradient_line_using_an_expression.py by the automated test suite.</p>
 </div>
 
-    <div id="maplibreum_d19321e8e4e64a83a369c4baf6a62d7c">
+    <div id="maplibreum_23d064f8262147479b1cc0188ae25c8d">
         
         
     </div>
@@ -92,7 +92,7 @@
 
         // Function to show error message when MapLibre fails to load
         function showMapError(message) {
-            const mapDiv = document.getElementById('maplibreum_d19321e8e4e64a83a369c4baf6a62d7c');
+            const mapDiv = document.getElementById('maplibreum_23d064f8262147479b1cc0188ae25c8d');
             if (mapDiv) {
                 mapDiv.innerHTML = `
                     <div style="
@@ -137,7 +137,13 @@
         function initializeMap() {
             try {
         // Initialize map
-        var map = new maplibregl.Map({"container": "maplibreum_d19321e8e4e64a83a369c4baf6a62d7c", "style": "https://demotiles.maplibre.org/style.json", "center": [-122.48369693756104, 37.83381888486939], "zoom": 14});
+        var map = new maplibregl.Map({"container": "maplibreum_23d064f8262147479b1cc0188ae25c8d", "style": "https://demotiles.maplibre.org/style.json", "center": [-122.48369693756104, 37.83381888486939], "zoom": 14});
+        window.maplibreumMaps = window.maplibreumMaps || {};
+        window.maplibreumMaps["maplibreum_23d064f8262147479b1cc0188ae25c8d"] = map;
+        window.maplibreumMapsLoaded = window.maplibreumMapsLoaded || {};
+        map.once('load', function() {
+            window.maplibreumMapsLoaded["maplibreum_23d064f8262147479b1cc0188ae25c8d"] = true;
+        });
 
 
 // Add controls

@@ -114,3 +114,6 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
+
+# MapLibre example artefacts
+misc/maplibre_examples/reproduced_pages/

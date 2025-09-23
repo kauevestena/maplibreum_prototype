@@ -77,11 +77,25 @@ for page_id, href in pages.items():
     print(f"Fetching {page_id} from {href}...")
     response = requests.get(href)
     if response.status_code == 200:
-        with open(file_path, "w", encoding="utf-8") as f:
-            f.write(response.text)
-        print(f"  Saved to {file_path}")
 
-        entry["source_status"] = True
+        # create a soup object to parse the HTML content
+        example_soup = BeautifulSoup(response.content, "html.parser")
+
+        # extract the <code class="md-code__content" tabindex="0"> element
+        code_element = example_soup.find(
+            "code", class_="md-code__content", tabindex="0"
+        )
+        if code_element:
+            content = code_element.get_text(strip=True)
+
+            with open(file_path, "w", encoding="utf-8") as f:
+                f.write(content)
+            print(f"  Saved to {file_path}")
+
+            entry["source_status"] = True
+        else:
+            print(f"  No <code> element found in {href}")
+            entry["source_status"] = False
     else:
         print(f"  Failed to fetch {href}: Status code {response.status_code}")
 

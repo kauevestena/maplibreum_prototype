@@ -15,7 +15,7 @@
             padding: 0;
         }
 
-        #maplibreum_5aa36a2a0897418997b62dcc7f294fdb {
+        #maplibreum_0382b8963b8941f78e91a6ef5fc1900c {
             width: 100%;
             height: 500px;
             position: relative;
@@ -45,7 +45,7 @@
 
         }
 
-        #maplibreum_5aa36a2a0897418997b62dcc7f294fdb { width: 100%; height: 500px; }
+        #maplibreum_0382b8963b8941f78e91a6ef5fc1900c { width: 100%; height: 500px; }
 
 
 
@@ -58,7 +58,7 @@
   <p>Generated from test_display_a_non_interactive_map.py by the automated test suite.</p>
 </div>
 
-    <div id="maplibreum_5aa36a2a0897418997b62dcc7f294fdb">
+    <div id="maplibreum_0382b8963b8941f78e91a6ef5fc1900c">
         
         
     </div>
@@ -92,7 +92,7 @@
 
         // Function to show error message when MapLibre fails to load
         function showMapError(message) {
-            const mapDiv = document.getElementById('maplibreum_5aa36a2a0897418997b62dcc7f294fdb');
+            const mapDiv = document.getElementById('maplibreum_0382b8963b8941f78e91a6ef5fc1900c');
             if (mapDiv) {
                 mapDiv.innerHTML = `
                     <div style="
@@ -137,7 +137,13 @@
         function initializeMap() {
             try {
         // Initialize map
-        var map = new maplibregl.Map({"container": "maplibreum_5aa36a2a0897418997b62dcc7f294fdb", "style": "https://demotiles.maplibre.org/style.json", "center": [74.5, 40.0], "zoom": 3, "interactive": false});
+        var map = new maplibregl.Map({"container": "maplibreum_0382b8963b8941f78e91a6ef5fc1900c", "style": "https://demotiles.maplibre.org/style.json", "center": [74.5, 40.0], "zoom": 3, "interactive": false});
+        window.maplibreumMaps = window.maplibreumMaps || {};
+        window.maplibreumMaps["maplibreum_0382b8963b8941f78e91a6ef5fc1900c"] = map;
+        window.maplibreumMapsLoaded = window.maplibreumMapsLoaded || {};
+        map.once('load', function() {
+            window.maplibreumMapsLoaded["maplibreum_0382b8963b8941f78e91a6ef5fc1900c"] = true;
+        });
 
 
 // Add controls

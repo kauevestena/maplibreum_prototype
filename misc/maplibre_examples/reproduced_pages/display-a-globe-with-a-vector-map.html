@@ -15,7 +15,7 @@
             padding: 0;
         }
 
-        #maplibreum_5fa1cce9dea7499ba916e163d2f9f3d6 {
+        #maplibreum_fd41e5ee077848af839f31717523de05 {
             width: 100%;
             height: 500px;
             position: relative;
@@ -45,7 +45,7 @@
 
         }
 
-        #maplibreum_5fa1cce9dea7499ba916e163d2f9f3d6 { width: 100%; height: 500px; }
+        #maplibreum_fd41e5ee077848af839f31717523de05 { width: 100%; height: 500px; }
 
 
 
@@ -58,7 +58,7 @@
   <p>Generated from test_display_a_globe_with_a_vector_map.py by the automated test suite.</p>
 </div>
 
-    <div id="maplibreum_5fa1cce9dea7499ba916e163d2f9f3d6">
+    <div id="maplibreum_fd41e5ee077848af839f31717523de05">
         
         
     </div>
@@ -92,7 +92,7 @@
 
         // Function to show error message when MapLibre fails to load
         function showMapError(message) {
-            const mapDiv = document.getElementById('maplibreum_5fa1cce9dea7499ba916e163d2f9f3d6');
+            const mapDiv = document.getElementById('maplibreum_fd41e5ee077848af839f31717523de05');
             if (mapDiv) {
                 mapDiv.innerHTML = `
                     <div style="
@@ -137,7 +137,13 @@
         function initializeMap() {
             try {
         // Initialize map
-        var map = new maplibregl.Map({"container": "maplibreum_5fa1cce9dea7499ba916e163d2f9f3d6", "style": "https://demotiles.maplibre.org/style.json", "center": [0, 0], "zoom": 1.2, "projection": "globe"});
+        var map = new maplibregl.Map({"container": "maplibreum_fd41e5ee077848af839f31717523de05", "style": "https://demotiles.maplibre.org/style.json", "center": [0, 0], "zoom": 1.2, "projection": "globe"});
+        window.maplibreumMaps = window.maplibreumMaps || {};
+        window.maplibreumMaps["maplibreum_fd41e5ee077848af839f31717523de05"] = map;
+        window.maplibreumMapsLoaded = window.maplibreumMapsLoaded || {};
+        map.once('load', function() {
+            window.maplibreumMapsLoaded["maplibreum_fd41e5ee077848af839f31717523de05"] = true;
+        });
 
 
 // Add controls

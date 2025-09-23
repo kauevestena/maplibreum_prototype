@@ -15,7 +15,7 @@
             padding: 0;
         }
 
-        #maplibreum_2c3b94d5fcb54a39a25c85e41309b010 {
+        #maplibreum_3854abb95a7a4393829a21e7056001c2 {
             width: 100%;
             height: 500px;
             position: relative;
@@ -45,7 +45,7 @@
 
         }
 
-        #maplibreum_2c3b94d5fcb54a39a25c85e41309b010 { width: 100%; height: 500px; }
+        #maplibreum_3854abb95a7a4393829a21e7056001c2 { width: 100%; height: 500px; }
 
 
 
@@ -58,7 +58,7 @@
   <p>Generated from test_add_a_multidirectional_hillshade_layer.py by the automated test suite.</p>
 </div>
 
-    <div id="maplibreum_2c3b94d5fcb54a39a25c85e41309b010">
+    <div id="maplibreum_3854abb95a7a4393829a21e7056001c2">
         
         
     </div>
@@ -92,7 +92,7 @@
 
         // Function to show error message when MapLibre fails to load
         function showMapError(message) {
-            const mapDiv = document.getElementById('maplibreum_2c3b94d5fcb54a39a25c85e41309b010');
+            const mapDiv = document.getElementById('maplibreum_3854abb95a7a4393829a21e7056001c2');
             if (mapDiv) {
                 mapDiv.innerHTML = `
                     <div style="
@@ -137,7 +137,13 @@
         function initializeMap() {
             try {
         // Initialize map
-        var map = new maplibregl.Map({"container": "maplibreum_2c3b94d5fcb54a39a25c85e41309b010", "style": "https://demotiles.maplibre.org/style.json", "center": [-113.57, 37.07], "zoom": 11});
+        var map = new maplibregl.Map({"container": "maplibreum_3854abb95a7a4393829a21e7056001c2", "style": "https://demotiles.maplibre.org/style.json", "center": [-113.57, 37.07], "zoom": 11});
+        window.maplibreumMaps = window.maplibreumMaps || {};
+        window.maplibreumMaps["maplibreum_3854abb95a7a4393829a21e7056001c2"] = map;
+        window.maplibreumMapsLoaded = window.maplibreumMapsLoaded || {};
+        map.once('load', function() {
+            window.maplibreumMapsLoaded["maplibreum_3854abb95a7a4393829a21e7056001c2"] = true;
+        });
 
 
 // Add controls

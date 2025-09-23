@@ -15,7 +15,7 @@
             padding: 0;
         }
 
-        #maplibreum_807510159fd3469abe2d7e619d39504a {
+        #maplibreum_a8558898f4274c0da15899eeb104a8bb {
             width: 100%;
             height: 500px;
             position: relative;
@@ -45,7 +45,7 @@
 
         }
 
-        #maplibreum_807510159fd3469abe2d7e619d39504a { width: 100%; height: 500px; }
+        #maplibreum_a8558898f4274c0da15899eeb104a8bb { width: 100%; height: 500px; }
 
 
 
@@ -58,7 +58,7 @@
   <p>Generated from test_add_contour_lines.py by the automated test suite.</p>
 </div>
 
-    <div id="maplibreum_807510159fd3469abe2d7e619d39504a">
+    <div id="maplibreum_a8558898f4274c0da15899eeb104a8bb">
         
         
     </div>
@@ -92,7 +92,7 @@
 
         // Function to show error message when MapLibre fails to load
         function showMapError(message) {
-            const mapDiv = document.getElementById('maplibreum_807510159fd3469abe2d7e619d39504a');
+            const mapDiv = document.getElementById('maplibreum_a8558898f4274c0da15899eeb104a8bb');
             if (mapDiv) {
                 mapDiv.innerHTML = `
                     <div style="
@@ -137,7 +137,13 @@
         function initializeMap() {
             try {
         // Initialize map
-        var map = new maplibregl.Map({"container": "maplibreum_807510159fd3469abe2d7e619d39504a", "style": {"version": 8, "glyphs": "https://demotiles.maplibre.org/font/{fontstack}/{range}.pbf", "sources": {"hillshadeSource": {"type": "raster-dem", "tiles": ["https://demotiles.maplibre.org/terrain-tiles/{z}/{x}/{y}.png"], "tileSize": 512, "maxzoom": 12}, "contourSourceFeet": {"type": "vector", "tiles": ["https://demotiles.maplibre.org/contours/{z}/{x}/{y}.mvt"], "maxzoom": 15}}, "layers": [{"id": "hills", "type": "hillshade", "source": "hillshadeSource", "paint": {"hillshade-exaggeration": 0.25}, "layout": {"visibility": "visible"}}, {"id": "contours", "type": "line", "source": "contourSourceFeet", "paint": {"line-opacity": 0.5, "line-width": ["match", ["get", "level"], 1, 1, 0.5]}, "source-layer": "contours"}, {"id": "contour-text", "type": "symbol", "source": "contourSourceFeet", "paint": {"text-halo-color": "white", "text-halo-width": 1}, "layout": {"symbol-placement": "line", "text-size": 10, "text-field": ["concat", ["number-format", ["get", "ele"], {}], "'"], "text-font": ["Noto Sans Bold"]}, "filter": [">", ["get", "level"], 0], "source-layer": "contours"}]}, "center": [11.3229, 47.2738], "zoom": 13, "hash": true});
+        var map = new maplibregl.Map({"container": "maplibreum_a8558898f4274c0da15899eeb104a8bb", "style": {"version": 8, "glyphs": "https://demotiles.maplibre.org/font/{fontstack}/{range}.pbf", "sources": {"hillshadeSource": {"type": "raster-dem", "tiles": ["https://demotiles.maplibre.org/terrain-tiles/{z}/{x}/{y}.png"], "tileSize": 512, "maxzoom": 12}, "contourSourceFeet": {"type": "vector", "tiles": ["https://demotiles.maplibre.org/contours/{z}/{x}/{y}.mvt"], "maxzoom": 15}}, "layers": [{"id": "hills", "type": "hillshade", "source": "hillshadeSource", "paint": {"hillshade-exaggeration": 0.25}, "layout": {"visibility": "visible"}}, {"id": "contours", "type": "line", "source": "contourSourceFeet", "paint": {"line-opacity": 0.5, "line-width": ["match", ["get", "level"], 1, 1, 0.5]}, "source-layer": "contours"}, {"id": "contour-text", "type": "symbol", "source": "contourSourceFeet", "paint": {"text-halo-color": "white", "text-halo-width": 1}, "layout": {"symbol-placement": "line", "text-size": 10, "text-field": ["concat", ["number-format", ["get", "ele"], {}], "'"], "text-font": ["Noto Sans Bold"]}, "filter": [">", ["get", "level"], 0], "source-layer": "contours"}]}, "center": [11.3229, 47.2738], "zoom": 13, "hash": true});
+        window.maplibreumMaps = window.maplibreumMaps || {};
+        window.maplibreumMaps["maplibreum_a8558898f4274c0da15899eeb104a8bb"] = map;
+        window.maplibreumMapsLoaded = window.maplibreumMapsLoaded || {};
+        map.once('load', function() {
+            window.maplibreumMapsLoaded["maplibreum_a8558898f4274c0da15899eeb104a8bb"] = true;
+        });
 
 
 // Add controls

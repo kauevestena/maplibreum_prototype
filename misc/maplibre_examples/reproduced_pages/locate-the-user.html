@@ -15,7 +15,7 @@
             padding: 0;
         }
 
-        #maplibreum_1fbbb1ec5c5e4fb4b6c3b03c391ac88e {
+        #maplibreum_35e2da8c6a3b404f84f51680f46e255b {
             width: 100%;
             height: 500px;
             position: relative;
@@ -45,7 +45,7 @@
 
         }
 
-        #maplibreum_1fbbb1ec5c5e4fb4b6c3b03c391ac88e { width: 100%; height: 500px; }
+        #maplibreum_35e2da8c6a3b404f84f51680f46e255b { width: 100%; height: 500px; }
 
 
 
@@ -58,7 +58,7 @@
   <p>Generated from test_locate_the_user.py by the automated test suite.</p>
 </div>
 
-    <div id="maplibreum_1fbbb1ec5c5e4fb4b6c3b03c391ac88e">
+    <div id="maplibreum_35e2da8c6a3b404f84f51680f46e255b">
         
         
     </div>
@@ -92,7 +92,7 @@
 
         // Function to show error message when MapLibre fails to load
         function showMapError(message) {
-            const mapDiv = document.getElementById('maplibreum_1fbbb1ec5c5e4fb4b6c3b03c391ac88e');
+            const mapDiv = document.getElementById('maplibreum_35e2da8c6a3b404f84f51680f46e255b');
             if (mapDiv) {
                 mapDiv.innerHTML = `
                     <div style="
@@ -137,7 +137,13 @@
         function initializeMap() {
             try {
         // Initialize map
-        var map = new maplibregl.Map({"container": "maplibreum_1fbbb1ec5c5e4fb4b6c3b03c391ac88e", "style": "https://tiles.openfreemap.org/styles/bright", "center": [-96.0, 37.8], "zoom": 3});
+        var map = new maplibregl.Map({"container": "maplibreum_35e2da8c6a3b404f84f51680f46e255b", "style": "https://tiles.openfreemap.org/styles/bright", "center": [-96.0, 37.8], "zoom": 3});
+        window.maplibreumMaps = window.maplibreumMaps || {};
+        window.maplibreumMaps["maplibreum_35e2da8c6a3b404f84f51680f46e255b"] = map;
+        window.maplibreumMapsLoaded = window.maplibreumMapsLoaded || {};
+        map.once('load', function() {
+            window.maplibreumMapsLoaded["maplibreum_35e2da8c6a3b404f84f51680f46e255b"] = true;
+        });
 
 
 // Add controls

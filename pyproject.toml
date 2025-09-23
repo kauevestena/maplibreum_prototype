@@ -52,4 +52,7 @@ version = {attr = "maplibreum._version.__version__"}
 testpaths = [
   "tests"
 ]
-
+markers = [
+  "manual: Tests intended for manual execution outside CI",
+  "browser: Requires a browser runtime (Playwright)"
+]

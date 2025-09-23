@@ -15,7 +15,7 @@
             padding: 0;
         }
 
-        #maplibreum_6356839db8fa44118ba570adae752201 {
+        #maplibreum_cfb0daab84d14eb1a7fc815f30454684 {
             width: 100%;
             height: 500px;
             position: relative;
@@ -45,7 +45,7 @@
 
         }
 
-        #maplibreum_6356839db8fa44118ba570adae752201 { width: 100%; height: 500px; }
+        #maplibreum_cfb0daab84d14eb1a7fc815f30454684 { width: 100%; height: 500px; }
 
 
 
@@ -58,7 +58,7 @@
   <p>Generated from test_change_the_default_position_for_attribution.py by the automated test suite.</p>
 </div>
 
-    <div id="maplibreum_6356839db8fa44118ba570adae752201">
+    <div id="maplibreum_cfb0daab84d14eb1a7fc815f30454684">
         
         
     </div>
@@ -92,7 +92,7 @@
 
         // Function to show error message when MapLibre fails to load
         function showMapError(message) {
-            const mapDiv = document.getElementById('maplibreum_6356839db8fa44118ba570adae752201');
+            const mapDiv = document.getElementById('maplibreum_cfb0daab84d14eb1a7fc815f30454684');
             if (mapDiv) {
                 mapDiv.innerHTML = `
                     <div style="
@@ -137,7 +137,13 @@
         function initializeMap() {
             try {
         // Initialize map
-        var map = new maplibregl.Map({"container": "maplibreum_6356839db8fa44118ba570adae752201", "style": "https://demotiles.maplibre.org/style.json", "center": [0, 0], "zoom": 2});
+        var map = new maplibregl.Map({"container": "maplibreum_cfb0daab84d14eb1a7fc815f30454684", "style": "https://demotiles.maplibre.org/style.json", "center": [0, 0], "zoom": 2});
+        window.maplibreumMaps = window.maplibreumMaps || {};
+        window.maplibreumMaps["maplibreum_cfb0daab84d14eb1a7fc815f30454684"] = map;
+        window.maplibreumMapsLoaded = window.maplibreumMapsLoaded || {};
+        map.once('load', function() {
+            window.maplibreumMapsLoaded["maplibreum_cfb0daab84d14eb1a7fc815f30454684"] = true;
+        });
 
 
 // Add controls

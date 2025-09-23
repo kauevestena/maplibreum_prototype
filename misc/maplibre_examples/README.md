@@ -60,6 +60,30 @@ misc/maplibre_examples/
 2. **Check failure patterns** in test output
 3. **Update maplibreum core** if systematic failures found
 
+## Browser Verification (Manual)
+
+The core pytest suite only validates the generated HTML configuration. When you
+need to confirm that MapLibre GL initialises correctly in a real browser:
+
+1. **Install the optional tooling** (within your virtual environment):
+   ```bash
+   pip install pytest-playwright playwright
+   playwright install chromium
+   ```
+2. **Regenerate the HTML artefacts** by running the automated examples suite:
+   ```bash
+   pytest tests/test_examples -q
+   ```
+   This recreates the files in `misc/maplibre_examples/reproduced_pages/`.
+3. **Launch the browser checks** whenever you want an end-to-end sanity test:
+   ```bash
+   pytest playwright_tests --browser chromium -m browser
+   ```
+
+These Playwright-powered tests live outside the default `pytest` discovery
+path, so CI remains lightweight while you can still perform manual parity
+checks on demand.
+
 ## Status Tracking
 
 The `status.json` file tracks each example with:

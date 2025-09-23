@@ -15,7 +15,7 @@
             padding: 0;
         }
 
-        #maplibreum_00925691ea334943b6fec3160c6b0fc5 {
+        #maplibreum_1b48ff5ca56f4b0f93952d0677a030c6 {
             width: 100%;
             height: 500px;
             position: relative;
@@ -45,7 +45,7 @@
 
         }
 
-        #maplibreum_00925691ea334943b6fec3160c6b0fc5 { width: 100%; height: 500px; }
+        #maplibreum_1b48ff5ca56f4b0f93952d0677a030c6 { width: 100%; height: 500px; }
 
 
 
@@ -58,7 +58,7 @@
   <p>Generated from test_visualize_population_density.py by the automated test suite.</p>
 </div>
 
-    <div id="maplibreum_00925691ea334943b6fec3160c6b0fc5">
+    <div id="maplibreum_1b48ff5ca56f4b0f93952d0677a030c6">
         
         
     </div>
@@ -92,7 +92,7 @@
 
         // Function to show error message when MapLibre fails to load
         function showMapError(message) {
-            const mapDiv = document.getElementById('maplibreum_00925691ea334943b6fec3160c6b0fc5');
+            const mapDiv = document.getElementById('maplibreum_1b48ff5ca56f4b0f93952d0677a030c6');
             if (mapDiv) {
                 mapDiv.innerHTML = `
                     <div style="
@@ -137,7 +137,13 @@
         function initializeMap() {
             try {
         // Initialize map
-        var map = new maplibregl.Map({"container": "maplibreum_00925691ea334943b6fec3160c6b0fc5", "style": "https://demotiles.maplibre.org/style.json", "center": [-96.797, 32.7767], "zoom": 5});
+        var map = new maplibregl.Map({"container": "maplibreum_1b48ff5ca56f4b0f93952d0677a030c6", "style": "https://demotiles.maplibre.org/style.json", "center": [-96.797, 32.7767], "zoom": 5});
+        window.maplibreumMaps = window.maplibreumMaps || {};
+        window.maplibreumMaps["maplibreum_1b48ff5ca56f4b0f93952d0677a030c6"] = map;
+        window.maplibreumMapsLoaded = window.maplibreumMapsLoaded || {};
+        map.once('load', function() {
+            window.maplibreumMapsLoaded["maplibreum_1b48ff5ca56f4b0f93952d0677a030c6"] = true;
+        });
 
 
 // Add controls

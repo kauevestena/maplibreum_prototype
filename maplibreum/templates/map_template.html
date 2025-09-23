@@ -167,6 +167,12 @@
             try {
         // Initialize map
         var map = new maplibregl.Map({{ map_options | tojson }});
+        window.maplibreumMaps = window.maplibreumMaps || {};
+        window.maplibreumMaps["{{ map_id }}"] = map;
+        window.maplibreumMapsLoaded = window.maplibreumMapsLoaded || {};
+        map.once('load', function() {
+            window.maplibreumMapsLoaded["{{ map_id }}"] = true;
+        });
 
 
 // Add controls

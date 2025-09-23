@@ -15,7 +15,7 @@
             padding: 0;
         }
 
-        #maplibreum_a989b22d1fc94b64b5ffce9a8534ef11 {
+        #maplibreum_cbbdcbdcc99e4d2fb6468dacbdd68974 {
             width: 100%;
             height: 500px;
             position: relative;
@@ -45,7 +45,7 @@
 
         }
 
-        #maplibreum_a989b22d1fc94b64b5ffce9a8534ef11 { width: 100%; height: 500px; }
+        #maplibreum_cbbdcbdcc99e4d2fb6468dacbdd68974 { width: 100%; height: 500px; }
 
 
 
@@ -58,7 +58,7 @@
   <p>Generated from test_display_a_popup_on_click.py by the automated test suite.</p>
 </div>
 
-    <div id="maplibreum_a989b22d1fc94b64b5ffce9a8534ef11">
+    <div id="maplibreum_cbbdcbdcc99e4d2fb6468dacbdd68974">
         
         
     </div>
@@ -92,7 +92,7 @@
 
         // Function to show error message when MapLibre fails to load
         function showMapError(message) {
-            const mapDiv = document.getElementById('maplibreum_a989b22d1fc94b64b5ffce9a8534ef11');
+            const mapDiv = document.getElementById('maplibreum_cbbdcbdcc99e4d2fb6468dacbdd68974');
             if (mapDiv) {
                 mapDiv.innerHTML = `
                     <div style="
@@ -137,7 +137,13 @@
         function initializeMap() {
             try {
         // Initialize map
-        var map = new maplibregl.Map({"container": "maplibreum_a989b22d1fc94b64b5ffce9a8534ef11", "style": "https://tiles.openfreemap.org/styles/bright", "center": [-77.04, 38.907], "zoom": 11.15});
+        var map = new maplibregl.Map({"container": "maplibreum_cbbdcbdcc99e4d2fb6468dacbdd68974", "style": "https://tiles.openfreemap.org/styles/bright", "center": [-77.04, 38.907], "zoom": 11.15});
+        window.maplibreumMaps = window.maplibreumMaps || {};
+        window.maplibreumMaps["maplibreum_cbbdcbdcc99e4d2fb6468dacbdd68974"] = map;
+        window.maplibreumMapsLoaded = window.maplibreumMapsLoaded || {};
+        map.once('load', function() {
+            window.maplibreumMapsLoaded["maplibreum_cbbdcbdcc99e4d2fb6468dacbdd68974"] = true;
+        });
 
 
 // Add controls
@@ -151,7 +157,7 @@ map.on('load', function() {
     
     // Add sources
     
-    map.addSource("source_a8ebfd0c4b2a4aa79489714aba21d2f9", {"type": "geojson", "data": {"type": "FeatureCollection", "features": [{"type": "Feature", "properties": {"description": "<strong>Test Location</strong><p>This is a test location for popup functionality.</p>", "icon": "theatre"}, "geometry": {"type": "Point", "coordinates": [-77.038659, 38.931567]}}]}});
+    map.addSource("source_2a1311f1755f4f088b77e7ce12b69497", {"type": "geojson", "data": {"type": "FeatureCollection", "features": [{"type": "Feature", "properties": {"description": "<strong>Test Location</strong><p>This is a test location for popup functionality.</p>", "icon": "theatre"}, "geometry": {"type": "Point", "coordinates": [-77.038659, 38.931567]}}]}});
     
 
     // Register images used by style layers
@@ -162,7 +168,7 @@ map.on('load', function() {
 
     // Add layers
     
-    map.addLayer({"id": "places", "type": "symbol", "layout": {"icon-image": "{icon}", "icon-overlap": "always"}, "source": "source_a8ebfd0c4b2a4aa79489714aba21d2f9"});
+    map.addLayer({"id": "places", "type": "symbol", "layout": {"icon-image": "{icon}", "icon-overlap": "always"}, "source": "source_2a1311f1755f4f088b77e7ce12b69497"});
     
 
     // Popups
@@ -211,7 +217,7 @@ map.on('load', function() {
             data.zoom = map.getZoom();
             
             if (window.Jupyter && Jupyter.notebook && Jupyter.notebook.kernel) {
-                var cmd = "from maplibreum.core import Map; Map._handle_event('" + "maplibreum_a989b22d1fc94b64b5ffce9a8534ef11" + "', '" + "click" + "', '" + JSON.stringify(data).replace(/'/g, "\\'") + "')";
+                var cmd = "from maplibreum.core import Map; Map._handle_event('" + "maplibreum_cbbdcbdcc99e4d2fb6468dacbdd68974" + "', '" + "click" + "', '" + JSON.stringify(data).replace(/'/g, "\\'") + "')";
                 Jupyter.notebook.kernel.execute(cmd);
             }
             
