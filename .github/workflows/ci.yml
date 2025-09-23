@@ -23,5 +23,46 @@ jobs:
         run: |
           pip install -e .
           pip install pytest
-      - name: Run tests
-        run: pytest
+      - name: Run core tests
+        run: pytest -k "not test_examples"
+      - name: Run MapLibre example tests
+        run: pytest tests/test_examples/ -v
+      - name: Run focused example tests (if any)
+        run: |
+          python - <<'PY'
+import pathlib
+import subprocess
+import sys
+
+tests_dir = pathlib.Path("tests") / "test_examples"
+if not tests_dir.exists():
+    print("No example tests directory found; skipping focused run.")
+    raise SystemExit(0)
+
+focused_candidates = []
+focus_dir = tests_dir / "focused"
+if focus_dir.exists():
+    focused_candidates.extend(sorted(focus_dir.glob("test_*.py")))
+
+for pattern in ("*focused*.py", "*focus*.py"):
+    focused_candidates.extend(sorted(tests_dir.glob(pattern)))
+
+unique_paths = []
+seen = set()
+for path in focused_candidates:
+    if not path.is_file():
+        continue
+    rel_path = path.as_posix()
+    if rel_path in seen:
+        continue
+    seen.add(rel_path)
+    unique_paths.append(rel_path)
+
+if not unique_paths:
+    print("No focused example tests detected; skipping.")
+    raise SystemExit(0)
+
+cmd = ["pytest", "-v", *unique_paths]
+print("Running focused example tests:", " ".join(cmd))
+raise SystemExit(subprocess.call(cmd))
+PY

@@ -139,6 +139,15 @@ This roadmap now reflects full parity with the 123 official MapLibre GL JS examp
 
 **Current Coverage:** 123/123 examples completed (100%). The remaining edge-case HTML samples—cooperative gestures, right-to-left scripts, mobile projections, and globe-specific styling—are reproduced entirely through generated HTML/JS with light-weight Python helpers where strictly necessary.
 
+#### Progress snapshot (regenerated 2025-09-22)
+
+| Metric | Value |
+| --- | --- |
+| Total examples tracked | 123 |
+| Examples downloaded | 123 |
+| Examples implemented | 123 |
+| Coverage percentage | 100% |
+
 ### Edge-case Validation
 
 - ✅ **Right-to-left script support** – Exercised via `Map.enable_rtl_text_plugin`, matching the `add-support-for-right-to-left-scripts` gallery example with automated pytest coverage.

@@ -12,8 +12,39 @@ pip install maplibreum
 
 ```bash
 pip install -e .
-pytest
+pytest -k "not test_examples"
+pytest tests/test_examples/ -v
 ```
+
+### Contribution Workflow
+
+- Start from the existing gallery tests in `tests/test_examples/` when adding a new
+  MapLibre example. Files such as
+  `tests/test_examples/test_display_a_map.py` provide a concise template for
+  porting the upstream HTML/JavaScript into maplibreum assertions.
+- Exercise targeted examples locally with:
+
+  ```bash
+  pytest tests/test_examples/test_<example_slug>.py -v
+  ```
+
+- Refresh the upstream gallery snapshots before updating a test or
+  `status.json`:
+
+  ```bash
+  python misc/maplibre_examples/scrapping.py
+  ```
+
+- Recalculate the roadmap metrics so documentation reflects the latest
+  `status.json` values:
+
+  ```bash
+  python -c "import json; data = json.load(open('misc/maplibre_examples/status.json')); print(f'Total examples: {len(data)}');"
+  python -c "import json; data = json.load(open('misc/maplibre_examples/status.json')); implemented = sum(1 for v in data.values() if list(v.values())[0]['task_status']); print(f'Implemented: {implemented}'); print(f'Coverage: {implemented/len(data)*100:.1f}%')"
+  ```
+
+- See `misc/maplibre_examples/README.md` for the full roadmap, parity goals,
+  and additional helper commands that keep the gallery in sync.
 
 ## Usage
 
