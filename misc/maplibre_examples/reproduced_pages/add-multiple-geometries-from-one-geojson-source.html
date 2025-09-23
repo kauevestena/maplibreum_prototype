@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <title>MapLibreum Map</title>
+    <meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no" />
+    <link href="https://unpkg.com/maplibre-gl@3.4.0/dist/maplibre-gl.css" rel="stylesheet" onerror="this.onerror=null;this.href='https://cdn.jsdelivr.net/npm/maplibre-gl@3.4.0/dist/maplibre-gl.css';" />
+    
+    
+    
+    
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+        }
+
+        #maplibreum_3407fa059ad9418cb09ddab9abc9cbde {
+            width: 100%;
+            height: 500px;
+            position: relative;
+        }
+
+        .maplibreum-legend {
+            position: absolute;
+            bottom: 10px;
+            left: 10px;
+            background: rgba(255, 255, 255, 0.8);
+            padding: 6px;
+            font-size: 12px;
+            border-radius: 4px;
+        }
+
+        .maplibreum-legend div {
+            display: flex;
+            align-items: center;
+            margin-bottom: 4px;
+        }
+
+        .maplibreum-legend span {
+            display: inline-block;
+            width: 12px;
+            height: 12px;
+            margin-right: 4px;
+
+        }
+
+        #maplibreum_3407fa059ad9418cb09ddab9abc9cbde { width: 100%; height: 500px; }
+
+
+
+    </style>
+</head>
+<body>
+<div class="maplibreum-example-banner">
+  <h1>Add Multiple Geometries From One Geojson Source</h1>
+  <p>Original MapLibre example: <a href="https://maplibre.org/maplibre-gl-js/docs/examples/add-multiple-geometries-from-one-geojson-source/" target="_blank" rel="noopener">https://maplibre.org/maplibre-gl-js/docs/examples/add-multiple-geometries-from-one-geojson-source/</a></p>
+  <p>Generated from test_add_multiple_geometries_from_one_geojson_source.py by the automated test suite.</p>
+</div>
+
+    <div id="maplibreum_3407fa059ad9418cb09ddab9abc9cbde">
+        
+        
+    </div>
+    <!-- MapLibre GL JS with CDN fallbacks -->
+    <script>
+        // Function to load MapLibre GL JS with fallbacks
+        function loadMapLibreGL() {
+            return new Promise((resolve, reject) => {
+                // Try loading from unpkg.com first
+                const script1 = document.createElement('script');
+                script1.src = 'https://unpkg.com/maplibre-gl@3.4.0/dist/maplibre-gl.js';
+                script1.onload = () => resolve();
+                script1.onerror = () => {
+                    // Fallback to jsDelivr
+                    const script2 = document.createElement('script');
+                    script2.src = 'https://cdn.jsdelivr.net/npm/maplibre-gl@3.4.0/dist/maplibre-gl.js';
+                    script2.onload = () => resolve();
+                    script2.onerror = () => {
+                        // Last fallback to cdnjs
+                        const script3 = document.createElement('script');
+                        script3.src = 'https://cdnjs.cloudflare.com/ajax/libs/maplibre-gl/3.4.0/maplibre-gl.min.js';
+                        script3.onload = () => resolve();
+                        script3.onerror = () => reject(new Error('Failed to load MapLibre GL JS from all CDNs'));
+                        document.head.appendChild(script3);
+                    };
+                    document.head.appendChild(script2);
+                };
+                document.head.appendChild(script1);
+            });
+        }
+
+        // Function to show error message when MapLibre fails to load
+        function showMapError(message) {
+            const mapDiv = document.getElementById('maplibreum_3407fa059ad9418cb09ddab9abc9cbde');
+            if (mapDiv) {
+                mapDiv.innerHTML = `
+                    <div style="
+                        display: flex;
+                        align-items: center;
+                        justify-content: center;
+                        height: 100%;
+                        background-color: #f8f9fa;
+                        border: 2px dashed #dee2e6;
+                        border-radius: 8px;
+                        text-align: center;
+                        padding: 20px;
+                        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+                    ">
+                        <div>
+                            <div style="font-size: 48px; color: #6c757d; margin-bottom: 16px;">🗺️</div>
+                            <div style="font-size: 18px; color: #495057; margin-bottom: 8px;">Map Loading Error</div>
+                            <div style="font-size: 14px; color: #6c757d; margin-bottom: 16px;">${message}</div>
+                            <div style="font-size: 12px; color: #6c757d;">
+                                This may be due to network restrictions or CDN availability issues.
+                                <br>Try refreshing the page or check your internet connection.
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }
+        }
+
+        // Load MapLibre and initialize map
+        loadMapLibreGL().then(() => {
+            // MapLibre loaded successfully, check if it's available
+            if (typeof maplibregl === 'undefined') {
+                throw new Error('MapLibre GL JS loaded but not available');
+            }
+            
+            initializeMap();
+        }).catch(error => {
+            console.error('Failed to load MapLibre GL JS:', error);
+            showMapError('Failed to load MapLibre GL JavaScript library');
+        });
+
+        function initializeMap() {
+            try {
+        // Initialize map
+        var map = new maplibregl.Map({"container": "maplibreum_3407fa059ad9418cb09ddab9abc9cbde", "style": "https://tiles.openfreemap.org/styles/bright", "center": [-121.403732, 40.492392], "zoom": 10});
+
+
+// Add controls
+
+
+
+
+
+
+map.on('load', function() {
+    
+    // Add sources
+    
+    map.addSource("national-park", {"type": "geojson", "data": {"type": "FeatureCollection", "features": [{"type": "Feature", "properties": {"name": "Lassen Volcanic National Park"}, "geometry": {"type": "Polygon", "coordinates": [[[-121.353637, 40.584978], [-121.284551, 40.584758], [-121.275349, 40.541646], [-121.246768, 40.541017], [-121.251343, 40.423383], [-121.32687, 40.423768], [-121.360619, 40.43479], [-121.363694, 40.409124], [-121.439713, 40.409197], [-121.439711, 40.423791], [-121.572133, 40.423548], [-121.577415, 40.550766], [-121.539486, 40.558107], [-121.520284, 40.572459], [-121.487219, 40.550822], [-121.446951, 40.56319], [-121.370644, 40.563267], [-121.353637, 40.584978]]]}}, {"type": "Feature", "properties": {"name": "Primary Trail"}, "geometry": {"type": "LineString", "coordinates": [[-121.4004, 40.508], [-121.425, 40.512], [-121.451, 40.5225], [-121.485, 40.534]]}}, {"type": "Feature", "properties": {"name": "Cinder Cone"}, "geometry": {"type": "Point", "coordinates": [-121.415061, 40.506229]}}, {"type": "Feature", "properties": {"name": "Brokeoff"}, "geometry": {"type": "Point", "coordinates": [-121.505184, 40.488084]}}, {"type": "Feature", "properties": {"name": "Chaos Crags"}, "geometry": {"type": "Point", "coordinates": [-121.354465, 40.488737]}}]}});
+    
+
+    // Register images used by style layers
+    
+
+    
+    
+
+    // Add layers
+    
+    map.addLayer({"id": "park-boundary", "type": "fill", "paint": {"fill-color": "#888888", "fill-opacity": 0.4}, "filter": ["==", "$type", "Polygon"], "source": "national-park"});
+    
+    map.addLayer({"id": "park-boundary-outline", "type": "line", "paint": {"line-color": "#000000", "line-width": 2}, "filter": ["==", "$type", "Polygon"], "source": "national-park"});
+    
+    map.addLayer({"id": "park-trails", "type": "line", "paint": {"line-color": "#ff69b4", "line-width": 4}, "layout": {"line-join": "round", "line-cap": "round"}, "filter": ["==", "$type", "LineString"], "source": "national-park"});
+    
+    map.addLayer({"id": "park-volcanoes", "type": "circle", "paint": {"circle-radius": 6, "circle-color": "#B42222"}, "filter": ["==", "$type", "Point"], "source": "national-park"});
+    
+
+    // Popups
+    
+
+    // Tooltips
+    
+
+    // Tile Layers
+    var tileLayers = [
+    
+    ];
+
+    // Overlay Layers
+    var overlayLayers = [
+    
+    ];
+
+    
+
+    
+
+    // Markers
+    
+
+    
+
+    
+
+    
+
+    
+
+    // Queued camera actions
+    
+});
+
+    
+
+    
+
+    
+
+            } catch (error) {
+                console.error('Error initializing map:', error);
+                showMapError('Error initializing the map: ' + error.message);
+            }
+        }
+    </script>
+    
+    <!-- Load additional libraries with fallbacks -->
+    
+    
+    
+    
+    
+</body>
+
+</html>

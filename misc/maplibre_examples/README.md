@@ -135,9 +135,7 @@ When converting JavaScript examples to Python:
 
 ### Coverage Summary
 
-This roadmap now reflects full parity with the 123 official MapLibre GL JS examples.
-
-**Current Coverage:** 123/123 examples completed (100%). The remaining edge-case HTML samples—cooperative gestures, right-to-left scripts, mobile projections, and globe-specific styling—are reproduced entirely through generated HTML/JS with light-weight Python helpers where strictly necessary.
+**Current Coverage:** 35/123 examples completed
 
 ### Edge-case Validation
 

@@ -2,6 +2,8 @@ from bs4 import BeautifulSoup
 import requests
 import os
 import json
+from pathlib import Path
+from typing import Optional
 
 base_folder = "misc/maplibre_examples"
 
@@ -37,18 +39,39 @@ for page_id, href in list(pages.items())[:5]:  # Show first 5 examples
     print(f"  {page_id}: {href}")
 
 
-control_dict = {}
+status_path = os.path.join(base_folder, "status.json")
+if os.path.exists(status_path):
+    with open(status_path, "r", encoding="utf-8") as status_file:
+        status_data = json.load(status_file)
+else:
+    status_data = {}
+
+
+def normalise_script(page_id: str, existing: Optional[str]) -> Optional[str]:
+    """Return a relative test path when a script exists on disk."""
+
+    if existing:
+        return existing
+
+    candidate = Path("tests") / "test_examples" / f"test_{page_id.replace('-', '_')}.py"
+    if candidate.exists():
+        return str(candidate)
+    return None
+
+
 # iterating and saving each page
 for page_id, href in pages.items():
     file_path = os.path.join(ouput_folder, f"{page_id}.html")
 
-    control_dict[page_id] = {
-        page_id: {
-            "url": href,
-            "source_status": False,
-            "file_path": file_path,
-            "task_status": False,
-        }
+    existing_entry = status_data.get(page_id, {})
+    inner = existing_entry.get(page_id, {})
+
+    entry = {
+        "url": href,
+        "source_status": inner.get("source_status", False),
+        "file_path": file_path,
+        "task_status": inner.get("task_status", False),
+        "script": normalise_script(page_id, inner.get("script")),
     }
 
     print(f"Fetching {page_id} from {href}...")
@@ -58,13 +81,17 @@ for page_id, href in pages.items():
             f.write(response.text)
         print(f"  Saved to {file_path}")
 
-        control_dict[page_id][page_id]["source_status"] = True
+        entry["source_status"] = True
     else:
         print(f"  Failed to fetch {href}: Status code {response.status_code}")
 
+    status_data[page_id] = {page_id: entry}
+
 # Save the pages dictionary to a JSON file
 output_file = os.path.join(base_folder, "status.json")
-with open(output_file, "w") as f:
-    json.dump(control_dict, f, indent=2)
+sorted_status = {key: status_data[key] for key in sorted(status_data)}
+with open(output_file, "w", encoding="utf-8") as f:
+    json.dump(sorted_status, f, indent=2)
+    f.write("\n")
 
 print(f"\nSaved {len(pages)} example URLs to {output_file}")

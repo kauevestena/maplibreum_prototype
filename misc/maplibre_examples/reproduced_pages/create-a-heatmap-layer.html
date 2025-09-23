@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <title>MapLibreum Map</title>
+    <meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no" />
+    <link href="https://unpkg.com/maplibre-gl@3.4.0/dist/maplibre-gl.css" rel="stylesheet" onerror="this.onerror=null;this.href='https://cdn.jsdelivr.net/npm/maplibre-gl@3.4.0/dist/maplibre-gl.css';" />
+    
+    
+    
+    
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+        }
+
+        #maplibreum_bbdbe8a922eb4eb7a3aa2a13d09117c4 {
+            width: 100%;
+            height: 500px;
+            position: relative;
+        }
+
+        .maplibreum-legend {
+            position: absolute;
+            bottom: 10px;
+            left: 10px;
+            background: rgba(255, 255, 255, 0.8);
+            padding: 6px;
+            font-size: 12px;
+            border-radius: 4px;
+        }
+
+        .maplibreum-legend div {
+            display: flex;
+            align-items: center;
+            margin-bottom: 4px;
+        }
+
+        .maplibreum-legend span {
+            display: inline-block;
+            width: 12px;
+            height: 12px;
+            margin-right: 4px;
+
+        }
+
+        #maplibreum_bbdbe8a922eb4eb7a3aa2a13d09117c4 { width: 100%; height: 500px; }
+
+
+
+    </style>
+</head>
+<body>
+<div class="maplibreum-example-banner">
+  <h1>Create A Heatmap Layer</h1>
+  <p>Original MapLibre example: <a href="https://maplibre.org/maplibre-gl-js/docs/examples/create-a-heatmap-layer/" target="_blank" rel="noopener">https://maplibre.org/maplibre-gl-js/docs/examples/create-a-heatmap-layer/</a></p>
+  <p>Generated from test_create_a_heatmap_layer.py by the automated test suite.</p>
+</div>
+
+    <div id="maplibreum_bbdbe8a922eb4eb7a3aa2a13d09117c4">
+        
+        
+    </div>
+    <!-- MapLibre GL JS with CDN fallbacks -->
+    <script>
+        // Function to load MapLibre GL JS with fallbacks
+        function loadMapLibreGL() {
+            return new Promise((resolve, reject) => {
+                // Try loading from unpkg.com first
+                const script1 = document.createElement('script');
+                script1.src = 'https://unpkg.com/maplibre-gl@3.4.0/dist/maplibre-gl.js';
+                script1.onload = () => resolve();
+                script1.onerror = () => {
+                    // Fallback to jsDelivr
+                    const script2 = document.createElement('script');
+                    script2.src = 'https://cdn.jsdelivr.net/npm/maplibre-gl@3.4.0/dist/maplibre-gl.js';
+                    script2.onload = () => resolve();
+                    script2.onerror = () => {
+                        // Last fallback to cdnjs
+                        const script3 = document.createElement('script');
+                        script3.src = 'https://cdnjs.cloudflare.com/ajax/libs/maplibre-gl/3.4.0/maplibre-gl.min.js';
+                        script3.onload = () => resolve();
+                        script3.onerror = () => reject(new Error('Failed to load MapLibre GL JS from all CDNs'));
+                        document.head.appendChild(script3);
+                    };
+                    document.head.appendChild(script2);
+                };
+                document.head.appendChild(script1);
+            });
+        }
+
+        // Function to show error message when MapLibre fails to load
+        function showMapError(message) {
+            const mapDiv = document.getElementById('maplibreum_bbdbe8a922eb4eb7a3aa2a13d09117c4');
+            if (mapDiv) {
+                mapDiv.innerHTML = `
+                    <div style="
+                        display: flex;
+                        align-items: center;
+                        justify-content: center;
+                        height: 100%;
+                        background-color: #f8f9fa;
+                        border: 2px dashed #dee2e6;
+                        border-radius: 8px;
+                        text-align: center;
+                        padding: 20px;
+                        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+                    ">
+                        <div>
+                            <div style="font-size: 48px; color: #6c757d; margin-bottom: 16px;">🗺️</div>
+                            <div style="font-size: 18px; color: #495057; margin-bottom: 8px;">Map Loading Error</div>
+                            <div style="font-size: 14px; color: #6c757d; margin-bottom: 16px;">${message}</div>
+                            <div style="font-size: 12px; color: #6c757d;">
+                                This may be due to network restrictions or CDN availability issues.
+                                <br>Try refreshing the page or check your internet connection.
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }
+        }
+
+        // Load MapLibre and initialize map
+        loadMapLibreGL().then(() => {
+            // MapLibre loaded successfully, check if it's available
+            if (typeof maplibregl === 'undefined') {
+                throw new Error('MapLibre GL JS loaded but not available');
+            }
+            
+            initializeMap();
+        }).catch(error => {
+            console.error('Failed to load MapLibre GL JS:', error);
+            showMapError('Failed to load MapLibre GL JavaScript library');
+        });
+
+        function initializeMap() {
+            try {
+        // Initialize map
+        var map = new maplibregl.Map({"container": "maplibreum_bbdbe8a922eb4eb7a3aa2a13d09117c4", "style": "https://demotiles.maplibre.org/style.json", "center": [-120, 50], "zoom": 2});
+
+
+// Add controls
+
+
+
+
+
+
+map.on('load', function() {
+    
+    // Add sources
+    
+    map.addSource("earthquakes", {"type": "geojson", "data": {"type": "FeatureCollection", "features": [{"type": "Feature", "properties": {"mag": 1.5}, "geometry": {"type": "Point", "coordinates": [-122.75, 38.2]}}, {"type": "Feature", "properties": {"mag": 3.1}, "geometry": {"type": "Point", "coordinates": [-120.0, 35.1]}}, {"type": "Feature", "properties": {"mag": 5.4}, "geometry": {"type": "Point", "coordinates": [-118.2, 34.05]}}, {"type": "Feature", "properties": {"mag": 4.7}, "geometry": {"type": "Point", "coordinates": [-123.0, 49.2]}}]}});
+    
+
+    // Register images used by style layers
+    
+
+    
+    
+
+    // Add layers
+    
+    map.addLayer({"id": "earthquakes-heat", "type": "heatmap", "paint": {"heatmap-radius": ["interpolate", ["linear"], ["zoom"], 0, 2, 9, 20], "heatmap-intensity": ["interpolate", ["linear"], ["zoom"], 0, 1, 9, 3], "heatmap-opacity": ["interpolate", ["linear"], ["zoom"], 7, 1, 9, 0], "heatmap-color": ["interpolate", ["linear"], ["heatmap-density"], 0, "rgba(33,102,172,0)", 0.2, "rgb(103,169,207)", 0.4, "rgb(209,229,240)", 0.6, "rgb(253,219,199)", 0.8, "rgb(239,138,98)", 1, "rgb(178,24,43)"], "heatmap-weight": ["interpolate", ["linear"], ["get", "mag"], 0, 0, 6, 1]}, "source": "earthquakes", "maxzoom": 9});
+    
+    map.addLayer({"id": "earthquakes-point", "type": "circle", "paint": {"circle-radius": ["interpolate", ["linear"], ["zoom"], 7, ["interpolate", ["linear"], ["get", "mag"], 1, 1, 6, 4], 16, ["interpolate", ["linear"], ["get", "mag"], 1, 5, 6, 50]], "circle-color": ["interpolate", ["linear"], ["get", "mag"], 1, "rgba(33,102,172,0)", 2, "rgb(103,169,207)", 3, "rgb(209,229,240)", 4, "rgb(253,219,199)", 5, "rgb(239,138,98)", 6, "rgb(178,24,43)"], "circle-stroke-color": "white", "circle-stroke-width": 1, "circle-opacity": ["interpolate", ["linear"], ["zoom"], 7, 0, 8, 1]}, "source": "earthquakes", "minzoom": 7});
+    
+
+    // Popups
+    
+
+    // Tooltips
+    
+
+    // Tile Layers
+    var tileLayers = [
+    
+    ];
+
+    // Overlay Layers
+    var overlayLayers = [
+    
+    ];
+
+    
+
+    
+
+    // Markers
+    
+
+    
+
+    
+
+    
+
+    
+
+    // Queued camera actions
+    
+});
+
+    
+
+    
+
+    
+
+            } catch (error) {
+                console.error('Error initializing map:', error);
+                showMapError('Error initializing the map: ' + error.message);
+            }
+        }
+    </script>
+    
+    <!-- Load additional libraries with fallbacks -->
+    
+    
+    
+    
+    
+</body>
+
+</html>
