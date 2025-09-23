@@ -1,1108 +1,1108 @@
 {
   "3d-terrain": {
     "3d-terrain": {
-      "file_path": "misc/maplibre_examples/pages/3d-terrain.html",
-      "source_status": true,
-      "task_status": true,
       "url": "https://maplibre.org/maplibre-gl-js/docs/examples/3d-terrain/",
+      "source_status": true,
+      "file_path": "misc/maplibre_examples/pages/3d-terrain.html",
+      "task_status": true,
       "script": "tests/test_examples/test_3d_terrain.py"
     }
   },
   "add-a-3d-model-to-globe-using-threejs": {
     "add-a-3d-model-to-globe-using-threejs": {
-      "file_path": "misc/maplibre_examples/pages/add-a-3d-model-to-globe-using-threejs.html",
-      "source_status": true,
-      "task_status": false,
       "url": "https://maplibre.org/maplibre-gl-js/docs/examples/add-a-3d-model-to-globe-using-threejs/",
+      "source_status": true,
+      "file_path": "misc/maplibre_examples/pages/add-a-3d-model-to-globe-using-threejs.html",
+      "task_status": false,
       "script": null
     }
   },
   "add-a-3d-model-using-threejs": {
     "add-a-3d-model-using-threejs": {
-      "file_path": "misc/maplibre_examples/pages/add-a-3d-model-using-threejs.html",
-      "source_status": true,
-      "task_status": false,
       "url": "https://maplibre.org/maplibre-gl-js/docs/examples/add-a-3d-model-using-threejs/",
+      "source_status": true,
+      "file_path": "misc/maplibre_examples/pages/add-a-3d-model-using-threejs.html",
+      "task_status": false,
       "script": null
     }
   },
   "add-a-3d-model-with-babylonjs": {
     "add-a-3d-model-with-babylonjs": {
-      "file_path": "misc/maplibre_examples/pages/add-a-3d-model-with-babylonjs.html",
-      "source_status": true,
-      "task_status": false,
       "url": "https://maplibre.org/maplibre-gl-js/docs/examples/add-a-3d-model-with-babylonjs/",
+      "source_status": true,
+      "file_path": "misc/maplibre_examples/pages/add-a-3d-model-with-babylonjs.html",
+      "task_status": false,
       "script": null
     }
   },
   "add-a-3d-model-with-shadow-using-threejs": {
     "add-a-3d-model-with-shadow-using-threejs": {
-      "file_path": "misc/maplibre_examples/pages/add-a-3d-model-with-shadow-using-threejs.html",
-      "source_status": true,
-      "task_status": false,
       "url": "https://maplibre.org/maplibre-gl-js/docs/examples/add-a-3d-model-with-shadow-using-threejs/",
+      "source_status": true,
+      "file_path": "misc/maplibre_examples/pages/add-a-3d-model-with-shadow-using-threejs.html",
+      "task_status": false,
       "script": null
     }
   },
   "add-a-canvas-source": {
     "add-a-canvas-source": {
-      "file_path": "misc/maplibre_examples/pages/add-a-canvas-source.html",
-      "source_status": true,
-      "task_status": true,
       "url": "https://maplibre.org/maplibre-gl-js/docs/examples/add-a-canvas-source/",
+      "source_status": true,
+      "file_path": "misc/maplibre_examples/pages/add-a-canvas-source.html",
+      "task_status": true,
       "script": "tests/test_examples/test_add_a_canvas_source.py"
     }
   },
   "add-a-cog-raster-source": {
     "add-a-cog-raster-source": {
-      "file_path": "misc/maplibre_examples/pages/add-a-cog-raster-source.html",
-      "source_status": true,
-      "task_status": true,
       "url": "https://maplibre.org/maplibre-gl-js/docs/examples/add-a-cog-raster-source/",
+      "source_status": true,
+      "file_path": "misc/maplibre_examples/pages/add-a-cog-raster-source.html",
+      "task_status": true,
       "script": "tests/test_examples/test_add_a_cog_raster_source.py"
     }
   },
   "add-a-color-relief-layer": {
     "add-a-color-relief-layer": {
-      "file_path": "misc/maplibre_examples/pages/add-a-color-relief-layer.html",
-      "source_status": true,
-      "task_status": true,
       "url": "https://maplibre.org/maplibre-gl-js/docs/examples/add-a-color-relief-layer/",
+      "source_status": true,
+      "file_path": "misc/maplibre_examples/pages/add-a-color-relief-layer.html",
+      "task_status": true,
       "script": "tests/test_examples/test_add_a_color_relief_layer.py"
     }
   },
   "add-a-custom-layer-with-tiles-to-a-globe": {
     "add-a-custom-layer-with-tiles-to-a-globe": {
-      "file_path": "misc/maplibre_examples/pages/add-a-custom-layer-with-tiles-to-a-globe.html",
-      "source_status": true,
-      "task_status": false,
       "url": "https://maplibre.org/maplibre-gl-js/docs/examples/add-a-custom-layer-with-tiles-to-a-globe/",
+      "source_status": true,
+      "file_path": "misc/maplibre_examples/pages/add-a-custom-layer-with-tiles-to-a-globe.html",
+      "task_status": false,
       "script": null
     }
   },
   "add-a-custom-style-layer": {
     "add-a-custom-style-layer": {
-      "file_path": "misc/maplibre_examples/pages/add-a-custom-style-layer.html",
-      "source_status": true,
-      "task_status": false,
       "url": "https://maplibre.org/maplibre-gl-js/docs/examples/add-a-custom-style-layer/",
+      "source_status": true,
+      "file_path": "misc/maplibre_examples/pages/add-a-custom-style-layer.html",
+      "task_status": false,
       "script": null
     }
   },
   "add-a-default-marker": {
     "add-a-default-marker": {
-      "file_path": "misc/maplibre_examples/pages/add-a-default-marker.html",
-      "source_status": true,
-      "task_status": true,
       "url": "https://maplibre.org/maplibre-gl-js/docs/examples/add-a-default-marker/",
+      "source_status": true,
+      "file_path": "misc/maplibre_examples/pages/add-a-default-marker.html",
+      "task_status": true,
       "script": "tests/test_examples/test_add_a_default_marker.py"
     }
   },
   "add-a-generated-icon-to-the-map": {
     "add-a-generated-icon-to-the-map": {
-      "file_path": "misc/maplibre_examples/pages/add-a-generated-icon-to-the-map.html",
-      "source_status": true,
-      "task_status": false,
       "url": "https://maplibre.org/maplibre-gl-js/docs/examples/add-a-generated-icon-to-the-map/",
+      "source_status": true,
+      "file_path": "misc/maplibre_examples/pages/add-a-generated-icon-to-the-map.html",
+      "task_status": false,
       "script": null
     }
   },
   "add-a-geojson-line": {
     "add-a-geojson-line": {
-      "file_path": "misc/maplibre_examples/pages/add-a-geojson-line.html",
-      "source_status": true,
-      "task_status": true,
       "url": "https://maplibre.org/maplibre-gl-js/docs/examples/add-a-geojson-line/",
+      "source_status": true,
+      "file_path": "misc/maplibre_examples/pages/add-a-geojson-line.html",
+      "task_status": true,
       "script": "tests/test_examples/test_add_a_geojson_line.py"
     }
   },
   "add-a-geojson-polygon": {
     "add-a-geojson-polygon": {
-      "file_path": "misc/maplibre_examples/pages/add-a-geojson-polygon.html",
-      "source_status": true,
-      "task_status": true,
       "url": "https://maplibre.org/maplibre-gl-js/docs/examples/add-a-geojson-polygon/",
+      "source_status": true,
+      "file_path": "misc/maplibre_examples/pages/add-a-geojson-polygon.html",
+      "task_status": true,
       "script": "tests/test_examples/test_add_a_geojson_polygon.py"
     }
   },
   "add-a-hillshade-layer": {
     "add-a-hillshade-layer": {
-      "file_path": "misc/maplibre_examples/pages/add-a-hillshade-layer.html",
-      "source_status": true,
-      "task_status": true,
       "url": "https://maplibre.org/maplibre-gl-js/docs/examples/add-a-hillshade-layer/",
+      "source_status": true,
+      "file_path": "misc/maplibre_examples/pages/add-a-hillshade-layer.html",
+      "task_status": true,
       "script": "tests/test_examples/test_add_a_hillshade_layer.py"
     }
   },
   "add-a-multidirectional-hillshade-layer": {
     "add-a-multidirectional-hillshade-layer": {
-      "file_path": "misc/maplibre_examples/pages/add-a-multidirectional-hillshade-layer.html",
-      "source_status": true,
-      "task_status": true,
       "url": "https://maplibre.org/maplibre-gl-js/docs/examples/add-a-multidirectional-hillshade-layer/",
+      "source_status": true,
+      "file_path": "misc/maplibre_examples/pages/add-a-multidirectional-hillshade-layer.html",
+      "task_status": true,
       "script": "tests/test_examples/test_add_a_multidirectional_hillshade_layer.py"
     }
   },
   "add-a-new-layer-below-labels": {
     "add-a-new-layer-below-labels": {
-      "file_path": "misc/maplibre_examples/pages/add-a-new-layer-below-labels.html",
-      "source_status": true,
-      "task_status": true,
       "url": "https://maplibre.org/maplibre-gl-js/docs/examples/add-a-new-layer-below-labels/",
+      "source_status": true,
+      "file_path": "misc/maplibre_examples/pages/add-a-new-layer-below-labels.html",
+      "task_status": true,
       "script": "tests/test_examples/test_add_a_new_layer_below_labels.py"
     }
   },
   "add-a-pattern-to-a-polygon": {
     "add-a-pattern-to-a-polygon": {
-      "file_path": "misc/maplibre_examples/pages/add-a-pattern-to-a-polygon.html",
-      "source_status": true,
-      "task_status": true,
       "url": "https://maplibre.org/maplibre-gl-js/docs/examples/add-a-pattern-to-a-polygon/",
+      "source_status": true,
+      "file_path": "misc/maplibre_examples/pages/add-a-pattern-to-a-polygon.html",
+      "task_status": true,
       "script": "tests/test_examples/test_add_a_pattern_to_a_polygon.py"
     }
   },
   "add-a-raster-tile-source": {
     "add-a-raster-tile-source": {
-      "file_path": "misc/maplibre_examples/pages/add-a-raster-tile-source.html",
-      "source_status": true,
-      "task_status": true,
       "url": "https://maplibre.org/maplibre-gl-js/docs/examples/add-a-raster-tile-source/",
+      "source_status": true,
+      "file_path": "misc/maplibre_examples/pages/add-a-raster-tile-source.html",
+      "task_status": true,
       "script": "tests/test_examples/test_add_a_raster_tile_source.py"
     }
   },
   "add-a-simple-custom-layer-on-a-globe": {
     "add-a-simple-custom-layer-on-a-globe": {
-      "file_path": "misc/maplibre_examples/pages/add-a-simple-custom-layer-on-a-globe.html",
-      "source_status": true,
-      "task_status": false,
       "url": "https://maplibre.org/maplibre-gl-js/docs/examples/add-a-simple-custom-layer-on-a-globe/",
+      "source_status": true,
+      "file_path": "misc/maplibre_examples/pages/add-a-simple-custom-layer-on-a-globe.html",
+      "task_status": false,
       "script": null
     }
   },
   "add-a-stretchable-image-to-the-map": {
     "add-a-stretchable-image-to-the-map": {
-      "file_path": "misc/maplibre_examples/pages/add-a-stretchable-image-to-the-map.html",
-      "source_status": true,
-      "task_status": false,
       "url": "https://maplibre.org/maplibre-gl-js/docs/examples/add-a-stretchable-image-to-the-map/",
+      "source_status": true,
+      "file_path": "misc/maplibre_examples/pages/add-a-stretchable-image-to-the-map.html",
+      "task_status": false,
       "script": null
     }
   },
   "add-a-vector-tile-source": {
     "add-a-vector-tile-source": {
-      "file_path": "misc/maplibre_examples/pages/add-a-vector-tile-source.html",
-      "source_status": true,
-      "task_status": true,
       "url": "https://maplibre.org/maplibre-gl-js/docs/examples/add-a-vector-tile-source/",
+      "source_status": true,
+      "file_path": "misc/maplibre_examples/pages/add-a-vector-tile-source.html",
+      "task_status": true,
       "script": "tests/test_examples/test_add_a_vector_tile_source.py"
     }
   },
   "add-a-video": {
     "add-a-video": {
-      "file_path": "misc/maplibre_examples/pages/add-a-video.html",
-      "source_status": true,
-      "task_status": false,
       "url": "https://maplibre.org/maplibre-gl-js/docs/examples/add-a-video/",
+      "source_status": true,
+      "file_path": "misc/maplibre_examples/pages/add-a-video.html",
+      "task_status": false,
       "script": null
     }
   },
   "add-a-wms-source": {
     "add-a-wms-source": {
-      "file_path": "misc/maplibre_examples/pages/add-a-wms-source.html",
-      "source_status": true,
-      "task_status": false,
       "url": "https://maplibre.org/maplibre-gl-js/docs/examples/add-a-wms-source/",
+      "source_status": true,
+      "file_path": "misc/maplibre_examples/pages/add-a-wms-source.html",
+      "task_status": false,
       "script": null
     }
   },
   "add-an-animated-icon-to-the-map": {
     "add-an-animated-icon-to-the-map": {
-      "file_path": "misc/maplibre_examples/pages/add-an-animated-icon-to-the-map.html",
-      "source_status": true,
-      "task_status": false,
       "url": "https://maplibre.org/maplibre-gl-js/docs/examples/add-an-animated-icon-to-the-map/",
+      "source_status": true,
+      "file_path": "misc/maplibre_examples/pages/add-an-animated-icon-to-the-map.html",
+      "task_status": false,
       "script": null
     }
   },
   "add-an-icon-to-the-map": {
     "add-an-icon-to-the-map": {
-      "file_path": "misc/maplibre_examples/pages/add-an-icon-to-the-map.html",
-      "source_status": true,
-      "task_status": true,
       "url": "https://maplibre.org/maplibre-gl-js/docs/examples/add-an-icon-to-the-map/",
+      "source_status": true,
+      "file_path": "misc/maplibre_examples/pages/add-an-icon-to-the-map.html",
+      "task_status": true,
       "script": "tests/test_examples/test_add_an_icon_to_the_map.py"
     }
   },
   "add-contour-lines": {
     "add-contour-lines": {
-      "file_path": "misc/maplibre_examples/pages/add-contour-lines.html",
-      "source_status": true,
-      "task_status": true,
       "url": "https://maplibre.org/maplibre-gl-js/docs/examples/add-contour-lines/",
+      "source_status": true,
+      "file_path": "misc/maplibre_examples/pages/add-contour-lines.html",
+      "task_status": true,
       "script": "tests/test_examples/test_add_contour_lines.py"
     }
   },
   "add-custom-icons-with-markers": {
     "add-custom-icons-with-markers": {
-      "file_path": "misc/maplibre_examples/pages/add-custom-icons-with-markers.html",
-      "source_status": true,
-      "task_status": false,
       "url": "https://maplibre.org/maplibre-gl-js/docs/examples/add-custom-icons-with-markers/",
+      "source_status": true,
+      "file_path": "misc/maplibre_examples/pages/add-custom-icons-with-markers.html",
+      "task_status": false,
       "script": null
     }
   },
   "add-live-realtime-data": {
     "add-live-realtime-data": {
-      "file_path": "misc/maplibre_examples/pages/add-live-realtime-data.html",
-      "source_status": true,
-      "task_status": false,
       "url": "https://maplibre.org/maplibre-gl-js/docs/examples/add-live-realtime-data/",
+      "source_status": true,
+      "file_path": "misc/maplibre_examples/pages/add-live-realtime-data.html",
+      "task_status": false,
       "script": null
     }
   },
   "add-multiple-geometries-from-one-geojson-source": {
     "add-multiple-geometries-from-one-geojson-source": {
-      "file_path": "misc/maplibre_examples/pages/add-multiple-geometries-from-one-geojson-source.html",
-      "source_status": true,
-      "task_status": true,
       "url": "https://maplibre.org/maplibre-gl-js/docs/examples/add-multiple-geometries-from-one-geojson-source/",
+      "source_status": true,
+      "file_path": "misc/maplibre_examples/pages/add-multiple-geometries-from-one-geojson-source.html",
+      "task_status": true,
       "script": "tests/test_examples/test_add_multiple_geometries_from_one_geojson_source.py"
     }
   },
   "add-support-for-right-to-left-scripts": {
     "add-support-for-right-to-left-scripts": {
-      "file_path": "misc/maplibre_examples/pages/add-support-for-right-to-left-scripts.html",
-      "source_status": true,
-      "task_status": false,
       "url": "https://maplibre.org/maplibre-gl-js/docs/examples/add-support-for-right-to-left-scripts/",
+      "source_status": true,
+      "file_path": "misc/maplibre_examples/pages/add-support-for-right-to-left-scripts.html",
+      "task_status": false,
       "script": null
     }
   },
   "adding-3d-models-using-threejs-on-terrain": {
     "adding-3d-models-using-threejs-on-terrain": {
-      "file_path": "misc/maplibre_examples/pages/adding-3d-models-using-threejs-on-terrain.html",
-      "source_status": true,
-      "task_status": false,
       "url": "https://maplibre.org/maplibre-gl-js/docs/examples/adding-3d-models-using-threejs-on-terrain/",
+      "source_status": true,
+      "file_path": "misc/maplibre_examples/pages/adding-3d-models-using-threejs-on-terrain.html",
+      "task_status": false,
       "script": null
     }
   },
   "animate-a-line": {
     "animate-a-line": {
-      "file_path": "misc/maplibre_examples/pages/animate-a-line.html",
-      "source_status": true,
-      "task_status": true,
       "url": "https://maplibre.org/maplibre-gl-js/docs/examples/animate-a-line/",
+      "source_status": true,
+      "file_path": "misc/maplibre_examples/pages/animate-a-line.html",
+      "task_status": true,
       "script": "tests/test_examples/test_animate_a_line.py"
     }
   },
   "animate-a-marker": {
     "animate-a-marker": {
-      "file_path": "misc/maplibre_examples/pages/animate-a-marker.html",
-      "source_status": true,
-      "task_status": false,
       "url": "https://maplibre.org/maplibre-gl-js/docs/examples/animate-a-marker/",
+      "source_status": true,
+      "file_path": "misc/maplibre_examples/pages/animate-a-marker.html",
+      "task_status": false,
       "script": null
     }
   },
   "animate-a-point": {
     "animate-a-point": {
-      "file_path": "misc/maplibre_examples/pages/animate-a-point.html",
-      "source_status": true,
-      "task_status": false,
       "url": "https://maplibre.org/maplibre-gl-js/docs/examples/animate-a-point/",
+      "source_status": true,
+      "file_path": "misc/maplibre_examples/pages/animate-a-point.html",
+      "task_status": false,
       "script": null
     }
   },
   "animate-a-point-along-a-route": {
     "animate-a-point-along-a-route": {
-      "file_path": "misc/maplibre_examples/pages/animate-a-point-along-a-route.html",
-      "source_status": true,
-      "task_status": false,
       "url": "https://maplibre.org/maplibre-gl-js/docs/examples/animate-a-point-along-a-route/",
+      "source_status": true,
+      "file_path": "misc/maplibre_examples/pages/animate-a-point-along-a-route.html",
+      "task_status": false,
       "script": null
     }
   },
   "animate-a-series-of-images": {
     "animate-a-series-of-images": {
-      "file_path": "misc/maplibre_examples/pages/animate-a-series-of-images.html",
-      "source_status": true,
-      "task_status": false,
       "url": "https://maplibre.org/maplibre-gl-js/docs/examples/animate-a-series-of-images/",
+      "source_status": true,
+      "file_path": "misc/maplibre_examples/pages/animate-a-series-of-images.html",
+      "task_status": false,
       "script": null
     }
   },
   "animate-map-camera-around-a-point": {
     "animate-map-camera-around-a-point": {
-      "file_path": "misc/maplibre_examples/pages/animate-map-camera-around-a-point.html",
-      "source_status": true,
-      "task_status": false,
       "url": "https://maplibre.org/maplibre-gl-js/docs/examples/animate-map-camera-around-a-point/",
+      "source_status": true,
+      "file_path": "misc/maplibre_examples/pages/animate-map-camera-around-a-point.html",
+      "task_status": false,
       "script": null
     }
   },
   "animate-symbol-to-follow-the-mouse": {
     "animate-symbol-to-follow-the-mouse": {
-      "file_path": "misc/maplibre_examples/pages/animate-symbol-to-follow-the-mouse.html",
-      "source_status": true,
-      "task_status": false,
       "url": "https://maplibre.org/maplibre-gl-js/docs/examples/animate-symbol-to-follow-the-mouse/",
+      "source_status": true,
+      "file_path": "misc/maplibre_examples/pages/animate-symbol-to-follow-the-mouse.html",
+      "task_status": false,
       "script": null
     }
   },
   "attach-a-popup-to-a-marker-instance": {
     "attach-a-popup-to-a-marker-instance": {
-      "file_path": "misc/maplibre_examples/pages/attach-a-popup-to-a-marker-instance.html",
-      "source_status": true,
-      "task_status": false,
       "url": "https://maplibre.org/maplibre-gl-js/docs/examples/attach-a-popup-to-a-marker-instance/",
+      "source_status": true,
+      "file_path": "misc/maplibre_examples/pages/attach-a-popup-to-a-marker-instance.html",
+      "task_status": false,
       "script": null
     }
   },
   "center-the-map-on-a-clicked-symbol": {
     "center-the-map-on-a-clicked-symbol": {
-      "file_path": "misc/maplibre_examples/pages/center-the-map-on-a-clicked-symbol.html",
-      "source_status": true,
-      "task_status": false,
       "url": "https://maplibre.org/maplibre-gl-js/docs/examples/center-the-map-on-a-clicked-symbol/",
+      "source_status": true,
+      "file_path": "misc/maplibre_examples/pages/center-the-map-on-a-clicked-symbol.html",
+      "task_status": false,
       "script": null
     }
   },
   "change-a-layers-color-with-buttons": {
     "change-a-layers-color-with-buttons": {
-      "file_path": "misc/maplibre_examples/pages/change-a-layers-color-with-buttons.html",
-      "source_status": true,
-      "task_status": false,
       "url": "https://maplibre.org/maplibre-gl-js/docs/examples/change-a-layers-color-with-buttons/",
+      "source_status": true,
+      "file_path": "misc/maplibre_examples/pages/change-a-layers-color-with-buttons.html",
+      "task_status": false,
       "script": null
     }
   },
   "change-a-maps-language": {
     "change-a-maps-language": {
-      "file_path": "misc/maplibre_examples/pages/change-a-maps-language.html",
-      "source_status": true,
-      "task_status": false,
       "url": "https://maplibre.org/maplibre-gl-js/docs/examples/change-a-maps-language/",
+      "source_status": true,
+      "file_path": "misc/maplibre_examples/pages/change-a-maps-language.html",
+      "task_status": false,
       "script": null
     }
   },
   "change-building-color-based-on-zoom-level": {
     "change-building-color-based-on-zoom-level": {
-      "file_path": "misc/maplibre_examples/pages/change-building-color-based-on-zoom-level.html",
-      "source_status": true,
-      "task_status": true,
       "url": "https://maplibre.org/maplibre-gl-js/docs/examples/change-building-color-based-on-zoom-level/",
+      "source_status": true,
+      "file_path": "misc/maplibre_examples/pages/change-building-color-based-on-zoom-level.html",
+      "task_status": true,
       "script": "tests/test_examples/test_change_building_color_based_on_zoom_level.py"
     }
   },
   "change-the-case-of-labels": {
     "change-the-case-of-labels": {
-      "file_path": "misc/maplibre_examples/pages/change-the-case-of-labels.html",
-      "source_status": true,
-      "task_status": false,
       "url": "https://maplibre.org/maplibre-gl-js/docs/examples/change-the-case-of-labels/",
+      "source_status": true,
+      "file_path": "misc/maplibre_examples/pages/change-the-case-of-labels.html",
+      "task_status": false,
       "script": null
     }
   },
   "change-the-default-position-for-attribution": {
     "change-the-default-position-for-attribution": {
-      "file_path": "misc/maplibre_examples/pages/change-the-default-position-for-attribution.html",
-      "source_status": true,
-      "task_status": true,
       "url": "https://maplibre.org/maplibre-gl-js/docs/examples/change-the-default-position-for-attribution/",
+      "source_status": true,
+      "file_path": "misc/maplibre_examples/pages/change-the-default-position-for-attribution.html",
+      "task_status": true,
       "script": "tests/test_examples/test_change_the_default_position_for_attribution.py"
     }
   },
   "check-if-webgl-is-supported": {
     "check-if-webgl-is-supported": {
-      "file_path": "misc/maplibre_examples/pages/check-if-webgl-is-supported.html",
-      "source_status": true,
-      "task_status": false,
       "url": "https://maplibre.org/maplibre-gl-js/docs/examples/check-if-webgl-is-supported/",
+      "source_status": true,
+      "file_path": "misc/maplibre_examples/pages/check-if-webgl-is-supported.html",
+      "task_status": false,
       "script": null
     }
   },
   "cooperative-gestures": {
     "cooperative-gestures": {
-      "file_path": "misc/maplibre_examples/pages/cooperative-gestures.html",
-      "source_status": true,
-      "task_status": true,
       "url": "https://maplibre.org/maplibre-gl-js/docs/examples/cooperative-gestures/",
+      "source_status": true,
+      "file_path": "misc/maplibre_examples/pages/cooperative-gestures.html",
+      "task_status": true,
       "script": "tests/test_examples/test_cooperative_gestures.py"
     }
   },
   "create-a-draggable-marker": {
     "create-a-draggable-marker": {
-      "file_path": "misc/maplibre_examples/pages/create-a-draggable-marker.html",
-      "source_status": true,
-      "task_status": true,
       "url": "https://maplibre.org/maplibre-gl-js/docs/examples/create-a-draggable-marker/",
+      "source_status": true,
+      "file_path": "misc/maplibre_examples/pages/create-a-draggable-marker.html",
+      "task_status": true,
       "script": "tests/test_examples/test_create_a_draggable_marker.py"
     }
   },
   "create-a-draggable-point": {
     "create-a-draggable-point": {
-      "file_path": "misc/maplibre_examples/pages/create-a-draggable-point.html",
-      "source_status": true,
-      "task_status": false,
       "url": "https://maplibre.org/maplibre-gl-js/docs/examples/create-a-draggable-point/",
+      "source_status": true,
+      "file_path": "misc/maplibre_examples/pages/create-a-draggable-point.html",
+      "task_status": false,
       "script": null
     }
   },
   "create-a-gradient-line-using-an-expression": {
     "create-a-gradient-line-using-an-expression": {
-      "file_path": "misc/maplibre_examples/pages/create-a-gradient-line-using-an-expression.html",
-      "source_status": true,
-      "task_status": true,
       "url": "https://maplibre.org/maplibre-gl-js/docs/examples/create-a-gradient-line-using-an-expression/",
+      "source_status": true,
+      "file_path": "misc/maplibre_examples/pages/create-a-gradient-line-using-an-expression.html",
+      "task_status": true,
       "script": "tests/test_examples/test_create_a_gradient_line_using_an_expression.py"
     }
   },
   "create-a-heatmap-layer": {
     "create-a-heatmap-layer": {
-      "file_path": "misc/maplibre_examples/pages/create-a-heatmap-layer.html",
-      "source_status": true,
-      "task_status": true,
       "url": "https://maplibre.org/maplibre-gl-js/docs/examples/create-a-heatmap-layer/",
+      "source_status": true,
+      "file_path": "misc/maplibre_examples/pages/create-a-heatmap-layer.html",
+      "task_status": true,
       "script": "tests/test_examples/test_create_a_heatmap_layer.py"
     }
   },
   "create-a-heatmap-layer-on-a-globe-with-terrain-elevation": {
     "create-a-heatmap-layer-on-a-globe-with-terrain-elevation": {
-      "file_path": "misc/maplibre_examples/pages/create-a-heatmap-layer-on-a-globe-with-terrain-elevation.html",
-      "source_status": true,
-      "task_status": true,
       "url": "https://maplibre.org/maplibre-gl-js/docs/examples/create-a-heatmap-layer-on-a-globe-with-terrain-elevation/",
+      "source_status": true,
+      "file_path": "misc/maplibre_examples/pages/create-a-heatmap-layer-on-a-globe-with-terrain-elevation.html",
+      "task_status": true,
       "script": "tests/test_examples/test_create_a_heatmap_layer_on_a_globe_with_terrain_elevation.py"
     }
   },
   "create-a-hover-effect": {
     "create-a-hover-effect": {
-      "file_path": "misc/maplibre_examples/pages/create-a-hover-effect.html",
-      "source_status": true,
-      "task_status": false,
       "url": "https://maplibre.org/maplibre-gl-js/docs/examples/create-a-hover-effect/",
+      "source_status": true,
+      "file_path": "misc/maplibre_examples/pages/create-a-hover-effect.html",
+      "task_status": false,
       "script": null
     }
   },
   "create-a-time-slider": {
     "create-a-time-slider": {
-      "file_path": "misc/maplibre_examples/pages/create-a-time-slider.html",
-      "source_status": true,
-      "task_status": false,
       "url": "https://maplibre.org/maplibre-gl-js/docs/examples/create-a-time-slider/",
+      "source_status": true,
+      "file_path": "misc/maplibre_examples/pages/create-a-time-slider.html",
+      "task_status": false,
       "script": null
     }
   },
   "create-and-style-clusters": {
     "create-and-style-clusters": {
-      "file_path": "misc/maplibre_examples/pages/create-and-style-clusters.html",
-      "source_status": true,
-      "task_status": true,
       "url": "https://maplibre.org/maplibre-gl-js/docs/examples/create-and-style-clusters/",
+      "source_status": true,
+      "file_path": "misc/maplibre_examples/pages/create-and-style-clusters.html",
+      "task_status": true,
       "script": "tests/test_examples/test_create_and_style_clusters.py"
     }
   },
   "create-deckgl-layer-using-rest-api": {
     "create-deckgl-layer-using-rest-api": {
-      "file_path": "misc/maplibre_examples/pages/create-deckgl-layer-using-rest-api.html",
-      "source_status": true,
-      "task_status": false,
       "url": "https://maplibre.org/maplibre-gl-js/docs/examples/create-deckgl-layer-using-rest-api/",
+      "source_status": true,
+      "file_path": "misc/maplibre_examples/pages/create-deckgl-layer-using-rest-api.html",
+      "task_status": false,
       "script": null
     }
   },
   "customize-camera-animations": {
     "customize-camera-animations": {
-      "file_path": "misc/maplibre_examples/pages/customize-camera-animations.html",
-      "source_status": true,
-      "task_status": false,
       "url": "https://maplibre.org/maplibre-gl-js/docs/examples/customize-camera-animations/",
+      "source_status": true,
+      "file_path": "misc/maplibre_examples/pages/customize-camera-animations.html",
+      "task_status": false,
       "script": null
     }
   },
   "disable-map-rotation": {
     "disable-map-rotation": {
-      "file_path": "misc/maplibre_examples/pages/disable-map-rotation.html",
-      "source_status": true,
-      "task_status": true,
       "url": "https://maplibre.org/maplibre-gl-js/docs/examples/disable-map-rotation/",
+      "source_status": true,
+      "file_path": "misc/maplibre_examples/pages/disable-map-rotation.html",
+      "task_status": true,
       "script": "tests/test_examples/test_disable_map_rotation.py"
     }
   },
   "disable-scroll-zoom": {
     "disable-scroll-zoom": {
-      "file_path": "misc/maplibre_examples/pages/disable-scroll-zoom.html",
-      "source_status": true,
-      "task_status": true,
       "url": "https://maplibre.org/maplibre-gl-js/docs/examples/disable-scroll-zoom/",
+      "source_status": true,
+      "file_path": "misc/maplibre_examples/pages/disable-scroll-zoom.html",
+      "task_status": true,
       "script": "tests/test_examples/test_disable_scroll_zoom.py"
     }
   },
   "display-a-globe-with-a-fill-extrusion-layer": {
     "display-a-globe-with-a-fill-extrusion-layer": {
-      "file_path": "misc/maplibre_examples/pages/display-a-globe-with-a-fill-extrusion-layer.html",
-      "source_status": true,
-      "task_status": true,
       "url": "https://maplibre.org/maplibre-gl-js/docs/examples/display-a-globe-with-a-fill-extrusion-layer/",
+      "source_status": true,
+      "file_path": "misc/maplibre_examples/pages/display-a-globe-with-a-fill-extrusion-layer.html",
+      "task_status": true,
       "script": "tests/test_examples/test_display_a_globe_with_a_fill_extrusion_layer.py"
     }
   },
   "display-a-globe-with-a-vector-map": {
     "display-a-globe-with-a-vector-map": {
-      "file_path": "misc/maplibre_examples/pages/display-a-globe-with-a-vector-map.html",
-      "source_status": true,
-      "task_status": true,
       "url": "https://maplibre.org/maplibre-gl-js/docs/examples/display-a-globe-with-a-vector-map/",
+      "source_status": true,
+      "file_path": "misc/maplibre_examples/pages/display-a-globe-with-a-vector-map.html",
+      "task_status": true,
       "script": "tests/test_examples/test_display_a_globe_with_a_vector_map.py"
     }
   },
   "display-a-globe-with-an-atmosphere": {
     "display-a-globe-with-an-atmosphere": {
-      "file_path": "misc/maplibre_examples/pages/display-a-globe-with-an-atmosphere.html",
-      "source_status": true,
-      "task_status": true,
       "url": "https://maplibre.org/maplibre-gl-js/docs/examples/display-a-globe-with-an-atmosphere/",
+      "source_status": true,
+      "file_path": "misc/maplibre_examples/pages/display-a-globe-with-an-atmosphere.html",
+      "task_status": true,
       "script": "tests/test_examples/test_display_a_globe_with_an_atmosphere.py"
     }
   },
   "display-a-hybrid-satellite-map-with-terrain-elevation": {
     "display-a-hybrid-satellite-map-with-terrain-elevation": {
-      "file_path": "misc/maplibre_examples/pages/display-a-hybrid-satellite-map-with-terrain-elevation.html",
-      "source_status": true,
-      "task_status": false,
       "url": "https://maplibre.org/maplibre-gl-js/docs/examples/display-a-hybrid-satellite-map-with-terrain-elevation/",
+      "source_status": true,
+      "file_path": "misc/maplibre_examples/pages/display-a-hybrid-satellite-map-with-terrain-elevation.html",
+      "task_status": false,
       "script": null
     }
   },
   "display-a-map": {
     "display-a-map": {
-      "file_path": "misc/maplibre_examples/pages/display-a-map.html",
-      "source_status": true,
-      "task_status": true,
       "url": "https://maplibre.org/maplibre-gl-js/docs/examples/display-a-map/",
+      "source_status": true,
+      "file_path": "misc/maplibre_examples/pages/display-a-map.html",
+      "task_status": true,
       "script": "tests/test_examples/test_display_a_map.py"
     }
   },
   "display-a-non-interactive-map": {
     "display-a-non-interactive-map": {
-      "file_path": "misc/maplibre_examples/pages/display-a-non-interactive-map.html",
-      "source_status": true,
-      "task_status": true,
       "url": "https://maplibre.org/maplibre-gl-js/docs/examples/display-a-non-interactive-map/",
+      "source_status": true,
+      "file_path": "misc/maplibre_examples/pages/display-a-non-interactive-map.html",
+      "task_status": true,
       "script": "tests/test_examples/test_display_a_non_interactive_map.py"
     }
   },
   "display-a-popup": {
     "display-a-popup": {
-      "file_path": "misc/maplibre_examples/pages/display-a-popup.html",
-      "source_status": true,
-      "task_status": true,
       "url": "https://maplibre.org/maplibre-gl-js/docs/examples/display-a-popup/",
+      "source_status": true,
+      "file_path": "misc/maplibre_examples/pages/display-a-popup.html",
+      "task_status": true,
       "script": "tests/test_examples/test_display_a_popup.py"
     }
   },
   "display-a-popup-on-click": {
     "display-a-popup-on-click": {
-      "file_path": "misc/maplibre_examples/pages/display-a-popup-on-click.html",
-      "source_status": true,
-      "task_status": true,
       "url": "https://maplibre.org/maplibre-gl-js/docs/examples/display-a-popup-on-click/",
+      "source_status": true,
+      "file_path": "misc/maplibre_examples/pages/display-a-popup-on-click.html",
+      "task_status": true,
       "script": "tests/test_examples/test_display_a_popup_on_click.py"
     }
   },
   "display-a-popup-on-hover": {
     "display-a-popup-on-hover": {
-      "file_path": "misc/maplibre_examples/pages/display-a-popup-on-hover.html",
-      "source_status": true,
-      "task_status": false,
       "url": "https://maplibre.org/maplibre-gl-js/docs/examples/display-a-popup-on-hover/",
+      "source_status": true,
+      "file_path": "misc/maplibre_examples/pages/display-a-popup-on-hover.html",
+      "task_status": false,
       "script": null
     }
   },
   "display-a-remote-svg-symbol": {
     "display-a-remote-svg-symbol": {
-      "file_path": "misc/maplibre_examples/pages/display-a-remote-svg-symbol.html",
-      "source_status": true,
-      "task_status": true,
       "url": "https://maplibre.org/maplibre-gl-js/docs/examples/display-a-remote-svg-symbol/",
+      "source_status": true,
+      "file_path": "misc/maplibre_examples/pages/display-a-remote-svg-symbol.html",
+      "task_status": true,
       "script": "tests/test_examples/test_display_a_remote_svg_symbol.py"
     }
   },
   "display-a-satellite-map": {
     "display-a-satellite-map": {
-      "file_path": "misc/maplibre_examples/pages/display-a-satellite-map.html",
-      "source_status": true,
-      "task_status": false,
       "url": "https://maplibre.org/maplibre-gl-js/docs/examples/display-a-satellite-map/",
+      "source_status": true,
+      "file_path": "misc/maplibre_examples/pages/display-a-satellite-map.html",
+      "task_status": false,
       "script": null
     }
   },
   "display-and-style-rich-text-labels": {
     "display-and-style-rich-text-labels": {
-      "file_path": "misc/maplibre_examples/pages/display-and-style-rich-text-labels.html",
-      "source_status": true,
-      "task_status": false,
       "url": "https://maplibre.org/maplibre-gl-js/docs/examples/display-and-style-rich-text-labels/",
+      "source_status": true,
+      "file_path": "misc/maplibre_examples/pages/display-and-style-rich-text-labels.html",
+      "task_status": false,
       "script": null
     }
   },
   "display-buildings-in-3d": {
     "display-buildings-in-3d": {
-      "file_path": "misc/maplibre_examples/pages/display-buildings-in-3d.html",
-      "source_status": true,
-      "task_status": false,
       "url": "https://maplibre.org/maplibre-gl-js/docs/examples/display-buildings-in-3d/",
+      "source_status": true,
+      "file_path": "misc/maplibre_examples/pages/display-buildings-in-3d.html",
+      "task_status": false,
       "script": null
     }
   },
   "display-html-clusters-with-custom-properties": {
     "display-html-clusters-with-custom-properties": {
-      "file_path": "misc/maplibre_examples/pages/display-html-clusters-with-custom-properties.html",
-      "source_status": true,
-      "task_status": false,
       "url": "https://maplibre.org/maplibre-gl-js/docs/examples/display-html-clusters-with-custom-properties/",
+      "source_status": true,
+      "file_path": "misc/maplibre_examples/pages/display-html-clusters-with-custom-properties.html",
+      "task_status": false,
       "script": null
     }
   },
   "display-line-that-crosses-180th-meridian": {
     "display-line-that-crosses-180th-meridian": {
-      "file_path": "misc/maplibre_examples/pages/display-line-that-crosses-180th-meridian.html",
-      "source_status": true,
-      "task_status": false,
       "url": "https://maplibre.org/maplibre-gl-js/docs/examples/display-line-that-crosses-180th-meridian/",
+      "source_status": true,
+      "file_path": "misc/maplibre_examples/pages/display-line-that-crosses-180th-meridian.html",
+      "task_status": false,
       "script": null
     }
   },
   "display-map-navigation-controls": {
     "display-map-navigation-controls": {
-      "file_path": "misc/maplibre_examples/pages/display-map-navigation-controls.html",
-      "source_status": true,
-      "task_status": true,
       "url": "https://maplibre.org/maplibre-gl-js/docs/examples/display-map-navigation-controls/",
+      "source_status": true,
+      "file_path": "misc/maplibre_examples/pages/display-map-navigation-controls.html",
+      "task_status": true,
       "script": "tests/test_examples/test_display_map_navigation_controls.py"
     }
   },
   "draw-a-circle": {
     "draw-a-circle": {
-      "file_path": "misc/maplibre_examples/pages/draw-a-circle.html",
-      "source_status": true,
-      "task_status": false,
       "url": "https://maplibre.org/maplibre-gl-js/docs/examples/draw-a-circle/",
+      "source_status": true,
+      "file_path": "misc/maplibre_examples/pages/draw-a-circle.html",
+      "task_status": false,
       "script": null
     }
   },
   "draw-geojson-points": {
     "draw-geojson-points": {
-      "file_path": "misc/maplibre_examples/pages/draw-geojson-points.html",
-      "source_status": true,
-      "task_status": false,
       "url": "https://maplibre.org/maplibre-gl-js/docs/examples/draw-geojson-points/",
+      "source_status": true,
+      "file_path": "misc/maplibre_examples/pages/draw-geojson-points.html",
+      "task_status": false,
       "script": null
     }
   },
   "draw-geometries-with-terra-draw": {
     "draw-geometries-with-terra-draw": {
-      "file_path": "misc/maplibre_examples/pages/draw-geometries-with-terra-draw.html",
-      "source_status": true,
-      "task_status": false,
       "url": "https://maplibre.org/maplibre-gl-js/docs/examples/draw-geometries-with-terra-draw/",
+      "source_status": true,
+      "file_path": "misc/maplibre_examples/pages/draw-geometries-with-terra-draw.html",
+      "task_status": false,
       "script": null
     }
   },
   "draw-polygon-with-mapbox-gl-draw": {
     "draw-polygon-with-mapbox-gl-draw": {
-      "file_path": "misc/maplibre_examples/pages/draw-polygon-with-mapbox-gl-draw.html",
-      "source_status": true,
-      "task_status": false,
       "url": "https://maplibre.org/maplibre-gl-js/docs/examples/draw-polygon-with-mapbox-gl-draw/",
+      "source_status": true,
+      "file_path": "misc/maplibre_examples/pages/draw-polygon-with-mapbox-gl-draw.html",
+      "task_status": false,
       "script": null
     }
   },
   "extrude-polygons-for-3d-indoor-mapping": {
     "extrude-polygons-for-3d-indoor-mapping": {
-      "file_path": "misc/maplibre_examples/pages/extrude-polygons-for-3d-indoor-mapping.html",
-      "source_status": true,
-      "task_status": false,
       "url": "https://maplibre.org/maplibre-gl-js/docs/examples/extrude-polygons-for-3d-indoor-mapping/",
+      "source_status": true,
+      "file_path": "misc/maplibre_examples/pages/extrude-polygons-for-3d-indoor-mapping.html",
+      "task_status": false,
       "script": null
     }
   },
   "filter-layer-symbols-using-global-state": {
     "filter-layer-symbols-using-global-state": {
-      "file_path": "misc/maplibre_examples/pages/filter-layer-symbols-using-global-state.html",
-      "source_status": true,
-      "task_status": false,
       "url": "https://maplibre.org/maplibre-gl-js/docs/examples/filter-layer-symbols-using-global-state/",
+      "source_status": true,
+      "file_path": "misc/maplibre_examples/pages/filter-layer-symbols-using-global-state.html",
+      "task_status": false,
       "script": null
     }
   },
   "filter-symbols-by-text-input": {
     "filter-symbols-by-text-input": {
-      "file_path": "misc/maplibre_examples/pages/filter-symbols-by-text-input.html",
-      "source_status": true,
-      "task_status": false,
       "url": "https://maplibre.org/maplibre-gl-js/docs/examples/filter-symbols-by-text-input/",
+      "source_status": true,
+      "file_path": "misc/maplibre_examples/pages/filter-symbols-by-text-input.html",
+      "task_status": false,
       "script": null
     }
   },
   "filter-symbols-by-toggling-a-list": {
     "filter-symbols-by-toggling-a-list": {
-      "file_path": "misc/maplibre_examples/pages/filter-symbols-by-toggling-a-list.html",
-      "source_status": true,
-      "task_status": false,
       "url": "https://maplibre.org/maplibre-gl-js/docs/examples/filter-symbols-by-toggling-a-list/",
+      "source_status": true,
+      "file_path": "misc/maplibre_examples/pages/filter-symbols-by-toggling-a-list.html",
+      "task_status": false,
       "script": null
     }
   },
   "filter-within-a-layer": {
     "filter-within-a-layer": {
-      "file_path": "misc/maplibre_examples/pages/filter-within-a-layer.html",
-      "source_status": true,
-      "task_status": true,
       "url": "https://maplibre.org/maplibre-gl-js/docs/examples/filter-within-a-layer/",
+      "source_status": true,
+      "file_path": "misc/maplibre_examples/pages/filter-within-a-layer.html",
+      "task_status": true,
       "script": "tests/test_examples/test_filter_within_a_layer.py"
     }
   },
   "fit-a-map-to-a-bounding-box": {
     "fit-a-map-to-a-bounding-box": {
-      "file_path": "misc/maplibre_examples/pages/fit-a-map-to-a-bounding-box.html",
-      "source_status": true,
-      "task_status": true,
       "url": "https://maplibre.org/maplibre-gl-js/docs/examples/fit-a-map-to-a-bounding-box/",
+      "source_status": true,
+      "file_path": "misc/maplibre_examples/pages/fit-a-map-to-a-bounding-box.html",
+      "task_status": true,
       "script": "tests/test_examples/test_fit_a_map_to_a_bounding_box.py"
     }
   },
   "fit-to-the-bounds-of-a-linestring": {
     "fit-to-the-bounds-of-a-linestring": {
-      "file_path": "misc/maplibre_examples/pages/fit-to-the-bounds-of-a-linestring.html",
-      "source_status": true,
-      "task_status": false,
       "url": "https://maplibre.org/maplibre-gl-js/docs/examples/fit-to-the-bounds-of-a-linestring/",
+      "source_status": true,
+      "file_path": "misc/maplibre_examples/pages/fit-to-the-bounds-of-a-linestring.html",
+      "task_status": false,
       "script": null
     }
   },
   "fly-to-a-location": {
     "fly-to-a-location": {
-      "file_path": "misc/maplibre_examples/pages/fly-to-a-location.html",
-      "source_status": true,
-      "task_status": false,
       "url": "https://maplibre.org/maplibre-gl-js/docs/examples/fly-to-a-location/",
+      "source_status": true,
+      "file_path": "misc/maplibre_examples/pages/fly-to-a-location.html",
+      "task_status": false,
       "script": null
     }
   },
   "fly-to-a-location-based-on-scroll-position": {
     "fly-to-a-location-based-on-scroll-position": {
-      "file_path": "misc/maplibre_examples/pages/fly-to-a-location-based-on-scroll-position.html",
-      "source_status": true,
-      "task_status": false,
       "url": "https://maplibre.org/maplibre-gl-js/docs/examples/fly-to-a-location-based-on-scroll-position/",
+      "source_status": true,
+      "file_path": "misc/maplibre_examples/pages/fly-to-a-location-based-on-scroll-position.html",
+      "task_status": false,
       "script": null
     }
   },
   "generate-and-add-a-missing-icon-to-the-map": {
     "generate-and-add-a-missing-icon-to-the-map": {
-      "file_path": "misc/maplibre_examples/pages/generate-and-add-a-missing-icon-to-the-map.html",
-      "source_status": true,
-      "task_status": false,
       "url": "https://maplibre.org/maplibre-gl-js/docs/examples/generate-and-add-a-missing-icon-to-the-map/",
+      "source_status": true,
+      "file_path": "misc/maplibre_examples/pages/generate-and-add-a-missing-icon-to-the-map.html",
+      "task_status": false,
       "script": null
     }
   },
   "geocode-with-nominatim": {
     "geocode-with-nominatim": {
-      "file_path": "misc/maplibre_examples/pages/geocode-with-nominatim.html",
-      "source_status": true,
-      "task_status": false,
       "url": "https://maplibre.org/maplibre-gl-js/docs/examples/geocode-with-nominatim/",
+      "source_status": true,
+      "file_path": "misc/maplibre_examples/pages/geocode-with-nominatim.html",
+      "task_status": false,
       "script": null
     }
   },
   "get-coordinates-of-the-mouse-pointer": {
     "get-coordinates-of-the-mouse-pointer": {
-      "file_path": "misc/maplibre_examples/pages/get-coordinates-of-the-mouse-pointer.html",
-      "source_status": true,
-      "task_status": false,
       "url": "https://maplibre.org/maplibre-gl-js/docs/examples/get-coordinates-of-the-mouse-pointer/",
+      "source_status": true,
+      "file_path": "misc/maplibre_examples/pages/get-coordinates-of-the-mouse-pointer.html",
+      "task_status": false,
       "script": null
     }
   },
   "get-features-under-the-mouse-pointer": {
     "get-features-under-the-mouse-pointer": {
-      "file_path": "misc/maplibre_examples/pages/get-features-under-the-mouse-pointer.html",
-      "source_status": true,
-      "task_status": false,
       "url": "https://maplibre.org/maplibre-gl-js/docs/examples/get-features-under-the-mouse-pointer/",
+      "source_status": true,
+      "file_path": "misc/maplibre_examples/pages/get-features-under-the-mouse-pointer.html",
+      "task_status": false,
       "script": null
     }
   },
   "hash-routing": {
     "hash-routing": {
-      "file_path": "misc/maplibre_examples/pages/hash-routing.html",
-      "source_status": true,
-      "task_status": true,
       "url": "https://maplibre.org/maplibre-gl-js/docs/examples/hash-routing/",
+      "source_status": true,
+      "file_path": "misc/maplibre_examples/pages/hash-routing.html",
+      "task_status": true,
       "script": "tests/test_examples/test_hash_routing.py"
     }
   },
   "jump-to-a-series-of-locations": {
     "jump-to-a-series-of-locations": {
-      "file_path": "misc/maplibre_examples/pages/jump-to-a-series-of-locations.html",
-      "source_status": true,
-      "task_status": false,
       "url": "https://maplibre.org/maplibre-gl-js/docs/examples/jump-to-a-series-of-locations/",
+      "source_status": true,
+      "file_path": "misc/maplibre_examples/pages/jump-to-a-series-of-locations.html",
+      "task_status": false,
       "script": null
     }
   },
   "level-of-detail-control": {
     "level-of-detail-control": {
-      "file_path": "misc/maplibre_examples/pages/level-of-detail-control.html",
-      "source_status": true,
-      "task_status": false,
       "url": "https://maplibre.org/maplibre-gl-js/docs/examples/level-of-detail-control/",
+      "source_status": true,
+      "file_path": "misc/maplibre_examples/pages/level-of-detail-control.html",
+      "task_status": false,
       "script": null
     }
   },
   "locate-the-user": {
     "locate-the-user": {
-      "file_path": "misc/maplibre_examples/pages/locate-the-user.html",
-      "source_status": true,
-      "task_status": true,
       "url": "https://maplibre.org/maplibre-gl-js/docs/examples/locate-the-user/",
+      "source_status": true,
+      "file_path": "misc/maplibre_examples/pages/locate-the-user.html",
+      "task_status": true,
       "script": "tests/test_examples/test_locate_the_user.py"
     }
   },
   "measure-distances": {
     "measure-distances": {
-      "file_path": "misc/maplibre_examples/pages/measure-distances.html",
-      "source_status": true,
-      "task_status": false,
       "url": "https://maplibre.org/maplibre-gl-js/docs/examples/measure-distances/",
+      "source_status": true,
+      "file_path": "misc/maplibre_examples/pages/measure-distances.html",
+      "task_status": false,
       "script": null
     }
   },
   "navigate-the-map-with-game-like-controls": {
     "navigate-the-map-with-game-like-controls": {
-      "file_path": "misc/maplibre_examples/pages/navigate-the-map-with-game-like-controls.html",
-      "source_status": true,
-      "task_status": false,
       "url": "https://maplibre.org/maplibre-gl-js/docs/examples/navigate-the-map-with-game-like-controls/",
+      "source_status": true,
+      "file_path": "misc/maplibre_examples/pages/navigate-the-map-with-game-like-controls.html",
+      "task_status": false,
       "script": null
     }
   },
   "offset-the-vanishing-point-using-padding": {
     "offset-the-vanishing-point-using-padding": {
-      "file_path": "misc/maplibre_examples/pages/offset-the-vanishing-point-using-padding.html",
-      "source_status": true,
-      "task_status": false,
       "url": "https://maplibre.org/maplibre-gl-js/docs/examples/offset-the-vanishing-point-using-padding/",
+      "source_status": true,
+      "file_path": "misc/maplibre_examples/pages/offset-the-vanishing-point-using-padding.html",
+      "task_status": false,
       "script": null
     }
   },
   "pmtiles-source-and-protocol": {
     "pmtiles-source-and-protocol": {
-      "file_path": "misc/maplibre_examples/pages/pmtiles-source-and-protocol.html",
-      "source_status": true,
-      "task_status": false,
       "url": "https://maplibre.org/maplibre-gl-js/docs/examples/pmtiles-source-and-protocol/",
+      "source_status": true,
+      "file_path": "misc/maplibre_examples/pages/pmtiles-source-and-protocol.html",
+      "task_status": false,
       "script": null
     }
   },
   "render-world-copies": {
     "render-world-copies": {
-      "file_path": "misc/maplibre_examples/pages/render-world-copies.html",
-      "source_status": true,
-      "task_status": true,
       "url": "https://maplibre.org/maplibre-gl-js/docs/examples/render-world-copies/",
+      "source_status": true,
+      "file_path": "misc/maplibre_examples/pages/render-world-copies.html",
+      "task_status": true,
       "script": "tests/test_examples/test_render_world_copies.py"
     }
   },
   "restrict-map-panning-to-an-area": {
     "restrict-map-panning-to-an-area": {
-      "file_path": "misc/maplibre_examples/pages/restrict-map-panning-to-an-area.html",
-      "source_status": true,
-      "task_status": false,
       "url": "https://maplibre.org/maplibre-gl-js/docs/examples/restrict-map-panning-to-an-area/",
+      "source_status": true,
+      "file_path": "misc/maplibre_examples/pages/restrict-map-panning-to-an-area.html",
+      "task_status": false,
       "script": null
     }
   },
   "set-center-point-above-ground": {
     "set-center-point-above-ground": {
-      "file_path": "misc/maplibre_examples/pages/set-center-point-above-ground.html",
-      "source_status": true,
-      "task_status": false,
       "url": "https://maplibre.org/maplibre-gl-js/docs/examples/set-center-point-above-ground/",
+      "source_status": true,
+      "file_path": "misc/maplibre_examples/pages/set-center-point-above-ground.html",
+      "task_status": false,
       "script": null
     }
   },
   "set-pitch-and-bearing": {
     "set-pitch-and-bearing": {
-      "file_path": "misc/maplibre_examples/pages/set-pitch-and-bearing.html",
-      "source_status": true,
-      "task_status": false,
       "url": "https://maplibre.org/maplibre-gl-js/docs/examples/set-pitch-and-bearing/",
+      "source_status": true,
+      "file_path": "misc/maplibre_examples/pages/set-pitch-and-bearing.html",
+      "task_status": false,
       "script": null
     }
   },
   "show-polygon-information-on-click": {
     "show-polygon-information-on-click": {
-      "file_path": "misc/maplibre_examples/pages/show-polygon-information-on-click.html",
-      "source_status": true,
-      "task_status": false,
       "url": "https://maplibre.org/maplibre-gl-js/docs/examples/show-polygon-information-on-click/",
+      "source_status": true,
+      "file_path": "misc/maplibre_examples/pages/show-polygon-information-on-click.html",
+      "task_status": false,
       "script": null
     }
   },
   "sky-fog-terrain": {
     "sky-fog-terrain": {
-      "file_path": "misc/maplibre_examples/pages/sky-fog-terrain.html",
-      "source_status": true,
-      "task_status": true,
       "url": "https://maplibre.org/maplibre-gl-js/docs/examples/sky-fog-terrain/",
+      "source_status": true,
+      "file_path": "misc/maplibre_examples/pages/sky-fog-terrain.html",
+      "task_status": true,
       "script": "tests/test_examples/test_sky_fog_terrain.py"
     }
   },
   "slowly-fly-to-a-location": {
     "slowly-fly-to-a-location": {
-      "file_path": "misc/maplibre_examples/pages/slowly-fly-to-a-location.html",
-      "source_status": true,
-      "task_status": false,
       "url": "https://maplibre.org/maplibre-gl-js/docs/examples/slowly-fly-to-a-location/",
+      "source_status": true,
+      "file_path": "misc/maplibre_examples/pages/slowly-fly-to-a-location.html",
+      "task_status": false,
       "script": null
     }
   },
   "style-lines-with-a-data-driven-property": {
     "style-lines-with-a-data-driven-property": {
-      "file_path": "misc/maplibre_examples/pages/style-lines-with-a-data-driven-property.html",
-      "source_status": true,
-      "task_status": true,
       "url": "https://maplibre.org/maplibre-gl-js/docs/examples/style-lines-with-a-data-driven-property/",
+      "source_status": true,
+      "file_path": "misc/maplibre_examples/pages/style-lines-with-a-data-driven-property.html",
+      "task_status": true,
       "script": "tests/test_examples/test_style_lines_with_a_data_driven_property.py"
     }
   },
   "sync-movement-of-multiple-maps": {
     "sync-movement-of-multiple-maps": {
-      "file_path": "misc/maplibre_examples/pages/sync-movement-of-multiple-maps.html",
-      "source_status": true,
-      "task_status": false,
       "url": "https://maplibre.org/maplibre-gl-js/docs/examples/sync-movement-of-multiple-maps/",
+      "source_status": true,
+      "file_path": "misc/maplibre_examples/pages/sync-movement-of-multiple-maps.html",
+      "task_status": false,
       "script": null
     }
   },
   "toggle-deckgl-layer": {
     "toggle-deckgl-layer": {
-      "file_path": "misc/maplibre_examples/pages/toggle-deckgl-layer.html",
-      "source_status": true,
-      "task_status": false,
       "url": "https://maplibre.org/maplibre-gl-js/docs/examples/toggle-deckgl-layer/",
+      "source_status": true,
+      "file_path": "misc/maplibre_examples/pages/toggle-deckgl-layer.html",
+      "task_status": false,
       "script": null
     }
   },
   "toggle-interactions": {
     "toggle-interactions": {
-      "file_path": "misc/maplibre_examples/pages/toggle-interactions.html",
-      "source_status": true,
-      "task_status": false,
       "url": "https://maplibre.org/maplibre-gl-js/docs/examples/toggle-interactions/",
+      "source_status": true,
+      "file_path": "misc/maplibre_examples/pages/toggle-interactions.html",
+      "task_status": false,
       "script": null
     }
   },
   "update-a-feature-in-realtime": {
     "update-a-feature-in-realtime": {
-      "file_path": "misc/maplibre_examples/pages/update-a-feature-in-realtime.html",
-      "source_status": true,
-      "task_status": false,
       "url": "https://maplibre.org/maplibre-gl-js/docs/examples/update-a-feature-in-realtime/",
+      "source_status": true,
+      "file_path": "misc/maplibre_examples/pages/update-a-feature-in-realtime.html",
+      "task_status": false,
       "script": null
     }
   },
   "use-a-fallback-image": {
     "use-a-fallback-image": {
-      "file_path": "misc/maplibre_examples/pages/use-a-fallback-image.html",
-      "source_status": true,
-      "task_status": false,
       "url": "https://maplibre.org/maplibre-gl-js/docs/examples/use-a-fallback-image/",
+      "source_status": true,
+      "file_path": "misc/maplibre_examples/pages/use-a-fallback-image.html",
+      "task_status": false,
       "script": null
     }
   },
   "use-addprotocol-to-transform-feature-properties": {
     "use-addprotocol-to-transform-feature-properties": {
-      "file_path": "misc/maplibre_examples/pages/use-addprotocol-to-transform-feature-properties.html",
-      "source_status": true,
-      "task_status": false,
       "url": "https://maplibre.org/maplibre-gl-js/docs/examples/use-addprotocol-to-transform-feature-properties/",
+      "source_status": true,
+      "file_path": "misc/maplibre_examples/pages/use-addprotocol-to-transform-feature-properties.html",
+      "task_status": false,
       "script": null
     }
   },
   "use-locally-generated-ideographs": {
     "use-locally-generated-ideographs": {
-      "file_path": "misc/maplibre_examples/pages/use-locally-generated-ideographs.html",
-      "source_status": true,
-      "task_status": false,
       "url": "https://maplibre.org/maplibre-gl-js/docs/examples/use-locally-generated-ideographs/",
+      "source_status": true,
+      "file_path": "misc/maplibre_examples/pages/use-locally-generated-ideographs.html",
+      "task_status": false,
       "script": null
     }
   },
   "variable-label-placement": {
     "variable-label-placement": {
-      "file_path": "misc/maplibre_examples/pages/variable-label-placement.html",
-      "source_status": true,
-      "task_status": false,
       "url": "https://maplibre.org/maplibre-gl-js/docs/examples/variable-label-placement/",
+      "source_status": true,
+      "file_path": "misc/maplibre_examples/pages/variable-label-placement.html",
+      "task_status": false,
       "script": null
     }
   },
   "variable-label-placement-with-offset": {
     "variable-label-placement-with-offset": {
-      "file_path": "misc/maplibre_examples/pages/variable-label-placement-with-offset.html",
-      "source_status": true,
-      "task_status": false,
       "url": "https://maplibre.org/maplibre-gl-js/docs/examples/variable-label-placement-with-offset/",
+      "source_status": true,
+      "file_path": "misc/maplibre_examples/pages/variable-label-placement-with-offset.html",
+      "task_status": false,
       "script": null
     }
   },
   "view-a-fullscreen-map": {
     "view-a-fullscreen-map": {
-      "file_path": "misc/maplibre_examples/pages/view-a-fullscreen-map.html",
-      "source_status": true,
-      "task_status": true,
       "url": "https://maplibre.org/maplibre-gl-js/docs/examples/view-a-fullscreen-map/",
+      "source_status": true,
+      "file_path": "misc/maplibre_examples/pages/view-a-fullscreen-map.html",
+      "task_status": true,
       "script": "tests/test_examples/test_view_a_fullscreen_map.py"
     }
   },
   "view-local-geojson": {
     "view-local-geojson": {
-      "file_path": "misc/maplibre_examples/pages/view-local-geojson.html",
-      "source_status": true,
-      "task_status": false,
       "url": "https://maplibre.org/maplibre-gl-js/docs/examples/view-local-geojson/",
+      "source_status": true,
+      "file_path": "misc/maplibre_examples/pages/view-local-geojson.html",
+      "task_status": false,
       "script": null
     }
   },
   "view-local-geojson-experimental": {
     "view-local-geojson-experimental": {
-      "file_path": "misc/maplibre_examples/pages/view-local-geojson-experimental.html",
-      "source_status": true,
-      "task_status": false,
       "url": "https://maplibre.org/maplibre-gl-js/docs/examples/view-local-geojson-experimental/",
+      "source_status": true,
+      "file_path": "misc/maplibre_examples/pages/view-local-geojson-experimental.html",
+      "task_status": false,
       "script": null
     }
   },
   "visualize-population-density": {
     "visualize-population-density": {
-      "file_path": "misc/maplibre_examples/pages/visualize-population-density.html",
-      "source_status": true,
-      "task_status": true,
       "url": "https://maplibre.org/maplibre-gl-js/docs/examples/visualize-population-density/",
+      "source_status": true,
+      "file_path": "misc/maplibre_examples/pages/visualize-population-density.html",
+      "task_status": true,
       "script": "tests/test_examples/test_visualize_population_density.py"
     }
   },
   "zoom-and-planet-size-relation-on-globe": {
     "zoom-and-planet-size-relation-on-globe": {
-      "file_path": "misc/maplibre_examples/pages/zoom-and-planet-size-relation-on-globe.html",
-      "source_status": true,
-      "task_status": false,
       "url": "https://maplibre.org/maplibre-gl-js/docs/examples/zoom-and-planet-size-relation-on-globe/",
+      "source_status": true,
+      "file_path": "misc/maplibre_examples/pages/zoom-and-planet-size-relation-on-globe.html",
+      "task_status": false,
       "script": null
     }
   }

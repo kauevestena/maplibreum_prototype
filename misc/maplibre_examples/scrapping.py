@@ -81,20 +81,94 @@ for page_id, href in pages.items():
         # create a soup object to parse the HTML content
         example_soup = BeautifulSoup(response.content, "html.parser")
 
-        # extract the <code class="md-code__content" tabindex="0"> element
-        code_element = example_soup.find(
-            "code", class_="md-code__content", tabindex="0"
-        )
-        if code_element:
-            content = code_element.get_text(strip=True)
+        # Try multiple approaches to find the code
+        maplibre_script = None
 
+        # Approach 1: Look for code in <script> tags
+        script_elements = example_soup.find_all("script")
+
+        for script in script_elements:
+            script_content = script.get_text(strip=False)
+            script_src = script.get("src", "")
+
+            if (
+                not script_src
+                and script_content
+                and any(
+                    pattern in script_content
+                    for pattern in [
+                        "maplibregl.Map",
+                        "new maplibregl",
+                        "maplibregl.",
+                        "Map({",
+                        "new Map(",
+                    ]
+                )
+            ):
+                maplibre_script = script_content
+                print(f"    Found MapLibre script in script tag")
+                break
+
+        # Approach 2: Look for code in <pre> or <code> elements
+        if not maplibre_script:
+            code_elements = example_soup.find_all(["pre", "code"])
+
+            for code_elem in code_elements:
+                code_content = code_elem.get_text(strip=False)
+                if code_content and any(
+                    pattern in code_content
+                    for pattern in [
+                        "maplibregl.Map",
+                        "new maplibregl",
+                        "maplibregl.",
+                        "Map({",
+                        "new Map(",
+                    ]
+                ):
+                    maplibre_script = code_content
+                    print(f"    Found MapLibre script in code element")
+                    break
+
+        # Approach 3: Look for code in any element that might contain "const map = "
+        if not maplibre_script:
+            all_text = example_soup.get_text()
+            if "const map = " in all_text or "maplibregl.Map" in all_text:
+                # Try to extract script blocks from the formatted content
+                lines = all_text.split("\n")
+                script_lines = []
+                in_script = False
+
+                for line in lines:
+                    if any(
+                        pattern in line
+                        for pattern in [
+                            "const map = ",
+                            "new maplibregl.Map",
+                            "maplibregl.Map",
+                        ]
+                    ):
+                        in_script = True
+                        script_lines.append(line)
+                    elif in_script:
+                        if (
+                            line.strip()
+                            and not line.startswith(" ")
+                            and not line.startswith("\t")
+                        ):
+                            break
+                        script_lines.append(line)
+
+                if script_lines:
+                    maplibre_script = "\n".join(script_lines)
+                    print(f"    Extracted script from page text")
+
+        if maplibre_script:
             with open(file_path, "w", encoding="utf-8") as f:
-                f.write(content)
-            print(f"  Saved to {file_path}")
-
+                f.write(maplibre_script)
+            print(f"  Saved JavaScript to {file_path}")
             entry["source_status"] = True
         else:
-            print(f"  No <code> element found in {href}")
+            print(f"  No MapLibre script found in {href}")
             entry["source_status"] = False
     else:
         print(f"  Failed to fetch {href}: Status code {response.status_code}")
