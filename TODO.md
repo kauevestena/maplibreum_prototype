@@ -2,12 +2,12 @@
 
 ## Backlog
 
-- [ ] Document the MiniMap, measure, and search controls in the README and Sphinx docs.
 - [ ] Add notebook examples showcasing popup templating and floating image overlays.
 - [ ] Benchmark marker clustering performance on large (>50k point) datasets and record guidance.
 
 ## Completed
 
+- [x] Document the MiniMap, measure, and search controls in the README and Sphinx docs.
 - [x] MiniMap plugin for overview map
 - [x] Measure control to calculate distances and areas
 - [x] TimeDimension support for time-enabled layers
