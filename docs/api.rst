@@ -9,6 +9,10 @@ API Reference
    :members:
    :show-inheritance:
 
+.. automodule:: maplibreum.controls
+   :members:
+   :show-inheritance:
+
 .. automodule:: maplibreum.core
    :members:
    :show-inheritance:

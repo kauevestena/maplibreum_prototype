@@ -48,6 +48,20 @@ m.add_control(
     "attribution", "bottom-right", options={"customAttribution": "My Data"}
 )
 
+# Controls
+from maplibreum.controls import MiniMapControl, MeasureControl, SearchControl
+
+# Add a minimap
+m.add_control(MiniMapControl())
+
+# Add a measure control
+m.add_measure_control()
+
+# Add a search control
+# You will need an API key from a geocoding provider like Maptiler.
+# https://www.maptiler.com/cloud/keys/
+m.add_search_control(SearchControl(provider="maptiler", api_key="YOUR_API_KEY"))
+
 # Enable terrain and atmospheric effects
 m.add_dem_source("terrain", "https://example.com/dem.png")
 m.set_terrain("terrain")
