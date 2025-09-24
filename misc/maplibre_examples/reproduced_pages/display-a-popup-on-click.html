@@ -15,7 +15,7 @@
             padding: 0;
         }
 
-        #maplibreum_cbbdcbdcc99e4d2fb6468dacbdd68974 {
+        #maplibreum_41cc293e0c644060b56a8dce03bb36ca {
             width: 100%;
             height: 500px;
             position: relative;
@@ -45,11 +45,12 @@
 
         }
 
-        #maplibreum_cbbdcbdcc99e4d2fb6468dacbdd68974 { width: 100%; height: 500px; }
+        #maplibreum_41cc293e0c644060b56a8dce03bb36ca { width: 100%; height: 500px; }
 
 
 
     </style>
+    
 </head>
 <body>
 <div class="maplibreum-example-banner">
@@ -58,7 +59,7 @@
   <p>Generated from test_display_a_popup_on_click.py by the automated test suite.</p>
 </div>
 
-    <div id="maplibreum_cbbdcbdcc99e4d2fb6468dacbdd68974">
+    <div id="maplibreum_41cc293e0c644060b56a8dce03bb36ca">
         
         
     </div>
@@ -92,7 +93,7 @@
 
         // Function to show error message when MapLibre fails to load
         function showMapError(message) {
-            const mapDiv = document.getElementById('maplibreum_cbbdcbdcc99e4d2fb6468dacbdd68974');
+            const mapDiv = document.getElementById('maplibreum_41cc293e0c644060b56a8dce03bb36ca');
             if (mapDiv) {
                 mapDiv.innerHTML = `
                     <div style="
@@ -137,12 +138,12 @@
         function initializeMap() {
             try {
         // Initialize map
-        var map = new maplibregl.Map({"container": "maplibreum_cbbdcbdcc99e4d2fb6468dacbdd68974", "style": "https://tiles.openfreemap.org/styles/bright", "center": [-77.04, 38.907], "zoom": 11.15});
+        var map = new maplibregl.Map({"container": "maplibreum_41cc293e0c644060b56a8dce03bb36ca", "style": "https://tiles.openfreemap.org/styles/bright", "center": [-77.04, 38.907], "zoom": 11.15});
         window.maplibreumMaps = window.maplibreumMaps || {};
-        window.maplibreumMaps["maplibreum_cbbdcbdcc99e4d2fb6468dacbdd68974"] = map;
+        window.maplibreumMaps["maplibreum_41cc293e0c644060b56a8dce03bb36ca"] = map;
         window.maplibreumMapsLoaded = window.maplibreumMapsLoaded || {};
         map.once('load', function() {
-            window.maplibreumMapsLoaded["maplibreum_cbbdcbdcc99e4d2fb6468dacbdd68974"] = true;
+            window.maplibreumMapsLoaded["maplibreum_41cc293e0c644060b56a8dce03bb36ca"] = true;
         });
 
 
@@ -157,7 +158,7 @@ map.on('load', function() {
     
     // Add sources
     
-    map.addSource("source_2a1311f1755f4f088b77e7ce12b69497", {"type": "geojson", "data": {"type": "FeatureCollection", "features": [{"type": "Feature", "properties": {"description": "<strong>Test Location</strong><p>This is a test location for popup functionality.</p>", "icon": "theatre"}, "geometry": {"type": "Point", "coordinates": [-77.038659, 38.931567]}}]}});
+    map.addSource("source_3e50753b9d1c40da8dd7c9ac1e20d98a", {"type": "geojson", "data": {"type": "FeatureCollection", "features": [{"type": "Feature", "properties": {"description": "<strong>Test Location</strong><p>This is a test location for popup functionality.</p>", "icon": "theatre"}, "geometry": {"type": "Point", "coordinates": [-77.038659, 38.931567]}}]}});
     
 
     // Register images used by style layers
@@ -168,7 +169,7 @@ map.on('load', function() {
 
     // Add layers
     
-    map.addLayer({"id": "places", "type": "symbol", "layout": {"icon-image": "{icon}", "icon-overlap": "always"}, "source": "source_2a1311f1755f4f088b77e7ce12b69497"});
+    map.addLayer({"id": "places", "type": "symbol", "layout": {"icon-image": "{icon}", "icon-overlap": "always"}, "source": "source_3e50753b9d1c40da8dd7c9ac1e20d98a"});
     
 
     // Popups
@@ -217,7 +218,7 @@ map.on('load', function() {
             data.zoom = map.getZoom();
             
             if (window.Jupyter && Jupyter.notebook && Jupyter.notebook.kernel) {
-                var cmd = "from maplibreum.core import Map; Map._handle_event('" + "maplibreum_cbbdcbdcc99e4d2fb6468dacbdd68974" + "', '" + "click" + "', '" + JSON.stringify(data).replace(/'/g, "\\'") + "')";
+                var cmd = "from maplibreum.core import Map; Map._handle_event('" + "maplibreum_41cc293e0c644060b56a8dce03bb36ca" + "', '" + "click" + "', '" + JSON.stringify(data).replace(/'/g, "\\'") + "')";
                 Jupyter.notebook.kernel.execute(cmd);
             }
             

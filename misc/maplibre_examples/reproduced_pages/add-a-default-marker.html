@@ -15,7 +15,7 @@
             padding: 0;
         }
 
-        #maplibreum_b7b1bae3ce0540e7988e0c8fff70e47b {
+        #maplibreum_3cafc19601c54a1eab15415ff34f753f {
             width: 100%;
             height: 500px;
             position: relative;
@@ -45,11 +45,12 @@
 
         }
 
-        #maplibreum_b7b1bae3ce0540e7988e0c8fff70e47b { width: 100%; height: 500px; }
+        #maplibreum_3cafc19601c54a1eab15415ff34f753f { width: 100%; height: 500px; }
 
 
 
     </style>
+    
 </head>
 <body>
 <div class="maplibreum-example-banner">
@@ -58,7 +59,7 @@
   <p>Generated from test_add_a_default_marker.py by the automated test suite.</p>
 </div>
 
-    <div id="maplibreum_b7b1bae3ce0540e7988e0c8fff70e47b">
+    <div id="maplibreum_3cafc19601c54a1eab15415ff34f753f">
         
         
     </div>
@@ -92,7 +93,7 @@
 
         // Function to show error message when MapLibre fails to load
         function showMapError(message) {
-            const mapDiv = document.getElementById('maplibreum_b7b1bae3ce0540e7988e0c8fff70e47b');
+            const mapDiv = document.getElementById('maplibreum_3cafc19601c54a1eab15415ff34f753f');
             if (mapDiv) {
                 mapDiv.innerHTML = `
                     <div style="
@@ -137,12 +138,12 @@
         function initializeMap() {
             try {
         // Initialize map
-        var map = new maplibregl.Map({"container": "maplibreum_b7b1bae3ce0540e7988e0c8fff70e47b", "style": "https://demotiles.maplibre.org/style.json", "center": [12.550343, 55.665957], "zoom": 6});
+        var map = new maplibregl.Map({"container": "maplibreum_3cafc19601c54a1eab15415ff34f753f", "style": "https://demotiles.maplibre.org/style.json", "center": [12.550343, 55.665957], "zoom": 6});
         window.maplibreumMaps = window.maplibreumMaps || {};
-        window.maplibreumMaps["maplibreum_b7b1bae3ce0540e7988e0c8fff70e47b"] = map;
+        window.maplibreumMaps["maplibreum_3cafc19601c54a1eab15415ff34f753f"] = map;
         window.maplibreumMapsLoaded = window.maplibreumMapsLoaded || {};
         map.once('load', function() {
-            window.maplibreumMapsLoaded["maplibreum_b7b1bae3ce0540e7988e0c8fff70e47b"] = true;
+            window.maplibreumMapsLoaded["maplibreum_3cafc19601c54a1eab15415ff34f753f"] = true;
         });
 
 
@@ -157,7 +158,7 @@ map.on('load', function() {
     
     // Add sources
     
-    map.addSource("source_a6ccd7e2e1ae4d6db0a81b4b07332e27", {"type": "geojson", "data": {"type": "FeatureCollection", "features": [{"type": "Feature", "geometry": {"type": "Point", "coordinates": [12.550343, 55.665957]}, "properties": {}}]}});
+    map.addSource("source_ee7323b9d91a4536bb9c4a7f08022eb0", {"type": "geojson", "data": {"type": "FeatureCollection", "features": [{"type": "Feature", "geometry": {"type": "Point", "coordinates": [12.550343, 55.665957]}, "properties": {}}]}});
     
 
     // Register images used by style layers
@@ -168,7 +169,7 @@ map.on('load', function() {
 
     // Add layers
     
-    map.addLayer({"id": "marker_0491c62226754f5489f59acf77c9f9b5", "type": "circle", "source": "source_a6ccd7e2e1ae4d6db0a81b4b07332e27", "paint": {"circle-radius": 8, "circle-color": "#007cbf", "circle-stroke-width": 1, "circle-stroke-color": "#fff"}});
+    map.addLayer({"id": "marker_f6e70e778c7447f2a8deabdf5b2e575a", "type": "circle", "source": "source_ee7323b9d91a4536bb9c4a7f08022eb0", "paint": {"circle-radius": 8, "circle-color": "#007cbf", "circle-stroke-width": 1, "circle-stroke-color": "#fff"}});
     
 
     // Popups

@@ -15,7 +15,7 @@
             padding: 0;
         }
 
-        #maplibreum_ce1467434e0f4d3e999b6ca4770b3887 {
+        #maplibreum_7b7df3a89e9743c8ac0ce86e104e5a1c {
             width: 100%;
             height: 500px;
             position: relative;
@@ -45,11 +45,12 @@
 
         }
 
-        #maplibreum_ce1467434e0f4d3e999b6ca4770b3887 { width: 100%; height: 500px; }
+        #maplibreum_7b7df3a89e9743c8ac0ce86e104e5a1c { width: 100%; height: 500px; }
 
 
 
     </style>
+    
 </head>
 <body>
 <div class="maplibreum-example-banner">
@@ -58,7 +59,7 @@
   <p>Generated from test_add_a_geojson_line.py by the automated test suite.</p>
 </div>
 
-    <div id="maplibreum_ce1467434e0f4d3e999b6ca4770b3887">
+    <div id="maplibreum_7b7df3a89e9743c8ac0ce86e104e5a1c">
         
         
     </div>
@@ -92,7 +93,7 @@
 
         // Function to show error message when MapLibre fails to load
         function showMapError(message) {
-            const mapDiv = document.getElementById('maplibreum_ce1467434e0f4d3e999b6ca4770b3887');
+            const mapDiv = document.getElementById('maplibreum_7b7df3a89e9743c8ac0ce86e104e5a1c');
             if (mapDiv) {
                 mapDiv.innerHTML = `
                     <div style="
@@ -137,12 +138,12 @@
         function initializeMap() {
             try {
         // Initialize map
-        var map = new maplibregl.Map({"container": "maplibreum_ce1467434e0f4d3e999b6ca4770b3887", "style": "https://tiles.openfreemap.org/styles/bright", "center": [-122.486052, 37.830348], "zoom": 15});
+        var map = new maplibregl.Map({"container": "maplibreum_7b7df3a89e9743c8ac0ce86e104e5a1c", "style": "https://tiles.openfreemap.org/styles/bright", "center": [-122.486052, 37.830348], "zoom": 15});
         window.maplibreumMaps = window.maplibreumMaps || {};
-        window.maplibreumMaps["maplibreum_ce1467434e0f4d3e999b6ca4770b3887"] = map;
+        window.maplibreumMaps["maplibreum_7b7df3a89e9743c8ac0ce86e104e5a1c"] = map;
         window.maplibreumMapsLoaded = window.maplibreumMapsLoaded || {};
         map.once('load', function() {
-            window.maplibreumMapsLoaded["maplibreum_ce1467434e0f4d3e999b6ca4770b3887"] = true;
+            window.maplibreumMapsLoaded["maplibreum_7b7df3a89e9743c8ac0ce86e104e5a1c"] = true;
         });
 
 
@@ -157,7 +158,7 @@ map.on('load', function() {
     
     // Add sources
     
-    map.addSource("source_14a35062ce2046408e4029199298e3fe", {"type": "geojson", "data": {"type": "Feature", "properties": {}, "geometry": {"type": "LineString", "coordinates": [[-122.48369693756104, 37.83381888486939], [-122.48348236083984, 37.83317489144141], [-122.48339653015138, 37.83270036637107], [-122.48356819152832, 37.832056363179625], [-122.48404026031496, 37.83114119107971], [-122.48404026031496, 37.83049717427869], [-122.48348236083984, 37.829920943955045], [-122.48356819152832, 37.82954808664175], [-122.48507022857666, 37.82944639795659], [-122.48610019683838, 37.82880236636284], [-122.48695850372314, 37.82931081282506], [-122.48700141906738, 37.83080223556934], [-122.48751640319824, 37.83168351665737], [-122.48803138732912, 37.832158048267786], [-122.48888969421387, 37.83297152392784], [-122.48987674713133, 37.83263257682617], [-122.49043464660643, 37.832937629287755], [-122.49125003814696, 37.832429207817725], [-122.49163627624512, 37.832564787218985], [-122.49223709106445, 37.83337825839438], [-122.49378204345702, 37.83368330777276]]}}});
+    map.addSource("source_d5f6cb0deff24631a2a07599f08db7cb", {"type": "geojson", "data": {"type": "Feature", "properties": {}, "geometry": {"type": "LineString", "coordinates": [[-122.48369693756104, 37.83381888486939], [-122.48348236083984, 37.83317489144141], [-122.48339653015138, 37.83270036637107], [-122.48356819152832, 37.832056363179625], [-122.48404026031496, 37.83114119107971], [-122.48404026031496, 37.83049717427869], [-122.48348236083984, 37.829920943955045], [-122.48356819152832, 37.82954808664175], [-122.48507022857666, 37.82944639795659], [-122.48610019683838, 37.82880236636284], [-122.48695850372314, 37.82931081282506], [-122.48700141906738, 37.83080223556934], [-122.48751640319824, 37.83168351665737], [-122.48803138732912, 37.832158048267786], [-122.48888969421387, 37.83297152392784], [-122.48987674713133, 37.83263257682617], [-122.49043464660643, 37.832937629287755], [-122.49125003814696, 37.832429207817725], [-122.49163627624512, 37.832564787218985], [-122.49223709106445, 37.83337825839438], [-122.49378204345702, 37.83368330777276]]}}});
     
 
     // Register images used by style layers
@@ -168,7 +169,7 @@ map.on('load', function() {
 
     // Add layers
     
-    map.addLayer({"id": "route", "type": "line", "paint": {"line-color": "#888", "line-width": 8}, "layout": {"line-join": "round", "line-cap": "round"}, "source": "source_14a35062ce2046408e4029199298e3fe"});
+    map.addLayer({"id": "route", "type": "line", "paint": {"line-color": "#888", "line-width": 8}, "layout": {"line-join": "round", "line-cap": "round"}, "source": "source_d5f6cb0deff24631a2a07599f08db7cb"});
     
 
     // Popups

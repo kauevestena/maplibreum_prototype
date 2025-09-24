@@ -22,8 +22,8 @@
       "url": "https://maplibre.org/maplibre-gl-js/docs/examples/add-a-3d-model-using-threejs/",
       "source_status": true,
       "file_path": "misc/maplibre_examples/pages/add-a-3d-model-using-threejs.html",
-      "task_status": false,
-      "script": null
+      "task_status": true,
+      "script": "tests/test_examples/test_add_a_3d_model_using_threejs.py"
     }
   },
   "add-a-3d-model-with-babylonjs": {
