@@ -1,56 +1,16 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="utf-8" />
-    <title>MapLibreum Map</title>
-    <meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no" />
-    <link href="https://unpkg.com/maplibre-gl@3.4.0/dist/maplibre-gl.css" rel="stylesheet" onerror="this.onerror=null;this.href='https://cdn.jsdelivr.net/npm/maplibre-gl@3.4.0/dist/maplibre-gl.css';" />
-    
-    
-    
-    
+    <title>Change building color based on zoom level</title>
+    <meta property="og:description" content="Use the interpolate expression to ease-in the building layer and smoothly fade from one color to the next." />
+    <meta charset='utf-8'>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel='stylesheet' href='https://unpkg.com/maplibre-gl@5.7.3/dist/maplibre-gl.css' />
+    <script src='https://unpkg.com/maplibre-gl@5.7.3/dist/maplibre-gl.js'></script>
     <style>
-        body {
-            margin: 0;
-            padding: 0;
-        }
-
-        #maplibreum_d0d044740159447fba0852b5a4cfbc34 {
-            width: 100%;
-            height: 500px;
-            position: relative;
-        }
-
-        .maplibreum-legend {
-            position: absolute;
-            bottom: 10px;
-            left: 10px;
-            background: rgba(255, 255, 255, 0.8);
-            padding: 6px;
-            font-size: 12px;
-            border-radius: 4px;
-        }
-
-        .maplibreum-legend div {
-            display: flex;
-            align-items: center;
-            margin-bottom: 4px;
-        }
-
-        .maplibreum-legend span {
-            display: inline-block;
-            width: 12px;
-            height: 12px;
-            margin-right: 4px;
-
-        }
-
-        #maplibreum_d0d044740159447fba0852b5a4cfbc34 { width: 100%; height: 500px; }
-
-
-
+        body { margin: 0; padding: 0; }
+        html, body, #map { height: 100%; }
     </style>
-    
 </head>
 <body>
 <div class="maplibreum-example-banner">
@@ -59,171 +19,59 @@
   <p>Generated from test_change_building_color_based_on_zoom_level.py by the automated test suite.</p>
 </div>
 
-    <div id="maplibreum_d0d044740159447fba0852b5a4cfbc34">
-        
-        
-    </div>
-    <!-- MapLibre GL JS with CDN fallbacks -->
-    <script>
-        // Function to load MapLibre GL JS with fallbacks
-        function loadMapLibreGL() {
-            return new Promise((resolve, reject) => {
-                // Try loading from unpkg.com first
-                const script1 = document.createElement('script');
-                script1.src = 'https://unpkg.com/maplibre-gl@3.4.0/dist/maplibre-gl.js';
-                script1.onload = () => resolve();
-                script1.onerror = () => {
-                    // Fallback to jsDelivr
-                    const script2 = document.createElement('script');
-                    script2.src = 'https://cdn.jsdelivr.net/npm/maplibre-gl@3.4.0/dist/maplibre-gl.js';
-                    script2.onload = () => resolve();
-                    script2.onerror = () => {
-                        // Last fallback to cdnjs
-                        const script3 = document.createElement('script');
-                        script3.src = 'https://cdnjs.cloudflare.com/ajax/libs/maplibre-gl/3.4.0/maplibre-gl.min.js';
-                        script3.onload = () => resolve();
-                        script3.onerror = () => reject(new Error('Failed to load MapLibre GL JS from all CDNs'));
-                        document.head.appendChild(script3);
-                    };
-                    document.head.appendChild(script2);
-                };
-                document.head.appendChild(script1);
-            });
-        }
+<style>
+    #zoom {
+        display: block;
+        position: absolute;
+        top: 20px;
+        left: 50%;
+        transform: translate(-50%);
+        width: 50%;
+        height: 40px;
+        padding: 10px;
+        border: none;
+        border-radius: 3px;
+        font-size: 12px;
+        text-align: center;
+        color: #fff;
+        background: #ee8a65;
+    }
+</style>
+<div id="map"></div>
+<button id="zoom">Zoom to buildings</button>
+<script>
+    const map = new maplibregl.Map({
+        container: 'map',
+        style: 'https://tiles.openfreemap.org/styles/bright',
+        center: [-90.73414, 14.55524],
+        zoom: 13
+    });
 
-        // Function to show error message when MapLibre fails to load
-        function showMapError(message) {
-            const mapDiv = document.getElementById('maplibreum_d0d044740159447fba0852b5a4cfbc34');
-            if (mapDiv) {
-                mapDiv.innerHTML = `
-                    <div style="
-                        display: flex;
-                        align-items: center;
-                        justify-content: center;
-                        height: 100%;
-                        background-color: #f8f9fa;
-                        border: 2px dashed #dee2e6;
-                        border-radius: 8px;
-                        text-align: center;
-                        padding: 20px;
-                        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
-                    ">
-                        <div>
-                            <div style="font-size: 48px; color: #6c757d; margin-bottom: 16px;">🗺️</div>
-                            <div style="font-size: 18px; color: #495057; margin-bottom: 8px;">Map Loading Error</div>
-                            <div style="font-size: 14px; color: #6c757d; margin-bottom: 16px;">${message}</div>
-                            <div style="font-size: 12px; color: #6c757d;">
-                                This may be due to network restrictions or CDN availability issues.
-                                <br>Try refreshing the page or check your internet connection.
-                            </div>
-                        </div>
-                    </div>
-                `;
-            }
-        }
+    map.on('load', () => {
+        map.setPaintProperty('building-top', 'fill-color', [
+            'interpolate',
+            ['exponential', 0.5],
+            ['zoom'],
+            15,
+            '#e2714b',
+            22,
+            '#eee695'
+        ]);
 
-        // Load MapLibre and initialize map
-        loadMapLibreGL().then(() => {
-            // MapLibre loaded successfully, check if it's available
-            if (typeof maplibregl === 'undefined') {
-                throw new Error('MapLibre GL JS loaded but not available');
-            }
-            
-            initializeMap();
-        }).catch(error => {
-            console.error('Failed to load MapLibre GL JS:', error);
-            showMapError('Failed to load MapLibre GL JavaScript library');
-        });
+        map.setPaintProperty('building-top', 'fill-opacity', [
+            'interpolate',
+            ['exponential', 0.5],
+            ['zoom'],
+            15,
+            0,
+            22,
+            1
+        ]);
+    });
 
-        function initializeMap() {
-            try {
-        // Initialize map
-        var map = new maplibregl.Map({"container": "maplibreum_d0d044740159447fba0852b5a4cfbc34", "style": "https://demotiles.maplibre.org/style.json", "center": [-73.985664, 40.748514], "zoom": 15});
-        window.maplibreumMaps = window.maplibreumMaps || {};
-        window.maplibreumMaps["maplibreum_d0d044740159447fba0852b5a4cfbc34"] = map;
-        window.maplibreumMapsLoaded = window.maplibreumMapsLoaded || {};
-        map.once('load', function() {
-            window.maplibreumMapsLoaded["maplibreum_d0d044740159447fba0852b5a4cfbc34"] = true;
-        });
-
-
-// Add controls
-
-
-
-
-
-
-map.on('load', function() {
-    
-    // Add sources
-    
-
-    // Register images used by style layers
-    
-
-    
-    
-
-    // Add layers
-    
-    map.addLayer({"id": "3d-buildings", "type": "fill-extrusion", "source": "composite", "paint": {"fill-extrusion-color": ["interpolate", ["linear"], ["zoom"], 15, "#aaa", 16, "#f08", 17, "#ffb703"], "fill-extrusion-height": ["interpolate", ["linear"], ["zoom"], 15, 0, 17, ["get", "render_height"]], "fill-extrusion-base": ["interpolate", ["linear"], ["zoom"], 15, 0, 17, ["get", "render_min_height"]], "fill-extrusion-opacity": 0.8}, "minzoom": 15, "source-layer": "building"}, "waterway-label");
-    
-
-    // Popups
-    
-
-    // Tooltips
-    
-
-    // Tile Layers
-    var tileLayers = [
-    
-    ];
-
-    // Overlay Layers
-    var overlayLayers = [
-    
-    ];
-
-    
-
-    
-
-    // Markers
-    
-
-    
-
-    
-
-    
-
-    
-
-    // Queued camera actions
-    
-});
-
-    
-
-    
-
-    
-
-            } catch (error) {
-                console.error('Error initializing map:', error);
-                showMapError('Error initializing the map: ' + error.message);
-            }
-        }
-    </script>
-    
-    <!-- Load additional libraries with fallbacks -->
-    
-    
-    
-    
-    
+    document.getElementById('zoom').addEventListener('click', () => {
+        map.zoomTo(19, {duration: 9000});
+    });
+</script>
 </body>
-
 </html>

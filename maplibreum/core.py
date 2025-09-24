@@ -1770,46 +1770,26 @@ class Marker:
             map_instance.add_marker(self)
             return self
 
-        if isinstance(self.icon, (DivIcon, BeautifyIcon)) or self.draggable:
-            self.id = f"marker_{uuid.uuid4().hex}"
-            marker_data = {
-                "id": self.id,
-                "coordinates": self.coordinates,
-                "popup": self.popup,
-                "tooltip": self.tooltip,
-                "draggable": self.draggable,
-            }
-            if isinstance(self.icon, (DivIcon, BeautifyIcon)):
-                marker_data["html"] = self.icon.html
-                marker_data["class_name"] = self.icon.class_name
-                if getattr(self.icon, "css", None):
-                    if self.icon.css not in map_instance.marker_css:
-                        map_instance.marker_css.append(self.icon.css)
-            else:
-                marker_data["color"] = self.color
-            map_instance.markers.append(marker_data)
-            if self.draggable:
-                Map._register_marker(map_instance.map_id, self)
-            return self
+        is_feature_group = map_instance.__class__.__name__ == "FeatureGroup"
 
-        layer_id = f"marker_{uuid.uuid4().hex}"
-        source = {
-            "type": "geojson",
-            "data": {
-                "type": "FeatureCollection",
-                "features": [
-                    {
-                        "type": "Feature",
-                        "geometry": {
-                            "type": "Point",
-                            "coordinates": self.coordinates,
-                        },
-                        "properties": {},
-                    }
-                ],
-            },
-        }
-        if self.icon:
+        if isinstance(self.icon, Icon):
+            layer_id = f"marker_{uuid.uuid4().hex}"
+            source = {
+                "type": "geojson",
+                "data": {
+                    "type": "FeatureCollection",
+                    "features": [
+                        {
+                            "type": "Feature",
+                            "geometry": {
+                                "type": "Point",
+                                "coordinates": self.coordinates,
+                            },
+                            "properties": {},
+                        }
+                    ],
+                },
+            }
             layer = {
                 "id": layer_id,
                 "type": "symbol",
@@ -1822,7 +1802,32 @@ class Marker:
                 layer["layout"]["icon-size"] = self.icon.icon_size
             if self.icon.icon_anchor is not None:
                 layer["layout"]["icon-anchor"] = self.icon.icon_anchor
-        else:
+            map_instance.add_layer(layer, source=source)
+
+            if self.popup:
+                map_instance.add_popup(html=self.popup, layer_id=layer_id)
+            if self.tooltip:
+                map_instance.add_tooltip(self.tooltip, layer_id=layer_id)
+            return self
+
+        if is_feature_group:
+            layer_id = f"marker_{uuid.uuid4().hex}"
+            source = {
+                "type": "geojson",
+                "data": {
+                    "type": "FeatureCollection",
+                    "features": [
+                        {
+                            "type": "Feature",
+                            "geometry": {
+                                "type": "Point",
+                                "coordinates": self.coordinates,
+                            },
+                            "properties": {},
+                        }
+                    ],
+                },
+            }
             layer = {
                 "id": layer_id,
                 "type": "circle",
@@ -1834,12 +1839,46 @@ class Marker:
                     "circle-stroke-color": "#fff",
                 },
             }
-        map_instance.add_layer(layer, source=source)
+            map_instance.add_layer(layer, source=source)
 
-        if self.popup:
-            map_instance.add_popup(html=self.popup, layer_id=layer_id)
-        if self.tooltip:
-            map_instance.add_tooltip(self.tooltip, layer_id=layer_id)
+            if self.popup:
+                map_instance.add_popup(html=self.popup, layer_id=layer_id)
+            if self.tooltip:
+                map_instance.add_tooltip(self.tooltip, layer_id=layer_id)
+            return self
+
+        self.id = f"marker_{uuid.uuid4().hex}"
+
+        if self.popup is not None and callable(getattr(self.popup, "render", None)):
+            popup_content = self.popup.render({})
+        else:
+            popup_content = self.popup
+
+        if isinstance(self.tooltip, Tooltip):
+            tooltip_content = self.tooltip.text
+        else:
+            tooltip_content = self.tooltip
+
+        marker_data = {
+            "id": self.id,
+            "coordinates": self.coordinates,
+            "popup": popup_content,
+            "tooltip": tooltip_content,
+            "draggable": self.draggable,
+        }
+        if isinstance(self.icon, (DivIcon, BeautifyIcon)):
+            marker_data["html"] = self.icon.html
+            marker_data["class_name"] = self.icon.class_name
+            if getattr(self.icon, "css", None):
+                if self.icon.css not in map_instance.marker_css:
+                    map_instance.marker_css.append(self.icon.css)
+        else:
+            marker_data["color"] = self.color
+        map_instance.markers.append(marker_data)
+        if self.draggable:
+            Map._register_marker(map_instance.map_id, self)
+        return self
+
 
 
 class GeoJson:
