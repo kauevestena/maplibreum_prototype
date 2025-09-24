@@ -11,6 +11,7 @@ from urllib.parse import quote
 from IPython.display import IFrame, display
 from jinja2 import Environment, FileSystemLoader
 
+from .babylon import BabylonLayer
 from .cluster import ClusteredGeoJson, MarkerCluster
 from .expressions import get as expr_get
 from .expressions import interpolate, var
@@ -470,8 +471,17 @@ class Map:
             self.add_source(source_name, source)
             layer_definition["source"] = source_name
 
-        layer_id = layer_definition.get("id", f"layer_{uuid.uuid4().hex}")
-        layer_definition["id"] = layer_id
+        if isinstance(layer_definition, BabylonLayer):
+            layer_id = layer_definition.id
+            self.add_external_script("https://unpkg.com/babylonjs@5.42.2/babylon.js")
+            self.add_external_script(
+                "https://unpkg.com/babylonjs-loaders@5.42.2/babylonjs.loaders.min.js"
+            )
+            self.add_on_load_js(layer_definition.js_code)
+            layer_definition = layer_definition.to_dict()
+        else:
+            layer_id = layer_definition.get("id", f"layer_{uuid.uuid4().hex}")
+            layer_definition["id"] = layer_id
 
         self.layers.append(
             {"id": layer_id, "definition": layer_definition, "before": before}
