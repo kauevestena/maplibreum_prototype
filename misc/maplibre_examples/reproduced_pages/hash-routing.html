@@ -1,56 +1,29 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="utf-8" />
-    <title>MapLibreum Map</title>
-    <meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no" />
-    <link href="https://unpkg.com/maplibre-gl@3.4.0/dist/maplibre-gl.css" rel="stylesheet" onerror="this.onerror=null;this.href='https://cdn.jsdelivr.net/npm/maplibre-gl@3.4.0/dist/maplibre-gl.css';" />
-    
-    
-    
-    
+    <title>Hash routing</title>
+    <meta property="og:description" content="Keep the viewport state in the url with hash routing." />
+    <meta charset='utf-8'>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel='stylesheet' href='https://unpkg.com/maplibre-gl@5.7.3/dist/maplibre-gl.css' />
+    <script src='https://unpkg.com/maplibre-gl@5.7.3/dist/maplibre-gl.js'></script>
     <style>
-        body {
-            margin: 0;
-            padding: 0;
-        }
-
-        #maplibreum_38da8f9eeeca46ecb299fdd546179c1e {
-            width: 100%;
-            height: 500px;
-            position: relative;
-        }
-
-        .maplibreum-legend {
-            position: absolute;
-            bottom: 10px;
-            left: 10px;
-            background: rgba(255, 255, 255, 0.8);
-            padding: 6px;
-            font-size: 12px;
-            border-radius: 4px;
-        }
-
-        .maplibreum-legend div {
+        body { margin: 0; padding: 0; }
+        html, body, #map { height: 100%; }
+        #urlHash {
+            position: fixed;
+            left: 0;
+            top: 0;
+            height: 30px;
+            background-color: white;
             display: flex;
             align-items: center;
-            margin-bottom: 4px;
+            border-radius: 10px;
+            padding: 0 10px;
+            margin: 10px;
+            border: 1px solid #888;
         }
-
-        .maplibreum-legend span {
-            display: inline-block;
-            width: 12px;
-            height: 12px;
-            margin-right: 4px;
-
-        }
-
-        #maplibreum_38da8f9eeeca46ecb299fdd546179c1e { width: 100%; height: 500px; }
-
-
-
     </style>
-    
 </head>
 <body>
 <div class="maplibreum-example-banner">
@@ -59,169 +32,24 @@
   <p>Generated from test_hash_routing.py by the automated test suite.</p>
 </div>
 
-    <div id="maplibreum_38da8f9eeeca46ecb299fdd546179c1e">
-        
-        
-    </div>
-    <!-- MapLibre GL JS with CDN fallbacks -->
-    <script>
-        // Function to load MapLibre GL JS with fallbacks
-        function loadMapLibreGL() {
-            return new Promise((resolve, reject) => {
-                // Try loading from unpkg.com first
-                const script1 = document.createElement('script');
-                script1.src = 'https://unpkg.com/maplibre-gl@3.4.0/dist/maplibre-gl.js';
-                script1.onload = () => resolve();
-                script1.onerror = () => {
-                    // Fallback to jsDelivr
-                    const script2 = document.createElement('script');
-                    script2.src = 'https://cdn.jsdelivr.net/npm/maplibre-gl@3.4.0/dist/maplibre-gl.js';
-                    script2.onload = () => resolve();
-                    script2.onerror = () => {
-                        // Last fallback to cdnjs
-                        const script3 = document.createElement('script');
-                        script3.src = 'https://cdnjs.cloudflare.com/ajax/libs/maplibre-gl/3.4.0/maplibre-gl.min.js';
-                        script3.onload = () => resolve();
-                        script3.onerror = () => reject(new Error('Failed to load MapLibre GL JS from all CDNs'));
-                        document.head.appendChild(script3);
-                    };
-                    document.head.appendChild(script2);
-                };
-                document.head.appendChild(script1);
-            });
-        }
+<div id="map"></div>
+<span id="urlHash"></span>
+<script>
+    const map = new maplibregl.Map({
+        container: 'map',
+        hash: true, // <- Enable hash routing
+        style: 'https://demotiles.maplibre.org/style.json',
+        center: [0, 0],
+        zoom: 1,
+        maplibreLogo: true
+    });
 
-        // Function to show error message when MapLibre fails to load
-        function showMapError(message) {
-            const mapDiv = document.getElementById('maplibreum_38da8f9eeeca46ecb299fdd546179c1e');
-            if (mapDiv) {
-                mapDiv.innerHTML = `
-                    <div style="
-                        display: flex;
-                        align-items: center;
-                        justify-content: center;
-                        height: 100%;
-                        background-color: #f8f9fa;
-                        border: 2px dashed #dee2e6;
-                        border-radius: 8px;
-                        text-align: center;
-                        padding: 20px;
-                        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
-                    ">
-                        <div>
-                            <div style="font-size: 48px; color: #6c757d; margin-bottom: 16px;">🗺️</div>
-                            <div style="font-size: 18px; color: #495057; margin-bottom: 8px;">Map Loading Error</div>
-                            <div style="font-size: 14px; color: #6c757d; margin-bottom: 16px;">${message}</div>
-                            <div style="font-size: 12px; color: #6c757d;">
-                                This may be due to network restrictions or CDN availability issues.
-                                <br>Try refreshing the page or check your internet connection.
-                            </div>
-                        </div>
-                    </div>
-                `;
-            }
-        }
+    // Set an interval to update the url hash in a map overlay
+    const urlHash = document.getElementById('urlHash');
+    setInterval(() => {
+        urlHash.textContent = `URL hash: ${window.location.hash}`;
+    }, 100);
 
-        // Load MapLibre and initialize map
-        loadMapLibreGL().then(() => {
-            // MapLibre loaded successfully, check if it's available
-            if (typeof maplibregl === 'undefined') {
-                throw new Error('MapLibre GL JS loaded but not available');
-            }
-            
-            initializeMap();
-        }).catch(error => {
-            console.error('Failed to load MapLibre GL JS:', error);
-            showMapError('Failed to load MapLibre GL JavaScript library');
-        });
-
-        function initializeMap() {
-            try {
-        // Initialize map
-        var map = new maplibregl.Map({"container": "maplibreum_38da8f9eeeca46ecb299fdd546179c1e", "style": "https://demotiles.maplibre.org/style.json", "center": [0, 0], "zoom": 2, "hash": true});
-        window.maplibreumMaps = window.maplibreumMaps || {};
-        window.maplibreumMaps["maplibreum_38da8f9eeeca46ecb299fdd546179c1e"] = map;
-        window.maplibreumMapsLoaded = window.maplibreumMapsLoaded || {};
-        map.once('load', function() {
-            window.maplibreumMapsLoaded["maplibreum_38da8f9eeeca46ecb299fdd546179c1e"] = true;
-        });
-
-
-// Add controls
-
-
-
-
-
-
-map.on('load', function() {
-    
-    // Add sources
-    
-
-    // Register images used by style layers
-    
-
-    
-    
-
-    // Add layers
-    
-
-    // Popups
-    
-
-    // Tooltips
-    
-
-    // Tile Layers
-    var tileLayers = [
-    
-    ];
-
-    // Overlay Layers
-    var overlayLayers = [
-    
-    ];
-
-    
-
-    
-
-    // Markers
-    
-
-    
-
-    
-
-    
-
-    
-
-    // Queued camera actions
-    
-});
-
-    
-
-    
-
-    
-
-            } catch (error) {
-                console.error('Error initializing map:', error);
-                showMapError('Error initializing the map: ' + error.message);
-            }
-        }
-    </script>
-    
-    <!-- Load additional libraries with fallbacks -->
-    
-    
-    
-    
-    
+</script>
 </body>
-
 </html>

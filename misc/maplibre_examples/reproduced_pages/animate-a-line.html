@@ -1,56 +1,16 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="utf-8" />
-    <title>MapLibreum Map</title>
-    <meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no" />
-    <link href="https://unpkg.com/maplibre-gl@3.4.0/dist/maplibre-gl.css" rel="stylesheet" onerror="this.onerror=null;this.href='https://cdn.jsdelivr.net/npm/maplibre-gl@3.4.0/dist/maplibre-gl.css';" />
-    
-    
-    
-    
+    <title>Animate a line</title>
+    <meta property="og:description" content="Animate a line by updating a GeoJSON source on each frame." />
+    <meta charset='utf-8'>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel='stylesheet' href='https://unpkg.com/maplibre-gl@5.7.3/dist/maplibre-gl.css' />
+    <script src='https://unpkg.com/maplibre-gl@5.7.3/dist/maplibre-gl.js'></script>
     <style>
-        body {
-            margin: 0;
-            padding: 0;
-        }
-
-        #maplibreum_ac89e44ee7f34f3b87419d2804387d52 {
-            width: 100%;
-            height: 500px;
-            position: relative;
-        }
-
-        .maplibreum-legend {
-            position: absolute;
-            bottom: 10px;
-            left: 10px;
-            background: rgba(255, 255, 255, 0.8);
-            padding: 6px;
-            font-size: 12px;
-            border-radius: 4px;
-        }
-
-        .maplibreum-legend div {
-            display: flex;
-            align-items: center;
-            margin-bottom: 4px;
-        }
-
-        .maplibreum-legend span {
-            display: inline-block;
-            width: 12px;
-            height: 12px;
-            margin-right: 4px;
-
-        }
-
-        #maplibreum_ac89e44ee7f34f3b87419d2804387d52 { width: 100%; height: 500px; }
-
-
-
+        body { margin: 0; padding: 0; }
+        html, body, #map { height: 100%; }
     </style>
-    
 </head>
 <body>
 <div class="maplibreum-example-banner">
@@ -59,200 +19,122 @@
   <p>Generated from test_animate_a_line.py by the automated test suite.</p>
 </div>
 
-    <div id="maplibreum_ac89e44ee7f34f3b87419d2804387d52">
-        
-        
-    </div>
-    <!-- MapLibre GL JS with CDN fallbacks -->
-    <script>
-        // Function to load MapLibre GL JS with fallbacks
-        function loadMapLibreGL() {
-            return new Promise((resolve, reject) => {
-                // Try loading from unpkg.com first
-                const script1 = document.createElement('script');
-                script1.src = 'https://unpkg.com/maplibre-gl@3.4.0/dist/maplibre-gl.js';
-                script1.onload = () => resolve();
-                script1.onerror = () => {
-                    // Fallback to jsDelivr
-                    const script2 = document.createElement('script');
-                    script2.src = 'https://cdn.jsdelivr.net/npm/maplibre-gl@3.4.0/dist/maplibre-gl.js';
-                    script2.onload = () => resolve();
-                    script2.onerror = () => {
-                        // Last fallback to cdnjs
-                        const script3 = document.createElement('script');
-                        script3.src = 'https://cdnjs.cloudflare.com/ajax/libs/maplibre-gl/3.4.0/maplibre-gl.min.js';
-                        script3.onload = () => resolve();
-                        script3.onerror = () => reject(new Error('Failed to load MapLibre GL JS from all CDNs'));
-                        document.head.appendChild(script3);
-                    };
-                    document.head.appendChild(script2);
-                };
-                document.head.appendChild(script1);
-            });
-        }
-
-        // Function to show error message when MapLibre fails to load
-        function showMapError(message) {
-            const mapDiv = document.getElementById('maplibreum_ac89e44ee7f34f3b87419d2804387d52');
-            if (mapDiv) {
-                mapDiv.innerHTML = `
-                    <div style="
-                        display: flex;
-                        align-items: center;
-                        justify-content: center;
-                        height: 100%;
-                        background-color: #f8f9fa;
-                        border: 2px dashed #dee2e6;
-                        border-radius: 8px;
-                        text-align: center;
-                        padding: 20px;
-                        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
-                    ">
-                        <div>
-                            <div style="font-size: 48px; color: #6c757d; margin-bottom: 16px;">🗺️</div>
-                            <div style="font-size: 18px; color: #495057; margin-bottom: 8px;">Map Loading Error</div>
-                            <div style="font-size: 14px; color: #6c757d; margin-bottom: 16px;">${message}</div>
-                            <div style="font-size: 12px; color: #6c757d;">
-                                This may be due to network restrictions or CDN availability issues.
-                                <br>Try refreshing the page or check your internet connection.
-                            </div>
-                        </div>
-                    </div>
-                `;
-            }
-        }
-
-        // Load MapLibre and initialize map
-        loadMapLibreGL().then(() => {
-            // MapLibre loaded successfully, check if it's available
-            if (typeof maplibregl === 'undefined') {
-                throw new Error('MapLibre GL JS loaded but not available');
-            }
-            
-            initializeMap();
-        }).catch(error => {
-            console.error('Failed to load MapLibre GL JS:', error);
-            showMapError('Failed to load MapLibre GL JavaScript library');
-        });
-
-        function initializeMap() {
-            try {
-        // Initialize map
-        var map = new maplibregl.Map({"container": "maplibreum_ac89e44ee7f34f3b87419d2804387d52", "style": "https://demotiles.maplibre.org/style.json", "center": [0, 0], "zoom": 3});
-        window.maplibreumMaps = window.maplibreumMaps || {};
-        window.maplibreumMaps["maplibreum_ac89e44ee7f34f3b87419d2804387d52"] = map;
-        window.maplibreumMapsLoaded = window.maplibreumMapsLoaded || {};
-        map.once('load', function() {
-            window.maplibreumMapsLoaded["maplibreum_ac89e44ee7f34f3b87419d2804387d52"] = true;
-        });
-
-
-// Add controls
-
-
-
-
-
-
-map.on('load', function() {
-    
-    // Add sources
-    
-    map.addSource("travel", {"type": "geojson", "data": {"type": "FeatureCollection", "features": [{"type": "Feature", "geometry": {"type": "LineString", "coordinates": []}, "properties": {}}]}});
-    
-
-    // Register images used by style layers
-    
-
-    
-    
-
-    // Add layers
-    
-    map.addLayer({"id": "travel", "type": "line", "source": "travel", "paint": {"line-color": "#ed6498", "line-width": 5, "line-opacity": 0.8}, "layout": {"line-cap": "round", "line-join": "round"}});
-    
-
-    // Popups
-    
-
-    // Tooltips
-    
-
-    // Tile Layers
-    var tileLayers = [
-    
-    ];
-
-    // Overlay Layers
-    var overlayLayers = [
-    
-    ];
-
-    
-
-    
-
-    // Markers
-    
-
-    
-
-    
-
-    
-
-    
-    (function(map) {
-        let startTime = performance.now();
-let progress = 0;
-let animation;
-const speedFactor = 30;
-const geojson = {"type": "FeatureCollection", "features": [{"type": "Feature", "geometry": {"type": "LineString", "coordinates": []}, "properties": {}}]};
-const source = map.getSource('travel');
-source.setData(geojson);
-function animateLine(timestamp){
-    progress = performance.now() - startTime;
-    if (progress > speedFactor * 180) {
-        startTime = performance.now();
-        geojson.features[0].geometry.coordinates = [];
+<style>
+    button {
+        position: absolute;
+        top: 0;
+        margin: 20px;
     }
-    const x = progress / speedFactor;
-    const y = Math.sin((x * Math.PI) / 90) * 40;
-    geojson.features[0].geometry.coordinates.push([x, y]);
-    source.setData(geojson);
-    animation = requestAnimationFrame(animateLine);
-}
-animation = requestAnimationFrame(animateLine);
-document.addEventListener('visibilitychange', function(){
-    startTime = performance.now();
-    progress = 0;
-});
-    })(map);
-    
 
-    // Queued camera actions
-    
-});
+    #pause::after {
+        content: 'Pause';
+    }
 
-    
+    #pause.pause::after {
+        content: 'Play';
+    }
+</style>
+<div id="map"></div>
+<button id="pause"></button>
+<script>
+    const map = new maplibregl.Map({
+        container: 'map',
+        style: 'https://demotiles.maplibre.org/style.json',
+        center: [0, 0],
+        zoom: 0.5
+    });
 
-    
-
-    
-
-            } catch (error) {
-                console.error('Error initializing map:', error);
-                showMapError('Error initializing the map: ' + error.message);
+    // Create a GeoJSON source with an empty lineString.
+    const geojson = {
+        'type': 'FeatureCollection',
+        'features': [
+            {
+                'type': 'Feature',
+                'geometry': {
+                    'type': 'LineString',
+                    'coordinates': [[0, 0]]
+                }
             }
-        }
-    </script>
-    
-    <!-- Load additional libraries with fallbacks -->
-    
-    
-    
-    
-    
-</body>
+        ]
+    };
 
+    const speedFactor = 30; // number of frames per longitude degree
+    let animation; // to store and cancel the animation
+    let startTime = 0;
+    let progress = 0; // progress = timestamp - startTime
+    let resetTime = false; // indicator of whether time reset is needed for the animation
+    const pauseButton = document.getElementById('pause');
+
+    map.on('load', () => {
+        map.addSource('line', {
+            'type': 'geojson',
+            'data': geojson
+        });
+
+        // add the line which will be modified in the animation
+        map.addLayer({
+            'id': 'line-animation',
+            'type': 'line',
+            'source': 'line',
+            'layout': {
+                'line-cap': 'round',
+                'line-join': 'round'
+            },
+            'paint': {
+                'line-color': '#ed6498',
+                'line-width': 5,
+                'line-opacity': 0.8
+            }
+        });
+
+        startTime = performance.now();
+
+        animateLine();
+
+        // click the button to pause or play
+        pauseButton.addEventListener('click', () => {
+            pauseButton.classList.toggle('pause');
+            if (pauseButton.classList.contains('pause')) {
+                cancelAnimationFrame(animation);
+            } else {
+                resetTime = true;
+                animateLine();
+            }
+        });
+
+        // reset startTime and progress once the tab loses or gains focus
+        // requestAnimationFrame also pauses on hidden tabs by default
+        document.addEventListener('visibilitychange', () => {
+            resetTime = true;
+        });
+
+        // animated in a circle as a sine wave along the map.
+        function animateLine(timestamp) {
+            if (resetTime) {
+                // resume previous progress
+                startTime = performance.now() - progress;
+                resetTime = false;
+            } else {
+                progress = timestamp - startTime;
+            }
+
+            // restart if it finishes a loop
+            if (progress > speedFactor * 360) {
+                startTime = timestamp;
+                geojson.features[0].geometry.coordinates = [];
+            } else {
+                const x = progress / speedFactor;
+                // draw a sine wave with some math.
+                const y = Math.sin((x * Math.PI) / 90) * 40;
+                // append new coordinates to the lineString
+                geojson.features[0].geometry.coordinates.push([x, y]);
+                // then update the map
+                map.getSource('line').setData(geojson);
+            }
+            // Request the next frame of the animation.
+            animation = requestAnimationFrame(animateLine);
+        }
+    });
+</script>
+</body>
 </html>

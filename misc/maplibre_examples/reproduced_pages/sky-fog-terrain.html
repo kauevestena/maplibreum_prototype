@@ -1,56 +1,26 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="utf-8" />
-    <title>MapLibreum Map</title>
-    <meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no" />
-    <link href="https://unpkg.com/maplibre-gl@3.4.0/dist/maplibre-gl.css" rel="stylesheet" onerror="this.onerror=null;this.href='https://cdn.jsdelivr.net/npm/maplibre-gl@3.4.0/dist/maplibre-gl.css';" />
-    
-    
-    
-    
+    <title>Sky, Fog, Terrain</title>
+    <meta property="og:description" content="Allows changing the sky, fog and horizon color and blends." />
+    <meta charset='utf-8'>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel='stylesheet' href='https://unpkg.com/maplibre-gl@5.7.3/dist/maplibre-gl.css' />
+    <script src='https://unpkg.com/maplibre-gl@5.7.3/dist/maplibre-gl.js'></script>
     <style>
-        body {
-            margin: 0;
-            padding: 0;
-        }
-
-        #maplibreum_79ecd314a53140fb8421d05826cb104d {
-            width: 100%;
-            height: 500px;
-            position: relative;
-        }
-
-        .maplibreum-legend {
+        body { margin: 0; padding: 0; }
+        html, body, #map { height: 100%; }
+        .listing-group {
+            font-family: 'Helvetica Neue', Arial, Helvetica, sans-serif;
             position: absolute;
             bottom: 10px;
             left: 10px;
-            background: rgba(255, 255, 255, 0.8);
-            padding: 6px;
-            font-size: 12px;
+            color: #fff;
+            background-color: gray;
+            padding: 10px;
             border-radius: 4px;
         }
-
-        .maplibreum-legend div {
-            display: flex;
-            align-items: center;
-            margin-bottom: 4px;
-        }
-
-        .maplibreum-legend span {
-            display: inline-block;
-            width: 12px;
-            height: 12px;
-            margin-right: 4px;
-
-        }
-
-        #maplibreum_79ecd314a53140fb8421d05826cb104d { width: 100%; height: 500px; }
-
-
-
     </style>
-    
 </head>
 <body>
 <div class="maplibreum-example-banner">
@@ -59,189 +29,113 @@
   <p>Generated from test_sky_fog_terrain.py by the automated test suite.</p>
 </div>
 
-    <div id="maplibreum_79ecd314a53140fb8421d05826cb104d">
-        
-        
-    </div>
-    <!-- MapLibre GL JS with CDN fallbacks -->
-    <script>
-        // Function to load MapLibre GL JS with fallbacks
-        function loadMapLibreGL() {
-            return new Promise((resolve, reject) => {
-                // Try loading from unpkg.com first
-                const script1 = document.createElement('script');
-                script1.src = 'https://unpkg.com/maplibre-gl@3.4.0/dist/maplibre-gl.js';
-                script1.onload = () => resolve();
-                script1.onerror = () => {
-                    // Fallback to jsDelivr
-                    const script2 = document.createElement('script');
-                    script2.src = 'https://cdn.jsdelivr.net/npm/maplibre-gl@3.4.0/dist/maplibre-gl.js';
-                    script2.onload = () => resolve();
-                    script2.onerror = () => {
-                        // Last fallback to cdnjs
-                        const script3 = document.createElement('script');
-                        script3.src = 'https://cdnjs.cloudflare.com/ajax/libs/maplibre-gl/3.4.0/maplibre-gl.min.js';
-                        script3.onload = () => resolve();
-                        script3.onerror = () => reject(new Error('Failed to load MapLibre GL JS from all CDNs'));
-                        document.head.appendChild(script3);
-                    };
-                    document.head.appendChild(script2);
-                };
-                document.head.appendChild(script1);
-            });
+<div id="map"></div>
+<table id="listing-group" class="listing-group">
+    <tr><td><label for="sky-enabled">enabled</label></td><td><input type="checkbox" id="sky-enabled" checked/></td></tr>
+    <tr><td><label for="sky-color-picker">sky-color</label></td><td><input type="color" id="sky-color-picker" value="#0000ff" style="width: 100%"/></td></tr>
+    <tr><td><label for="horizon-color-picker">horizon-color</label></td><td><input type="color" id="horizon-color-picker" value="#00ff00" style="width: 100%"/></td></tr>
+    <tr><td><label for="fog-color-picker">fog-color</label></td><td><input type="color" id="fog-color-picker" value="#ff0000" style="width: 100%"/></td></tr>
+    <tr><td><label for="sky-horizon-blend-slider">sky-horizon-blend</label></td><td><input type="range" id="sky-horizon-blend-slider" min="0" max="1" step="0.01" value="0.5" /></td></tr>
+    <tr><td><label for="horizon-fog-blend-slider">horizon-fog-blend</label></td><td><input type="range" id="horizon-fog-blend-slider" min="0" max="1" step="0.01" value="0.5" /></td></tr>
+    <tr><td><label for="fog-ground-blend-slider">fog-ground-blend</label></td><td><input type="range" id="fog-ground-blend-slider" min="0" max="1" step="0.01" value="0.1" /></td></tr>
+</table>
+<script>
+    function setSkyFromUi() {
+        if (!document.getElementById('sky-enabled').checked) {
+            map.setSky(undefined);
+            return;
         }
-
-        // Function to show error message when MapLibre fails to load
-        function showMapError(message) {
-            const mapDiv = document.getElementById('maplibreum_79ecd314a53140fb8421d05826cb104d');
-            if (mapDiv) {
-                mapDiv.innerHTML = `
-                    <div style="
-                        display: flex;
-                        align-items: center;
-                        justify-content: center;
-                        height: 100%;
-                        background-color: #f8f9fa;
-                        border: 2px dashed #dee2e6;
-                        border-radius: 8px;
-                        text-align: center;
-                        padding: 20px;
-                        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
-                    ">
-                        <div>
-                            <div style="font-size: 48px; color: #6c757d; margin-bottom: 16px;">🗺️</div>
-                            <div style="font-size: 18px; color: #495057; margin-bottom: 8px;">Map Loading Error</div>
-                            <div style="font-size: 14px; color: #6c757d; margin-bottom: 16px;">${message}</div>
-                            <div style="font-size: 12px; color: #6c757d;">
-                                This may be due to network restrictions or CDN availability issues.
-                                <br>Try refreshing the page or check your internet connection.
-                            </div>
-                        </div>
-                    </div>
-                `;
-            }
-        }
-
-        // Load MapLibre and initialize map
-        loadMapLibreGL().then(() => {
-            // MapLibre loaded successfully, check if it's available
-            if (typeof maplibregl === 'undefined') {
-                throw new Error('MapLibre GL JS loaded but not available');
-            }
-            
-            initializeMap();
-        }).catch(error => {
-            console.error('Failed to load MapLibre GL JS:', error);
-            showMapError('Failed to load MapLibre GL JavaScript library');
+        map.setSky({
+            'sky-color': document.getElementById('sky-color-picker').value,
+            'sky-horizon-blend': +document.getElementById('sky-horizon-blend-slider').value,
+            'horizon-color': document.getElementById('horizon-color-picker').value,
+            'horizon-fog-blend': +document.getElementById('horizon-fog-blend-slider').value,
+            'fog-color': document.getElementById('fog-color-picker').value,
+            'fog-ground-blend': +document.getElementById('fog-ground-blend-slider').value
         });
+    }
 
-        function initializeMap() {
-            try {
-        // Initialize map
-        var map = new maplibregl.Map({"container": "maplibreum_79ecd314a53140fb8421d05826cb104d", "style": "https://demotiles.maplibre.org/style.json", "center": [11.39, 47.28], "zoom": 12, "pitch": 70, "projection": "globe"});
-        window.maplibreumMaps = window.maplibreumMaps || {};
-        window.maplibreumMaps["maplibreum_79ecd314a53140fb8421d05826cb104d"] = map;
-        window.maplibreumMapsLoaded = window.maplibreumMapsLoaded || {};
-        map.once('load', function() {
-            window.maplibreumMapsLoaded["maplibreum_79ecd314a53140fb8421d05826cb104d"] = true;
-        });
-
-
-// Add controls
-
-
-map.addControl(new maplibregl.NavigationControl({"visualizePitch": true, "showZoom": true, "showCompass": true}), "top-right");
-
-
-
-map.addControl(new maplibregl.TerrainControl({"source": "terrainSource", "exaggeration": 1.0}), "top-right");
-
-
-
-map.addControl(new maplibregl.GlobeControl({}), "top-left");
-
-
-
-
-
-
-
-map.on('load', function() {
-    
-    // Add sources
-    
-    map.addSource("terrainSource", {"type": "raster-dem", "url": "https://demotiles.maplibre.org/terrain-tiles/tiles.json", "tileSize": 256});
-    
-
-    // Register images used by style layers
-    
-
-    
-    map.setTerrain({"source": "terrainSource", "exaggeration": 1.0});
-    
-    
-    map.setFog({"range": [0.8, 5.0], "horizon-blend": 0.2, "color": "#88c0ff", "high-color": "#245bde", "space-color": "#000000"});
-    
-
-    // Add layers
-    
-    map.addLayer({"id": "sky", "type": "sky", "paint": {"sky-type": "atmosphere", "sky-atmosphere-sun": [0.0, 0.0], "sky-atmosphere-color": "#88c0ff", "sky-atmosphere-halo-color": "#ffffff"}});
-    
-
-    // Popups
-    
-
-    // Tooltips
-    
-
-    // Tile Layers
-    var tileLayers = [
-    
-    ];
-
-    // Overlay Layers
-    var overlayLayers = [
-    
-    ];
-
-    
-
-    
-
-    // Markers
-    
-
-    
-
-    
-
-    
-
-    
-
-    // Queued camera actions
-    
-});
-
-    
-
-    
-
-    
-
-            } catch (error) {
-                console.error('Error initializing map:', error);
-                showMapError('Error initializing the map: ' + error.message);
+    const map = (window.map = new maplibregl.Map({
+        container: 'map',
+        zoom: 12,
+        center: [11.2953, 47.5479],
+        pitch: 77,
+        hash: true,
+        style: {
+            version: 8,
+            sources: {
+                osm: {
+                    type: 'raster',
+                    tiles: ['https://a.tile.openstreetmap.org/{z}/{x}/{y}.png'],
+                    tileSize: 256,
+                    attribution: '&copy; OpenStreetMap Contributors',
+                    maxzoom: 19
+                },
+                // Use a different source for terrain and hillshade layers, to improve render quality
+                terrainSource: {
+                    type: 'raster-dem',
+                    url: 'https://demotiles.maplibre.org/terrain-tiles/tiles.json',
+                    tileSize: 256
+                },
+                hillshadeSource: {
+                    type: 'raster-dem',
+                    url: 'https://demotiles.maplibre.org/terrain-tiles/tiles.json',
+                    tileSize: 256
+                }
+            },
+            layers: [
+                {
+                    id: 'osm',
+                    type: 'raster',
+                    source: 'osm'
+                },
+                {
+                    id: 'hills',
+                    type: 'hillshade',
+                    source: 'hillshadeSource',
+                    layout: {visibility: 'visible'},
+                    paint: {'hillshade-shadow-color': '#473B24'}
+                }
+            ],
+            terrain: {
+                source: 'terrainSource',
+                exaggeration: 1
             }
-        }
-    </script>
-    
-    <!-- Load additional libraries with fallbacks -->
-    
-    
-    
-    
-    
+        },
+        maxZoom: 18,
+        maxPitch: 85
+    }));
+
+    map.addControl(
+        new maplibregl.NavigationControl({
+            visualizePitch: true,
+            showZoom: true,
+            showCompass: true
+        })
+    );
+
+
+    map.addControl(
+        new maplibregl.GlobeControl()
+    );
+
+
+    map.addControl(
+        new maplibregl.TerrainControl({
+            source: 'terrainSource',
+            exaggeration: 1
+        })
+    );
+    map.on('load', () => {
+        document.getElementById('sky-color-picker').addEventListener('change', setSkyFromUi);
+        document.getElementById('horizon-color-picker').addEventListener('change', setSkyFromUi);
+        document.getElementById('fog-color-picker').addEventListener('change', setSkyFromUi);
+        document.getElementById('sky-horizon-blend-slider').addEventListener('change', setSkyFromUi);
+        document.getElementById('horizon-fog-blend-slider').addEventListener('change', setSkyFromUi);
+        document.getElementById('fog-ground-blend-slider').addEventListener('change', setSkyFromUi);
+        document.getElementById('sky-enabled').addEventListener('change', setSkyFromUi);
+        setSkyFromUi();
+    });
+</script>
 </body>
-
 </html>

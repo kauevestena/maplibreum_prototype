@@ -7,6 +7,12 @@ from functools import lru_cache
 from pathlib import Path
 from typing import Any, Dict, Optional
 
+import sys
+
+_REPO_ROOT = Path(__file__).resolve().parents[2]
+if str(_REPO_ROOT) not in sys.path:
+    sys.path.insert(0, str(_REPO_ROOT))
+
 import pytest
 
 from maplibreum.core import Map
@@ -42,6 +48,41 @@ def _get_metadata(slug: str) -> Dict[str, Any]:
     return inner_value
 
 
+def _inject_banner(html: str, banner: str) -> str:
+    """Insert a banner immediately after the opening ``<body>`` tag."""
+
+    if not html.strip():
+        return f"<body>\n{banner}</body>"
+
+    lower_html = html.lower()
+    body_index = lower_html.find("<body")
+    if body_index == -1:
+        return banner + html
+
+    tag_end = lower_html.find(">", body_index)
+    if tag_end == -1:
+        return banner + html
+
+    insertion_point = tag_end + 1
+    return html[:insertion_point] + "\n" + banner + html[insertion_point:]
+
+
+def _load_original_html(path_value: Optional[str]) -> Optional[str]:
+    """Return the contents of the scraped HTML page if it exists."""
+
+    if not path_value:
+        return None
+
+    candidate = Path(path_value)
+    if not candidate.is_absolute():
+        candidate = _REPO_ROOT / candidate
+
+    try:
+        return candidate.read_text(encoding="utf-8") if candidate.exists() else None
+    except OSError:
+        return None
+
+
 @pytest.fixture(autouse=True)
 def capture_reproduction_page(monkeypatch: pytest.MonkeyPatch, request: pytest.FixtureRequest) -> None:
     """Wrap Map.render to emit a documentation page for each gallery example."""
@@ -74,13 +115,15 @@ def capture_reproduction_page(monkeypatch: pytest.MonkeyPatch, request: pytest.F
         header_lines.append("</div>")
         banner = "\n".join(header_lines) + "\n"
 
-        if "<body>" in html:
-            prefix, remainder = html.split("<body>", 1)
-            html_output = f"{prefix}<body>\n{banner}{remainder}"
-        else:
-            html_output = f"<body>\n{banner}</body>" if not html.strip() else banner + html
+        html_output = _inject_banner(html, banner)
 
-        output_file.write_text(html_output, encoding="utf-8")
+        original_html = _load_original_html(metadata.get("file_path"))
+        if original_html is not None:
+            write_payload = _inject_banner(original_html, banner)
+        else:
+            write_payload = html_output
+
+        output_file.write_text(write_payload, encoding="utf-8")
         return html_output
 
     monkeypatch.setattr(Map, "render", _wrapped_render, raising=False)

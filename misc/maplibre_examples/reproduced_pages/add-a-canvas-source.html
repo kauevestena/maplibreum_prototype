@@ -1,56 +1,16 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="utf-8" />
-    <title>MapLibreum Map</title>
-    <meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no" />
-    <link href="https://unpkg.com/maplibre-gl@3.4.0/dist/maplibre-gl.css" rel="stylesheet" onerror="this.onerror=null;this.href='https://cdn.jsdelivr.net/npm/maplibre-gl@3.4.0/dist/maplibre-gl.css';" />
-    
-    
-    
-    
+    <title>Add a canvas source</title>
+    <meta property="og:description" content="Add a canvas source to the map." />
+    <meta charset='utf-8'>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel='stylesheet' href='https://unpkg.com/maplibre-gl@5.7.3/dist/maplibre-gl.css' />
+    <script src='https://unpkg.com/maplibre-gl@5.7.3/dist/maplibre-gl.js'></script>
     <style>
-        body {
-            margin: 0;
-            padding: 0;
-        }
-
-        #maplibreum_e75343cd3f3f45169d4f8cc2b5e8fb58 {
-            width: 100%;
-            height: 500px;
-            position: relative;
-        }
-
-        .maplibreum-legend {
-            position: absolute;
-            bottom: 10px;
-            left: 10px;
-            background: rgba(255, 255, 255, 0.8);
-            padding: 6px;
-            font-size: 12px;
-            border-radius: 4px;
-        }
-
-        .maplibreum-legend div {
-            display: flex;
-            align-items: center;
-            margin-bottom: 4px;
-        }
-
-        .maplibreum-legend span {
-            display: inline-block;
-            width: 12px;
-            height: 12px;
-            margin-right: 4px;
-
-        }
-
-        #maplibreum_e75343cd3f3f45169d4f8cc2b5e8fb58 { width: 100%; height: 500px; }
-
-
-
+        body { margin: 0; padding: 0; }
+        html, body, #map { height: 100%; }
     </style>
-    
 </head>
 <body>
 <div class="maplibreum-example-banner">
@@ -59,173 +19,97 @@
   <p>Generated from test_add_a_canvas_source.py by the automated test suite.</p>
 </div>
 
-    <div id="maplibreum_e75343cd3f3f45169d4f8cc2b5e8fb58">
-        
-        
-    </div>
-    <!-- MapLibre GL JS with CDN fallbacks -->
-    <script>
-        // Function to load MapLibre GL JS with fallbacks
-        function loadMapLibreGL() {
-            return new Promise((resolve, reject) => {
-                // Try loading from unpkg.com first
-                const script1 = document.createElement('script');
-                script1.src = 'https://unpkg.com/maplibre-gl@3.4.0/dist/maplibre-gl.js';
-                script1.onload = () => resolve();
-                script1.onerror = () => {
-                    // Fallback to jsDelivr
-                    const script2 = document.createElement('script');
-                    script2.src = 'https://cdn.jsdelivr.net/npm/maplibre-gl@3.4.0/dist/maplibre-gl.js';
-                    script2.onload = () => resolve();
-                    script2.onerror = () => {
-                        // Last fallback to cdnjs
-                        const script3 = document.createElement('script');
-                        script3.src = 'https://cdnjs.cloudflare.com/ajax/libs/maplibre-gl/3.4.0/maplibre-gl.min.js';
-                        script3.onload = () => resolve();
-                        script3.onerror = () => reject(new Error('Failed to load MapLibre GL JS from all CDNs'));
-                        document.head.appendChild(script3);
-                    };
-                    document.head.appendChild(script2);
-                };
-                document.head.appendChild(script1);
-            });
-        }
+<canvas id="canvasID" width="400" height="400">Canvas not supported</canvas>
+<div id="map"></div>
+<script>
+    //Animation from https://javascript.tutorials24x7.com/blog/how-to-draw-animated-circles-in-html5-canvas
+    const canvas = document.getElementById('canvasID');
+    const ctx = canvas.getContext('2d');
+    canvas.style.display = 'none';
+    const circles = [];
+    const radius = 20;
 
-        // Function to show error message when MapLibre fails to load
-        function showMapError(message) {
-            const mapDiv = document.getElementById('maplibreum_e75343cd3f3f45169d4f8cc2b5e8fb58');
-            if (mapDiv) {
-                mapDiv.innerHTML = `
-                    <div style="
-                        display: flex;
-                        align-items: center;
-                        justify-content: center;
-                        height: 100%;
-                        background-color: #f8f9fa;
-                        border: 2px dashed #dee2e6;
-                        border-radius: 8px;
-                        text-align: center;
-                        padding: 20px;
-                        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
-                    ">
-                        <div>
-                            <div style="font-size: 48px; color: #6c757d; margin-bottom: 16px;">🗺️</div>
-                            <div style="font-size: 18px; color: #495057; margin-bottom: 8px;">Map Loading Error</div>
-                            <div style="font-size: 14px; color: #6c757d; margin-bottom: 16px;">${message}</div>
-                            <div style="font-size: 12px; color: #6c757d;">
-                                This may be due to network restrictions or CDN availability issues.
-                                <br>Try refreshing the page or check your internet connection.
-                            </div>
-                        </div>
-                    </div>
-                `;
-            }
-        }
+    function Circle(x, y, dx, dy, radius, color) {
+        this.x = x;
+        this.y = y;
+        this.dx = dx;
+        this.dy = dy;
 
-        // Load MapLibre and initialize map
-        loadMapLibreGL().then(() => {
-            // MapLibre loaded successfully, check if it's available
-            if (typeof maplibregl === 'undefined') {
-                throw new Error('MapLibre GL JS loaded but not available');
+        this.radius = radius;
+
+        this.draw = function () {
+            ctx.beginPath();
+            ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2, false);
+            ctx.strokeStyle = color;
+            ctx.stroke();
+        };
+
+        this.update = function () {
+            if (this.x + this.radius > 400 || this.x - this.radius < 0) {
+                this.dx = -this.dx;
             }
-            
-            initializeMap();
-        }).catch(error => {
-            console.error('Failed to load MapLibre GL JS:', error);
-            showMapError('Failed to load MapLibre GL JavaScript library');
+
+            if (this.y + this.radius > 400 || this.y - this.radius < 0) {
+                this.dy = -this.dy;
+            }
+
+            this.x += this.dx;
+            this.y += this.dy;
+
+            this.draw();
+        };
+    }
+
+    for (let i = 0; i < 5; i++) {
+        const color = `#${(0x1000000 + Math.random() * 0xffffff).toString(16).substr(1, 6)}`;
+        const x = Math.random() * (400 - radius * 2) + radius;
+        const y = Math.random() * (400 - radius * 2) + radius;
+
+        const dx = (Math.random() - 0.5) * 2;
+        const dy = (Math.random() - 0.5) * 2;
+
+        circles.push(new Circle(x, y, dx, dy, radius, color));
+    }
+
+    function animate() {
+        requestAnimationFrame(animate);
+        ctx.clearRect(0, 0, 400, 400);
+
+        for (let r = 0; r < 5; r++) {
+            circles[r].update();
+        }
+    }
+
+    animate();
+
+    const map = new maplibregl.Map({
+        container: 'map',
+        zoom: 5,
+        minZoom: 4,
+        center: [95.899147, 18.088694],
+        style: 'https://demotiles.maplibre.org/style.json'
+    });
+
+    map.on('load', () => {
+        map.addSource('canvas-source', {
+            type: 'canvas',
+            canvas: 'canvasID',
+            coordinates: [
+                [91.4461, 21.5006],
+                [100.3541, 21.5006],
+                [100.3541, 13.9706],
+                [91.4461, 13.9706]
+            ],
+            // Set to true if the canvas source is animated. If the canvas is static, animate should be set to false to improve performance.
+            animate: true
         });
 
-        function initializeMap() {
-            try {
-        // Initialize map
-        var map = new maplibregl.Map({"container": "maplibreum_e75343cd3f3f45169d4f8cc2b5e8fb58", "style": "https://demotiles.maplibre.org/style.json", "center": [0, 0], "zoom": 2});
-        window.maplibreumMaps = window.maplibreumMaps || {};
-        window.maplibreumMaps["maplibreum_e75343cd3f3f45169d4f8cc2b5e8fb58"] = map;
-        window.maplibreumMapsLoaded = window.maplibreumMapsLoaded || {};
-        map.once('load', function() {
-            window.maplibreumMapsLoaded["maplibreum_e75343cd3f3f45169d4f8cc2b5e8fb58"] = true;
+        map.addLayer({
+            id: 'canvas-layer',
+            type: 'raster',
+            source: 'canvas-source'
         });
-
-
-// Add controls
-
-
-
-
-
-
-map.on('load', function() {
-    
-    // Add sources
-    
-    map.addSource("canvas-source", {"type": "canvas", "canvas": "canvas-id", "coordinates": [[-76.54, 39.18], [-76.52, 39.18], [-76.52, 39.17], [-76.54, 39.17]], "animate": true, "attribution": "Canvas demo"});
-    
-
-    // Register images used by style layers
-    
-
-    
-    
-
-    // Add layers
-    
-    map.addLayer({"id": "canvas-layer", "type": "raster", "source": "canvas-source", "paint": {"raster-opacity": 0.7}});
-    
-
-    // Popups
-    
-
-    // Tooltips
-    
-
-    // Tile Layers
-    var tileLayers = [
-    
-    ];
-
-    // Overlay Layers
-    var overlayLayers = [
-    
-    ];
-
-    
-
-    
-
-    // Markers
-    
-
-    
-
-    
-
-    
-
-    
-
-    // Queued camera actions
-    
-});
-
-    
-
-    
-
-    
-
-            } catch (error) {
-                console.error('Error initializing map:', error);
-                showMapError('Error initializing the map: ' + error.message);
-            }
-        }
-    </script>
-    
-    <!-- Load additional libraries with fallbacks -->
-    
-    
-    
-    
-    
+    });
+</script>
 </body>
-
 </html>

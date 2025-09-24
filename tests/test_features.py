@@ -26,17 +26,23 @@ def test_marker():
     m = Map()
     marker = Marker(coordinates=[-74.5, 40], popup="A marker!", color="red")
     marker.add_to(m)
-    assert len(m.layers) == 1
-    assert len(m.popups) == 1
-    assert m.layers[0]["definition"]["paint"]["circle-color"] == "red"
+    assert len(m.layers) == 0
+    assert len(m.popups) == 0
+    assert len(m.markers) == 1
+    stored_marker = m.markers[0]
+    assert stored_marker["color"] == "red"
+    assert stored_marker["popup"] == "A marker!"
 
 
 def test_add_marker_wrapper():
     m = Map()
     m.add_marker(coordinates=[-74.5, 40], popup="Wrapper marker", color="green")
-    assert len(m.layers) == 1
-    assert len(m.popups) == 1
-    assert m.layers[0]["definition"]["paint"]["circle-color"] == "green"
+    assert len(m.layers) == 0
+    assert len(m.popups) == 0
+    assert len(m.markers) == 1
+    stored_marker = m.markers[0]
+    assert stored_marker["color"] == "green"
+    assert stored_marker["popup"] == "Wrapper marker"
 
 
 def test_geojson():
