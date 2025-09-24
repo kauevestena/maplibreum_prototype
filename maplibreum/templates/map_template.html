@@ -56,6 +56,9 @@
         {{ custom_css | safe }}
 
     </style>
+    {% for script in external_scripts %}
+    <script src="{{ script.src }}"{% for attr, value in script.attributes.items() %}{% if value is sameas(true) %} {{ attr }}{% else %} {{ attr }}="{{ value }}"{% endif %}{% endfor %}></script>
+    {% endfor %}
 </head>
 <body>
     <div id="{{ map_id }}">

@@ -5,7 +5,7 @@ import os
 import subprocess
 import uuid
 from dataclasses import dataclass, field
-from typing import Any, Dict, Iterable, List, Optional
+from typing import Any, Dict, Iterable, List, Mapping, Optional
 from urllib.parse import quote
 
 from IPython.display import IFrame, display
@@ -317,6 +317,7 @@ class Map:
         self._on_load_callbacks: List[str] = []
         self.animations: List[str] = []
         self.rtl_text_plugin: Optional[Dict[str, Any]] = None
+        self.external_scripts: List[Dict[str, Any]] = []
 
         template_dir = os.path.join(os.path.dirname(__file__), "templates")
         self.env = Environment(loader=FileSystemLoader(template_dir))
@@ -574,6 +575,54 @@ class Map:
         img = FloatImage(image_url, position=position, width=width)
         self.float_images.append(img)
         return img
+
+    def add_external_script(
+        self,
+        src: str,
+        *,
+        defer: bool = False,
+        async_: bool = False,
+        module: bool = False,
+        attributes: Optional[Mapping[str, Any]] = None,
+    ) -> str:
+        """Load an additional JavaScript bundle before the map initialises.
+
+        Parameters
+        ----------
+        src : str
+            Absolute or relative URL of the script to include.
+        defer : bool, optional
+            Add the ``defer`` attribute so the browser defers execution until
+            after parsing the document.
+        async_ : bool, optional
+            Add the ``async`` attribute for asynchronous loading.
+        module : bool, optional
+            Mark the script as an ES module by setting ``type="module"``.
+        attributes : mapping, optional
+            Extra HTML attributes (e.g. ``integrity``) to attach to the tag.
+        """
+
+        if not isinstance(src, str) or not src.strip():
+            raise ValueError("add_external_script requires a script URL")
+
+        attr_map: Dict[str, Any] = {}
+        if defer:
+            attr_map["defer"] = True
+        if async_:
+            attr_map["async"] = True
+        if module:
+            attr_map.setdefault("type", "module")
+
+        if attributes is not None:
+            if not isinstance(attributes, Mapping):
+                raise TypeError("attributes must be a mapping of attribute names to values")
+            for key, value in attributes.items():
+                if value is False or value is None:
+                    continue
+                attr_map[str(key)] = True if value is True else str(value)
+
+        self.external_scripts.append({"src": src, "attributes": attr_map})
+        return src
 
     def add_image(self, name, url=None, data=None, options=None):
         """Register a style image so it can be referenced by layers.
@@ -1523,6 +1572,7 @@ class Map:
             on_load_callbacks=self._on_load_callbacks,
             animations=self.animations,
             rtl_text_plugin=self.rtl_text_plugin,
+            external_scripts=self.external_scripts,
         )
 
     def _repr_html_(self):
