@@ -100,6 +100,30 @@ class FillExtrusionLayer(Layer):
         super().__init__(id, "fill-extrusion", source, **kwargs)
 
 
+class CustomLayer(Layer):
+    def __init__(
+        self,
+        id: str,
+        on_add: str,
+        render: str,
+        **kwargs: Any,
+    ) -> None:
+        super().__init__(id, "custom", **kwargs)
+        self.on_add = on_add
+        self.render = render
+
+    def to_dict(self) -> Dict[str, Any]:
+        """Return the layer definition as a plain dictionary."""
+
+        return {
+            "id": self.id,
+            "type": self.type,
+            "onAdd": self.on_add,
+            "render": self.render,
+            **self._options,
+        }
+
+
 __all__ = [
     "Layer",
     "RasterLayer",
@@ -110,4 +134,5 @@ __all__ = [
     "CircleLayer",
     "SymbolLayer",
     "FillExtrusionLayer",
+    "CustomLayer",
 ]
