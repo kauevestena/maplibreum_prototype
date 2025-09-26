@@ -145,8 +145,8 @@ def test_add_custom_icons_with_markers():
 
         assert marker_data["coordinates"] == expected_coords
         assert expected_message in marker_data["popup"]
-        assert marker_data["icon"] is not None
-        assert marker_data["icon"].class_name == "marker"
+        assert "class_name" in marker_data  # Check that the marker has icon-related data
+        assert marker_data["class_name"] == "marker"
 
     # Verify the HTML renders correctly
     html = m.render()
