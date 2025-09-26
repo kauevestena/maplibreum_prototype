@@ -6,7 +6,7 @@ from maplibreum.core import Map
 
 def test_add_a_generated_icon_to_the_map():
     """Test recreating the 'add-a-generated-icon-to-the-map' MapLibre example.
-    
+
     Original JavaScript:
     ```
     const map = new maplibregl.Map({
@@ -58,64 +58,54 @@ def test_add_a_generated_icon_to_the_map():
     ```
     """
     # Create map with the same configuration as the original example
-    m = Map(
-        map_style='https://demotiles.maplibre.org/style.json'
-    )
-    
+    m = Map(map_style="https://demotiles.maplibre.org/style.json")
+
     # Generate image data similar to the original example
     width = 64
     bytes_per_pixel = 4
     data = []
-    
+
     for x in range(width):
         for y in range(width):
             offset = (y * width + x) * bytes_per_pixel
-            data.extend([
-                int((y / width) * 255),  # red
-                int((x / width) * 255),  # green  
-                128,                     # blue
-                255                      # alpha
-            ])
-    
+            data.extend(
+                [
+                    int((y / width) * 255),  # red
+                    int((x / width) * 255),  # green
+                    128,  # blue
+                    255,  # alpha
+                ]
+            )
+
     # Add the generated image to the map
-    m.add_image('gradient', data={'width': width, 'height': width, 'data': data})
-    
+    m.add_image("gradient", data={"width": width, "height": width, "data": data})
+
     # Add a GeoJSON source with a point
     geojson_data = {
-        'type': 'FeatureCollection',
-        'features': [
-            {
-                'type': 'Feature',
-                'geometry': {
-                    'type': 'Point',
-                    'coordinates': [0, 0]
-                }
-            }
-        ]
+        "type": "FeatureCollection",
+        "features": [
+            {"type": "Feature", "geometry": {"type": "Point", "coordinates": [0, 0]}}
+        ],
     }
-    
+
     # Add the source and layer
-    m.add_source('point', geojson_data)
-    m.add_symbol_layer(
-        'points',
-        'point',
-        layout={'icon-image': 'gradient'}
-    )
-    
+    m.add_source("point", geojson_data)
+    m.add_symbol_layer("points", "point", layout={"icon-image": "gradient"})
+
     # Verify the components were added correctly
     assert len(m.images) == 1
-    assert m.images[0]['id'] == 'gradient'
-    assert m.images[0]['data']['width'] == 64
-    assert m.images[0]['data']['height'] == 64
-    assert len(m.images[0]['data']['data']) == width * width * bytes_per_pixel
-    
-    assert 'point' in m.sources
+    assert m.images[0]["id"] == "gradient"
+    assert m.images[0]["data"]["width"] == 64
+    assert m.images[0]["data"]["height"] == 64
+    assert len(m.images[0]["data"]["data"]) == width * width * bytes_per_pixel
+
+    assert "point" in m.sources
     assert len(m.layers) == 1
-    assert m.layers[0]['id'] == 'points'
-    assert m.layers[0]['type'] == 'symbol'
-    assert m.layers[0]['layout']['icon-image'] == 'gradient'
-    
+    assert m.layers[0]["id"] == "points"
+    assert m.layers[0]["type"] == "symbol"
+    assert m.layers[0]["layout"]["icon-image"] == "gradient"
+
     # Verify the HTML renders correctly
     html = m.render()
-    assert 'demotiles.maplibre.org/style.json' in html
-    assert 'gradient' in html
+    assert "demotiles.maplibre.org/style.json" in html
+    assert "gradient" in html
