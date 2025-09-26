@@ -99,11 +99,11 @@ def test_add_a_generated_icon_to_the_map():
     assert m.images[0]["data"]["height"] == 64
     assert len(m.images[0]["data"]["data"]) == width * width * bytes_per_pixel
 
-    assert "point" in m.sources
+    assert any(source["name"] == "point" for source in m.sources)
     assert len(m.layers) == 1
     assert m.layers[0]["id"] == "points"
-    assert m.layers[0]["type"] == "symbol"
-    assert m.layers[0]["layout"]["icon-image"] == "gradient"
+    assert m.layers[0]["definition"]["type"] == "symbol"
+    assert m.layers[0]["definition"]["layout"]["icon-image"] == "gradient"
 
     # Verify the HTML renders correctly
     html = m.render()

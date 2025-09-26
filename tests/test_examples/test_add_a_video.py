@@ -117,7 +117,9 @@ def test_add_a_video():
     html = m._repr_html_()
     assert "drone.mp4" in html
     assert "drone.webm" in html
-    assert "toggle-video" in html
+    assert "videoSource" in html  # Check that the toggle JS is present
+    assert "videoSource.pause()" in html
+    assert "videoSource.play()" in html
     assert "background-color" in html
     assert "tiles.json" in html
 

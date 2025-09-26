@@ -363,7 +363,7 @@ map.on('load', function() {
 
     // Markers
     {% for marker in markers %}
-    {% if marker.html %}
+    {% if marker.html is defined or marker.class_name is defined %}
     var el_{{ marker.id }} = document.createElement('div');
     el_{{ marker.id }}.className = "{{ marker.class_name }}";
     el_{{ marker.id }}.innerHTML = `{{ marker.html | safe }}`;
