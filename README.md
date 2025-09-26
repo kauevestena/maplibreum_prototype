@@ -182,7 +182,7 @@ import json
 with open('misc/maplibre_examples/status.json') as f:
     data = json.load(f)
 total = len(data)
-implemented = sum(1 for v in data.values() if list(v.values())[0]['task_status'])
+implemented = sum(1 for v in data.values() if v['task_status'])
 print(f'MapLibreum Feature Coverage: {implemented}/{total} ({implemented/total*100:.1f}%)')
 print(f'Total MapLibre examples available: {total}')
 print(f'Examples successfully implemented: {implemented}')
@@ -204,9 +204,9 @@ import json
 with open('misc/maplibre_examples/status.json') as f:
     data = json.load(f)
 for name, info in data.items():
-    if not list(info.values())[0]['task_status']:
+    if not info['task_status']:
         print(f'Next unimplemented example: {name}')
-        print(f'MapLibre URL: {list(info.values())[0][\"url\"]}')
+        print(f'MapLibre URL: {info[\"url\"]}')
         break
 "
 ```

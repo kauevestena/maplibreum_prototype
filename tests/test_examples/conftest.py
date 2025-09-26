@@ -42,10 +42,16 @@ def _get_metadata(slug: str) -> Dict[str, Any]:
     record = _status_lookup().get(slug, {})
     if not record:
         return {}
-    inner_key, inner_value = next(iter(record.items()))
-    if inner_key != slug:
+    
+    if isinstance(record, dict) and slug not in record:
+        # New clean structure - record is directly the metadata
+        return record
+    else:
+        # Legacy structure with duplicate keys
+        inner_key, inner_value = next(iter(record.items()))
+        if inner_key != slug:
+            return inner_value
         return inner_value
-    return inner_value
 
 
 def _inject_banner(html: str, banner: str) -> str:
