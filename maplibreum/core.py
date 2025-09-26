@@ -12,8 +12,9 @@ from IPython.display import IFrame, display
 from jinja2 import Environment, FileSystemLoader
 
 from .babylon import BabylonLayer
-from .three import ThreeLayer
 from .cluster import ClusteredGeoJson, MarkerCluster
+from .layers import Layer
+from .three import ThreeLayer
 from .expressions import get as expr_get
 from .expressions import interpolate, var
 from .markers import BeautifyIcon, DivIcon, Icon  # noqa: F401
@@ -491,6 +492,9 @@ class Map:
             self.add_on_load_js(layer_definition.js_code)
             layer_definition = layer_definition.to_dict()
         else:
+            if isinstance(layer_definition, Layer):
+                layer_definition = layer_definition.to_dict()
+
             layer_id = layer_definition.get("id", f"layer_{uuid.uuid4().hex}")
             layer_definition["id"] = layer_id
 
