@@ -173,7 +173,7 @@ for page_id, href in pages.items():
     else:
         print(f"  Failed to fetch {href}: Status code {response.status_code}")
 
-    status_data[page_id] = {page_id: entry}
+    status_data[page_id] = entry
 
 # Save the pages dictionary to a JSON file
 output_file = os.path.join(base_folder, "status.json")

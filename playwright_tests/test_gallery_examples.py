@@ -28,9 +28,14 @@ def _load_example_cases() -> Iterable[Tuple[str, Path, Dict[str, Any]]]:
         status = json.load(handle)
 
     for slug, wrapper in status.items():
-        inner_key, inner_value = next(iter(wrapper.items()))
-        # Normalise legacy entries that accidentally duplicated the slug key.
-        metadata = inner_value if inner_key == slug else wrapper[inner_key]
+        if isinstance(wrapper, dict) and slug not in wrapper:
+            # New clean structure - wrapper is directly the metadata
+            metadata = wrapper
+        else:
+            # Legacy structure with duplicate keys
+            inner_key, inner_value = next(iter(wrapper.items()))
+            # Normalise legacy entries that accidentally duplicated the slug key.
+            metadata = inner_value if inner_key == slug else wrapper[inner_key]
         if not metadata.get("script"):
             continue
         yield slug, _REPRODUCED_DIR / f"{slug}.html", metadata

@@ -25,7 +25,7 @@ python misc/maplibre_examples/scrapping.py
 
 ### 3. Check Status
 ```bash
-python -c "import json; data = json.load(open('misc/maplibre_examples/status.json')); print(f'Total examples: {len(data)}'); print(f'Downloaded: {sum(1 for v in data.values() if list(v.values())[0][\"source_status\"])}'); print(f'Implemented: {sum(1 for v in data.values() if list(v.values())[0][\"task_status\"])}')"
+python -c "import json; data = json.load(open('misc/maplibre_examples/status.json')); print(f'Total examples: {len(data)}'); print(f'Downloaded: {sum(1 for v in data.values() if v[\"source_status\"])}'); print(f'Implemented: {sum(1 for v in data.values() if v[\"task_status\"])}')"
 ```
 
 ## Directory Structure
@@ -90,12 +90,11 @@ The `status.json` file tracks each example with:
 ```json
 {
   "example-name": {
-    "example-name": {
-      "url": "https://maplibre.org/...",
-      "source_status": true,    // HTML downloaded
-      "file_path": "misc/...",  // Local file path
-      "task_status": false      // Python equivalent created
-    }
+    "url": "https://maplibre.org/...",
+    "source_status": true,    // HTML downloaded
+    "file_path": "misc/...",  // Local file path
+    "task_status": false,     // Python equivalent created
+    "script": "tests/..."     // Path to test file (null if not implemented)
   }
 }
 ```
