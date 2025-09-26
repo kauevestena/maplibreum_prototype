@@ -12,6 +12,7 @@ from IPython.display import IFrame, display
 from jinja2 import Environment, FileSystemLoader
 
 from .babylon import BabylonLayer
+from .three import ThreeLayer
 from .cluster import ClusteredGeoJson, MarkerCluster
 from .expressions import get as expr_get
 from .expressions import interpolate, var
@@ -476,6 +477,16 @@ class Map:
             self.add_external_script("https://unpkg.com/babylonjs@5.42.2/babylon.js")
             self.add_external_script(
                 "https://unpkg.com/babylonjs-loaders@5.42.2/babylonjs.loaders.min.js"
+            )
+            self.add_on_load_js(layer_definition.js_code)
+            layer_definition = layer_definition.to_dict()
+        elif isinstance(layer_definition, ThreeLayer):
+            layer_id = layer_definition.id
+            self.add_external_script(
+                "https://cdn.jsdelivr.net/npm/three@0.169.0/build/three.js"
+            )
+            self.add_external_script(
+                "https://cdn.jsdelivr.net/npm/three@0.169.0/examples/js/loaders/GLTFLoader.js"
             )
             self.add_on_load_js(layer_definition.js_code)
             layer_definition = layer_definition.to_dict()

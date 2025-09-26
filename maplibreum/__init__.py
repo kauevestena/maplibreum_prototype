@@ -1,5 +1,6 @@
 from ._version import __version__
 from .babylon import BabylonLayer
+from .three import ThreeLayer
 from .choropleth import Choropleth
 from .cluster import ClusteredGeoJson, MarkerCluster, cluster_features
 from .core import (GeoJson, GeoJsonPopup, GeoJsonTooltip, ImageOverlay,
