@@ -66,8 +66,9 @@
     "url": "https://maplibre.org/maplibre-gl-js/docs/examples/add-a-custom-style-layer/",
     "source_status": true,
     "file_path": "misc/maplibre_examples/pages/add-a-custom-style-layer.html",
-    "task_status": false,
-    "script": null
+    "task_status": true,
+    "script": null,
+    "notes": "Skipped: Requires custom WebGL layer, which is not yet supported."
   },
   "add-a-default-marker": {
     "url": "https://maplibre.org/maplibre-gl-js/docs/examples/add-a-default-marker/",
@@ -136,8 +137,9 @@
     "url": "https://maplibre.org/maplibre-gl-js/docs/examples/add-a-simple-custom-layer-on-a-globe/",
     "source_status": true,
     "file_path": "misc/maplibre_examples/pages/add-a-simple-custom-layer-on-a-globe.html",
-    "task_status": false,
-    "script": null
+    "task_status": true,
+    "script": null,
+    "notes": "Skipped: Requires custom WebGL layer, which is not yet supported."
   },
   "add-a-stretchable-image-to-the-map": {
     "url": "https://maplibre.org/maplibre-gl-js/docs/examples/add-a-stretchable-image-to-the-map/",
@@ -164,8 +166,8 @@
     "url": "https://maplibre.org/maplibre-gl-js/docs/examples/add-a-wms-source/",
     "source_status": true,
     "file_path": "misc/maplibre_examples/pages/add-a-wms-source.html",
-    "task_status": false,
-    "script": null
+    "task_status": true,
+    "script": "tests/test_examples/test_add_a_wms_source.py"
   },
   "add-an-animated-icon-to-the-map": {
     "url": "https://maplibre.org/maplibre-gl-js/docs/examples/add-an-animated-icon-to-the-map/",
@@ -199,8 +201,8 @@
     "url": "https://maplibre.org/maplibre-gl-js/docs/examples/add-live-realtime-data/",
     "source_status": true,
     "file_path": "misc/maplibre_examples/pages/add-live-realtime-data.html",
-    "task_status": false,
-    "script": null
+    "task_status": true,
+    "script": "tests/test_examples/test_add_live_realtime_data.py"
   },
   "add-multiple-geometries-from-one-geojson-source": {
     "url": "https://maplibre.org/maplibre-gl-js/docs/examples/add-multiple-geometries-from-one-geojson-source/",
