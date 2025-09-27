@@ -348,8 +348,8 @@
         "url": "https://maplibre.org/maplibre-gl-js/docs/examples/create-a-draggable-point/",
         "source_status": true,
         "file_path": "misc/maplibre_examples/pages/create-a-draggable-point.html",
-        "task_status": false,
-        "script": null
+        "task_status": true,
+        "script": "tests/test_examples/test_create_a_draggable_point.py"
     },
     "create-a-gradient-line-using-an-expression": {
         "url": "https://maplibre.org/maplibre-gl-js/docs/examples/create-a-gradient-line-using-an-expression/",
@@ -376,8 +376,8 @@
         "url": "https://maplibre.org/maplibre-gl-js/docs/examples/create-a-hover-effect/",
         "source_status": true,
         "file_path": "misc/maplibre_examples/pages/create-a-hover-effect.html",
-        "task_status": false,
-        "script": null
+        "task_status": true,
+        "script": "tests/test_examples/test_create_a_hover_effect.py"
     },
     "create-a-time-slider": {
         "url": "https://maplibre.org/maplibre-gl-js/docs/examples/create-a-time-slider/",
@@ -642,15 +642,15 @@
         "url": "https://maplibre.org/maplibre-gl-js/docs/examples/get-coordinates-of-the-mouse-pointer/",
         "source_status": true,
         "file_path": "misc/maplibre_examples/pages/get-coordinates-of-the-mouse-pointer.html",
-        "task_status": false,
-        "script": null
+        "task_status": true,
+        "script": "tests/test_examples/test_get_coordinates_of_the_mouse_pointer.py"
     },
     "get-features-under-the-mouse-pointer": {
         "url": "https://maplibre.org/maplibre-gl-js/docs/examples/get-features-under-the-mouse-pointer/",
         "source_status": true,
         "file_path": "misc/maplibre_examples/pages/get-features-under-the-mouse-pointer.html",
-        "task_status": false,
-        "script": null
+        "task_status": true,
+        "script": "tests/test_examples/test_get_features_under_the_mouse_pointer.py"
     },
     "hash-routing": {
         "url": "https://maplibre.org/maplibre-gl-js/docs/examples/hash-routing/",
@@ -684,15 +684,15 @@
         "url": "https://maplibre.org/maplibre-gl-js/docs/examples/measure-distances/",
         "source_status": true,
         "file_path": "misc/maplibre_examples/pages/measure-distances.html",
-        "task_status": false,
-        "script": null
+        "task_status": true,
+        "script": "tests/test_examples/test_measure_distances.py"
     },
     "navigate-the-map-with-game-like-controls": {
         "url": "https://maplibre.org/maplibre-gl-js/docs/examples/navigate-the-map-with-game-like-controls/",
         "source_status": true,
         "file_path": "misc/maplibre_examples/pages/navigate-the-map-with-game-like-controls.html",
-        "task_status": false,
-        "script": null
+        "task_status": true,
+        "script": "tests/test_examples/test_navigate_the_map_with_game_like_controls.py"
     },
     "offset-the-vanishing-point-using-padding": {
         "url": "https://maplibre.org/maplibre-gl-js/docs/examples/offset-the-vanishing-point-using-padding/",
@@ -719,8 +719,8 @@
         "url": "https://maplibre.org/maplibre-gl-js/docs/examples/restrict-map-panning-to-an-area/",
         "source_status": true,
         "file_path": "misc/maplibre_examples/pages/restrict-map-panning-to-an-area.html",
-        "task_status": false,
-        "script": null
+        "task_status": true,
+        "script": "tests/test_examples/test_restrict_map_panning_to_an_area.py"
     },
     "set-center-point-above-ground": {
         "url": "https://maplibre.org/maplibre-gl-js/docs/examples/set-center-point-above-ground/",
@@ -768,8 +768,8 @@
         "url": "https://maplibre.org/maplibre-gl-js/docs/examples/sync-movement-of-multiple-maps/",
         "source_status": true,
         "file_path": "misc/maplibre_examples/pages/sync-movement-of-multiple-maps.html",
-        "task_status": false,
-        "script": null
+        "task_status": true,
+        "script": "tests/test_examples/test_sync_movement_of_multiple_maps.py"
     },
     "toggle-deckgl-layer": {
         "url": "https://maplibre.org/maplibre-gl-js/docs/examples/toggle-deckgl-layer/",
@@ -782,8 +782,8 @@
         "url": "https://maplibre.org/maplibre-gl-js/docs/examples/toggle-interactions/",
         "source_status": true,
         "file_path": "misc/maplibre_examples/pages/toggle-interactions.html",
-        "task_status": false,
-        "script": null
+        "task_status": true,
+        "script": "tests/test_examples/test_toggle_interactions.py"
     },
     "update-a-feature-in-realtime": {
         "url": "https://maplibre.org/maplibre-gl-js/docs/examples/update-a-feature-in-realtime/",
