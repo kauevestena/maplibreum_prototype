@@ -397,8 +397,8 @@
     "url": "https://maplibre.org/maplibre-gl-js/docs/examples/create-deckgl-layer-using-rest-api/",
     "source_status": true,
     "file_path": "misc/maplibre_examples/pages/create-deckgl-layer-using-rest-api.html",
-    "task_status": false,
-    "script": null
+    "task_status": true,
+    "script": "tests/test_examples/test_create_deckgl_layer_using_rest_api.py"
   },
   "customize-camera-animations": {
     "url": "https://maplibre.org/maplibre-gl-js/docs/examples/customize-camera-animations/",
@@ -628,15 +628,15 @@
     "url": "https://maplibre.org/maplibre-gl-js/docs/examples/generate-and-add-a-missing-icon-to-the-map/",
     "source_status": true,
     "file_path": "misc/maplibre_examples/pages/generate-and-add-a-missing-icon-to-the-map.html",
-    "task_status": false,
-    "script": null
+    "task_status": true,
+    "script": "tests/test_examples/test_generate_and_add_a_missing_icon_to_the_map.py"
   },
   "geocode-with-nominatim": {
     "url": "https://maplibre.org/maplibre-gl-js/docs/examples/geocode-with-nominatim/",
     "source_status": true,
     "file_path": "misc/maplibre_examples/pages/geocode-with-nominatim.html",
-    "task_status": false,
-    "script": null
+    "task_status": true,
+    "script": "tests/test_examples/test_geocode_with_nominatim.py"
   },
   "get-coordinates-of-the-mouse-pointer": {
     "url": "https://maplibre.org/maplibre-gl-js/docs/examples/get-coordinates-of-the-mouse-pointer/",
@@ -705,8 +705,8 @@
     "url": "https://maplibre.org/maplibre-gl-js/docs/examples/pmtiles-source-and-protocol/",
     "source_status": true,
     "file_path": "misc/maplibre_examples/pages/pmtiles-source-and-protocol.html",
-    "task_status": false,
-    "script": null
+    "task_status": true,
+    "script": "tests/test_examples/test_pmtiles_source_and_protocol.py"
   },
   "render-world-copies": {
     "url": "https://maplibre.org/maplibre-gl-js/docs/examples/render-world-copies/",
@@ -775,8 +775,8 @@
     "url": "https://maplibre.org/maplibre-gl-js/docs/examples/toggle-deckgl-layer/",
     "source_status": true,
     "file_path": "misc/maplibre_examples/pages/toggle-deckgl-layer.html",
-    "task_status": false,
-    "script": null
+    "task_status": true,
+    "script": "tests/test_examples/test_toggle_deckgl_layer.py"
   },
   "toggle-interactions": {
     "url": "https://maplibre.org/maplibre-gl-js/docs/examples/toggle-interactions/",
@@ -789,29 +789,29 @@
     "url": "https://maplibre.org/maplibre-gl-js/docs/examples/update-a-feature-in-realtime/",
     "source_status": true,
     "file_path": "misc/maplibre_examples/pages/update-a-feature-in-realtime.html",
-    "task_status": false,
-    "script": null
+    "task_status": true,
+    "script": "tests/test_examples/test_update_a_feature_in_realtime.py"
   },
   "use-a-fallback-image": {
     "url": "https://maplibre.org/maplibre-gl-js/docs/examples/use-a-fallback-image/",
     "source_status": true,
     "file_path": "misc/maplibre_examples/pages/use-a-fallback-image.html",
-    "task_status": false,
-    "script": null
+    "task_status": true,
+    "script": "tests/test_examples/test_use_a_fallback_image.py"
   },
   "use-addprotocol-to-transform-feature-properties": {
     "url": "https://maplibre.org/maplibre-gl-js/docs/examples/use-addprotocol-to-transform-feature-properties/",
     "source_status": true,
     "file_path": "misc/maplibre_examples/pages/use-addprotocol-to-transform-feature-properties.html",
-    "task_status": false,
-    "script": null
+    "task_status": true,
+    "script": "tests/test_examples/test_use_addprotocol_to_transform_feature_properties.py"
   },
   "use-locally-generated-ideographs": {
     "url": "https://maplibre.org/maplibre-gl-js/docs/examples/use-locally-generated-ideographs/",
     "source_status": true,
     "file_path": "misc/maplibre_examples/pages/use-locally-generated-ideographs.html",
-    "task_status": false,
-    "script": null
+    "task_status": true,
+    "script": "tests/test_examples/test_use_locally_generated_ideographs.py"
   },
   "variable-label-placement": {
     "url": "https://maplibre.org/maplibre-gl-js/docs/examples/variable-label-placement/",
@@ -838,15 +838,15 @@
     "url": "https://maplibre.org/maplibre-gl-js/docs/examples/view-local-geojson/",
     "source_status": true,
     "file_path": "misc/maplibre_examples/pages/view-local-geojson.html",
-    "task_status": false,
-    "script": null
+    "task_status": true,
+    "script": "tests/test_examples/test_view_local_geojson.py"
   },
   "view-local-geojson-experimental": {
     "url": "https://maplibre.org/maplibre-gl-js/docs/examples/view-local-geojson-experimental/",
     "source_status": true,
     "file_path": "misc/maplibre_examples/pages/view-local-geojson-experimental.html",
-    "task_status": false,
-    "script": null
+    "task_status": true,
+    "script": "tests/test_examples/test_view_local_geojson.py"
   },
   "visualize-population-density": {
     "url": "https://maplibre.org/maplibre-gl-js/docs/examples/visualize-population-density/",
