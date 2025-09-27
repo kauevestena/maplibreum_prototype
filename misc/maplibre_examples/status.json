@@ -327,8 +327,8 @@
     "url": "https://maplibre.org/maplibre-gl-js/docs/examples/check-if-webgl-is-supported/",
     "source_status": true,
     "file_path": "misc/maplibre_examples/pages/check-if-webgl-is-supported.html",
-    "task_status": false,
-    "script": null
+    "task_status": true,
+    "script": "tests/test_examples/test_check_if_webgl_is_supported.py"
   },
   "cooperative-gestures": {
     "url": "https://maplibre.org/maplibre-gl-js/docs/examples/cooperative-gestures/",
