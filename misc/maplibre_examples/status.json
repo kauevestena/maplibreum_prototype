@@ -236,43 +236,43 @@
         "url": "https://maplibre.org/maplibre-gl-js/docs/examples/animate-a-marker/",
         "source_status": true,
         "file_path": "misc/maplibre_examples/pages/animate-a-marker.html",
-        "task_status": false,
-        "script": null
+        "task_status": true,
+        "script": "tests/test_examples/test_animate_a_marker.py"
     },
     "animate-a-point": {
         "url": "https://maplibre.org/maplibre-gl-js/docs/examples/animate-a-point/",
         "source_status": true,
         "file_path": "misc/maplibre_examples/pages/animate-a-point.html",
-        "task_status": false,
-        "script": null
+        "task_status": true,
+        "script": "tests/test_examples/test_animate_a_point.py"
     },
     "animate-a-point-along-a-route": {
         "url": "https://maplibre.org/maplibre-gl-js/docs/examples/animate-a-point-along-a-route/",
         "source_status": true,
         "file_path": "misc/maplibre_examples/pages/animate-a-point-along-a-route.html",
-        "task_status": false,
-        "script": null
+        "task_status": true,
+        "script": "tests/test_examples/test_animate_a_point_along_a_route.py"
     },
     "animate-a-series-of-images": {
         "url": "https://maplibre.org/maplibre-gl-js/docs/examples/animate-a-series-of-images/",
         "source_status": true,
         "file_path": "misc/maplibre_examples/pages/animate-a-series-of-images.html",
-        "task_status": false,
-        "script": null
+        "task_status": true,
+        "script": "tests/test_examples/test_animate_a_series_of_images.py"
     },
     "animate-map-camera-around-a-point": {
         "url": "https://maplibre.org/maplibre-gl-js/docs/examples/animate-map-camera-around-a-point/",
         "source_status": true,
         "file_path": "misc/maplibre_examples/pages/animate-map-camera-around-a-point.html",
-        "task_status": false,
-        "script": null
+        "task_status": true,
+        "script": "tests/test_examples/test_animate_map_camera_around_a_point.py"
     },
     "animate-symbol-to-follow-the-mouse": {
         "url": "https://maplibre.org/maplibre-gl-js/docs/examples/animate-symbol-to-follow-the-mouse/",
         "source_status": true,
         "file_path": "misc/maplibre_examples/pages/animate-symbol-to-follow-the-mouse.html",
-        "task_status": false,
-        "script": null
+        "task_status": true,
+        "script": "tests/test_examples/test_animate_symbol_to_follow_the_mouse.py"
     },
     "attach-a-popup-to-a-marker-instance": {
         "url": "https://maplibre.org/maplibre-gl-js/docs/examples/attach-a-popup-to-a-marker-instance/",
@@ -285,8 +285,8 @@
         "url": "https://maplibre.org/maplibre-gl-js/docs/examples/center-the-map-on-a-clicked-symbol/",
         "source_status": true,
         "file_path": "misc/maplibre_examples/pages/center-the-map-on-a-clicked-symbol.html",
-        "task_status": false,
-        "script": null
+        "task_status": true,
+        "script": "tests/test_examples/test_center_the_map_on_a_clicked_symbol.py"
     },
     "change-a-layers-color-with-buttons": {
         "url": "https://maplibre.org/maplibre-gl-js/docs/examples/change-a-layers-color-with-buttons/",
@@ -404,8 +404,8 @@
         "url": "https://maplibre.org/maplibre-gl-js/docs/examples/customize-camera-animations/",
         "source_status": true,
         "file_path": "misc/maplibre_examples/pages/customize-camera-animations.html",
-        "task_status": false,
-        "script": null
+        "task_status": true,
+        "script": "tests/test_examples/test_customize_camera_animations.py"
     },
     "disable-map-rotation": {
         "url": "https://maplibre.org/maplibre-gl-js/docs/examples/disable-map-rotation/",
@@ -607,22 +607,22 @@
         "url": "https://maplibre.org/maplibre-gl-js/docs/examples/fit-to-the-bounds-of-a-linestring/",
         "source_status": true,
         "file_path": "misc/maplibre_examples/pages/fit-to-the-bounds-of-a-linestring.html",
-        "task_status": false,
-        "script": null
+        "task_status": true,
+        "script": "tests/test_examples/test_fit_to_the_bounds_of_a_linestring.py"
     },
     "fly-to-a-location": {
         "url": "https://maplibre.org/maplibre-gl-js/docs/examples/fly-to-a-location/",
         "source_status": true,
         "file_path": "misc/maplibre_examples/pages/fly-to-a-location.html",
-        "task_status": false,
-        "script": null
+        "task_status": true,
+        "script": "tests/test_examples/test_fly_to_a_location.py"
     },
     "fly-to-a-location-based-on-scroll-position": {
         "url": "https://maplibre.org/maplibre-gl-js/docs/examples/fly-to-a-location-based-on-scroll-position/",
         "source_status": true,
         "file_path": "misc/maplibre_examples/pages/fly-to-a-location-based-on-scroll-position.html",
-        "task_status": false,
-        "script": null
+        "task_status": true,
+        "script": "tests/test_examples/test_fly_to_a_location_based_on_scroll_position.py"
     },
     "generate-and-add-a-missing-icon-to-the-map": {
         "url": "https://maplibre.org/maplibre-gl-js/docs/examples/generate-and-add-a-missing-icon-to-the-map/",
@@ -663,8 +663,8 @@
         "url": "https://maplibre.org/maplibre-gl-js/docs/examples/jump-to-a-series-of-locations/",
         "source_status": true,
         "file_path": "misc/maplibre_examples/pages/jump-to-a-series-of-locations.html",
-        "task_status": false,
-        "script": null
+        "task_status": true,
+        "script": "tests/test_examples/test_jump_to_a_series_of_locations.py"
     },
     "level-of-detail-control": {
         "url": "https://maplibre.org/maplibre-gl-js/docs/examples/level-of-detail-control/",
@@ -698,8 +698,8 @@
         "url": "https://maplibre.org/maplibre-gl-js/docs/examples/offset-the-vanishing-point-using-padding/",
         "source_status": true,
         "file_path": "misc/maplibre_examples/pages/offset-the-vanishing-point-using-padding.html",
-        "task_status": false,
-        "script": null
+        "task_status": true,
+        "script": "tests/test_examples/test_offset_the_vanishing_point_using_padding.py"
     },
     "pmtiles-source-and-protocol": {
         "url": "https://maplibre.org/maplibre-gl-js/docs/examples/pmtiles-source-and-protocol/",
@@ -754,8 +754,8 @@
         "url": "https://maplibre.org/maplibre-gl-js/docs/examples/slowly-fly-to-a-location/",
         "source_status": true,
         "file_path": "misc/maplibre_examples/pages/slowly-fly-to-a-location.html",
-        "task_status": false,
-        "script": null
+        "task_status": true,
+        "script": "tests/test_examples/test_slowly_fly_to_a_location.py"
     },
     "style-lines-with-a-data-driven-property": {
         "url": "https://maplibre.org/maplibre-gl-js/docs/examples/style-lines-with-a-data-driven-property/",
