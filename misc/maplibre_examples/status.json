@@ -222,8 +222,8 @@
     "url": "https://maplibre.org/maplibre-gl-js/docs/examples/adding-3d-models-using-threejs-on-terrain/",
     "source_status": true,
     "file_path": "misc/maplibre_examples/pages/adding-3d-models-using-threejs-on-terrain.html",
-    "task_status": false,
-    "script": null
+    "task_status": true,
+    "script": "tests/test_examples/test_adding_3d_models_using_threejs_on_terrain.py"
   },
   "animate-a-line": {
     "url": "https://maplibre.org/maplibre-gl-js/docs/examples/animate-a-line/",
