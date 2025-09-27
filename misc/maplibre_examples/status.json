@@ -383,8 +383,8 @@
         "url": "https://maplibre.org/maplibre-gl-js/docs/examples/create-a-time-slider/",
         "source_status": true,
         "file_path": "misc/maplibre_examples/pages/create-a-time-slider.html",
-        "task_status": false,
-        "script": null
+        "task_status": true,
+        "script": "tests/test_examples/test_create_a_time_slider.py"
     },
     "create-and-style-clusters": {
         "url": "https://maplibre.org/maplibre-gl-js/docs/examples/create-and-style-clusters/",
@@ -537,8 +537,8 @@
         "url": "https://maplibre.org/maplibre-gl-js/docs/examples/draw-a-circle/",
         "source_status": true,
         "file_path": "misc/maplibre_examples/pages/draw-a-circle.html",
-        "task_status": false,
-        "script": null
+        "task_status": true,
+        "script": "tests/test_examples/test_draw_a_circle.py"
     },
     "draw-geojson-points": {
         "url": "https://maplibre.org/maplibre-gl-js/docs/examples/draw-geojson-points/",
@@ -551,15 +551,15 @@
         "url": "https://maplibre.org/maplibre-gl-js/docs/examples/draw-geometries-with-terra-draw/",
         "source_status": true,
         "file_path": "misc/maplibre_examples/pages/draw-geometries-with-terra-draw.html",
-        "task_status": false,
-        "script": null
+        "task_status": true,
+        "script": "tests/test_examples/test_draw_geometries_with_terra_draw.py"
     },
     "draw-polygon-with-mapbox-gl-draw": {
         "url": "https://maplibre.org/maplibre-gl-js/docs/examples/draw-polygon-with-mapbox-gl-draw/",
         "source_status": true,
         "file_path": "misc/maplibre_examples/pages/draw-polygon-with-mapbox-gl-draw.html",
-        "task_status": false,
-        "script": null
+        "task_status": true,
+        "script": "tests/test_examples/test_draw_polygon_with_mapbox_gl_draw.py"
     },
     "extrude-polygons-for-3d-indoor-mapping": {
         "url": "https://maplibre.org/maplibre-gl-js/docs/examples/extrude-polygons-for-3d-indoor-mapping/",
