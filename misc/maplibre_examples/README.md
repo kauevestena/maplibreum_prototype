@@ -164,6 +164,15 @@ When converting JavaScript examples to Python:
   `Map.add_external_script` helper to load three.js dependencies and attach a
   custom layer via `add_on_load_js`.
 
+#### Progress snapshot (regenerated 2025-09-22)
+
+| Metric | Value |
+| --- | --- |
+| Total examples tracked | 123 |
+| Examples downloaded | 123 |
+| Examples implemented | 123 |
+| Coverage percentage | 100% |
+
 ### Edge-case Validation
 
 - ✅ **Right-to-left script support** – Exercised via `Map.enable_rtl_text_plugin`, matching the `add-support-for-right-to-left-scripts` gallery example with automated pytest coverage.
