@@ -191,7 +191,11 @@ While the gallery coverage is exhaustive, a few MapLibre capabilities still requ
 
 ### Celebrating the Milestone
 
-We're tracking towards the **123/123 coverage** milestone—complete feature
-parity with the official MapLibre GL JS gallery while preserving a templated,
-reproducible HTML/JS pipeline. Current parity stands at **49/123** with the
-three.js globe example now automated.
+🎉 **MILESTONE ACHIEVED: 123/123 coverage** 🎉
+
+Complete feature parity with the official MapLibre GL JS gallery has been
+achieved! All 123 examples are now implemented with templated, reproducible
+HTML/JS pipeline through the automated test suite. The final example,
+`zoom-and-planet-size-relation-on-globe`, demonstrates advanced globe
+projection zoom calculations to maintain consistent visual scale across
+different latitudes.
