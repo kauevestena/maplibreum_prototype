@@ -254,6 +254,8 @@ class Map:
         zoom=2,
         pitch=None,
         bearing=None,
+        elevation=None,
+        center_clamped_to_ground=None,
         width="100%",
         height="500px",
         controls=None,
@@ -281,6 +283,8 @@ class Map:
         self.zoom = zoom
         self.pitch = pitch
         self.bearing = bearing
+        self.elevation = elevation
+        self.center_clamped_to_ground = center_clamped_to_ground
         self.width = width
         self.height = height
         self.controls = controls if controls is not None else []
@@ -1563,6 +1567,10 @@ class Map:
             map_options["pitch"] = self.pitch
         if self.bearing is not None:
             map_options["bearing"] = self.bearing
+        if self.elevation is not None:
+            map_options["elevation"] = self.elevation
+        if self.center_clamped_to_ground is not None:
+            map_options["centerClampedToGround"] = self.center_clamped_to_ground
         if self.additional_map_options:
             map_options.update(self.additional_map_options)
 

@@ -169,7 +169,7 @@
         function initializeMap() {
             try {
         // Initialize map
-        var map = new maplibregl.Map({{ map_options | tojson }});
+        var map = new maplibregl.Map({{ map_options | tojson | safe }});
         window.maplibreumMaps = window.maplibreumMaps || {};
         window.maplibreumMaps["{{ map_id }}"] = map;
         window.maplibreumMapsLoaded = window.maplibreumMapsLoaded || {};
