@@ -446,8 +446,8 @@
     "url": "https://maplibre.org/maplibre-gl-js/docs/examples/display-a-hybrid-satellite-map-with-terrain-elevation/",
     "source_status": true,
     "file_path": "misc/maplibre_examples/pages/display-a-hybrid-satellite-map-with-terrain-elevation.html",
-    "task_status": false,
-    "script": null
+    "task_status": true,
+    "script": "tests/test_examples/test_display_a_hybrid_satellite_map_with_terrain_elevation.py"
   },
   "display-a-map": {
     "url": "https://maplibre.org/maplibre-gl-js/docs/examples/display-a-map/",
