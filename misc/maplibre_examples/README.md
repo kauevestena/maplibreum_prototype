@@ -165,6 +165,7 @@ When converting JavaScript examples to Python:
   custom layer via `add_on_load_js`.
 - ✅ Implemented `display-buildings-in-3d` by dynamically inserting a `fill-extrusion` layer before the first symbol layer, ensuring labels render correctly on top of 3D buildings.
 - ✅ Added `extrude-polygons-for-3d-indoor-mapping` to showcase 3D indoor mapping using the `fill-extrusion-height` paint property.
+- ✅ Implemented `set-center-point-above-ground` by adding `elevation` and `centerClampedToGround` properties to the `Map` constructor, allowing for camera positioning relative to the terrain.
 
 ### Edge-case Validation
 

@@ -726,8 +726,8 @@
     "url": "https://maplibre.org/maplibre-gl-js/docs/examples/set-center-point-above-ground/",
     "source_status": true,
     "file_path": "misc/maplibre_examples/pages/set-center-point-above-ground.html",
-    "task_status": false,
-    "script": null
+    "task_status": true,
+    "script": "tests/test_examples/test_set_center_point_above_ground.py"
   },
   "set-pitch-and-bearing": {
     "url": "https://maplibre.org/maplibre-gl-js/docs/examples/set-pitch-and-bearing/",
