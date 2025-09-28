@@ -1025,6 +1025,23 @@ class Map:
         """Enable a popup showing latitude and longitude on click."""
         self.lat_lng_popup = True
 
+    def set_source_tile_lod_params(
+        self, max_zoom_levels: int, tile_count_ratio: float
+    ):
+        """Set the LOD parameters for source tiles.
+
+        This is a wrapper around the MapLibre GL JS `setSourceTileLodParams` method.
+
+        Parameters
+        ----------
+        max_zoom_levels : int
+            The maximum number of zoom levels to show on screen.
+        tile_count_ratio : float
+            The ratio of tiles to render at high pitch angles.
+        """
+        js_code = f"map.setSourceTileLodParams({max_zoom_levels}, {tile_count_ratio});"
+        self.add_on_load_js(js_code)
+
     def add_on_load_js(self, code: str) -> None:
         """Schedule raw JavaScript to execute within the load handler."""
 

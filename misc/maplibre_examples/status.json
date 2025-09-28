@@ -670,8 +670,8 @@
     "url": "https://maplibre.org/maplibre-gl-js/docs/examples/level-of-detail-control/",
     "source_status": true,
     "file_path": "misc/maplibre_examples/pages/level-of-detail-control.html",
-    "task_status": false,
-    "script": null
+    "task_status": true,
+    "script": "tests/test_examples/test_level_of_detail_control.py"
   },
   "locate-the-user": {
     "url": "https://maplibre.org/maplibre-gl-js/docs/examples/locate-the-user/",
