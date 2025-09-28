@@ -1,4 +1,4 @@
-name: Deploy Unified Site to GitHub Pages
+name: Documentation Build
 
 on:
   workflow_dispatch:
