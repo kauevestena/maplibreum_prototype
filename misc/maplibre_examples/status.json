@@ -565,8 +565,8 @@
     "url": "https://maplibre.org/maplibre-gl-js/docs/examples/extrude-polygons-for-3d-indoor-mapping/",
     "source_status": true,
     "file_path": "misc/maplibre_examples/pages/extrude-polygons-for-3d-indoor-mapping.html",
-    "task_status": false,
-    "script": null
+    "task_status": true,
+    "script": "tests/test_examples/test_extrude_polygons_for_3d_indoor_mapping.py"
   },
   "filter-layer-symbols-using-global-state": {
     "url": "https://maplibre.org/maplibre-gl-js/docs/examples/filter-layer-symbols-using-global-state/",

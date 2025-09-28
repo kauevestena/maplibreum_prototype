@@ -158,12 +158,13 @@ When converting JavaScript examples to Python:
 
 ### Coverage Summary
 
-**Current Coverage:** 47/123 examples completed
+**Current Coverage:** 48/123 examples completed
 
 - ✅ Ported `add-a-3d-model-to-globe-using-threejs` leveraging the new
   `Map.add_external_script` helper to load three.js dependencies and attach a
   custom layer via `add_on_load_js`.
 - ✅ Implemented `display-buildings-in-3d` by dynamically inserting a `fill-extrusion` layer before the first symbol layer, ensuring labels render correctly on top of 3D buildings.
+- ✅ Added `extrude-polygons-for-3d-indoor-mapping` to showcase 3D indoor mapping using the `fill-extrusion-height` paint property.
 
 ### Edge-case Validation
 
@@ -190,5 +191,5 @@ While the gallery coverage is exhaustive, a few MapLibre capabilities still requ
 
 We're tracking towards the **123/123 coverage** milestone—complete feature
 parity with the official MapLibre GL JS gallery while preserving a templated,
-reproducible HTML/JS pipeline. Current parity stands at **47/123** with the
+reproducible HTML/JS pipeline. Current parity stands at **48/123** with the
 three.js globe example now automated.
