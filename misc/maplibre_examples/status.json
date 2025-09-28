@@ -509,8 +509,8 @@
     "url": "https://maplibre.org/maplibre-gl-js/docs/examples/display-buildings-in-3d/",
     "source_status": true,
     "file_path": "misc/maplibre_examples/pages/display-buildings-in-3d.html",
-    "task_status": false,
-    "script": null
+    "task_status": true,
+    "script": "tests/test_examples/test_display_buildings_in_3d.py"
   },
   "display-html-clusters-with-custom-properties": {
     "url": "https://maplibre.org/maplibre-gl-js/docs/examples/display-html-clusters-with-custom-properties/",
