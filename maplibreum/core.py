@@ -4,9 +4,10 @@ import math
 import os
 import subprocess
 import uuid
+import logging
 from dataclasses import dataclass, field
 from typing import Any, Dict, Iterable, List, Mapping, Optional
-from urllib.parse import quote
+from urllib.parse import quote, urlparse
 
 from IPython.display import IFrame, display
 from jinja2 import Environment, FileSystemLoader
@@ -22,6 +23,45 @@ from . import controls
 from . import sources as source_wrappers
 from .sources import Source as SourceDefinition
 from .styles import MAP_STYLES
+
+# Configure logging
+logger = logging.getLogger(__name__)
+
+
+def validate_url(url: str, allow_relative: bool = True) -> bool:
+    """Validate URL format.
+    
+    Args:
+        url: URL to validate
+        allow_relative: Whether relative URLs are allowed
+        
+    Returns:
+        True if URL is valid, False otherwise
+    """
+    if not url or not isinstance(url, str):
+        return False
+        
+    url = url.strip()
+    if not url:
+        return False
+        
+    try:
+        parsed = urlparse(url)
+        
+        # For absolute URLs, require scheme and netloc
+        if parsed.scheme and parsed.netloc:
+            return parsed.scheme in ('http', 'https')
+        
+        # For relative URLs, check if allowed and has valid path
+        if allow_relative:
+            # Relative URLs should not have scheme or netloc but should have path
+            return not parsed.scheme and not parsed.netloc and parsed.path
+            
+        return False
+        
+    except Exception as e:
+        logger.warning(f"URL validation failed for '{url}': {e}")
+        return False
 
 
 class Tooltip:
@@ -550,31 +590,58 @@ class Map:
             configuration.
         """
 
+        if not isinstance(url, str) or not url.strip():
+            raise ValueError("add_tile_layer requires a valid tile URL")
+            
+        # Validate URL format (tile URLs are typically absolute)
+        if not validate_url(url, allow_relative=False):
+            raise ValueError(f"Invalid tile URL format: '{url}'. Tile URLs must be absolute (http/https).")
+
         layer_id = name or f"tilelayer_{uuid.uuid4().hex}"
 
         if "{s}" in url and subdomains:
+            # Validate subdomains
+            if not isinstance(subdomains, (list, tuple)) or not all(isinstance(s, str) for s in subdomains):
+                raise ValueError("subdomains must be a list of strings")
             tiles = [url.replace("{s}", s) for s in subdomains]
         else:
             tiles = [url]
+
+        # Validate tile_size
+        if not isinstance(tile_size, int) or tile_size <= 0:
+            raise ValueError("tile_size must be a positive integer")
+
+        # Validate zoom levels if provided
+        if min_zoom is not None and (not isinstance(min_zoom, int) or min_zoom < 0):
+            raise ValueError("min_zoom must be a non-negative integer")
+        if max_zoom is not None and (not isinstance(max_zoom, int) or max_zoom < 0):
+            raise ValueError("max_zoom must be a non-negative integer")
+        if min_zoom is not None and max_zoom is not None and min_zoom > max_zoom:
+            raise ValueError("min_zoom cannot be greater than max_zoom")
 
         source_kwargs = dict(source_options)
         if attribution is not None:
             source_kwargs["attribution"] = attribution
 
-        source = source_wrappers.RasterSource(
-            tiles=tiles,
-            tile_size=tile_size,
-            min_zoom=min_zoom,
-            max_zoom=max_zoom,
-            bounds=bounds,
-            scheme=scheme,
-            volatile=volatile,
-            **source_kwargs,
-        )
+        try:
+            source = source_wrappers.RasterSource(
+                tiles=tiles,
+                tile_size=tile_size,
+                min_zoom=min_zoom,
+                max_zoom=max_zoom,
+                bounds=bounds,
+                scheme=scheme,
+                volatile=volatile,
+                **source_kwargs,
+            )
+        except Exception as e:
+            logger.error(f"Failed to create RasterSource for {url}: {e}")
+            raise ValueError(f"Failed to create tile layer source: {e}") from e
 
         layer = {"id": layer_id, "type": "raster", "source": layer_id}
         self.add_layer(layer, source=source)
         self.tile_layers.append({"id": layer_id, "name": name or layer_id})
+        logger.debug(f"Added tile layer: {layer_id} from {url}")
 
     def register_overlay(self, layer_id, name=None, layers=None):
         """Register a non-tile overlay layer or group for the layer control."""
@@ -629,6 +696,10 @@ class Map:
 
         if not isinstance(src, str) or not src.strip():
             raise ValueError("add_external_script requires a script URL")
+            
+        # Validate URL format
+        if not validate_url(src, allow_relative=True):
+            raise ValueError(f"Invalid script URL format: '{src}'. URL must be absolute (http/https) or relative.")
 
         attr_map: Dict[str, Any] = {}
         if defer:
@@ -647,6 +718,7 @@ class Map:
                 attr_map[str(key)] = True if value is True else str(value)
 
         self.external_scripts.append({"src": src, "attributes": attr_map})
+        logger.debug(f"Added external script: {src}")
         return src
 
     def add_image(self, name, url=None, data=None, options=None):
