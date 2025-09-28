@@ -1,3 +1,6 @@
+[![CI](https://github.com/kauevestena/maplibreum_prototype/actions/workflows/ci.yml/badge.svg)](https://github.com/kauevestena/maplibreum_prototype/actions/workflows/ci.yml)
+[![Documentation Build](https://github.com/kauevestena/maplibreum_prototype/actions/workflows/deploy-unified-site.yml/badge.svg)](https://github.com/kauevestena/maplibreum_prototype/actions/workflows/deploy-unified-site.yml)
+
 # MapLibreum
 
 A Python library for creating interactive MapLibre maps, like Folium but for MapLibre.
