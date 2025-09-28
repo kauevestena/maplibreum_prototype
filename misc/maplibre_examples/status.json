@@ -740,8 +740,8 @@
     "url": "https://maplibre.org/maplibre-gl-js/docs/examples/show-polygon-information-on-click/",
     "source_status": true,
     "file_path": "misc/maplibre_examples/pages/show-polygon-information-on-click.html",
-    "task_status": false,
-    "script": null
+    "task_status": true,
+    "script": "tests/test_examples/test_show_polygon_information_on_click.py"
   },
   "sky-fog-terrain": {
     "url": "https://maplibre.org/maplibre-gl-js/docs/examples/sky-fog-terrain/",
