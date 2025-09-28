@@ -158,7 +158,7 @@ When converting JavaScript examples to Python:
 
 ### Coverage Summary
 
-**Current Coverage:** 48/123 examples completed
+**Current Coverage:** 49/123 examples completed
 
 - ✅ Ported `add-a-3d-model-to-globe-using-threejs` leveraging the new
   `Map.add_external_script` helper to load three.js dependencies and attach a
@@ -166,6 +166,7 @@ When converting JavaScript examples to Python:
 - ✅ Implemented `display-buildings-in-3d` by dynamically inserting a `fill-extrusion` layer before the first symbol layer, ensuring labels render correctly on top of 3D buildings.
 - ✅ Added `extrude-polygons-for-3d-indoor-mapping` to showcase 3D indoor mapping using the `fill-extrusion-height` paint property.
 - ✅ Implemented `set-center-point-above-ground` by adding `elevation` and `centerClampedToGround` properties to the `Map` constructor, allowing for camera positioning relative to the terrain.
+- ✅ Added `variable-label-placement` to demonstrate dynamic label repositioning using the `text-variable-anchor` and `text-radial-offset` layout properties, preventing label overlap during map interactions.
 
 ### Edge-case Validation
 
@@ -192,5 +193,5 @@ While the gallery coverage is exhaustive, a few MapLibre capabilities still requ
 
 We're tracking towards the **123/123 coverage** milestone—complete feature
 parity with the official MapLibre GL JS gallery while preserving a templated,
-reproducible HTML/JS pipeline. Current parity stands at **48/123** with the
+reproducible HTML/JS pipeline. Current parity stands at **49/123** with the
 three.js globe example now automated.

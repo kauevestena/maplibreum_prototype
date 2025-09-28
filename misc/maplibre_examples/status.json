@@ -817,8 +817,8 @@
     "url": "https://maplibre.org/maplibre-gl-js/docs/examples/variable-label-placement/",
     "source_status": true,
     "file_path": "misc/maplibre_examples/pages/variable-label-placement.html",
-    "task_status": false,
-    "script": null
+    "task_status": true,
+    "script": "tests/test_examples/test_variable_label_placement.py"
   },
   "variable-label-placement-with-offset": {
     "url": "https://maplibre.org/maplibre-gl-js/docs/examples/variable-label-placement-with-offset/",
