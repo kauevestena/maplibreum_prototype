@@ -859,7 +859,7 @@
     "url": "https://maplibre.org/maplibre-gl-js/docs/examples/zoom-and-planet-size-relation-on-globe/",
     "source_status": true,
     "file_path": "misc/maplibre_examples/pages/zoom-and-planet-size-relation-on-globe.html",
-    "task_status": true,
-    "script": "tests/test_examples/test_zoom_and_planet_size_relation_on_globe.py"
+    "task_status": false,
+    "script": null
   }
 }
