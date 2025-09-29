@@ -201,6 +201,19 @@ $ pytest tests/test_examples/ -v
 
 However, the tests validate HTML generation, not Python API design.
 
+## Progress Tracking
+
+**📋 Comprehensive Progress Tracker**: [`javascript_injection_roadmap.json`](javascript_injection_roadmap.json)
+
+This JSON file provides a detailed progress tracker with:
+- Complete categorization of all 123 examples with test paths and implementation details
+- Phase-based roadmap with priority levels, effort estimates, and completion tracking
+- Required API specifications for each improvement
+- Individual example analysis with current issues and improvement plans
+- Migration strategy with success criteria and timeline
+
+The JSON tracker serves as a living document to monitor progress as examples are converted from JavaScript injection to proper Python API implementations.
+
 ## Conclusion
 
 While MapLibreum achieves 100% example coverage as claimed in the roadmap, **37.4% of examples use JavaScript injection** rather than proper Python API methods. This represents a significant opportunity for improvement that would make the library more pythonic, maintainable, and better integrated with Python workflows.
