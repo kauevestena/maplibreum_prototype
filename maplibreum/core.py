@@ -1541,6 +1541,46 @@ class Map:
             layer_definition["filter"] = filter
         self.add_layer(layer_definition, source=source, before=before)
 
+    def add_button_control(self, label, action, position="top-left", css_class="maplibreum-button", style=None):
+        """Add a button control that can trigger map actions.
+        
+        This provides a Python API alternative to JavaScript injection for
+        interactive buttons.
+        
+        Parameters
+        ----------
+        label : str
+            The text label for the button.
+        action : callable
+            A function that takes the map instance as parameter.
+        position : str, optional
+            Position on the map (e.g. 'top-left', 'top-right').
+        css_class : str, optional
+            CSS class for styling the button.
+        style : dict, optional
+            Inline CSS styles for the button.
+        
+        Returns
+        -------
+        str
+            A unique identifier for this button control.
+        """
+        from . import controls
+        
+        # Create a ButtonControl instance
+        button = controls.ButtonControl(
+            label=label,
+            action=action,
+            position=position,
+            css_class=css_class,
+            style=style
+        )
+        
+        # Add it to the map's controls
+        self.add_control(button, position)
+        
+        return button
+
     def render(self):
         """Render the map to an HTML string.
 
