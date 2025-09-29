@@ -902,6 +902,43 @@ class Map:
                 raise TypeError(f"{flag} expects a boolean value")
             self.additional_map_options[flag] = value
 
+    def disable_rotation(
+        self,
+        *,
+        drag_rotate=True,
+        touch_zoom_rotate=True,
+        keyboard_rotate=True
+    ):
+        """Disable map rotation interactions.
+        
+        This method provides a Python API alternative to JavaScript injection
+        for disabling rotation controls.
+        
+        Parameters
+        ----------
+        drag_rotate : bool, optional
+            Whether to disable drag rotation (default True).
+        touch_zoom_rotate : bool, optional
+            Whether to disable touch zoom rotation (default True).
+        keyboard_rotate : bool, optional
+            Whether to disable keyboard rotation (default True).
+        """
+        
+        # Add JavaScript to disable rotation after map loads
+        disable_js = []
+        
+        if drag_rotate:
+            disable_js.append("map.dragRotate.disable();")
+        
+        if touch_zoom_rotate:
+            disable_js.append("map.touchZoomRotate.disableRotation();")
+            
+        if keyboard_rotate:
+            disable_js.append("map.keyboard.disableRotation();")
+        
+        if disable_js:
+            self.add_on_load_js("\n".join(disable_js))
+
     def enable_rtl_text_plugin(
         self,
         url="https://unpkg.com/maplibre-gl-rtl-text@latest/dist/maplibre-gl-rtl-text.js",
@@ -1246,6 +1283,57 @@ class Map:
 
         return self.on("move", callback, **kwargs)
 
+    def on_hover(self, callback, **kwargs):
+        """Convenience method for mouseenter events (hover)."""
+
+        return self.on("mouseenter", callback, **kwargs)
+
+    def on_mousemove(self, callback, **kwargs):
+        """Convenience method for mousemove events."""
+
+        return self.on("mousemove", callback, **kwargs)
+
+    def on_mouseover(self, callback, **kwargs):
+        """Convenience method for mouseover events."""
+
+        return self.on("mouseover", callback, **kwargs)
+
+    def on_mouseout(self, callback, **kwargs):
+        """Convenience method for mouseout events."""
+
+        return self.on("mouseout", callback, **kwargs)
+
+    def query_rendered_features_at_point(self, point, layers=None, filter=None):
+        """Create a JavaScript snippet to query rendered features at a point.
+        
+        This method provides a helper for generating feature query JavaScript
+        that can be used in event handlers.
+        
+        Parameters
+        ----------
+        point : str
+            JavaScript expression for the point (e.g., "event.point").
+        layers : list, optional
+            List of layer IDs to query.
+        filter : dict, optional
+            Filter expression to apply.
+            
+        Returns
+        -------
+        str
+            JavaScript code snippet for querying features.
+        """
+        options = {}
+        if layers is not None:
+            options["layers"] = layers
+        if filter is not None:
+            options["filter"] = filter
+            
+        if options:
+            return f"map.queryRenderedFeatures({point}, {json.dumps(options)})"
+        else:
+            return f"map.queryRenderedFeatures({point})"
+
     # Camera control methods
     def fly_to(self, **options):
         """Queue a MapLibre ``flyTo`` camera animation."""
@@ -1540,6 +1628,46 @@ class Map:
         if filter:
             layer_definition["filter"] = filter
         self.add_layer(layer_definition, source=source, before=before)
+
+    def add_button_control(self, label, action, position="top-left", css_class="maplibreum-button", style=None):
+        """Add a button control that can trigger map actions.
+        
+        This provides a Python API alternative to JavaScript injection for
+        interactive buttons.
+        
+        Parameters
+        ----------
+        label : str
+            The text label for the button.
+        action : callable
+            A function that takes the map instance as parameter.
+        position : str, optional
+            Position on the map (e.g. 'top-left', 'top-right').
+        css_class : str, optional
+            CSS class for styling the button.
+        style : dict, optional
+            Inline CSS styles for the button.
+        
+        Returns
+        -------
+        str
+            A unique identifier for this button control.
+        """
+        from . import controls
+        
+        # Create a ButtonControl instance
+        button = controls.ButtonControl(
+            label=label,
+            action=action,
+            position=position,
+            css_class=css_class,
+            style=style
+        )
+        
+        # Add it to the map's controls
+        self.add_control(button, position)
+        
+        return button
 
     def render(self):
         """Render the map to an HTML string.
