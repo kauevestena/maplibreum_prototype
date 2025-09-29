@@ -1,0 +1,845 @@
+{
+  "metadata": {
+    "title": "MapLibreum JavaScript Injection Analysis and Improvement Roadmap",
+    "version": "1.0.0",
+    "created_date": "2024-12-21",
+    "last_updated": "2024-12-21",
+    "total_examples": 123,
+    "analysis_source": "JAVASCRIPT_INJECTION_ANALYSIS.md",
+    "progress_tracker": true,
+    "description": "Comprehensive progress tracker for converting JavaScript injection examples to proper Python API implementations"
+  },
+  "summary": {
+    "total_examples": 123,
+    "javascript_injection_only": 26,
+    "mixed_approach": 20,
+    "proper_api_only": 55,
+    "other_patterns": 22,
+    "completion_percentage": {
+      "phase_1": 0,
+      "phase_2": 0, 
+      "phase_3": 0,
+      "overall": 44.7
+    }
+  },
+  "implementation_phases": {
+    "phase_1": {
+      "title": "Core API Methods Implementation",
+      "description": "Convert JavaScript-only examples by implementing navigation, events, and basic UI controls",
+      "priority": "high",
+      "target_examples": 26,
+      "estimated_effort": "3-4 months",
+      "required_apis": [
+        "Map.fly_to()",
+        "Map.ease_to()",
+        "Map.pan_to()",
+        "Map.on_click()",
+        "Map.on_hover()",
+        "Map.on_mousemove()",
+        "ButtonControl",
+        "ToggleControl"
+      ],
+      "completion_status": {
+        "completed": 0,
+        "in_progress": 0,
+        "planned": 26
+      }
+    },
+    "phase_2": {
+      "title": "Enhanced Features",
+      "description": "Improve mixed-approach examples by expanding animation system and real-time updates",
+      "priority": "medium",
+      "target_examples": 20,
+      "estimated_effort": "2-3 months",
+      "required_apis": [
+        "Enhanced AnimationLoop",
+        "RealTimeDataSource",
+        "InteractiveControl",
+        "CustomLayer wrappers"
+      ],
+      "completion_status": {
+        "completed": 0,
+        "in_progress": 0,
+        "planned": 20
+      }
+    },
+    "phase_3": {
+      "title": "Advanced Integration",
+      "description": "Create proper wrappers for external library integration",
+      "priority": "lower",
+      "target_examples": 22,
+      "estimated_effort": "4-5 months",
+      "required_apis": [
+        "ThreeJSLayer",
+        "DeckGLLayer",
+        "TerraDrawWrapper",
+        "ProtocolExtension"
+      ],
+      "completion_status": {
+        "completed": 0,
+        "in_progress": 0,
+        "planned": 22
+      }
+    }
+  },
+  "examples": {
+    "javascript_injection_only": {
+      "count": 26,
+      "description": "Examples that use only JavaScript injection without proper Python API methods",
+      "examples": {
+        "fly-to-a-location": {
+          "test_path": "tests/test_examples/test_fly_to_a_location.py",
+          "current_implementation": "javascript_injection",
+          "issues": [
+            "Uses add_on_load_js() for DOM manipulation",
+            "Creates buttons with raw JavaScript",
+            "Uses map.flyTo() directly instead of Python API"
+          ],
+          "required_apis": ["Map.fly_to()", "ButtonControl"],
+          "phase": "phase_1",
+          "priority": "high",
+          "estimated_effort": "2-3 days",
+          "status": "planned",
+          "assigned_to": null,
+          "completion_date": null,
+          "notes": "Core navigation functionality - high impact for Python users"
+        },
+        "slowly-fly-to-a-location": {
+          "test_path": "tests/test_examples/test_slowly_fly_to_a_location.py",
+          "current_implementation": "javascript_injection",
+          "issues": [
+            "Similar to fly-to-a-location but with duration parameter",
+            "Uses JavaScript animation directly"
+          ],
+          "required_apis": ["Map.fly_to(duration=)"],
+          "phase": "phase_1",
+          "priority": "high",
+          "estimated_effort": "1-2 days",
+          "status": "planned",
+          "assigned_to": null,
+          "completion_date": null,
+          "notes": "Should be simple extension of fly_to() method"
+        },
+        "jump-to-a-series-of-locations": {
+          "test_path": "tests/test_examples/test_jump_to_a_series_of_locations.py",
+          "current_implementation": "javascript_injection",
+          "issues": [
+            "Sequential navigation using JavaScript timing",
+            "No Python API for location sequences"
+          ],
+          "required_apis": ["Map.jump_to_sequence()"],
+          "phase": "phase_1",
+          "priority": "medium",
+          "estimated_effort": "3-4 days",
+          "status": "planned",
+          "assigned_to": null,
+          "completion_date": null,
+          "notes": "Requires new API for sequential navigation"
+        },
+        "animate-map-camera-around-a-point": {
+          "test_path": "tests/test_examples/test_animate_map_camera_around_a_point.py",
+          "current_implementation": "javascript_injection",
+          "issues": [
+            "Complex camera animation using JavaScript",
+            "No Python API for circular camera movement"
+          ],
+          "required_apis": ["Map.animate_camera_around()"],
+          "phase": "phase_1",
+          "priority": "medium",
+          "estimated_effort": "4-5 days",
+          "status": "planned",
+          "assigned_to": null,
+          "completion_date": null,
+          "notes": "Advanced animation - requires careful implementation"
+        },
+        "get-coordinates-of-the-mouse-pointer": {
+          "test_path": "tests/test_examples/test_get_coordinates_of_the_mouse_pointer.py",
+          "current_implementation": "javascript_injection",
+          "issues": [
+            "Uses JavaScript mouse event handlers",
+            "No Python event handling system"
+          ],
+          "required_apis": ["Map.on_mousemove()", "CoordinateDisplay"],
+          "phase": "phase_1",
+          "priority": "high",
+          "estimated_effort": "3-4 days",
+          "status": "planned",
+          "assigned_to": null,
+          "completion_date": null,
+          "notes": "Core interaction functionality"
+        },
+        "get-features-under-the-mouse-pointer": {
+          "test_path": "tests/test_examples/test_get_features_under_the_mouse_pointer.py",
+          "current_implementation": "javascript_injection",
+          "issues": [
+            "Feature querying with JavaScript events",
+            "No Python API for feature inspection"
+          ],
+          "required_apis": ["Map.query_features_at_point()", "Map.on_mousemove()"],
+          "phase": "phase_1",
+          "priority": "high",
+          "estimated_effort": "4-5 days",
+          "status": "planned",
+          "assigned_to": null,
+          "completion_date": null,
+          "notes": "Important for data exploration workflows"
+        },
+        "navigate-the-map-with-game-like-controls": {
+          "test_path": "tests/test_examples/test_navigate_the_map_with_game_like_controls.py",
+          "current_implementation": "javascript_injection",
+          "issues": [
+            "Keyboard navigation using JavaScript key handlers",
+            "No Python API for custom controls"
+          ],
+          "required_apis": ["Map.add_keyboard_navigation()", "CustomControl"],
+          "phase": "phase_1",
+          "priority": "medium",
+          "estimated_effort": "5-6 days",
+          "status": "planned",
+          "assigned_to": null,
+          "completion_date": null,
+          "notes": "Complex interaction system"
+        },
+        "toggle-interactions": {
+          "test_path": "tests/test_examples/test_toggle_interactions.py",
+          "current_implementation": "javascript_injection",
+          "issues": [
+            "JavaScript-based interaction toggling",
+            "No Python API for interaction management"
+          ],
+          "required_apis": ["Map.set_interactions()", "InteractionControl"],
+          "phase": "phase_1",
+          "priority": "medium",
+          "estimated_effort": "2-3 days",
+          "status": "planned",
+          "assigned_to": null,
+          "completion_date": null,
+          "notes": "Useful for controlled map interactions"
+        },
+        "add-a-3d-model-using-threejs": {
+          "test_path": "tests/test_examples/test_add_a_3d_model_using_threejs.py",
+          "current_implementation": "javascript_injection",
+          "issues": [
+            "External Three.js library loading",
+            "No Python wrapper for 3D models"
+          ],
+          "required_apis": ["ThreeJSLayer", "Model3D"],
+          "phase": "phase_3",
+          "priority": "lower",
+          "estimated_effort": "10-15 days",
+          "status": "planned",
+          "assigned_to": null,
+          "completion_date": null,
+          "notes": "Requires comprehensive Three.js integration"
+        },
+        "add-a-3d-model-to-globe-using-threejs": {
+          "test_path": "tests/test_examples/test_add_a_3d_model_to_globe_using_threejs.py",
+          "current_implementation": "javascript_injection",
+          "issues": [
+            "Three.js with globe projection",
+            "Complex 3D positioning"
+          ],
+          "required_apis": ["ThreeJSLayer", "GlobeProjection3D"],
+          "phase": "phase_3",
+          "priority": "lower",
+          "estimated_effort": "12-18 days",
+          "status": "planned",
+          "assigned_to": null,
+          "completion_date": null,
+          "notes": "Advanced 3D integration with globe"
+        },
+        "adding-3d-models-using-threejs-on-terrain": {
+          "test_path": "tests/test_examples/test_adding_3d_models_using_threejs_on_terrain.py",
+          "current_implementation": "javascript_injection",
+          "issues": [
+            "Three.js with terrain elevation",
+            "Complex elevation-aware positioning"
+          ],
+          "required_apis": ["ThreeJSLayer", "TerrainAware3D"],
+          "phase": "phase_3",
+          "priority": "lower",
+          "estimated_effort": "15-20 days",
+          "status": "planned",
+          "assigned_to": null,
+          "completion_date": null,
+          "notes": "Most complex 3D terrain integration"
+        },
+        "create-deckgl-layer-using-rest-api": {
+          "test_path": "tests/test_examples/test_create_deckgl_layer_using_rest_api.py",
+          "current_implementation": "javascript_injection",
+          "issues": [
+            "External Deck.GL library loading",
+            "REST API data fetching in JavaScript"
+          ],
+          "required_apis": ["DeckGLLayer", "RESTDataSource"],
+          "phase": "phase_3",
+          "priority": "medium",
+          "estimated_effort": "8-12 days",
+          "status": "planned",
+          "assigned_to": null,
+          "completion_date": null,
+          "notes": "Important for data visualization workflows"
+        },
+        "toggle-deckgl-layer": {
+          "test_path": "tests/test_examples/test_toggle_deckgl_layer.py",
+          "current_implementation": "javascript_injection",
+          "issues": [
+            "JavaScript layer toggling for Deck.GL",
+            "No Python layer management"
+          ],
+          "required_apis": ["DeckGLLayer", "LayerToggleControl"],
+          "phase": "phase_3",
+          "priority": "medium",
+          "estimated_effort": "4-6 days",
+          "status": "planned",
+          "assigned_to": null,
+          "completion_date": null,
+          "notes": "Depends on DeckGLLayer implementation"
+        },
+        "draw-geometries-with-terra-draw": {
+          "test_path": "tests/test_examples/test_draw_geometries_with_terra_draw.py",
+          "current_implementation": "javascript_injection",
+          "issues": [
+            "External Terra Draw library",
+            "No Python drawing tools integration"
+          ],
+          "required_apis": ["TerraDrawWrapper", "DrawingTools"],
+          "phase": "phase_3",
+          "priority": "medium",
+          "estimated_effort": "10-14 days",
+          "status": "planned",
+          "assigned_to": null,
+          "completion_date": null,
+          "notes": "Important for interactive geometry creation"
+        },
+        "draw-polygon-with-mapbox-gl-draw": {
+          "test_path": "tests/test_examples/test_draw_polygon_with_mapbox_gl_draw.py",
+          "current_implementation": "javascript_injection",
+          "issues": [
+            "Mapbox GL Draw library dependency",
+            "JavaScript-only drawing interface"
+          ],
+          "required_apis": ["MapboxDrawWrapper", "PolygonDrawTool"],
+          "phase": "phase_3",
+          "priority": "medium",
+          "estimated_effort": "8-10 days",
+          "status": "planned",
+          "assigned_to": null,
+          "completion_date": null,
+          "notes": "Alternative to Terra Draw"
+        },
+        "add-an-animated-icon-to-the-map": {
+          "test_path": "tests/test_examples/test_add_an_animated_icon_to_the_map.py",
+          "current_implementation": "javascript_injection",
+          "issues": [
+            "CSS animation with JavaScript timing",
+            "No Python animation API for icons"
+          ],
+          "required_apis": ["AnimatedIcon", "IconAnimation"],
+          "phase": "phase_2",
+          "priority": "medium",
+          "estimated_effort": "3-5 days",
+          "status": "planned",
+          "assigned_to": null,
+          "completion_date": null,
+          "notes": "Visual enhancement feature"
+        },
+        "update-a-feature-in-realtime": {
+          "test_path": "tests/test_examples/test_update_a_feature_in_realtime.py",
+          "current_implementation": "javascript_injection",
+          "issues": [
+            "JavaScript interval-based updates",
+            "No Python real-time data API"
+          ],
+          "required_apis": ["RealTimeDataSource", "DataUpdateLoop"],
+          "phase": "phase_2",
+          "priority": "high",
+          "estimated_effort": "6-8 days",
+          "status": "planned",
+          "assigned_to": null,
+          "completion_date": null,
+          "notes": "Critical for live data applications"
+        },
+        "sync-movement-of-multiple-maps": {
+          "test_path": "tests/test_examples/test_sync_movement_of_multiple_maps.py",
+          "current_implementation": "javascript_injection",
+          "issues": [
+            "JavaScript event synchronization",
+            "Multiple map instance management"
+          ],
+          "required_apis": ["MapSynchronizer", "MultiMapContainer"],
+          "phase": "phase_2",
+          "priority": "medium",
+          "estimated_effort": "8-10 days",
+          "status": "planned",
+          "assigned_to": null,
+          "completion_date": null,
+          "notes": "Advanced feature for comparative views"
+        },
+        "pmtiles-source-and-protocol": {
+          "test_path": "tests/test_examples/test_pmtiles_source_and_protocol.py",
+          "current_implementation": "javascript_injection",
+          "issues": [
+            "JavaScript protocol registration",
+            "No Python PMTiles support"
+          ],
+          "required_apis": ["PMTilesProtocol", "PMTilesSource"],
+          "phase": "phase_3",
+          "priority": "medium",
+          "estimated_effort": "6-9 days",
+          "status": "planned",
+          "assigned_to": null,
+          "completion_date": null,
+          "notes": "Important for efficient tile delivery"
+        },
+        "use-addprotocol-to-transform-feature-properties": {
+          "test_path": "tests/test_examples/test_use_addprotocol_to_transform_feature_properties.py",
+          "current_implementation": "javascript_injection",
+          "issues": [
+            "Custom protocol implementation in JavaScript",
+            "No Python protocol extension API"
+          ],
+          "required_apis": ["ProtocolExtension", "FeatureTransformer"],
+          "phase": "phase_3",
+          "priority": "lower",
+          "estimated_effort": "10-12 days",
+          "status": "planned",
+          "assigned_to": null,
+          "completion_date": null,
+          "notes": "Advanced data transformation feature"
+        },
+        "geocode-with-nominatim": {
+          "test_path": "tests/test_examples/test_geocode_with_nominatim.py",
+          "current_implementation": "javascript_injection",
+          "issues": [
+            "JavaScript API calls to Nominatim",
+            "No Python geocoding integration"
+          ],
+          "required_apis": ["GeocodingService", "NominatimGeocoder"],
+          "phase": "phase_2",
+          "priority": "medium",
+          "estimated_effort": "4-6 days",
+          "status": "planned",
+          "assigned_to": null,
+          "completion_date": null,
+          "notes": "Useful for address-based navigation"
+        },
+        "disable-map-rotation": {
+          "test_path": "tests/test_examples/test_disable_map_rotation.py",
+          "current_implementation": "javascript_injection",
+          "issues": [
+            "JavaScript map option modification",
+            "Should be simple constructor parameter"
+          ],
+          "required_apis": ["Map(rotation_enabled=False)"],
+          "phase": "phase_1",
+          "priority": "low",
+          "estimated_effort": "1 day",
+          "status": "planned",
+          "assigned_to": null,
+          "completion_date": null,
+          "notes": "Simple configuration option"
+        },
+        "view-local-geojson": {
+          "test_path": "tests/test_examples/test_view_local_geojson.py",
+          "current_implementation": "javascript_injection",
+          "issues": [
+            "JavaScript file loading",
+            "No Python local file handling"
+          ],
+          "required_apis": ["LocalFileLoader", "GeoJSONLoader"],
+          "phase": "phase_2",
+          "priority": "medium",
+          "estimated_effort": "3-4 days",
+          "status": "planned",
+          "assigned_to": null,
+          "completion_date": null,
+          "notes": "Important for local data workflows"
+        },
+        "view-local-geojson-experimental": {
+          "test_path": "tests/test_examples/test_view_local_geojson.py",
+          "current_implementation": "javascript_injection",
+          "issues": [
+            "Experimental local file handling",
+            "Similar to view-local-geojson"
+          ],
+          "required_apis": ["LocalFileLoader", "ExperimentalGeoJSONLoader"],
+          "phase": "phase_2",
+          "priority": "low",
+          "estimated_effort": "2-3 days",
+          "status": "planned",
+          "assigned_to": null,
+          "completion_date": null,
+          "notes": "Variant of local GeoJSON loading"
+        },
+        "zoom-and-planet-size-relation-on-globe": {
+          "test_path": "tests/test_examples/test_zoom_and_planet_size_relation_on_globe.py",
+          "current_implementation": "javascript_injection",
+          "issues": [
+            "JavaScript zoom event handling",
+            "No Python globe interaction API"
+          ],
+          "required_apis": ["GlobeInteraction", "ZoomHandler"],
+          "phase": "phase_2",
+          "priority": "low",
+          "estimated_effort": "4-5 days",
+          "status": "planned",
+          "assigned_to": null,
+          "completion_date": null,
+          "notes": "Globe-specific interaction feature"
+        }
+      }
+    },
+    "mixed_approach": {
+      "count": 20,
+      "description": "Examples that use both Python API methods AND JavaScript injection",
+      "examples": {
+        "animate-a-point-along-a-route": {
+          "test_path": "tests/test_examples/test_animate_a_point_along_a_route.py",
+          "current_implementation": "mixed",
+          "python_apis_used": ["AnimationLoop", "layers.LineLayer", "layers.SymbolLayer"],
+          "javascript_issues": [
+            "Uses external Turf.js library",
+            "JavaScript for route calculation",
+            "Custom button creation with JavaScript"
+          ],
+          "improvement_plan": [
+            "Implement route calculation in Python",
+            "Create proper ButtonControl",
+            "Enhance AnimationLoop for route following"
+          ],
+          "required_apis": ["RouteCalculator", "ButtonControl", "Enhanced AnimationLoop"],
+          "phase": "phase_2",
+          "priority": "high",
+          "estimated_effort": "6-8 days",
+          "status": "planned",
+          "assigned_to": null,
+          "completion_date": null,
+          "notes": "Good example of mixed approach - shows potential for improvement"
+        },
+        "create-a-hover-effect": {
+          "test_path": "tests/test_examples/test_create_a_hover_effect.py",
+          "current_implementation": "mixed",
+          "python_apis_used": ["layers", "sources"],
+          "javascript_issues": [
+            "JavaScript hover event handling",
+            "Custom feature highlighting logic"
+          ],
+          "improvement_plan": [
+            "Implement Map.on_hover() API",
+            "Create HoverEffect helper class"
+          ],
+          "required_apis": ["Map.on_hover()", "HoverEffect"],
+          "phase": "phase_1",
+          "priority": "high",
+          "estimated_effort": "4-5 days",
+          "status": "planned",
+          "assigned_to": null,
+          "completion_date": null,
+          "notes": "Common interaction pattern"
+        },
+        "create-a-time-slider": {
+          "test_path": "tests/test_examples/test_create_a_time_slider.py",
+          "current_implementation": "mixed",
+          "python_apis_used": ["layers", "sources"],
+          "javascript_issues": [
+            "JavaScript slider control creation",
+            "Custom time filtering logic"
+          ],
+          "improvement_plan": [
+            "Create TimeSliderControl",
+            "Implement temporal filtering API"
+          ],
+          "required_apis": ["TimeSliderControl", "TemporalFilter"],
+          "phase": "phase_2",
+          "priority": "medium",
+          "estimated_effort": "8-10 days",
+          "status": "planned",
+          "assigned_to": null,
+          "completion_date": null,
+          "notes": "Important for temporal data visualization"
+        },
+        "add-a-custom-layer-with-tiles-to-a-globe": {
+          "test_path": "tests/test_examples/test_add_a_custom_layer_with_tiles_to_a_globe.py",
+          "current_implementation": "mixed",
+          "python_apis_used": ["sources"],
+          "javascript_issues": [
+            "Custom layer implementation in JavaScript",
+            "Globe-specific rendering logic"
+          ],
+          "improvement_plan": [
+            "Create CustomGlobeLayer class",
+            "Implement proper globe tile handling"
+          ],
+          "required_apis": ["CustomGlobeLayer", "GlobeTileRenderer"],
+          "phase": "phase_3",
+          "priority": "medium",
+          "estimated_effort": "10-15 days",
+          "status": "planned",
+          "assigned_to": null,
+          "completion_date": null,
+          "notes": "Advanced globe customization"
+        },
+        "add-a-video": {
+          "test_path": "tests/test_examples/test_add_a_video.py",
+          "current_implementation": "mixed",
+          "python_apis_used": ["layers", "sources"],
+          "javascript_issues": [
+            "Video element creation and control",
+            "Custom video source handling"
+          ],
+          "improvement_plan": [
+            "Create VideoLayer class",
+            "Implement video source management"
+          ],
+          "required_apis": ["VideoLayer", "VideoSource"],
+          "phase": "phase_2",
+          "priority": "medium",
+          "estimated_effort": "6-8 days",
+          "status": "planned",
+          "assigned_to": null,
+          "completion_date": null,
+          "notes": "Multimedia content integration"
+        },
+        "add-live-realtime-data": {
+          "test_path": "tests/test_examples/test_add_live_realtime_data.py",
+          "current_implementation": "mixed", 
+          "python_apis_used": ["sources"],
+          "javascript_issues": [
+            "JavaScript interval-based data fetching",
+            "Custom data update logic"
+          ],
+          "improvement_plan": [
+            "Create LiveDataSource class",
+            "Implement automatic update mechanism"
+          ],
+          "required_apis": ["LiveDataSource", "DataUpdateManager"],
+          "phase": "phase_2",
+          "priority": "high",
+          "estimated_effort": "8-10 days",
+          "status": "planned",
+          "assigned_to": null,
+          "completion_date": null,
+          "notes": "Critical for real-time applications"
+        },
+        "change-a-layers-color-with-buttons": {
+          "test_path": "tests/test_examples/test_change_a_layers_color_with_buttons.py",
+          "current_implementation": "mixed",
+          "python_apis_used": ["layers"],
+          "javascript_issues": [
+            "Button creation with JavaScript",
+            "Direct layer paint property modification"
+          ],
+          "improvement_plan": [
+            "Create ColorPickerControl",
+            "Implement layer style management API"
+          ],
+          "required_apis": ["ColorPickerControl", "LayerStyleManager"],
+          "phase": "phase_1",
+          "priority": "medium",
+          "estimated_effort": "4-6 days",
+          "status": "planned",
+          "assigned_to": null,
+          "completion_date": null,
+          "notes": "Interactive styling feature"
+        },
+        "filter-symbols-by-text-input": {
+          "test_path": "tests/test_examples/test_filter_symbols_by_text_input.py",
+          "current_implementation": "mixed",
+          "python_apis_used": ["layers"],
+          "javascript_issues": [
+            "Text input creation with JavaScript",
+            "Custom filtering logic"
+          ],
+          "improvement_plan": [
+            "Create TextFilterControl",
+            "Implement filter expression helpers"
+          ],
+          "required_apis": ["TextFilterControl", "FilterExpression"],
+          "phase": "phase_1",
+          "priority": "medium",
+          "estimated_effort": "4-5 days",
+          "status": "planned",
+          "assigned_to": null,
+          "completion_date": null,
+          "notes": "Common data filtering pattern"
+        },
+        "measure-distances": {
+          "test_path": "tests/test_examples/test_measure_distances.py",
+          "current_implementation": "mixed",
+          "python_apis_used": ["drawing tools"],
+          "javascript_issues": [
+            "Custom measurement logic",
+            "Distance calculation in JavaScript"
+          ],
+          "improvement_plan": [
+            "Create MeasurementTool class",
+            "Implement geometry calculations in Python"
+          ],
+          "required_apis": ["MeasurementTool", "GeometryCalculator"],
+          "phase": "phase_2",
+          "priority": "medium",
+          "estimated_effort": "6-8 days",
+          "status": "planned",
+          "assigned_to": null,
+          "completion_date": null,
+          "notes": "Useful analysis tool"
+        }
+      }
+    },
+    "proper_api_only": {
+      "count": 55,
+      "description": "Examples that demonstrate the desired implementation approach using only Python APIs",
+      "status": "completed",
+      "examples_overview": [
+        "Basic map display and configuration",
+        "Layer management (Line, Fill, Circle, Symbol)",
+        "Source management (GeoJSON, Vector, Raster)",
+        "3D terrain and building extrusion",
+        "Clustering and heatmaps",
+        "Advanced styling with expressions",
+        "Popup and marker functionality",
+        "Globe projection features"
+      ],
+      "notes": "These examples serve as reference implementations for the desired API usage patterns"
+    },
+    "other_patterns": {
+      "count": 22,
+      "description": "Examples with various patterns or unclear implementation status",
+      "requires_investigation": true,
+      "notes": "These examples need detailed analysis to determine proper categorization and improvement needs"
+    }
+  },
+  "api_requirements": {
+    "navigation": {
+      "apis": [
+        "Map.fly_to(center, zoom, duration)",
+        "Map.ease_to(center, zoom, duration)", 
+        "Map.pan_to(center, duration)",
+        "Map.jump_to_sequence(locations, interval)",
+        "Map.animate_camera_around(center, radius, duration)"
+      ],
+      "priority": "high",
+      "phase": "phase_1"
+    },
+    "event_handling": {
+      "apis": [
+        "Map.on_click(callback)",
+        "Map.on_hover(callback)",
+        "Map.on_mousemove(callback)",
+        "Map.query_features_at_point(point)",
+        "Map.on_zoom(callback)"
+      ],
+      "priority": "high", 
+      "phase": "phase_1"
+    },
+    "controls": {
+      "apis": [
+        "ButtonControl(label, action)",
+        "ToggleControl(label, on_action, off_action)",
+        "SliderControl(min, max, step, callback)",
+        "TextInputControl(placeholder, callback)",
+        "ColorPickerControl(callback)"
+      ],
+      "priority": "high",
+      "phase": "phase_1"
+    },
+    "animation": {
+      "apis": [
+        "Enhanced AnimationLoop",
+        "RouteAnimation",
+        "IconAnimation", 
+        "CameraAnimation"
+      ],
+      "priority": "medium",
+      "phase": "phase_2"
+    },
+    "data_handling": {
+      "apis": [
+        "RealTimeDataSource",
+        "LiveDataSource",
+        "LocalFileLoader",
+        "RESTDataSource"
+      ],
+      "priority": "medium",
+      "phase": "phase_2"
+    },
+    "external_libraries": {
+      "apis": [
+        "ThreeJSLayer",
+        "DeckGLLayer", 
+        "TerraDrawWrapper",
+        "PMTilesProtocol"
+      ],
+      "priority": "lower",
+      "phase": "phase_3"
+    }
+  },
+  "testing_strategy": {
+    "current_status": "All 123 examples pass tests but validate HTML generation only",
+    "improvement_needed": [
+      "Add API functionality tests",
+      "Test Python API usage patterns",
+      "Validate JavaScript reduction",
+      "Performance benchmarking"
+    ],
+    "test_categories": [
+      "unit_tests_for_new_apis",
+      "integration_tests_for_examples", 
+      "regression_tests_for_conversions",
+      "performance_tests"
+    ]
+  },
+  "migration_strategy": {
+    "approach": "incremental_improvement",
+    "steps": [
+      {
+        "step": 1,
+        "title": "Implement Core APIs",
+        "description": "Create basic navigation and event handling APIs",
+        "duration": "1 month"
+      },
+      {
+        "step": 2,
+        "title": "Convert High-Priority Examples", 
+        "description": "Convert 10-15 most important JavaScript-only examples",
+        "duration": "2 months"
+      },
+      {
+        "step": 3,
+        "title": "Enhance Mixed Examples",
+        "description": "Improve mixed-approach examples",
+        "duration": "2 months"
+      },
+      {
+        "step": 4,
+        "title": "Advanced Integration",
+        "description": "Implement external library wrappers",
+        "duration": "3 months"
+      }
+    ],
+    "success_criteria": [
+      "Reduce JavaScript injection usage from 37.4% to <10%",
+      "Increase proper API usage from 44.7% to >80%",
+      "Maintain 100% example coverage",
+      "Improve Python integration and reusability"
+    ]
+  },
+  "resources": {
+    "documentation": [
+      "JAVASCRIPT_INJECTION_ANALYSIS.md",
+      "tests/test_examples/ directory",
+      "maplibreum/ API modules"
+    ],
+    "reference_implementations": [
+      "AnimationLoop class in animation.py",
+      "Layer classes in layers.py",
+      "Control classes in controls.py"
+    ],
+    "external_references": [
+      "MapLibre GL JS API documentation",
+      "Three.js documentation",
+      "Deck.GL documentation"
+    ]
+  }
+}
