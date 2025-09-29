@@ -1303,6 +1303,37 @@ class Map:
 
         return self.on("mouseout", callback, **kwargs)
 
+    def query_rendered_features_at_point(self, point, layers=None, filter=None):
+        """Create a JavaScript snippet to query rendered features at a point.
+        
+        This method provides a helper for generating feature query JavaScript
+        that can be used in event handlers.
+        
+        Parameters
+        ----------
+        point : str
+            JavaScript expression for the point (e.g., "event.point").
+        layers : list, optional
+            List of layer IDs to query.
+        filter : dict, optional
+            Filter expression to apply.
+            
+        Returns
+        -------
+        str
+            JavaScript code snippet for querying features.
+        """
+        options = {}
+        if layers is not None:
+            options["layers"] = layers
+        if filter is not None:
+            options["filter"] = filter
+            
+        if options:
+            return f"map.queryRenderedFeatures({point}, {json.dumps(options)})"
+        else:
+            return f"map.queryRenderedFeatures({point})"
+
     # Camera control methods
     def fly_to(self, **options):
         """Queue a MapLibre ``flyTo`` camera animation."""
