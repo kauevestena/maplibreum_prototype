@@ -902,6 +902,43 @@ class Map:
                 raise TypeError(f"{flag} expects a boolean value")
             self.additional_map_options[flag] = value
 
+    def disable_rotation(
+        self,
+        *,
+        drag_rotate=True,
+        touch_zoom_rotate=True,
+        keyboard_rotate=True
+    ):
+        """Disable map rotation interactions.
+        
+        This method provides a Python API alternative to JavaScript injection
+        for disabling rotation controls.
+        
+        Parameters
+        ----------
+        drag_rotate : bool, optional
+            Whether to disable drag rotation (default True).
+        touch_zoom_rotate : bool, optional
+            Whether to disable touch zoom rotation (default True).
+        keyboard_rotate : bool, optional
+            Whether to disable keyboard rotation (default True).
+        """
+        
+        # Add JavaScript to disable rotation after map loads
+        disable_js = []
+        
+        if drag_rotate:
+            disable_js.append("map.dragRotate.disable();")
+        
+        if touch_zoom_rotate:
+            disable_js.append("map.touchZoomRotate.disableRotation();")
+            
+        if keyboard_rotate:
+            disable_js.append("map.keyboard.disableRotation();")
+        
+        if disable_js:
+            self.add_on_load_js("\n".join(disable_js))
+
     def enable_rtl_text_plugin(
         self,
         url="https://unpkg.com/maplibre-gl-rtl-text@latest/dist/maplibre-gl-rtl-text.js",
@@ -1245,6 +1282,26 @@ class Map:
         """Convenience method for move events."""
 
         return self.on("move", callback, **kwargs)
+
+    def on_hover(self, callback, **kwargs):
+        """Convenience method for mouseenter events (hover)."""
+
+        return self.on("mouseenter", callback, **kwargs)
+
+    def on_mousemove(self, callback, **kwargs):
+        """Convenience method for mousemove events."""
+
+        return self.on("mousemove", callback, **kwargs)
+
+    def on_mouseover(self, callback, **kwargs):
+        """Convenience method for mouseover events."""
+
+        return self.on("mouseover", callback, **kwargs)
+
+    def on_mouseout(self, callback, **kwargs):
+        """Convenience method for mouseout events."""
+
+        return self.on("mouseout", callback, **kwargs)
 
     # Camera control methods
     def fly_to(self, **options):
