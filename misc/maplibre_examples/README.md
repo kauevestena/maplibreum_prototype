@@ -111,7 +111,7 @@ import json
 with open('misc/maplibre_examples/status.json') as f:
     data = json.load(f)
 total = len(data)
-implemented = sum(1 for v in data.values() if list(v.values())[0]['task_status'])
+implemented = sum(1 for v in data.values() if v['task_status'])
 print(f'Progress: {implemented}/{total} ({implemented/total*100:.1f}%)')
 "
 
@@ -121,10 +121,10 @@ import json
 with open('misc/maplibre_examples/status.json') as f:
     data = json.load(f)
 for name, info in data.items():
-    if not list(info.values())[0]['task_status']:
+    if not info['task_status']:
         print(f'Next: {name}')
-        print(f'URL: {list(info.values())[0][\"url\"]}')
-        print(f'File: {list(info.values())[0][\"file_path\"]}')
+        print(f'URL: {info[\"url\"]}')
+        print(f'File: {info[\"file_path\"]}')
         break
 "
 
@@ -158,7 +158,7 @@ When converting JavaScript examples to Python:
 
 ### Coverage Summary
 
-**Current Coverage:** 50/123 examples completed
+**Current Coverage:** 123/123 examples completed
 
 - ✅ Ported `add-a-3d-model-to-globe-using-threejs` leveraging the new
   `Map.add_external_script` helper to load three.js dependencies and attach a
@@ -194,5 +194,5 @@ While the gallery coverage is exhaustive, a few MapLibre capabilities still requ
 
 We're tracking towards the **123/123 coverage** milestone—complete feature
 parity with the official MapLibre GL JS gallery while preserving a templated,
-reproducible HTML/JS pipeline. Current parity stands at **50/123** with the
+reproducible HTML/JS pipeline. Current parity stands at **123/123** with the
 three.js globe example now automated.
