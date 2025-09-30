@@ -202,6 +202,42 @@ geocoder.on('result', function(e) {
     }
 });
 map.addControl(geocoder, "{{ ctrl.position }}");
+{% elif ctrl.type == "button" %}
+// Create button control
+{
+    const buttonEl = document.createElement('button');
+    buttonEl.id = '{{ ctrl.options.id }}';
+    buttonEl.className = '{{ ctrl.options.css_class or "maplibreum-button" }}';
+    buttonEl.textContent = '{{ ctrl.options.label }}';
+    {% if ctrl.options.style %}
+    {% for key, value in ctrl.options.style.items() %}
+    buttonEl.style.{{ key }} = '{{ value }}';
+    {% endfor %}
+    {% endif %}
+    
+    const buttonControl = {
+        onAdd: function(map) {
+            this._map = map;
+            this._container = document.createElement('div');
+            this._container.className = 'maplibregl-ctrl maplibregl-ctrl-group';
+            this._container.appendChild(buttonEl);
+            
+            buttonEl.addEventListener('click', function() {
+                {% if ctrl.options.onclick_js %}
+                {{ ctrl.options.onclick_js | safe }}
+                {% endif %}
+            });
+            
+            return this._container;
+        },
+        onRemove: function() {
+            this._container.parentNode.removeChild(this._container);
+            this._map = undefined;
+        }
+    };
+    
+    map.addControl(buttonControl, "{{ ctrl.position }}");
+}
 {% elif ctrl.type == "terrain" %}
 map.addControl(new maplibregl.TerrainControl({{ ctrl.options | tojson }}), "{{ ctrl.position }}");
 {% elif ctrl.type == "globe" %}
