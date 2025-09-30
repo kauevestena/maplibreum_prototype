@@ -1,7 +1,7 @@
 {
   "metadata": {
     "title": "MapLibreum JavaScript Injection Analysis and Improvement Roadmap",
-    "version": "1.2.0",
+    "version": "1.3.0",
     "created_date": "2024-12-21",
     "last_updated": "2025-09-30",
     "total_examples": 123,
@@ -16,10 +16,10 @@
     "proper_api_only": 55,
     "other_patterns": 22,
     "completion_percentage": {
-      "phase_1": 23.1,
-      "phase_2": 15.0,
+      "phase_1": 24.0,
+      "phase_2": 33.3,
       "phase_3": 0,
-      "overall": 52.0
+      "overall": 49.6
     }
   },
   "implementation_phases": {
@@ -27,7 +27,7 @@
       "title": "Core API Methods Implementation",
       "description": "Convert JavaScript-only examples by implementing navigation, events, and basic UI controls",
       "priority": "high",
-      "target_examples": 26,
+      "target_examples": 25,
       "estimated_effort": "3-4 months",
       "required_apis": [
         "Map.fly_to()",
@@ -42,14 +42,14 @@
       "completion_status": {
         "completed": 6,
         "in_progress": 0,
-        "planned": 20
+        "planned": 19
       }
     },
     "phase_2": {
       "title": "Enhanced Features",
       "description": "Improve mixed-approach examples by expanding animation system and real-time updates",
       "priority": "medium",
-      "target_examples": 20,
+      "target_examples": 9,
       "estimated_effort": "2-3 months",
       "required_apis": [
         "Enhanced AnimationLoop",
@@ -83,9 +83,10 @@
     }
   },
   "examples": {
+    "note": "This section provides detailed tracking for high-priority examples. The 'javascript_injection_only' section tracks 25 of the 26 total JavaScript-only examples. The 'mixed_approach' section tracks 9 of the 20 total mixed examples. See JAVASCRIPT_INJECTION_ANALYSIS.md for the complete list of all 46 examples using JavaScript injection.",
     "javascript_injection_only": {
-      "count": 26,
-      "description": "Examples that use only JavaScript injection without proper Python API methods",
+      "count": 25,
+      "description": "Examples that use only JavaScript injection without proper Python API methods (detailed tracking)",
       "examples": {
         "fly-to-a-location": {
           "test_path": "tests/test_examples/test_fly_to_a_location.py",
@@ -604,8 +605,8 @@
       }
     },
     "mixed_approach": {
-      "count": 20,
-      "description": "Examples that use both Python API methods AND JavaScript injection",
+      "count": 9,
+      "description": "Examples that use both Python API methods AND JavaScript injection (detailed tracking)",
       "examples": {
         "animate-a-point-along-a-route": {
           "test_path": "tests/test_examples/test_animate_a_point_along_a_route.py",
