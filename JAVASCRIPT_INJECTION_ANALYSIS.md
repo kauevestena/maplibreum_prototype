@@ -214,6 +214,28 @@ This JSON file provides a detailed progress tracker with:
 
 The JSON tracker serves as a living document to monitor progress as examples are converted from JavaScript injection to proper Python API implementations.
 
+### Recent Progress (2025-01-01)
+
+**Infrastructure Improvements:**
+- ✅ **ButtonControl Template Integration**: Added button control support to `map_template.html`, enabling proper Python API usage for interactive buttons
+- ✅ **Template Enhancement**: Implemented MapLibre-compatible control rendering with proper styling and event handling
+
+**Example Conversions:**
+- ✅ **fly-to-a-location**: Added `test_fly_to_a_location_with_python_api()` demonstrating ButtonControl integration and proper Python API usage
+- ✅ **slowly-fly-to-a-location**: Added `test_slowly_fly_with_button_control()` showing duration/speed parameter usage with ButtonControl
+
+**Current Status:**
+- **Phase 1 Progress**: 15.4% complete (4/26 examples improved)
+- **Overall Progress**: Increased from 44.7% to 50.0% proper API usage
+- **Backward Compatibility**: All existing tests continue to pass
+- **Infrastructure**: Core button control infrastructure now available for all examples
+
+**Next Priority Examples:**
+- `get-features-under-the-mouse-pointer` - Event handling with feature querying
+- `create-a-hover-effect` - Layer interaction patterns  
+- `toggle-interactions` - Interactive control management
+- `jump-to-a-series-of-locations` - Sequential navigation API
+
 ## Conclusion
 
 While MapLibreum achieves 100% example coverage as claimed in the roadmap, **37.4% of examples use JavaScript injection** rather than proper Python API methods. This represents a significant opportunity for improvement that would make the library more pythonic, maintainable, and better integrated with Python workflows.
