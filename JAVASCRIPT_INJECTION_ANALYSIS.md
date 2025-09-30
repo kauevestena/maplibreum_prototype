@@ -230,13 +230,13 @@ The JSON tracker serves as a living document to monitor progress as examples are
 - ✅ **toggle-interactions**: Added `test_toggle_interactions_with_python_api()` using ToggleControl for comprehensive interaction management
 
 **Current Status:**
-- **Phase 1 Progress**: 23.1% complete (6/26 examples improved)
-- **Phase 2 Progress**: 5.0% complete (1/20 examples improved)
-- **Overall Progress**: Increased from 44.7% to 58.5% proper API usage
+- **Phase 1 Progress**: 24.0% complete (6/25 examples improved)
+- **Phase 2 Progress**: 5.0% complete (1/9 examples improved - create-a-hover-effect)
+- **Overall Progress**: Increased from 44.7% to ~47% proper API usage
 - **Backward Compatibility**: All existing tests continue to pass
 - **Infrastructure**: Core button control infrastructure now available for all examples
 
-### Recent Progress (Current Date)
+### Recent Progress (2025-09-30)
 
 **Infrastructure Improvements:**
 - ✅ **TextFilterControl Implementation**: Added text filter control with multiple match modes (contains, startswith, exact)
@@ -248,11 +248,15 @@ The JSON tracker serves as a living document to monitor progress as examples are
 - ✅ **change-a-layers-color-with-buttons**: Added `test_change_a_layers_color_with_python_api()` demonstrating LayerColorControl for interactive styling
 
 **Current Status:**
-- **Phase 1 Progress**: 23.1% complete (6/26 examples improved)
-- **Phase 2 Progress**: 15.0% complete (3/20 examples improved)
-- **Overall Progress**: Increased from 44.7% to 52.0% proper API usage
-- **Backward Compatibility**: All 144 tests pass (2 new tests added)
+- **Phase 1 Progress**: 24.0% complete (6/25 examples improved)
+- **Phase 2 Progress**: 33.3% complete (3/9 examples improved)
+- **Overall Progress**: Increased from 44.7% to 49.6% proper API usage
+- **Backward Compatibility**: All 144 tests pass (including new Python API tests)
 - **Infrastructure**: Text filtering and layer color controls now available for all examples
+
+**Completed Examples:**
+- Phase 1: fly-to-a-location, slowly-fly-to-a-location, get-coordinates-of-the-mouse-pointer, get-features-under-the-mouse-pointer, disable-map-rotation, toggle-interactions
+- Phase 2: create-a-hover-effect, change-a-layers-color-with-buttons, filter-symbols-by-text-input
 
 **Next Priority Examples:**
 - `jump-to-a-series-of-locations` - Sequential navigation API
