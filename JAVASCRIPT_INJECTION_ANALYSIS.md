@@ -223,18 +223,23 @@ The JSON tracker serves as a living document to monitor progress as examples are
 **Example Conversions:**
 - ✅ **fly-to-a-location**: Added `test_fly_to_a_location_with_python_api()` demonstrating ButtonControl integration and proper Python API usage
 - ✅ **slowly-fly-to-a-location**: Added `test_slowly_fly_with_button_control()` showing duration/speed parameter usage with ButtonControl
+- ✅ **get-coordinates-of-the-mouse-pointer**: Added `test_get_coordinates_with_python_api()` demonstrating event handling with coordinate display
+- ✅ **get-features-under-the-mouse-pointer**: Added `test_get_features_with_python_api()` showing feature querying and mousemove event integration
+- ✅ **disable-map-rotation**: Added `test_disable_map_rotation_with_python_api()` with granular rotation control using `Map.disable_rotation()`
+- ✅ **create-a-hover-effect**: Added `test_create_a_hover_effect_with_python_api()` demonstrating cleaner event listener patterns for feature state management
 
 **Current Status:**
-- **Phase 1 Progress**: 15.4% complete (4/26 examples improved)
-- **Overall Progress**: Increased from 44.7% to 50.0% proper API usage
+- **Phase 1 Progress**: 19.2% complete (5/26 examples improved)
+- **Phase 2 Progress**: 5.0% complete (1/20 examples improved)
+- **Overall Progress**: Increased from 44.7% to 56.1% proper API usage
 - **Backward Compatibility**: All existing tests continue to pass
 - **Infrastructure**: Core button control infrastructure now available for all examples
 
 **Next Priority Examples:**
-- `get-features-under-the-mouse-pointer` - Event handling with feature querying
-- `create-a-hover-effect` - Layer interaction patterns  
-- `toggle-interactions` - Interactive control management
 - `jump-to-a-series-of-locations` - Sequential navigation API
+- `toggle-interactions` - Interactive control management
+- `animate-map-camera-around-a-point` - Advanced camera animations
+- `navigate-the-map-with-game-like-controls` - Custom keyboard controls
 
 ## Conclusion
 
