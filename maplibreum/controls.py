@@ -191,3 +191,81 @@ class ToggleControl:
             "initial_state": self.initial_state,
             "position": self.position
         }
+
+
+class TextFilterControl:
+    """A text input control for filtering map layers or features.
+    
+    This control provides an alternative to JavaScript injection for
+    text-based filtering of layers.
+    """
+    
+    def __init__(self, layer_ids, placeholder="Filter by name", 
+                 position="top-right", match_mode="contains"):
+        """Initialize a TextFilterControl.
+        
+        Parameters
+        ----------
+        layer_ids : list of str
+            List of layer IDs to filter.
+        placeholder : str, optional
+            Placeholder text for the input field.
+        position : str, optional
+            Position on the map (e.g. 'top-right', 'top-left').
+        match_mode : str, optional
+            How to match the filter text: 'contains', 'startswith', or 'exact'.
+        """
+        self.layer_ids = layer_ids
+        self.placeholder = placeholder
+        self.position = position
+        self.match_mode = match_mode
+        self.id = f"text_filter_{uuid.uuid4().hex}" if 'uuid' in globals() else f"text_filter_{hash(placeholder)}"
+        
+    def to_dict(self):
+        """Serialize configuration for template usage."""
+        return {
+            "id": self.id,
+            "layer_ids": self.layer_ids,
+            "placeholder": self.placeholder,
+            "position": self.position,
+            "match_mode": self.match_mode
+        }
+
+
+class LayerColorControl:
+    """A control for changing layer colors interactively.
+    
+    This control provides an alternative to JavaScript injection for
+    changing layer paint properties with a color picker interface.
+    """
+    
+    def __init__(self, layers, colors, position="top-left", title="Select layer"):
+        """Initialize a LayerColorControl.
+        
+        Parameters
+        ----------
+        layers : dict
+            Dictionary mapping layer IDs to display names.
+            Example: {'water': 'Water', 'building-top': 'Buildings'}
+        colors : list of str
+            List of color hex codes to use as swatches.
+        position : str, optional
+            Position on the map (e.g. 'top-left', 'top-right').
+        title : str, optional
+            Title text for the control.
+        """
+        self.layers = layers
+        self.colors = colors
+        self.position = position
+        self.title = title
+        self.id = f"layer_color_{uuid.uuid4().hex}" if 'uuid' in globals() else f"layer_color_{hash(title)}"
+        
+    def to_dict(self):
+        """Serialize configuration for template usage."""
+        return {
+            "id": self.id,
+            "layers": self.layers,
+            "colors": self.colors,
+            "position": self.position,
+            "title": self.title
+        }

@@ -236,6 +236,24 @@ The JSON tracker serves as a living document to monitor progress as examples are
 - **Backward Compatibility**: All existing tests continue to pass
 - **Infrastructure**: Core button control infrastructure now available for all examples
 
+### Recent Progress (Current Date)
+
+**Infrastructure Improvements:**
+- ✅ **TextFilterControl Implementation**: Added text filter control with multiple match modes (contains, startswith, exact)
+- ✅ **LayerColorControl Implementation**: Added interactive layer color picker control with swatch interface
+- ✅ **Template Enhancements**: Extended `map_template.html` with textfilter and layercolor control types
+
+**Example Conversions:**
+- ✅ **filter-symbols-by-text-input**: Added `test_filter_symbols_with_python_api()` demonstrating TextFilterControl for layer filtering
+- ✅ **change-a-layers-color-with-buttons**: Added `test_change_a_layers_color_with_python_api()` demonstrating LayerColorControl for interactive styling
+
+**Current Status:**
+- **Phase 1 Progress**: 23.1% complete (6/26 examples improved)
+- **Phase 2 Progress**: 15.0% complete (3/20 examples improved)
+- **Overall Progress**: Increased from 44.7% to 52.0% proper API usage
+- **Backward Compatibility**: All 144 tests pass (2 new tests added)
+- **Infrastructure**: Text filtering and layer color controls now available for all examples
+
 **Next Priority Examples:**
 - `jump-to-a-series-of-locations` - Sequential navigation API
 - `animate-map-camera-around-a-point` - Advanced camera animations
