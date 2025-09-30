@@ -1,9 +1,9 @@
 {
   "metadata": {
     "title": "MapLibreum JavaScript Injection Analysis and Improvement Roadmap",
-    "version": "1.1.0",
+    "version": "1.2.0",
     "created_date": "2024-12-21",
-    "last_updated": "2025-01-01",
+    "last_updated": "2025-09-30",
     "total_examples": 123,
     "analysis_source": "JAVASCRIPT_INJECTION_ANALYSIS.md",
     "progress_tracker": true,
@@ -17,9 +17,9 @@
     "other_patterns": 22,
     "completion_percentage": {
       "phase_1": 23.1,
-      "phase_2": 5.0, 
+      "phase_2": 15.0,
       "phase_3": 0,
-      "overall": 58.5
+      "overall": 52.0
     }
   },
   "implementation_phases": {
@@ -58,9 +58,9 @@
         "CustomLayer wrappers"
       ],
       "completion_status": {
-        "completed": 1,
+        "completed": 3,
         "in_progress": 0,
-        "planned": 19
+        "planned": 6
       }
     },
     "phase_3": {
@@ -92,10 +92,13 @@
           "current_implementation": "improved",
           "issues": [
             "RESOLVED: ButtonControl integration completed",
-            "RESOLVED: Python API approach demonstrated", 
+            "RESOLVED: Python API approach demonstrated",
             "RESOLVED: Proper control system integration"
           ],
-          "required_apis": ["Map.fly_to()", "ButtonControl"],
+          "required_apis": [
+            "Map.fly_to()",
+            "ButtonControl"
+          ],
           "phase": "phase_1",
           "priority": "high",
           "estimated_effort": "2-3 days",
@@ -118,7 +121,10 @@
             "RESOLVED: Duration and speed parameters demonstrated",
             "RESOLVED: Proper Python API usage patterns"
           ],
-          "required_apis": ["Map.fly_to(duration=)", "ButtonControl"],
+          "required_apis": [
+            "Map.fly_to(duration=)",
+            "ButtonControl"
+          ],
           "phase": "phase_1",
           "priority": "high",
           "estimated_effort": "1-2 days",
@@ -140,7 +146,9 @@
             "Sequential navigation using JavaScript timing",
             "No Python API for location sequences"
           ],
-          "required_apis": ["Map.jump_to_sequence()"],
+          "required_apis": [
+            "Map.jump_to_sequence()"
+          ],
           "phase": "phase_1",
           "priority": "medium",
           "estimated_effort": "3-4 days",
@@ -156,7 +164,9 @@
             "Complex camera animation using JavaScript",
             "No Python API for circular camera movement"
           ],
-          "required_apis": ["Map.animate_camera_around()"],
+          "required_apis": [
+            "Map.animate_camera_around()"
+          ],
           "phase": "phase_1",
           "priority": "medium",
           "estimated_effort": "4-5 days",
@@ -173,7 +183,10 @@
             "RESOLVED: Event handling with mouse coordinate display",
             "RESOLVED: Proper display component integration"
           ],
-          "required_apis": ["Map.add_event_listener()", "CoordinateDisplay"],
+          "required_apis": [
+            "Map.add_event_listener()",
+            "CoordinateDisplay"
+          ],
           "phase": "phase_1",
           "priority": "high",
           "estimated_effort": "3-4 days",
@@ -192,11 +205,14 @@
           "test_path": "tests/test_examples/test_get_features_under_the_mouse_pointer.py",
           "current_implementation": "improved",
           "issues": [
-            "RESOLVED: Python API implementation completed", 
+            "RESOLVED: Python API implementation completed",
             "RESOLVED: Feature querying with mousemove events",
             "RESOLVED: Display component integration"
           ],
-          "required_apis": ["Map.add_event_listener()", "Map.query_features_at_point()"],
+          "required_apis": [
+            "Map.add_event_listener()",
+            "Map.query_features_at_point()"
+          ],
           "phase": "phase_1",
           "priority": "high",
           "estimated_effort": "4-5 days",
@@ -219,7 +235,9 @@
             "RESOLVED: Map.disable_rotation() with granular control",
             "RESOLVED: Alternative map_options approach documented"
           ],
-          "required_apis": ["Map.disable_rotation()"],
+          "required_apis": [
+            "Map.disable_rotation()"
+          ],
           "phase": "phase_1",
           "priority": "low",
           "estimated_effort": "1 day",
@@ -241,7 +259,10 @@
             "Keyboard navigation using JavaScript key handlers",
             "No Python API for custom controls"
           ],
-          "required_apis": ["Map.add_keyboard_navigation()", "CustomControl"],
+          "required_apis": [
+            "Map.add_keyboard_navigation()",
+            "CustomControl"
+          ],
           "phase": "phase_1",
           "priority": "medium",
           "estimated_effort": "5-6 days",
@@ -258,7 +279,10 @@
             "RESOLVED: Interactive control management with proper Python API",
             "RESOLVED: Multiple interaction handlers with individual toggle controls"
           ],
-          "required_apis": ["ToggleControl", "Map.add_control()"],
+          "required_apis": [
+            "ToggleControl",
+            "Map.add_control()"
+          ],
           "phase": "phase_1",
           "priority": "medium",
           "estimated_effort": "2-3 days",
@@ -280,7 +304,10 @@
             "External Three.js library loading",
             "No Python wrapper for 3D models"
           ],
-          "required_apis": ["ThreeJSLayer", "Model3D"],
+          "required_apis": [
+            "ThreeJSLayer",
+            "Model3D"
+          ],
           "phase": "phase_3",
           "priority": "lower",
           "estimated_effort": "10-15 days",
@@ -296,7 +323,10 @@
             "Three.js with globe projection",
             "Complex 3D positioning"
           ],
-          "required_apis": ["ThreeJSLayer", "GlobeProjection3D"],
+          "required_apis": [
+            "ThreeJSLayer",
+            "GlobeProjection3D"
+          ],
           "phase": "phase_3",
           "priority": "lower",
           "estimated_effort": "12-18 days",
@@ -312,7 +342,10 @@
             "Three.js with terrain elevation",
             "Complex elevation-aware positioning"
           ],
-          "required_apis": ["ThreeJSLayer", "TerrainAware3D"],
+          "required_apis": [
+            "ThreeJSLayer",
+            "TerrainAware3D"
+          ],
           "phase": "phase_3",
           "priority": "lower",
           "estimated_effort": "15-20 days",
@@ -328,7 +361,10 @@
             "External Deck.GL library loading",
             "REST API data fetching in JavaScript"
           ],
-          "required_apis": ["DeckGLLayer", "RESTDataSource"],
+          "required_apis": [
+            "DeckGLLayer",
+            "RESTDataSource"
+          ],
           "phase": "phase_3",
           "priority": "medium",
           "estimated_effort": "8-12 days",
@@ -344,7 +380,10 @@
             "JavaScript layer toggling for Deck.GL",
             "No Python layer management"
           ],
-          "required_apis": ["DeckGLLayer", "LayerToggleControl"],
+          "required_apis": [
+            "DeckGLLayer",
+            "LayerToggleControl"
+          ],
           "phase": "phase_3",
           "priority": "medium",
           "estimated_effort": "4-6 days",
@@ -360,7 +399,10 @@
             "External Terra Draw library",
             "No Python drawing tools integration"
           ],
-          "required_apis": ["TerraDrawWrapper", "DrawingTools"],
+          "required_apis": [
+            "TerraDrawWrapper",
+            "DrawingTools"
+          ],
           "phase": "phase_3",
           "priority": "medium",
           "estimated_effort": "10-14 days",
@@ -376,7 +418,10 @@
             "Mapbox GL Draw library dependency",
             "JavaScript-only drawing interface"
           ],
-          "required_apis": ["MapboxDrawWrapper", "PolygonDrawTool"],
+          "required_apis": [
+            "MapboxDrawWrapper",
+            "PolygonDrawTool"
+          ],
           "phase": "phase_3",
           "priority": "medium",
           "estimated_effort": "8-10 days",
@@ -392,7 +437,10 @@
             "CSS animation with JavaScript timing",
             "No Python animation API for icons"
           ],
-          "required_apis": ["AnimatedIcon", "IconAnimation"],
+          "required_apis": [
+            "AnimatedIcon",
+            "IconAnimation"
+          ],
           "phase": "phase_2",
           "priority": "medium",
           "estimated_effort": "3-5 days",
@@ -408,7 +456,10 @@
             "JavaScript interval-based updates",
             "No Python real-time data API"
           ],
-          "required_apis": ["RealTimeDataSource", "DataUpdateLoop"],
+          "required_apis": [
+            "RealTimeDataSource",
+            "DataUpdateLoop"
+          ],
           "phase": "phase_2",
           "priority": "high",
           "estimated_effort": "6-8 days",
@@ -424,7 +475,10 @@
             "JavaScript event synchronization",
             "Multiple map instance management"
           ],
-          "required_apis": ["MapSynchronizer", "MultiMapContainer"],
+          "required_apis": [
+            "MapSynchronizer",
+            "MultiMapContainer"
+          ],
           "phase": "phase_2",
           "priority": "medium",
           "estimated_effort": "8-10 days",
@@ -440,7 +494,10 @@
             "JavaScript protocol registration",
             "No Python PMTiles support"
           ],
-          "required_apis": ["PMTilesProtocol", "PMTilesSource"],
+          "required_apis": [
+            "PMTilesProtocol",
+            "PMTilesSource"
+          ],
           "phase": "phase_3",
           "priority": "medium",
           "estimated_effort": "6-9 days",
@@ -456,7 +513,10 @@
             "Custom protocol implementation in JavaScript",
             "No Python protocol extension API"
           ],
-          "required_apis": ["ProtocolExtension", "FeatureTransformer"],
+          "required_apis": [
+            "ProtocolExtension",
+            "FeatureTransformer"
+          ],
           "phase": "phase_3",
           "priority": "lower",
           "estimated_effort": "10-12 days",
@@ -472,7 +532,10 @@
             "JavaScript API calls to Nominatim",
             "No Python geocoding integration"
           ],
-          "required_apis": ["GeocodingService", "NominatimGeocoder"],
+          "required_apis": [
+            "GeocodingService",
+            "NominatimGeocoder"
+          ],
           "phase": "phase_2",
           "priority": "medium",
           "estimated_effort": "4-6 days",
@@ -481,29 +544,6 @@
           "completion_date": null,
           "notes": "Useful for address-based navigation"
         },
-        "disable-map-rotation": {
-          "test_path": "tests/test_examples/test_disable_map_rotation.py",
-          "current_implementation": "improved",
-          "issues": [
-            "RESOLVED: Python API method implemented",
-            "RESOLVED: Map.disable_rotation() with granular control",
-            "RESOLVED: Alternative map_options approach documented"
-          ],
-          "required_apis": ["Map.disable_rotation()"],
-          "phase": "phase_1",
-          "priority": "low",
-          "estimated_effort": "1 day",
-          "status": "completed",
-          "assigned_to": "copilot",
-          "completion_date": "2025-01-01",
-          "notes": "Added test_disable_map_rotation_with_python_api() with granular control options",
-          "improvements_made": [
-            "Implemented Map.disable_rotation() with selective control",
-            "Added support for drag_rotate, touch_zoom_rotate, keyboard_rotate parameters",
-            "Created alternative map_options approach",
-            "Maintained backward compatibility with JavaScript approach"
-          ]
-        },
         "view-local-geojson": {
           "test_path": "tests/test_examples/test_view_local_geojson.py",
           "current_implementation": "javascript_injection",
@@ -511,7 +551,10 @@
             "JavaScript file loading",
             "No Python local file handling"
           ],
-          "required_apis": ["LocalFileLoader", "GeoJSONLoader"],
+          "required_apis": [
+            "LocalFileLoader",
+            "GeoJSONLoader"
+          ],
           "phase": "phase_2",
           "priority": "medium",
           "estimated_effort": "3-4 days",
@@ -527,7 +570,10 @@
             "Experimental local file handling",
             "Similar to view-local-geojson"
           ],
-          "required_apis": ["LocalFileLoader", "ExperimentalGeoJSONLoader"],
+          "required_apis": [
+            "LocalFileLoader",
+            "ExperimentalGeoJSONLoader"
+          ],
           "phase": "phase_2",
           "priority": "low",
           "estimated_effort": "2-3 days",
@@ -543,7 +589,10 @@
             "JavaScript zoom event handling",
             "No Python globe interaction API"
           ],
-          "required_apis": ["GlobeInteraction", "ZoomHandler"],
+          "required_apis": [
+            "GlobeInteraction",
+            "ZoomHandler"
+          ],
           "phase": "phase_2",
           "priority": "low",
           "estimated_effort": "4-5 days",
@@ -561,7 +610,11 @@
         "animate-a-point-along-a-route": {
           "test_path": "tests/test_examples/test_animate_a_point_along_a_route.py",
           "current_implementation": "mixed",
-          "python_apis_used": ["AnimationLoop", "layers.LineLayer", "layers.SymbolLayer"],
+          "python_apis_used": [
+            "AnimationLoop",
+            "layers.LineLayer",
+            "layers.SymbolLayer"
+          ],
           "javascript_issues": [
             "Uses external Turf.js library",
             "JavaScript for route calculation",
@@ -572,7 +625,11 @@
             "Create proper ButtonControl",
             "Enhance AnimationLoop for route following"
           ],
-          "required_apis": ["RouteCalculator", "ButtonControl", "Enhanced AnimationLoop"],
+          "required_apis": [
+            "RouteCalculator",
+            "ButtonControl",
+            "Enhanced AnimationLoop"
+          ],
           "phase": "phase_2",
           "priority": "high",
           "estimated_effort": "6-8 days",
@@ -584,7 +641,12 @@
         "create-a-hover-effect": {
           "test_path": "tests/test_examples/test_create_a_hover_effect.py",
           "current_implementation": "improved",
-          "python_apis_used": ["add_source", "add_fill_layer", "add_layer", "add_event_listener"],
+          "python_apis_used": [
+            "add_source",
+            "add_fill_layer",
+            "add_layer",
+            "add_event_listener"
+          ],
           "javascript_issues": [
             "RESOLVED: Event handling improved with cleaner Python API",
             "RESOLVED: Hover effect logic organized with proper event listeners"
@@ -593,7 +655,10 @@
             "COMPLETED: Enhanced event listener usage patterns",
             "COMPLETED: Demonstrated cleaner Python API approach"
           ],
-          "required_apis": ["Map.add_event_listener()", "HoverEffect"],
+          "required_apis": [
+            "Map.add_event_listener()",
+            "HoverEffect"
+          ],
           "phase": "phase_1",
           "priority": "high",
           "estimated_effort": "4-5 days",
@@ -611,7 +676,10 @@
         "create-a-time-slider": {
           "test_path": "tests/test_examples/test_create_a_time_slider.py",
           "current_implementation": "mixed",
-          "python_apis_used": ["layers", "sources"],
+          "python_apis_used": [
+            "layers",
+            "sources"
+          ],
           "javascript_issues": [
             "JavaScript slider control creation",
             "Custom time filtering logic"
@@ -620,7 +688,10 @@
             "Create TimeSliderControl",
             "Implement temporal filtering API"
           ],
-          "required_apis": ["TimeSliderControl", "TemporalFilter"],
+          "required_apis": [
+            "TimeSliderControl",
+            "TemporalFilter"
+          ],
           "phase": "phase_2",
           "priority": "medium",
           "estimated_effort": "8-10 days",
@@ -632,7 +703,9 @@
         "add-a-custom-layer-with-tiles-to-a-globe": {
           "test_path": "tests/test_examples/test_add_a_custom_layer_with_tiles_to_a_globe.py",
           "current_implementation": "mixed",
-          "python_apis_used": ["sources"],
+          "python_apis_used": [
+            "sources"
+          ],
           "javascript_issues": [
             "Custom layer implementation in JavaScript",
             "Globe-specific rendering logic"
@@ -641,7 +714,10 @@
             "Create CustomGlobeLayer class",
             "Implement proper globe tile handling"
           ],
-          "required_apis": ["CustomGlobeLayer", "GlobeTileRenderer"],
+          "required_apis": [
+            "CustomGlobeLayer",
+            "GlobeTileRenderer"
+          ],
           "phase": "phase_3",
           "priority": "medium",
           "estimated_effort": "10-15 days",
@@ -653,7 +729,10 @@
         "add-a-video": {
           "test_path": "tests/test_examples/test_add_a_video.py",
           "current_implementation": "mixed",
-          "python_apis_used": ["layers", "sources"],
+          "python_apis_used": [
+            "layers",
+            "sources"
+          ],
           "javascript_issues": [
             "Video element creation and control",
             "Custom video source handling"
@@ -662,7 +741,10 @@
             "Create VideoLayer class",
             "Implement video source management"
           ],
-          "required_apis": ["VideoLayer", "VideoSource"],
+          "required_apis": [
+            "VideoLayer",
+            "VideoSource"
+          ],
           "phase": "phase_2",
           "priority": "medium",
           "estimated_effort": "6-8 days",
@@ -673,8 +755,10 @@
         },
         "add-live-realtime-data": {
           "test_path": "tests/test_examples/test_add_live_realtime_data.py",
-          "current_implementation": "mixed", 
-          "python_apis_used": ["sources"],
+          "current_implementation": "mixed",
+          "python_apis_used": [
+            "sources"
+          ],
           "javascript_issues": [
             "JavaScript interval-based data fetching",
             "Custom data update logic"
@@ -683,7 +767,10 @@
             "Create LiveDataSource class",
             "Implement automatic update mechanism"
           ],
-          "required_apis": ["LiveDataSource", "DataUpdateManager"],
+          "required_apis": [
+            "LiveDataSource",
+            "DataUpdateManager"
+          ],
           "phase": "phase_2",
           "priority": "high",
           "estimated_effort": "8-10 days",
@@ -694,50 +781,74 @@
         },
         "change-a-layers-color-with-buttons": {
           "test_path": "tests/test_examples/test_change_a_layers_color_with_buttons.py",
-          "current_implementation": "mixed",
-          "python_apis_used": ["layers"],
+          "current_implementation": "improved",
+          "python_apis_used": [
+            "layers"
+          ],
           "javascript_issues": [
-            "Button creation with JavaScript",
-            "Direct layer paint property modification"
+            "RESOLVED: LayerColorControl Python API implemented",
+            "RESOLVED: Interactive color picker with proper control integration"
           ],
           "improvement_plan": [
-            "Create ColorPickerControl",
-            "Implement layer style management API"
+            "COMPLETED: Created LayerColorControl with layer selection",
+            "COMPLETED: Integrated color swatch interface"
           ],
-          "required_apis": ["ColorPickerControl", "LayerStyleManager"],
+          "required_apis": [
+            "ColorPickerControl",
+            "LayerStyleManager"
+          ],
           "phase": "phase_1",
           "priority": "medium",
           "estimated_effort": "4-6 days",
-          "status": "planned",
-          "assigned_to": null,
-          "completion_date": null,
-          "notes": "Interactive styling feature"
+          "status": "completed",
+          "assigned_to": "copilot",
+          "completion_date": "2025-09-30",
+          "notes": "Interactive styling feature",
+          "improvements_made": [
+            "Added LayerColorControl class with layer selection and color palette",
+            "Integrated control template rendering in map_template.html",
+            "Created test_change_a_layers_color_with_python_api() demonstrating proper usage",
+            "Maintained backward compatibility with JavaScript approach"
+          ]
         },
         "filter-symbols-by-text-input": {
           "test_path": "tests/test_examples/test_filter_symbols_by_text_input.py",
-          "current_implementation": "mixed",
-          "python_apis_used": ["layers"],
+          "current_implementation": "improved",
+          "python_apis_used": [
+            "layers"
+          ],
           "javascript_issues": [
-            "Text input creation with JavaScript",
-            "Custom filtering logic"
+            "RESOLVED: TextFilterControl Python API implemented",
+            "RESOLVED: Layer filtering with proper control integration"
           ],
           "improvement_plan": [
-            "Create TextFilterControl",
-            "Implement filter expression helpers"
+            "COMPLETED: Created TextFilterControl with match modes",
+            "COMPLETED: Integrated with map template"
           ],
-          "required_apis": ["TextFilterControl", "FilterExpression"],
+          "required_apis": [
+            "TextFilterControl",
+            "FilterExpression"
+          ],
           "phase": "phase_1",
           "priority": "medium",
           "estimated_effort": "4-5 days",
-          "status": "planned",
-          "assigned_to": null,
-          "completion_date": null,
-          "notes": "Common data filtering pattern"
+          "status": "completed",
+          "assigned_to": "copilot",
+          "completion_date": "2025-09-30",
+          "notes": "Common data filtering pattern",
+          "improvements_made": [
+            "Added TextFilterControl class with contains/startswith/exact match modes",
+            "Integrated control template rendering in map_template.html",
+            "Created test_filter_symbols_with_python_api() demonstrating proper usage",
+            "Maintained backward compatibility with JavaScript approach"
+          ]
         },
         "measure-distances": {
           "test_path": "tests/test_examples/test_measure_distances.py",
           "current_implementation": "mixed",
-          "python_apis_used": ["drawing tools"],
+          "python_apis_used": [
+            "drawing tools"
+          ],
           "javascript_issues": [
             "Custom measurement logic",
             "Distance calculation in JavaScript"
@@ -746,7 +857,10 @@
             "Create MeasurementTool class",
             "Implement geometry calculations in Python"
           ],
-          "required_apis": ["MeasurementTool", "GeometryCalculator"],
+          "required_apis": [
+            "MeasurementTool",
+            "GeometryCalculator"
+          ],
           "phase": "phase_2",
           "priority": "medium",
           "estimated_effort": "6-8 days",
@@ -784,7 +898,7 @@
     "navigation": {
       "apis": [
         "Map.fly_to(center, zoom, duration)",
-        "Map.ease_to(center, zoom, duration)", 
+        "Map.ease_to(center, zoom, duration)",
         "Map.pan_to(center, duration)",
         "Map.jump_to_sequence(locations, interval)",
         "Map.animate_camera_around(center, radius, duration)"
@@ -800,7 +914,7 @@
         "Map.query_features_at_point(point)",
         "Map.on_zoom(callback)"
       ],
-      "priority": "high", 
+      "priority": "high",
       "phase": "phase_1"
     },
     "controls": {
@@ -818,7 +932,7 @@
       "apis": [
         "Enhanced AnimationLoop",
         "RouteAnimation",
-        "IconAnimation", 
+        "IconAnimation",
         "CameraAnimation"
       ],
       "priority": "medium",
@@ -837,7 +951,7 @@
     "external_libraries": {
       "apis": [
         "ThreeJSLayer",
-        "DeckGLLayer", 
+        "DeckGLLayer",
         "TerraDrawWrapper",
         "PMTilesProtocol"
       ],
@@ -855,7 +969,7 @@
     ],
     "test_categories": [
       "unit_tests_for_new_apis",
-      "integration_tests_for_examples", 
+      "integration_tests_for_examples",
       "regression_tests_for_conversions",
       "performance_tests"
     ]
@@ -867,10 +981,12 @@
         "description": "Added button control support to map_template.html",
         "date": "2025-01-01",
         "impact": "Enables proper Python API usage for interactive buttons",
-        "files_modified": ["maplibreum/templates/map_template.html"],
+        "files_modified": [
+          "maplibreum/templates/map_template.html"
+        ],
         "benefits": [
           "Proper MapLibre control integration",
-          "Consistent styling with native controls", 
+          "Consistent styling with native controls",
           "Eliminates need for manual DOM manipulation",
           "Supports all button control features"
         ]
@@ -902,7 +1018,7 @@
       },
       {
         "step": 2,
-        "title": "Convert High-Priority Examples", 
+        "title": "Convert High-Priority Examples",
         "description": "Convert 10-15 most important JavaScript-only examples",
         "duration": "2 months"
       },

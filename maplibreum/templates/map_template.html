@@ -290,6 +290,142 @@ map.addControl(geocoder, "{{ ctrl.position }}");
     
     map.addControl(toggleControl, "{{ ctrl.position }}");
 }
+{% elif ctrl.type == "textfilter" %}
+// Create text filter control
+{
+    const inputEl = document.createElement('input');
+    inputEl.type = 'search';
+    inputEl.id = '{{ ctrl.options.id }}';
+    inputEl.placeholder = '{{ ctrl.options.placeholder }}';
+    inputEl.className = 'maplibreum-text-filter';
+    inputEl.style.font = "12px/20px 'Helvetica Neue', Arial, Helvetica, sans-serif";
+    inputEl.style.border = '0';
+    inputEl.style.backgroundColor = '#fff';
+    inputEl.style.margin = '0';
+    inputEl.style.color = 'rgba(0, 0, 0, 0.6)';
+    inputEl.style.padding = '10px';
+    inputEl.style.boxShadow = '0 0 0 2px rgba(0, 0, 0, 0.1)';
+    inputEl.style.borderRadius = '3px';
+    inputEl.style.width = '200px';
+    
+    const layerIDs = {{ ctrl.options.layer_ids | tojson }};
+    const matchMode = '{{ ctrl.options.match_mode }}';
+    
+    inputEl.addEventListener('keyup', function(event) {
+        const value = event.target.value.trim().toLowerCase();
+        layerIDs.forEach(function(layerId) {
+            let isMatch = false;
+            if (matchMode === 'contains') {
+                isMatch = layerId.toLowerCase().indexOf(value) > -1;
+            } else if (matchMode === 'startswith') {
+                isMatch = layerId.toLowerCase().startsWith(value);
+            } else if (matchMode === 'exact') {
+                isMatch = layerId.toLowerCase() === value;
+            }
+            map.setLayoutProperty(
+                layerId,
+                'visibility',
+                (value === '' || isMatch) ? 'visible' : 'none'
+            );
+        });
+    });
+    
+    const filterControl = {
+        onAdd: function(map) {
+            this._map = map;
+            this._container = document.createElement('div');
+            this._container.className = 'maplibregl-ctrl';
+            this._container.appendChild(inputEl);
+            return this._container;
+        },
+        onRemove: function() {
+            this._container.parentNode.removeChild(this._container);
+            this._map = undefined;
+        }
+    };
+    
+    map.addControl(filterControl, "{{ ctrl.position }}");
+}
+{% elif ctrl.type == "layercolor" %}
+// Create layer color picker control
+{
+    const layerColorContainer = document.createElement('div');
+    layerColorContainer.className = 'maplibregl-ctrl maplibreum-layer-color-ctrl';
+    layerColorContainer.style.font = "12px/20px 'Helvetica Neue', Arial, Helvetica, sans-serif";
+    layerColorContainer.style.background = '#fff';
+    layerColorContainer.style.padding = '12px';
+    layerColorContainer.style.borderRadius = '4px';
+    layerColorContainer.style.boxShadow = '0 1px 4px rgba(0, 0, 0, 0.25)';
+    layerColorContainer.style.width = '220px';
+    
+    const titleLabel = document.createElement('label');
+    titleLabel.textContent = '{{ ctrl.options.title }}';
+    titleLabel.htmlFor = '{{ ctrl.options.id }}_select';
+    titleLabel.style.fontWeight = '600';
+    titleLabel.style.display = 'block';
+    titleLabel.style.marginBottom = '6px';
+    layerColorContainer.appendChild(titleLabel);
+    
+    const layerSelect = document.createElement('select');
+    layerSelect.id = '{{ ctrl.options.id }}_select';
+    layerSelect.style.width = '100%';
+    layerSelect.style.marginBottom = '10px';
+    
+    const layers = {{ ctrl.options.layers | tojson }};
+    Object.entries(layers).forEach(function([layerId, displayName]) {
+        const option = document.createElement('option');
+        option.value = layerId;
+        option.textContent = displayName;
+        layerSelect.appendChild(option);
+    });
+    layerColorContainer.appendChild(layerSelect);
+    
+    const swatchLabel = document.createElement('label');
+    swatchLabel.textContent = 'Choose a color';
+    swatchLabel.style.fontWeight = '600';
+    swatchLabel.style.display = 'block';
+    swatchLabel.style.marginBottom = '6px';
+    layerColorContainer.appendChild(swatchLabel);
+    
+    const swatchRow = document.createElement('div');
+    swatchRow.style.display = 'flex';
+    swatchRow.style.flexWrap = 'wrap';
+    swatchRow.style.gap = '6px';
+    layerColorContainer.appendChild(swatchRow);
+    
+    const colors = {{ ctrl.options.colors | tojson }};
+    colors.forEach(function(color) {
+        const button = document.createElement('button');
+        button.type = 'button';
+        button.style.width = '32px';
+        button.style.height = '20px';
+        button.style.border = 'none';
+        button.style.borderRadius = '3px';
+        button.style.cursor = 'pointer';
+        button.style.backgroundColor = color;
+        button.addEventListener('click', function() {
+            const targetLayer = layerSelect.value;
+            map.setPaintProperty(targetLayer, 'fill-color', color);
+        });
+        swatchRow.appendChild(button);
+    });
+    
+    const layerColorControl = {
+        onAdd: function(map) {
+            this._map = map;
+            this._container = document.createElement('div');
+            this._container.className = 'maplibregl-ctrl';
+            this._container.appendChild(layerColorContainer);
+            return this._container;
+        },
+        onRemove: function() {
+            this._container.parentNode.removeChild(this._container);
+            this._map = undefined;
+        }
+    };
+    
+    map.addControl(layerColorControl, "{{ ctrl.position }}");
+}
 {% elif ctrl.type == "terrain" %}
 map.addControl(new maplibregl.TerrainControl({{ ctrl.options | tojson }}), "{{ ctrl.position }}");
 {% elif ctrl.type == "globe" %}
