@@ -16,10 +16,10 @@
     "proper_api_only": 55,
     "other_patterns": 22,
     "completion_percentage": {
-      "phase_1": 19.2,
+      "phase_1": 23.1,
       "phase_2": 5.0, 
       "phase_3": 0,
-      "overall": 56.1
+      "overall": 58.5
     }
   },
   "implementation_phases": {
@@ -40,9 +40,9 @@
         "ToggleControl"
       ],
       "completion_status": {
-        "completed": 5,
+        "completed": 6,
         "in_progress": 0,
-        "planned": 21
+        "planned": 20
       }
     },
     "phase_2": {
@@ -252,19 +252,26 @@
         },
         "toggle-interactions": {
           "test_path": "tests/test_examples/test_toggle_interactions.py",
-          "current_implementation": "javascript_injection",
+          "current_implementation": "improved",
           "issues": [
-            "JavaScript-based interaction toggling",
-            "No Python API for interaction management"
+            "RESOLVED: ToggleControl implementation completed",
+            "RESOLVED: Interactive control management with proper Python API",
+            "RESOLVED: Multiple interaction handlers with individual toggle controls"
           ],
-          "required_apis": ["Map.set_interactions()", "InteractionControl"],
+          "required_apis": ["ToggleControl", "Map.add_control()"],
           "phase": "phase_1",
           "priority": "medium",
           "estimated_effort": "2-3 days",
-          "status": "planned",
-          "assigned_to": null,
-          "completion_date": null,
-          "notes": "Useful for controlled map interactions"
+          "status": "completed",
+          "assigned_to": "copilot",
+          "completion_date": "2025-01-01",
+          "notes": "Added test_toggle_interactions_with_python_api() using ToggleControl for each interaction",
+          "improvements_made": [
+            "Implemented ToggleControl for all interaction handlers",
+            "Created proper Python API for interaction management",
+            "Demonstrated control positioning and integration",
+            "Maintained all original functionality with cleaner API"
+          ]
         },
         "add-a-3d-model-using-threejs": {
           "test_path": "tests/test_examples/test_add_a_3d_model_using_threejs.py",

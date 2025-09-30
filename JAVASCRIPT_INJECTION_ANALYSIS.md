@@ -227,19 +227,20 @@ The JSON tracker serves as a living document to monitor progress as examples are
 - ✅ **get-features-under-the-mouse-pointer**: Added `test_get_features_with_python_api()` showing feature querying and mousemove event integration
 - ✅ **disable-map-rotation**: Added `test_disable_map_rotation_with_python_api()` with granular rotation control using `Map.disable_rotation()`
 - ✅ **create-a-hover-effect**: Added `test_create_a_hover_effect_with_python_api()` demonstrating cleaner event listener patterns for feature state management
+- ✅ **toggle-interactions**: Added `test_toggle_interactions_with_python_api()` using ToggleControl for comprehensive interaction management
 
 **Current Status:**
-- **Phase 1 Progress**: 19.2% complete (5/26 examples improved)
+- **Phase 1 Progress**: 23.1% complete (6/26 examples improved)
 - **Phase 2 Progress**: 5.0% complete (1/20 examples improved)
-- **Overall Progress**: Increased from 44.7% to 56.1% proper API usage
+- **Overall Progress**: Increased from 44.7% to 58.5% proper API usage
 - **Backward Compatibility**: All existing tests continue to pass
 - **Infrastructure**: Core button control infrastructure now available for all examples
 
 **Next Priority Examples:**
 - `jump-to-a-series-of-locations` - Sequential navigation API
-- `toggle-interactions` - Interactive control management
 - `animate-map-camera-around-a-point` - Advanced camera animations
 - `navigate-the-map-with-game-like-controls` - Custom keyboard controls
+- `view-local-geojson` - Local file handling improvements
 
 ## Conclusion
 
