@@ -202,6 +202,94 @@ geocoder.on('result', function(e) {
     }
 });
 map.addControl(geocoder, "{{ ctrl.position }}");
+{% elif ctrl.type == "button" %}
+// Create button control
+{
+    const buttonEl = document.createElement('button');
+    buttonEl.id = '{{ ctrl.options.id }}';
+    buttonEl.className = '{{ ctrl.options.css_class or "maplibreum-button" }}';
+    buttonEl.textContent = '{{ ctrl.options.label }}';
+    {% if ctrl.options.style %}
+    {% for key, value in ctrl.options.style.items() %}
+    buttonEl.style.{{ key }} = '{{ value }}';
+    {% endfor %}
+    {% endif %}
+    
+    const buttonControl = {
+        onAdd: function(map) {
+            this._map = map;
+            this._container = document.createElement('div');
+            this._container.className = 'maplibregl-ctrl maplibregl-ctrl-group';
+            this._container.appendChild(buttonEl);
+            
+            buttonEl.addEventListener('click', function() {
+                {% if ctrl.options.onclick_js %}
+                {{ ctrl.options.onclick_js | safe }}
+                {% endif %}
+            });
+            
+            return this._container;
+        },
+        onRemove: function() {
+            this._container.parentNode.removeChild(this._container);
+            this._map = undefined;
+        }
+    };
+    
+    map.addControl(buttonControl, "{{ ctrl.position }}");
+}
+{% elif ctrl.type == "toggle" %}
+// Create toggle control
+{
+    const toggleContainer = document.createElement('div');
+    toggleContainer.className = 'maplibregl-ctrl maplibregl-ctrl-group';
+    
+    const toggleEl = document.createElement('input');
+    toggleEl.type = 'checkbox';
+    toggleEl.id = '{{ ctrl.options.id or ("toggle_" ~ loop.index0) }}';
+    toggleEl.checked = {{ ctrl.options.initial_state | tojson }};
+    
+    const labelEl = document.createElement('label');
+    labelEl.htmlFor = toggleEl.id;
+    labelEl.textContent = '{{ ctrl.options.label }}';
+    labelEl.style.cursor = 'pointer';
+    labelEl.style.padding = '6px 10px';
+    labelEl.style.display = 'block';
+    labelEl.style.fontSize = '12px';
+    labelEl.style.backgroundColor = '#fff';
+    labelEl.style.borderRadius = '3px';
+    labelEl.style.userSelect = 'none';
+    
+    toggleContainer.appendChild(toggleEl);
+    toggleContainer.appendChild(labelEl);
+    
+    const toggleControl = {
+        onAdd: function(map) {
+            this._map = map;
+            this._container = toggleContainer;
+            
+            toggleEl.addEventListener('change', function() {
+                if (this.checked) {
+                    {% if ctrl.options.on_action %}
+                    {{ ctrl.options.on_action | safe }}
+                    {% endif %}
+                } else {
+                    {% if ctrl.options.off_action %}
+                    {{ ctrl.options.off_action | safe }}
+                    {% endif %}
+                }
+            });
+            
+            return this._container;
+        },
+        onRemove: function() {
+            this._container.parentNode.removeChild(this._container);
+            this._map = undefined;
+        }
+    };
+    
+    map.addControl(toggleControl, "{{ ctrl.position }}");
+}
 {% elif ctrl.type == "terrain" %}
 map.addControl(new maplibregl.TerrainControl({{ ctrl.options | tojson }}), "{{ ctrl.position }}");
 {% elif ctrl.type == "globe" %}

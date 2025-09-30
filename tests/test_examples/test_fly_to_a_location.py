@@ -64,7 +64,7 @@ def test_fly_to_a_location():
 
 
 def test_fly_to_a_location_with_python_api():
-    """Test fly-to-a-location using the new Python API approach (Phase 1 improvement)."""
+    """Test fly-to-a-location using improved Python API approach (Phase 1 improvement)."""
     
     # Default button styles that match the original example
     button_css = """
@@ -94,10 +94,10 @@ def test_fly_to_a_location_with_python_api():
         custom_css=button_css,
     )
 
-    # Define the fly action using the existing camera API
-    def create_fly_action():
-        """Create JavaScript for random fly action."""
-        return """
+    # Create a button control with the fly action using proper Python API
+    button = ButtonControl(
+        label="Fly",
+        onclick_js="""
         map.flyTo({
             center: [
                 -74.5 + (Math.random() - 0.5) * 10,
@@ -106,25 +106,11 @@ def test_fly_to_a_location_with_python_api():
             essential: true
         });
         """
-    
-    # Create a button control with the fly action
-    button = ButtonControl(
-        label="Fly",
-        onclick_js=create_fly_action()
     )
     
-    # For now, we'll still need to inject the button creation
-    # This is a transitional approach - Phase 1.5
-    m.add_on_load_js(f"""
-        const flyBtn = document.createElement('button');
-        flyBtn.id = '{button.id}';
-        flyBtn.className = '{button.css_class}';
-        flyBtn.textContent = '{button.label}';
-        document.body.appendChild(flyBtn);
-        flyBtn.addEventListener('click', () => {{
-            {button.onclick_js}
-        }});
-    """)
+    # Add the button control to the map using the control system
+    # This demonstrates how to properly integrate ButtonControl
+    m.add_control(button, position="top-center")
 
     html = m.render()
 
@@ -137,9 +123,11 @@ def test_fly_to_a_location_with_python_api():
     assert "map.flyTo({" in html
     assert "essential: true" in html
     
-    # Verify button creation
+    # Verify button control is properly integrated
     assert button.id in html
     assert button.label in html
+    assert "buttonControl" in html  # Button control JavaScript code
+    assert "maplibregl-ctrl" in html  # MapLibre control styling
 
 
 def test_fly_to_a_location_with_existing_api():

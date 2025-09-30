@@ -5,6 +5,7 @@ from __future__ import annotations
 import textwrap
 
 from maplibreum.core import Map
+from maplibreum.controls import ToggleControl
 
 
 def test_toggle_interactions() -> None:
@@ -111,3 +112,45 @@ def test_toggle_interactions() -> None:
     assert "listing-group" in html
     assert "map[handler].enable()" in html
     assert "map[handler].disable()" in html
+
+
+def test_toggle_interactions_with_python_api() -> None:
+    """Demonstrate toggle interactions using ToggleControl (Phase 1 improvement)."""
+
+    map_instance = Map(
+        map_style="https://demotiles.maplibre.org/style.json",
+        center=[-77.04, 38.907],
+        zoom=3,
+    )
+
+    # Define the interactions to toggle
+    interactions = [
+        ("scrollZoom", "Scroll zoom"),
+        ("boxZoom", "Box zoom"), 
+        ("dragRotate", "Drag rotate"),
+        ("dragPan", "Drag pan"),
+        ("keyboard", "Keyboard"),
+        ("doubleClickZoom", "Double click zoom"),
+        ("touchZoomRotate", "Touch zoom rotate"),
+    ]
+
+    # Create toggle controls for each interaction
+    for i, (handler, label) in enumerate(interactions):
+        toggle = ToggleControl(
+            label=label,
+            initial_state=True,  # All interactions start enabled
+            on_action=f"map.{handler}.enable();",
+            off_action=f"map.{handler}.disable();"
+        )
+        
+        # Position controls vertically on the right side
+        map_instance.add_control(toggle, position="top-right")
+
+    html = map_instance.render()
+    
+    # Verify that toggle controls are properly integrated
+    assert "toggleControl" in html
+    assert "map.scrollZoom.enable()" in html
+    assert "map.scrollZoom.disable()" in html
+    assert "map.dragPan.enable()" in html
+    assert "map.dragPan.disable()" in html
