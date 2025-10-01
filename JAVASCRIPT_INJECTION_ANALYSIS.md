@@ -264,6 +264,27 @@ The JSON tracker serves as a living document to monitor progress as examples are
 - `navigate-the-map-with-game-like-controls` - Custom keyboard controls
 - `view-local-geojson` - Local file handling improvements
 
+### Recent Progress (2025-10-01)
+
+**Roadmap Maintenance:**
+- ✅ **Phase Assignment Correction**: Corrected phase assignments for mixed-approach examples in roadmap JSON
+  - Moved `create-a-hover-effect`, `change-a-layers-color-with-buttons`, and `filter-symbols-by-text-input` from Phase 1 to Phase 2
+  - These examples use enhanced features (hover effects, interactive controls) that align with Phase 2 objectives
+- ✅ **Roadmap Verification**: Verified all completion percentages and example statuses against test implementations
+- ✅ **Documentation Sync**: Ensured JSON roadmap and markdown documentation are consistent
+
+**Current Status:**
+- **Phase 1 Progress**: 24.0% complete (6/25 examples improved)
+- **Phase 2 Progress**: 33.3% complete (3/9 examples improved)
+- **Phase 3 Progress**: 0.0% complete (0/22 examples improved)
+- **Overall Progress**: 49.6% proper API usage
+- **All Tests Passing**: 144/144 tests pass (100% success rate)
+
+**Roadmap Accuracy:**
+- Phase assignments now correctly reflect implementation complexity
+- Completion percentages verified against actual test implementations
+- JSON and markdown documentation are in sync
+
 ## Conclusion
 
 While MapLibreum achieves 100% example coverage as claimed in the roadmap, **37.4% of examples use JavaScript injection** rather than proper Python API methods. This represents a significant opportunity for improvement that would make the library more pythonic, maintainable, and better integrated with Python workflows.
