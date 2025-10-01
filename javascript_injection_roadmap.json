@@ -1,9 +1,9 @@
 {
   "metadata": {
     "title": "MapLibreum JavaScript Injection Analysis and Improvement Roadmap",
-    "version": "1.3.0",
+    "version": "1.3.1",
     "created_date": "2024-12-21",
-    "last_updated": "2025-09-30",
+    "last_updated": "2025-10-01",
     "total_examples": 123,
     "analysis_source": "JAVASCRIPT_INJECTION_ANALYSIS.md",
     "progress_tracker": true,
@@ -660,7 +660,7 @@
             "Map.add_event_listener()",
             "HoverEffect"
           ],
-          "phase": "phase_1",
+          "phase": "phase_2",
           "priority": "high",
           "estimated_effort": "4-5 days",
           "status": "completed",
@@ -798,7 +798,7 @@
             "ColorPickerControl",
             "LayerStyleManager"
           ],
-          "phase": "phase_1",
+          "phase": "phase_2",
           "priority": "medium",
           "estimated_effort": "4-6 days",
           "status": "completed",
@@ -830,7 +830,7 @@
             "TextFilterControl",
             "FilterExpression"
           ],
-          "phase": "phase_1",
+          "phase": "phase_2",
           "priority": "medium",
           "estimated_effort": "4-5 days",
           "status": "completed",
@@ -990,6 +990,52 @@
           "Consistent styling with native controls",
           "Eliminates need for manual DOM manipulation",
           "Supports all button control features"
+        ]
+      },
+      {
+        "name": "TextFilterControl Implementation",
+        "description": "Added text filter control with multiple match modes",
+        "date": "2025-09-30",
+        "impact": "Enables proper Python API for layer filtering with text input",
+        "files_modified": [
+          "maplibreum/controls.py",
+          "maplibreum/templates/map_template.html"
+        ],
+        "benefits": [
+          "Multiple match modes (contains, startswith, exact)",
+          "Clean Python API for common filtering pattern",
+          "Integrated template rendering",
+          "Backward compatible with JavaScript approach"
+        ]
+      },
+      {
+        "name": "LayerColorControl Implementation",
+        "description": "Added interactive layer color picker control",
+        "date": "2025-09-30",
+        "impact": "Enables proper Python API for interactive layer styling",
+        "files_modified": [
+          "maplibreum/controls.py",
+          "maplibreum/templates/map_template.html"
+        ],
+        "benefits": [
+          "Layer selection with dropdown",
+          "Color swatch interface",
+          "Real-time layer color updates",
+          "Backward compatible with JavaScript approach"
+        ]
+      },
+      {
+        "name": "Roadmap Phase Correction",
+        "description": "Corrected phase assignments for mixed-approach examples",
+        "date": "2025-10-01",
+        "impact": "Ensures accurate tracking of phase completion percentages",
+        "files_modified": [
+          "javascript_injection_roadmap.json"
+        ],
+        "benefits": [
+          "Accurate phase completion tracking",
+          "Consistent with markdown documentation",
+          "Proper categorization of enhanced features in Phase 2"
         ]
       }
     ],
