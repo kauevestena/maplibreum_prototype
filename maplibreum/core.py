@@ -1392,6 +1392,47 @@ class Map:
         )
         self.add_animation(loop)
 
+    def add_keyboard_navigation(self, pan_distance=100, rotate_degrees=25):
+        """Enable game-like keyboard navigation for panning and rotating.
+
+        This method provides a high-level Python API for adding keyboard
+        listeners that allow users to navigate the map with arrow keys.
+
+        Parameters
+        ----------
+        pan_distance : int, optional
+            Distance in pixels to pan the map on each key press.
+        rotate_degrees : int, optional
+            Degrees to rotate the map on each key press.
+        """
+        js_code = [
+            "const canvas = map.getCanvas();",
+            "if (!canvas) { return; }",
+            "if (!canvas.hasAttribute('tabindex')) {",
+            "    canvas.setAttribute('tabindex', '0');",
+            "}",
+            "canvas.focus();",
+            "",
+            f"const deltaDistance = {pan_distance};",
+            f"const deltaDegrees = {rotate_degrees};",
+            "",
+            "function easing(t) { return t * (2 - t); }",
+            "",
+            "canvas.addEventListener('keydown', function(e) {",
+            "    e.preventDefault();",
+            "    if (e.which === 38) {",
+            "        map.panBy([0, -deltaDistance], { easing: easing });",
+            "    } else if (e.which === 40) {",
+            "        map.panBy([0, deltaDistance], { easing: easing });",
+            "    } else if (e.which === 37) {",
+            "        map.easeTo({ bearing: map.getBearing() - deltaDegrees, easing: easing });",
+            "    } else if (e.which === 39) {",
+            "        map.easeTo({ bearing: map.getBearing() + deltaDegrees, easing: easing });",
+            "    }",
+            "}, true);",
+        ]
+        self.add_on_load_js("\n".join(js_code))
+
     def add_marker(
         self,
         coordinates=None,

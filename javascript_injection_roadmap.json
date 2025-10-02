@@ -1,7 +1,7 @@
 {
   "metadata": {
     "title": "MapLibreum JavaScript Injection Analysis and Improvement Roadmap",
-    "version": "1.4.0",
+    "version": "1.5.0",
     "created_date": "2024-12-21",
     "last_updated": "2025-10-01",
     "total_examples": 123,
@@ -16,10 +16,10 @@
     "proper_api_only": 55,
     "other_patterns": 22,
     "completion_percentage": {
-      "phase_1": 32.0,
+      "phase_1": 36.0,
       "phase_2": 33.3,
       "phase_3": 0,
-      "overall": 53.7
+      "overall": 54.5
     }
   },
   "implementation_phases": {
@@ -40,9 +40,9 @@
         "ToggleControl"
       ],
       "completion_status": {
-        "completed": 8,
+        "completed": 9,
         "in_progress": 0,
-        "planned": 17
+        "planned": 16
       }
     },
     "phase_2": {
@@ -265,22 +265,26 @@
         },
         "navigate-the-map-with-game-like-controls": {
           "test_path": "tests/test_examples/test_navigate_the_map_with_game_like_controls.py",
-          "current_implementation": "javascript_injection",
+          "current_implementation": "improved",
           "issues": [
-            "Keyboard navigation using JavaScript key handlers",
-            "No Python API for custom controls"
+            "RESOLVED: Implemented Map.add_keyboard_navigation()",
+            "RESOLVED: Proper Python API for keyboard controls"
           ],
           "required_apis": [
-            "Map.add_keyboard_navigation()",
-            "CustomControl"
+            "Map.add_keyboard_navigation()"
           ],
           "phase": "phase_1",
           "priority": "medium",
           "estimated_effort": "5-6 days",
-          "status": "planned",
-          "assigned_to": null,
-          "completion_date": null,
-          "notes": "Complex interaction system"
+          "status": "completed",
+          "assigned_to": "copilot",
+          "completion_date": "2025-10-01",
+          "notes": "Added test_navigate_the_map_with_game_like_controls_with_python_api() demonstrating the new Map.add_keyboard_navigation() method.",
+          "improvements_made": [
+            "Implemented Map.add_keyboard_navigation() for high-level keyboard control",
+            "Created a new test to validate the Python API approach",
+            "Maintained backward compatibility with the original test"
+          ]
         },
         "toggle-interactions": {
           "test_path": "tests/test_examples/test_toggle_interactions.py",
@@ -1060,6 +1064,20 @@
           "Eliminates JavaScript injection for sequential navigation",
           "Simplifies creating location-based animations",
           "Demonstrates a clear path for future navigation API enhancements"
+        ]
+      },
+      {
+        "name": "Map.add_keyboard_navigation() API",
+        "description": "Implemented a new method for game-like keyboard navigation",
+        "date": "2025-10-01",
+        "impact": "Provides a clean Python API for interactive keyboard controls",
+        "files_modified": [
+          "maplibreum/core.py"
+        ],
+        "benefits": [
+          "Eliminates JavaScript injection for keyboard navigation",
+          "Simplifies creating interactive map experiences",
+          "Abstracts away low-level DOM event handling"
         ]
       }
     ],
