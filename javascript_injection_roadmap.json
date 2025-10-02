@@ -16,10 +16,10 @@
     "proper_api_only": 55,
     "other_patterns": 22,
     "completion_percentage": {
-      "phase_1": 28.0,
+      "phase_1": 32.0,
       "phase_2": 33.3,
       "phase_3": 0,
-      "overall": 52.8
+      "overall": 53.7
     }
   },
   "implementation_phases": {
@@ -40,9 +40,9 @@
         "ToggleControl"
       ],
       "completion_status": {
-        "completed": 7,
+        "completed": 8,
         "in_progress": 0,
-        "planned": 18
+        "planned": 17
       }
     },
     "phase_2": {
@@ -165,10 +165,10 @@
         },
         "animate-map-camera-around-a-point": {
           "test_path": "tests/test_examples/test_animate_map_camera_around_a_point.py",
-          "current_implementation": "javascript_injection",
+          "current_implementation": "improved",
           "issues": [
-            "Complex camera animation using JavaScript",
-            "No Python API for circular camera movement"
+            "RESOLVED: Implemented Map.animate_camera_around()",
+            "RESOLVED: Proper Python API for circular camera movement"
           ],
           "required_apis": [
             "Map.animate_camera_around()"
@@ -176,10 +176,15 @@
           "phase": "phase_1",
           "priority": "medium",
           "estimated_effort": "4-5 days",
-          "status": "planned",
-          "assigned_to": null,
-          "completion_date": null,
-          "notes": "Advanced animation - requires careful implementation"
+          "status": "completed",
+          "assigned_to": "copilot",
+          "completion_date": "2025-10-01",
+          "notes": "Added test_animate_map_camera_around_a_point_with_python_api() demonstrating the new Map.animate_camera_around() method.",
+          "improvements_made": [
+            "Implemented Map.animate_camera_around() for continuous camera rotation",
+            "Created a new test to validate the Python API approach",
+            "Maintained backward compatibility with the original test"
+          ]
         },
         "get-coordinates-of-the-mouse-pointer": {
           "test_path": "tests/test_examples/test_get_coordinates_of_the_mouse_pointer.py",

@@ -15,11 +15,11 @@ This document provides a comprehensive analysis of JavaScript code injection usa
 - **Other**: 22 examples (17.9%) - unknown patterns or no implementation
 
 **Current Progress (as of 2025-10-01):**
-- **Examples Improved**: 10 (7 from Phase 1 + 3 from Phase 2)
-- **Total Proper API Now**: 65 examples (55 initially + 10 improved)
-- **Overall Proper API Usage**: 52.8% (65/123)
+- **Examples Improved**: 11 (8 from Phase 1 + 3 from Phase 2)
+- **Total Proper API Now**: 66 examples (55 initially + 11 improved)
+- **Overall Proper API Usage**: 53.7% (66/123)
 
-**Conclusion**: The roadmap claim of "all examples implemented" is technically accurate, but JavaScript injection was initially used in 37.4% of examples. Through systematic improvement efforts, proper Python API usage has increased from 44.7% to 52.8%, with 10 examples successfully converted from JavaScript injection to proper Python API implementations.
+**Conclusion**: The roadmap claim of "all examples implemented" is technically accurate, but JavaScript injection was initially used in 37.4% of examples. Through systematic improvement efforts, proper Python API usage has increased from 44.7% to 53.7%, with 11 examples successfully converted from JavaScript injection to proper Python API implementations.
 
 ## Detailed Findings
 
@@ -222,6 +222,21 @@ The JSON tracker serves as a living document to monitor progress as examples are
 ### Recent Progress (2025-10-01)
 
 **API Implementation:**
+- ✅ **`Map.animate_camera_around()`**: Implemented a new method for creating a continuous camera rotation animation, providing a clean Python API for a common animation pattern.
+
+**Example Conversions:**
+- ✅ **`animate-map-camera-around-a-point`**: Added `test_animate_map_camera_around_a_point_with_python_api()` demonstrating the new `Map.animate_camera_around()` method, eliminating the need for JavaScript injection.
+
+**Current Status:**
+- **Phase 1 Progress**: 32.0% complete (8/25 examples improved)
+- **Phase 2 Progress**: 33.3% complete (3/9 examples improved)
+- **Overall Progress**: Increased from 52.8% to 53.7% proper API usage
+- **Backward Compatibility**: All 147 tests pass (including new Python API tests)
+- **Infrastructure**: New `animate_camera_around` API now available.
+
+### Recent Progress (2025-10-01)
+
+**API Implementation:**
 - ✅ **`Map.jump_to_sequence()`**: Implemented a new method for creating sequential camera jump animations, providing a clean Python API for a common navigation pattern.
 
 **Example Conversions:**
@@ -275,11 +290,10 @@ The JSON tracker serves as a living document to monitor progress as examples are
 - **Infrastructure**: Text filtering and layer color controls now available for all examples
 
 **Completed Examples:**
-- Phase 1: fly-to-a-location, slowly-fly-to-a-location, get-coordinates-of-the-mouse-pointer, get-features-under-the-mouse-pointer, disable-map-rotation, toggle-interactions, jump-to-a-series-of-locations
+- Phase 1: fly-to-a-location, slowly-fly-to-a-location, get-coordinates-of-the-mouse-pointer, get-features-under-the-mouse-pointer, disable-map-rotation, toggle-interactions, jump-to-a-series-of-locations, animate-map-camera-around-a-point
 - Phase 2: create-a-hover-effect, change-a-layers-color-with-buttons, filter-symbols-by-text-input
 
 **Next Priority Examples:**
-- `animate-map-camera-around-a-point` - Advanced camera animations
 - `navigate-the-map-with-game-like-controls` - Custom keyboard controls
 - `view-local-geojson` - Local file handling improvements
 
