@@ -1348,6 +1348,26 @@ class Map:
         action = {"method": "panTo", "center": center, "options": options}
         self.camera_actions.append(action)
 
+    def jump_to_sequence(self, locations, interval=2000):
+        """Queue a sequential `jumpTo` animation.
+
+        Parameters
+        ----------
+        locations : list
+            A list of coordinate pairs (e.g., `[[lng1, lat1], [lng2, lat2]]`).
+        interval : int, optional
+            Time in milliseconds between each jump. Defaults to 2000.
+        """
+        js_code = [
+            f"const locations = {json.dumps(locations)};",
+            "locations.forEach((location, index) => {",
+            f"    setTimeout(() => {{",
+            f"        map.jumpTo({{center: location}});",
+            f"    }}, {interval} * index);",
+            "});",
+        ]
+        self.add_on_load_js("\n".join(js_code))
+
     def add_marker(
         self,
         coordinates=None,

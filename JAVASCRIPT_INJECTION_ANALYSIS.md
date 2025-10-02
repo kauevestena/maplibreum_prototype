@@ -14,12 +14,12 @@ This document provides a comprehensive analysis of JavaScript code injection usa
 - **Proper API Usage**: 55 examples (44.7%) use only Python API methods initially
 - **Other**: 22 examples (17.9%) - unknown patterns or no implementation
 
-**Current Progress (as of 2025-01-10):**
-- **Examples Improved**: 9 (6 from Phase 1 + 3 from Phase 2)
-- **Total Proper API Now**: 64 examples (55 initially + 9 improved)
-- **Overall Proper API Usage**: 52.0% (64/123)
+**Current Progress (as of 2025-10-01):**
+- **Examples Improved**: 10 (7 from Phase 1 + 3 from Phase 2)
+- **Total Proper API Now**: 65 examples (55 initially + 10 improved)
+- **Overall Proper API Usage**: 52.8% (65/123)
 
-**Conclusion**: The roadmap claim of "all examples implemented" is technically accurate, but JavaScript injection was initially used in 37.4% of examples. Through systematic improvement efforts, proper Python API usage has increased from 44.7% to 52.0%, with 9 examples successfully converted from JavaScript injection to proper Python API implementations.
+**Conclusion**: The roadmap claim of "all examples implemented" is technically accurate, but JavaScript injection was initially used in 37.4% of examples. Through systematic improvement efforts, proper Python API usage has increased from 44.7% to 52.8%, with 10 examples successfully converted from JavaScript injection to proper Python API implementations.
 
 ## Detailed Findings
 
@@ -219,6 +219,21 @@ This JSON file provides a detailed progress tracker with:
 
 The JSON tracker serves as a living document to monitor progress as examples are converted from JavaScript injection to proper Python API implementations.
 
+### Recent Progress (2025-10-01)
+
+**API Implementation:**
+- ✅ **`Map.jump_to_sequence()`**: Implemented a new method for creating sequential camera jump animations, providing a clean Python API for a common navigation pattern.
+
+**Example Conversions:**
+- ✅ **`jump-to-a-series-of-locations`**: Added `test_jump_to_a_series_of_locations_with_python_api()` demonstrating the new `Map.jump_to_sequence()` method, eliminating the need for JavaScript injection.
+
+**Current Status:**
+- **Phase 1 Progress**: 28.0% complete (7/25 examples improved)
+- **Phase 2 Progress**: 33.3% complete (3/9 examples improved)
+- **Overall Progress**: Increased from 44.7% to 52.8% proper API usage
+- **Backward Compatibility**: All 146 tests pass (including new Python API tests)
+- **Infrastructure**: New `jump_to_sequence` API now available.
+
 ### Recent Progress (2025-01-01)
 
 **Infrastructure Improvements:**
@@ -260,11 +275,10 @@ The JSON tracker serves as a living document to monitor progress as examples are
 - **Infrastructure**: Text filtering and layer color controls now available for all examples
 
 **Completed Examples:**
-- Phase 1: fly-to-a-location, slowly-fly-to-a-location, get-coordinates-of-the-mouse-pointer, get-features-under-the-mouse-pointer, disable-map-rotation, toggle-interactions
+- Phase 1: fly-to-a-location, slowly-fly-to-a-location, get-coordinates-of-the-mouse-pointer, get-features-under-the-mouse-pointer, disable-map-rotation, toggle-interactions, jump-to-a-series-of-locations
 - Phase 2: create-a-hover-effect, change-a-layers-color-with-buttons, filter-symbols-by-text-input
 
 **Next Priority Examples:**
-- `jump-to-a-series-of-locations` - Sequential navigation API
 - `animate-map-camera-around-a-point` - Advanced camera animations
 - `navigate-the-map-with-game-like-controls` - Custom keyboard controls
 - `view-local-geojson` - Local file handling improvements

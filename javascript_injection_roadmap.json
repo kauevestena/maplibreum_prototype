@@ -1,9 +1,9 @@
 {
   "metadata": {
     "title": "MapLibreum JavaScript Injection Analysis and Improvement Roadmap",
-    "version": "1.3.2",
+    "version": "1.4.0",
     "created_date": "2024-12-21",
-    "last_updated": "2025-01-10",
+    "last_updated": "2025-10-01",
     "total_examples": 123,
     "analysis_source": "JAVASCRIPT_INJECTION_ANALYSIS.md",
     "progress_tracker": true,
@@ -16,10 +16,10 @@
     "proper_api_only": 55,
     "other_patterns": 22,
     "completion_percentage": {
-      "phase_1": 24.0,
+      "phase_1": 28.0,
       "phase_2": 33.3,
       "phase_3": 0,
-      "overall": 52.0
+      "overall": 52.8
     }
   },
   "implementation_phases": {
@@ -40,9 +40,9 @@
         "ToggleControl"
       ],
       "completion_status": {
-        "completed": 6,
+        "completed": 7,
         "in_progress": 0,
-        "planned": 19
+        "planned": 18
       }
     },
     "phase_2": {
@@ -142,10 +142,10 @@
         },
         "jump-to-a-series-of-locations": {
           "test_path": "tests/test_examples/test_jump_to_a_series_of_locations.py",
-          "current_implementation": "javascript_injection",
+          "current_implementation": "improved",
           "issues": [
-            "Sequential navigation using JavaScript timing",
-            "No Python API for location sequences"
+            "RESOLVED: Sequential navigation with proper Python API",
+            "RESOLVED: Implemented Map.jump_to_sequence()"
           ],
           "required_apis": [
             "Map.jump_to_sequence()"
@@ -153,10 +153,15 @@
           "phase": "phase_1",
           "priority": "medium",
           "estimated_effort": "3-4 days",
-          "status": "planned",
-          "assigned_to": null,
-          "completion_date": null,
-          "notes": "Requires new API for sequential navigation"
+          "status": "completed",
+          "assigned_to": "copilot",
+          "completion_date": "2025-10-01",
+          "notes": "Added test_jump_to_a_series_of_locations_with_python_api() demonstrating the new Map.jump_to_sequence() method.",
+          "improvements_made": [
+            "Implemented Map.jump_to_sequence() for sequential navigation",
+            "Created a new test to validate the Python API approach",
+            "Maintained backward compatibility with the original test"
+          ]
         },
         "animate-map-camera-around-a-point": {
           "test_path": "tests/test_examples/test_animate_map_camera_around_a_point.py",
@@ -1036,6 +1041,20 @@
           "Accurate phase completion tracking",
           "Consistent with markdown documentation",
           "Proper categorization of enhanced features in Phase 2"
+        ]
+      },
+      {
+        "name": "Map.jump_to_sequence() API",
+        "description": "Implemented a new method for sequential camera jumps",
+        "date": "2025-10-01",
+        "impact": "Provides a clean Python API for an important navigation pattern",
+        "files_modified": [
+          "maplibreum/core.py"
+        ],
+        "benefits": [
+          "Eliminates JavaScript injection for sequential navigation",
+          "Simplifies creating location-based animations",
+          "Demonstrates a clear path for future navigation API enhancements"
         ]
       }
     ],
