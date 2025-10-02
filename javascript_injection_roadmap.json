@@ -1007,6 +1007,22 @@
         ]
       },
       {
+        "name": "ToggleControl Template Integration",
+        "description": "Added toggle control support to map_template.html",
+        "date": "2025-01-01",
+        "impact": "Enables consistent toggle-based interactions via the Python API",
+        "files_modified": [
+          "maplibreum/templates/map_template.html",
+          "maplibreum/controls.py"
+        ],
+        "benefits": [
+          "Standardizes ToggleControl rendering across examples",
+          "Maps Python on/off callbacks directly to template markup",
+          "Reduces reliance on bespoke JavaScript for toggle UI",
+          "Extends reusable control library alongside ButtonControl"
+        ]
+      },
+      {
         "name": "TextFilterControl Implementation",
         "description": "Added text filter control with multiple match modes",
         "date": "2025-09-30",
@@ -1082,12 +1098,6 @@
       }
     ],
     "planned": [
-      {
-        "name": "ToggleControl Template Integration",
-        "description": "Add toggle control support to templates",
-        "priority": "medium",
-        "estimated_effort": "1 day"
-      },
       {
         "name": "SliderControl Implementation",
         "description": "Create and integrate slider controls for continuous values",

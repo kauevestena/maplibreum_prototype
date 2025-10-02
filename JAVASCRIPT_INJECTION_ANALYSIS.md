@@ -268,6 +268,7 @@ The JSON tracker serves as a living document to monitor progress as examples are
 
 **Infrastructure Improvements:**
 - ✅ **ButtonControl Template Integration**: Added button control support to `map_template.html`, enabling proper Python API usage for interactive buttons
+- ✅ **ToggleControl Template Integration**: Added ToggleControl support to `map_template.html`, wiring on/off callbacks directly from Python without manual JavaScript
 - ✅ **Template Enhancement**: Implemented MapLibre-compatible control rendering with proper styling and event handling
 
 **Example Conversions:**
@@ -284,7 +285,7 @@ The JSON tracker serves as a living document to monitor progress as examples are
 - **Phase 2 Progress**: 5.0% complete (1/9 examples improved - create-a-hover-effect)
 - **Overall Progress**: Increased from 44.7% to ~47% proper API usage
 - **Backward Compatibility**: All existing tests continue to pass
-- **Infrastructure**: Core button control infrastructure now available for all examples
+- **Infrastructure**: Core button and toggle control infrastructure now available for all examples
 
 ### Recent Progress (2025-09-30)
 
