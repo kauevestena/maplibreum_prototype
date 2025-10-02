@@ -1368,6 +1368,30 @@ class Map:
         ]
         self.add_on_load_js("\n".join(js_code))
 
+    def animate_camera_around(self, period_ms=36000):
+        """Animate the camera continuously rotating around the center point.
+
+        This method provides a high-level Python API for creating a smooth,
+        continuous camera rotation animation.
+
+        Parameters
+        ----------
+        period_ms : int, optional
+            The time in milliseconds for one full 360-degree rotation.
+            Defaults to 36000 (36 seconds).
+        """
+        from .animation import AnimationLoop
+
+        animation_js = (
+            f"map.rotateTo((timestamp * 360 / {period_ms}) % 360, {{duration: 0}});"
+        )
+
+        loop = AnimationLoop(
+            name="rotateCamera",
+            body=animation_js,
+        )
+        self.add_animation(loop)
+
     def add_marker(
         self,
         coordinates=None,
