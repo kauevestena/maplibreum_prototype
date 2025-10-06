@@ -240,6 +240,10 @@ The JSON tracker serves as a living document to monitor progress as examples are
 - **Overall Progress**: 55.3% proper API usage
 - **All Tests Passing**: 148/148 tests pass (100% success rate)
 
+**Completed Examples:**
+- Phase 1 (10): fly-to-a-location, slowly-fly-to-a-location, get-coordinates-of-the-mouse-pointer, get-features-under-the-mouse-pointer, disable-map-rotation, toggle-interactions, jump-to-a-series-of-locations, animate-map-camera-around-a-point, navigate-the-map-with-game-like-controls, view-local-geojson
+- Phase 2 (3): create-a-hover-effect, change-a-layers-color-with-buttons, filter-symbols-by-text-input
+
 **Infrastructure Available:**
 - ButtonControl, ToggleControl for interactive UI
 - TextFilterControl for layer filtering
@@ -350,7 +354,7 @@ The JSON tracker serves as a living document to monitor progress as examples are
 - **Infrastructure**: Text filtering and layer color controls now available for all examples
 
 **Completed Examples:**
-- Phase 1: fly-to-a-location, slowly-fly-to-a-location, get-coordinates-of-the-mouse-pointer, get-features-under-the-mouse-pointer, disable-map-rotation, toggle-interactions, jump-to-a-series-of-locations, animate-map-camera-around-a-point, navigate-the-map-with-game-like-controls
+- Phase 1: fly-to-a-location, slowly-fly-to-a-location, get-coordinates-of-the-mouse-pointer, get-features-under-the-mouse-pointer, disable-map-rotation, toggle-interactions, jump-to-a-series-of-locations, animate-map-camera-around-a-point, navigate-the-map-with-game-like-controls, view-local-geojson
 - Phase 2: create-a-hover-effect, change-a-layers-color-with-buttons, filter-symbols-by-text-input
 
 **Next Priority Examples:**
