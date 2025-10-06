@@ -1,9 +1,9 @@
 {
   "metadata": {
     "title": "MapLibreum JavaScript Injection Analysis and Improvement Roadmap",
-    "version": "1.5.0",
+    "version": "1.6.0",
     "created_date": "2024-12-21",
-    "last_updated": "2025-10-01",
+    "last_updated": "2025-10-05",
     "total_examples": 123,
     "analysis_source": "JAVASCRIPT_INJECTION_ANALYSIS.md",
     "progress_tracker": true,
@@ -16,10 +16,10 @@
     "proper_api_only": 55,
     "other_patterns": 22,
     "completion_percentage": {
-      "phase_1": 36.0,
+      "phase_1": 40.0,
       "phase_2": 33.3,
       "phase_3": 0,
-      "overall": 54.5
+      "overall": 55.3
     }
   },
   "implementation_phases": {
@@ -40,9 +40,9 @@
         "ToggleControl"
       ],
       "completion_status": {
-        "completed": 9,
+        "completed": 10,
         "in_progress": 0,
-        "planned": 16
+        "planned": 15
       }
     },
     "phase_2": {
@@ -561,22 +561,26 @@
         },
         "view-local-geojson": {
           "test_path": "tests/test_examples/test_view_local_geojson.py",
-          "current_implementation": "javascript_injection",
+          "current_implementation": "improved",
           "issues": [
-            "JavaScript file loading",
-            "No Python local file handling"
+            "RESOLVED: Implemented Python API for local file handling",
+            "RESOLVED: Eliminated JavaScript-based file loading"
           ],
           "required_apis": [
-            "LocalFileLoader",
-            "GeoJSONLoader"
+            "GeoJSONSource.from_file()"
           ],
-          "phase": "phase_2",
-          "priority": "medium",
-          "estimated_effort": "3-4 days",
-          "status": "planned",
-          "assigned_to": null,
-          "completion_date": null,
-          "notes": "Important for local data workflows"
+          "phase": "phase_1",
+          "priority": "high",
+          "estimated_effort": "1-2 days",
+          "status": "completed",
+          "assigned_to": "copilot",
+          "completion_date": "2025-10-05",
+          "notes": "Added a new test_view_local_geojson_with_python_api() demonstrating the new GeoJSONSource.from_file() method.",
+          "improvements_made": [
+            "Implemented GeoJSONSource.from_file() for loading local GeoJSON files",
+            "Created a new test to validate the Python API approach",
+            "Maintained backward compatibility with the original test"
+          ]
         },
         "view-local-geojson-experimental": {
           "test_path": "tests/test_examples/test_view_local_geojson.py",
@@ -1094,6 +1098,20 @@
           "Eliminates JavaScript injection for keyboard navigation",
           "Simplifies creating interactive map experiences",
           "Abstracts away low-level DOM event handling"
+        ]
+      },
+      {
+        "name": "GeoJSONSource.from_file() API",
+        "description": "Implemented a new method for loading local GeoJSON files",
+        "date": "2025-10-05",
+        "impact": "Provides a clean Python API for an important data handling pattern",
+        "files_modified": [
+          "maplibreum/sources.py"
+        ],
+        "benefits": [
+          "Eliminates JavaScript injection for local file handling",
+          "Simplifies loading local GeoJSON data",
+          "Demonstrates a clear path for future data source API enhancements"
         ]
       }
     ],
