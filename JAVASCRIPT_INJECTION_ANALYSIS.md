@@ -219,6 +219,39 @@ This JSON file provides a detailed progress tracker with:
 
 The JSON tracker serves as a living document to monitor progress as examples are converted from JavaScript injection to proper Python API implementations.
 
+### Recent Progress (2025-10-06)
+
+**Roadmap Verification and Audit:**
+- ✅ **Status Verification**: Performed comprehensive verification of roadmap status against test implementations
+  - Confirmed all 13 completed examples (10 Phase 1 + 3 Phase 2) are properly marked and have Python API tests
+  - Verified completion percentages: Phase 1 40.0% (10/25), Phase 2 33.3% (3/9), Phase 3 0% (0/22)
+  - Overall proper API usage: 55.3% (68/123 examples) = 55 initially proper + 13 improved
+- ✅ **Test Suite Status**: All 148 tests passing (100% success rate)
+  - Includes all Python API tests for improved examples
+  - Backward compatibility maintained with original JavaScript injection tests
+- ✅ **Documentation Sync**: Verified JSON roadmap and markdown documentation are consistent
+  - Updated version to 1.6.1 with latest verification date
+  - All completion statistics accurately reflect current implementation status
+
+**Current Status:**
+- **Phase 1 Progress**: 40.0% complete (10/25 examples improved)
+- **Phase 2 Progress**: 33.3% complete (3/9 examples improved)
+- **Phase 3 Progress**: 0.0% complete (0/22 examples improved)
+- **Overall Progress**: 55.3% proper API usage
+- **All Tests Passing**: 148/148 tests pass (100% success rate)
+
+**Completed Examples:**
+- Phase 1 (10): fly-to-a-location, slowly-fly-to-a-location, get-coordinates-of-the-mouse-pointer, get-features-under-the-mouse-pointer, disable-map-rotation, toggle-interactions, jump-to-a-series-of-locations, animate-map-camera-around-a-point, navigate-the-map-with-game-like-controls, view-local-geojson
+- Phase 2 (3): create-a-hover-effect, change-a-layers-color-with-buttons, filter-symbols-by-text-input
+
+**Infrastructure Available:**
+- ButtonControl, ToggleControl for interactive UI
+- TextFilterControl for layer filtering
+- LayerColorControl for interactive styling
+- Map navigation APIs: fly_to(), jump_to_sequence(), animate_camera_around(), add_keyboard_navigation()
+- Event handling: add_event_listener(), query_features_at_point()
+- Data loading: GeoJSONSource.from_file()
+
 ### Recent Progress (2025-10-05)
 
 **API Implementation:**
@@ -321,7 +354,7 @@ The JSON tracker serves as a living document to monitor progress as examples are
 - **Infrastructure**: Text filtering and layer color controls now available for all examples
 
 **Completed Examples:**
-- Phase 1: fly-to-a-location, slowly-fly-to-a-location, get-coordinates-of-the-mouse-pointer, get-features-under-the-mouse-pointer, disable-map-rotation, toggle-interactions, jump-to-a-series-of-locations, animate-map-camera-around-a-point, navigate-the-map-with-game-like-controls
+- Phase 1: fly-to-a-location, slowly-fly-to-a-location, get-coordinates-of-the-mouse-pointer, get-features-under-the-mouse-pointer, disable-map-rotation, toggle-interactions, jump-to-a-series-of-locations, animate-map-camera-around-a-point, navigate-the-map-with-game-like-controls, view-local-geojson
 - Phase 2: create-a-hover-effect, change-a-layers-color-with-buttons, filter-symbols-by-text-input
 
 **Next Priority Examples:**
