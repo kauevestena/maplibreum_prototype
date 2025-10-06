@@ -14,12 +14,12 @@ This document provides a comprehensive analysis of JavaScript code injection usa
 - **Proper API Usage**: 55 examples (44.7%) use only Python API methods initially
 - **Other**: 22 examples (17.9%) - unknown patterns or no implementation
 
-**Current Progress (as of 2025-10-01):**
-- **Examples Improved**: 12 (9 from Phase 1 + 3 from Phase 2)
-- **Total Proper API Now**: 67 examples (55 initially + 12 improved)
-- **Overall Proper API Usage**: 54.5% (67/123)
+**Current Progress (as of 2025-10-05):**
+- **Examples Improved**: 13 (10 from Phase 1 + 3 from Phase 2)
+- **Total Proper API Now**: 68 examples (55 initially + 13 improved)
+- **Overall Proper API Usage**: 55.3% (68/123)
 
-**Conclusion**: The roadmap claim of "all examples implemented" is technically accurate, but JavaScript injection was initially used in 37.4% of examples. Through systematic improvement efforts, proper Python API usage has increased from 44.7% to 54.5%, with 12 examples successfully converted from JavaScript injection to proper Python API implementations.
+**Conclusion**: The roadmap claim of "all examples implemented" is technically accurate, but JavaScript injection was initially used in 37.4% of examples. Through systematic improvement efforts, proper Python API usage has increased from 44.7% to 55.3%, with 13 examples successfully converted from JavaScript injection to proper Python API implementations.
 
 ## Detailed Findings
 
@@ -60,7 +60,7 @@ These examples use only `add_on_load_js()` and `add_external_script()` without p
 
 **Utility Examples:**
 - `disable-map-rotation`
-- `view-local-geojson`
+- `view-local-geojson` - ✅ Converted to Python API
 - `view-local-geojson-experimental`
 - `zoom-and-planet-size-relation-on-globe`
 
@@ -218,6 +218,21 @@ This JSON file provides a detailed progress tracker with:
 - Migration strategy with success criteria and timeline
 
 The JSON tracker serves as a living document to monitor progress as examples are converted from JavaScript injection to proper Python API implementations.
+
+### Recent Progress (2025-10-05)
+
+**API Implementation:**
+- ✅ **`GeoJSONSource.from_file()`**: Implemented a new class method for loading local GeoJSON files, providing a clean Python API for a common data handling pattern.
+
+**Example Conversions:**
+- ✅ **`view-local-geojson`**: Added `test_view_local_geojson_with_python_api()` demonstrating the new `GeoJSONSource.from_file()` method, eliminating the need for JavaScript injection.
+
+**Current Status:**
+- **Phase 1 Progress**: 40.0% complete (10/25 examples improved)
+- **Phase 2 Progress**: 33.3% complete (3/9 examples improved)
+- **Overall Progress**: Increased from 54.5% to 55.3% proper API usage
+- **Backward Compatibility**: All 151 tests pass (including new Python API tests)
+- **Infrastructure**: New `GeoJSONSource.from_file()` API now available.
 
 ### Recent Progress (2025-10-01)
 

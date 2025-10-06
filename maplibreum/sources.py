@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+import json
+from pathlib import Path
 from typing import Any, Dict, Mapping, Optional, Sequence, Union
 
 
@@ -278,6 +280,28 @@ class GeoJSONSource(Source):
         resolved.update(_normalise_options(kwargs, self._KEY_MAP))
 
         super().__init__("geojson", **resolved)
+
+    @classmethod
+    def from_file(
+        cls, file_path: Union[str, Path], **kwargs: Any
+    ) -> GeoJSONSource:
+        """Create a GeoJSONSource from a local file.
+
+        Parameters
+        ----------
+        file_path:
+            Path to the GeoJSON file.
+        **kwargs:
+            Other options for the GeoJSONSource.
+
+        Returns
+        -------
+        A new GeoJSONSource instance.
+        """
+        with open(file_path) as f:
+            data = json.load(f)
+
+        return cls(data=data, **kwargs)
 
 
 class ImageSource(Source):
