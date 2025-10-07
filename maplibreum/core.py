@@ -22,6 +22,7 @@ from . import controls
 from . import sources as source_wrappers
 from .sources import Source as SourceDefinition
 from .styles import MAP_STYLES
+from .animation import AnimatedIcon
 
 
 class Tooltip:
@@ -681,6 +682,19 @@ class Map:
             entry["options"] = options
         self.images.append(entry)
         return name
+
+    def add_animated_icon(self, icon: AnimatedIcon) -> str:
+        """Add an animated icon to the map.
+        Parameters
+        ----------
+        icon : AnimatedIcon
+            The animated icon to add.
+        Returns
+        -------
+        str
+            The ID of the added icon.
+        """
+        return icon.add_to_map(self)
 
     def add_wms_layer(
         self,
