@@ -15,9 +15,9 @@ This document provides a comprehensive analysis of JavaScript code injection usa
 - **Other**: 22 examples (17.9%) - unknown patterns or no implementation
 
 **Current Progress (as of 2025-10-06):**
-- **Examples Improved**: 14 (10 from Phase 1 + 4 from Phase 2)
-- **Total Proper API Now**: 69 examples (55 initially + 14 improved)
-- **Overall Proper API Usage**: 56.1% (69/123)
+- **Examples Improved**: 15 (10 from Phase 1 + 5 from Phase 2)
+- **Total Proper API Now**: 70 examples (55 initially + 15 improved)
+- **Overall Proper API Usage**: 56.9% (70/123)
 
 **Conclusion**: The roadmap claim of "all examples implemented" is technically accurate, but JavaScript injection was initially used in 37.4% of examples. Through systematic improvement efforts, proper Python API usage has increased from 44.7% to 56.1%, with 14 examples successfully converted from JavaScript injection to proper Python API implementations.
 
@@ -49,7 +49,7 @@ These examples use only `add_on_load_js()` and `add_external_script()` without p
 - `draw-polygon-with-mapbox-gl-draw`
 
 **Real-time & Animation:**
-- `add-an-animated-icon-to-the-map`
+- `add-an-animated-icon-to-the-map` - ✅ Converted to Python API
 - `update-a-feature-in-realtime` - ✅ Converted to Python API
 - `sync-movement-of-multiple-maps`
 
@@ -218,6 +218,21 @@ This JSON file provides a detailed progress tracker with:
 - Migration strategy with success criteria and timeline
 
 The JSON tracker serves as a living document to monitor progress as examples are converted from JavaScript injection to proper Python API implementations.
+
+### Recent Progress (2025-10-06)
+
+**API Implementation:**
+- ✅ **`AnimatedIcon`**: Implemented a new class for creating animated icons, providing a clean Python API for a common animation pattern.
+
+**Example Conversions:**
+- ✅ **`add-an-animated-icon-to-the-map`**: Added `test_add_an_animated_icon_with_python_api()` demonstrating the new `AnimatedIcon` class, eliminating the need for JavaScript injection.
+
+**Current Status:**
+- **Phase 1 Progress**: 40.0% complete (10/25 examples improved)
+- **Phase 2 Progress**: 55.6% complete (5/9 examples improved)
+- **Overall Progress**: Increased from 56.1% to 56.9% proper API usage
+- **Backward Compatibility**: All tests pass (including new Python API tests)
+- **Infrastructure**: New `AnimatedIcon` API now available.
 
 ### Recent Progress (2025-10-06)
 

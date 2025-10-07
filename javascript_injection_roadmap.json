@@ -58,9 +58,9 @@
         "CustomLayer wrappers"
       ],
       "completion_status": {
-        "completed": 4,
+        "completed": 5,
         "in_progress": 0,
-        "planned": 5
+        "planned": 4
       }
     },
     "phase_3": {
@@ -447,22 +447,26 @@
         },
         "add-an-animated-icon-to-the-map": {
           "test_path": "tests/test_examples/test_add_an_animated_icon_to_the_map.py",
-          "current_implementation": "javascript_injection",
+          "current_implementation": "improved",
           "issues": [
-            "CSS animation with JavaScript timing",
-            "No Python animation API for icons"
+            "RESOLVED: Implemented Python API for animated icons",
+            "RESOLVED: Eliminated JavaScript-based animation logic"
           ],
           "required_apis": [
-            "AnimatedIcon",
-            "IconAnimation"
+            "AnimatedIcon"
           ],
           "phase": "phase_2",
           "priority": "medium",
           "estimated_effort": "3-5 days",
-          "status": "planned",
-          "assigned_to": null,
-          "completion_date": null,
-          "notes": "Visual enhancement feature"
+          "status": "completed",
+          "assigned_to": "copilot",
+          "completion_date": "2025-10-06",
+          "notes": "Added a new test_add_an_animated_icon_with_python_api() demonstrating the new AnimatedIcon class.",
+          "improvements_made": [
+            "Implemented AnimatedIcon class for handling animated icons",
+            "Added a new test to validate the Python API approach",
+            "Maintained backward compatibility with the original test"
+          ]
         },
         "update-a-feature-in-realtime": {
           "test_path": "tests/test_examples/test_update_a_feature_in_realtime.py",
@@ -1133,6 +1137,21 @@
           "Eliminates JavaScript injection for real-time data updates",
           "Simplifies creating animations based on changing data",
           "Provides a reusable component for animating points along a line"
+        ]
+      },
+      {
+        "name": "Animated Icon API",
+        "description": "Implemented AnimatedIcon for creating animated icons with a Python API",
+        "date": "2025-10-06",
+        "impact": "Provides a clean Python API for creating animated icons.",
+        "files_modified": [
+          "maplibreum/animation.py",
+          "maplibreum/core.py"
+        ],
+        "benefits": [
+          "Eliminates JavaScript injection for animated icons",
+          "Simplifies creating custom animations",
+          "Provides a reusable component for animated icons"
         ]
       }
     ],

@@ -1,128 +1,170 @@
-"""Utilities for describing MapLibre animations using Python objects."""
-
-from __future__ import annotations
-
-import textwrap
-from dataclasses import dataclass, field
-from typing import Dict, Iterable, List, Optional, Sequence, Union
+import uuid
+from typing import List, Optional
 
 
-def _normalize_lines(block: Optional[Union[str, Sequence[str]]]) -> List[str]:
-    """Convert input into a flat list of JavaScript source lines."""
+class AnimatedIcon:
+    """Represents a customizable animated icon for use on a map."""
 
-    if block is None:
-        return []
-    if isinstance(block, str):
-        return [line for line in block.splitlines()]
-    result: List[str] = []
-    for line in block:
-        if not isinstance(line, str):
-            raise TypeError("Animation code blocks must be strings")
-        result.extend(line.splitlines())
-    return result
+    def __init__(
+        self,
+        size: int = 200,
+        color: str = "rgba(255, 100, 100, 1)",
+        pulse_color: str = "rgba(255, 200, 200, 0.7)",
+    ):
+        """Initializes an AnimatedIcon.
+        Args:
+            size: The size of the icon in pixels.
+            color: The main color of the icon.
+            pulse_color: The color of the pulsing animation.
+        """
+        self.icon_id = f"pulsing-dot-{uuid.uuid4().hex[:6]}"
+        self.size = size
+        self.color = color
+        self.pulse_color = pulse_color
+
+    def add_to_map(self, map_instance) -> str:
+        """Generates the JavaScript to add the animated icon to the map.
+        Args:
+            map_instance: The map instance to which the icon will be added.
+        Returns:
+            The ID of the generated icon.
+        """
+        js_code = f"""
+            const {self.icon_id} = {{
+                width: {self.size},
+                height: {self.size},
+                data: new Uint8Array({self.size} * {self.size} * 4),
+
+                onAdd: function () {{
+                    const canvas = document.createElement('canvas');
+                    canvas.width = this.width;
+                    canvas.height = this.height;
+                    this.context = canvas.getContext('2d');
+                }},
+
+                render: function () {{
+                    const duration = 1000;
+                    const t = (performance.now() % duration) / duration;
+
+                    const radius = ({self.size} / 2) * 0.3;
+                    const outerRadius = ({self.size} / 2) * 0.7 * t + radius;
+                    const context = this.context;
+
+                    context.clearRect(0, 0, this.width, this.height);
+                    context.beginPath();
+                    context.arc(this.width / 2, this.height / 2, outerRadius, 0, Math.PI * 2);
+                    context.fillStyle = '{self.pulse_color.replace("0.7", "' + (1 - t) + '")}';
+                    context.fill();
+
+                    context.beginPath();
+                    context.arc(this.width / 2, this.height / 2, radius, 0, Math.PI * 2);
+                    context.fillStyle = '{self.color}';
+                    context.strokeStyle = 'white';
+                    context.lineWidth = 2 + 4 * (1 - t);
+                    context.fill();
+                    context.stroke();
+
+                    this.data = context.getImageData(0, 0, this.width, this.height).data;
+                    map.triggerRepaint();
+                    return true;
+                }}
+            }};
+            map.addImage('{self.icon_id}', {self.icon_id}, {{ pixelRatio: 2 }});
+        """
+        map_instance.add_on_load_js(js_code)
+        return self.icon_id
 
 
-def _indent_block(lines: Iterable[str], prefix: str = "    ") -> str:
-    body = "\n".join(lines).strip()
-    if not body:
-        return ""
-    return textwrap.indent(body, prefix)
-
-
-@dataclass
 class AnimationLoop:
-    """Describe a ``requestAnimationFrame`` loop.
+    """Helper for generating JavaScript animations with requestAnimationFrame."""
 
-    Parameters
-    ----------
-    name:
-        Name of the JavaScript function implementing the loop.
-    body:
-        Statements executed on each frame. Either a string or sequence of
-        strings.
-    variables:
-        Mapping of variable names to initial values declared with ``let``.
-    setup:
-        Additional statements executed once before the animation starts.
-    auto_schedule:
-        When ``True`` the loop automatically schedules the next frame using
-        ``requestAnimationFrame`` at the end of ``body``.
-    start_immediately:
-        When ``True`` the animation starts right away once registered.
-    handle_name:
-        Optional variable that stores the ``requestAnimationFrame`` handle.
-    visibility_reset:
-        Statements executed whenever the page visibility changes, useful for
-        resuming animations gracefully.
-    """
-
-    name: str
-    body: Union[str, Sequence[str]]
-    variables: Dict[str, str] = field(default_factory=dict)
-    setup: Union[str, Sequence[str], None] = None
-    auto_schedule: bool = True
-    start_immediately: bool = True
-    handle_name: Optional[str] = None
-    visibility_reset: Union[str, Sequence[str], None] = None
-
-    def to_js(self) -> str:
-        handle = self.handle_name or f"{self.name}Handle"
-        parts: List[str] = []
-
-        for var, value in self.variables.items():
-            parts.append(f"let {var} = {value};")
-
-        declare_handle = (self.auto_schedule or self.start_immediately) and (
-            handle not in self.variables
+    def __init__(
+        self,
+        name: str,
+        body: str or list,
+        variables: Optional[dict] = None,
+        setup: Optional[str or list] = None,
+        handle_name: Optional[str] = None,
+        visibility_reset: Optional[str or list] = None,
+        auto_schedule: bool = True,
+        start_immediately: bool = True,
+    ):
+        self.name = name
+        self.body = body if isinstance(body, list) else [body]
+        self.variables = variables or {}
+        self.setup = setup if isinstance(setup, list) or setup is None else [setup]
+        self.handle_name = handle_name
+        self.visibility_reset = (
+            visibility_reset
+            if isinstance(visibility_reset, list) or visibility_reset is None
+            else [visibility_reset]
         )
-        if declare_handle:
-            parts.append(f"let {handle};")
-
-        parts.extend(_normalize_lines(self.setup))
-
-        body_lines = _normalize_lines(self.body)
-        if self.auto_schedule:
-            body_lines.append(f"{handle} = requestAnimationFrame({self.name});")
-        function_block = _indent_block(body_lines)
-        parts.append(f"function {self.name}(timestamp){{\n{function_block}\n}}")
-
-        if self.start_immediately:
-            parts.append(f"{handle} = requestAnimationFrame({self.name});")
-
-        reset_lines = _normalize_lines(self.visibility_reset)
-        if reset_lines:
-            reset_block = _indent_block(reset_lines)
-            parts.append(
-                "document.addEventListener('visibilitychange', function(){\n"
-                f"{reset_block}\n" "});"
-            )
-
-        return "\n".join(filter(None, parts))
-
-
-@dataclass
-class TemporalInterval:
-    """Represent a ``setInterval`` loop."""
-
-    callback: Union[str, Sequence[str]]
-    interval: int
-    name: Optional[str] = None
-    run_immediately: bool = False
+        self.auto_schedule = auto_schedule
+        self.start_immediately = start_immediately
 
     def to_js(self) -> str:
-        body_lines = _normalize_lines(self.callback)
-        body_block = _indent_block(body_lines)
-        function = f"function(){{\n{body_block}\n}}"
+        """Render the animation loop to a JavaScript string."""
+        lines = []
+        if self.variables:
+            for key, value in self.variables.items():
+                lines.append(f"let {key} = {value};")
+
+        if self.setup:
+            lines.extend(self.setup)
+
+        lines.append(f"function {self.name}(timestamp) {{")
+        lines.extend([f"    {line}" for line in self.body])
+        if self.auto_schedule:
+            lines.append(f"    requestAnimationFrame({self.name});")
+        lines.append("}")
+
+        if self.handle_name:
+            lines.append(f"let {self.handle_name} = requestAnimationFrame({self.name});")
+        elif self.start_immediately:
+            lines.append(f"requestAnimationFrame({self.name});")
+
+        if self.visibility_reset:
+            lines.append("document.addEventListener('visibilitychange', () => {")
+            lines.append("    if (document.visibilityState === 'visible') {")
+            lines.extend([f"        {line}" for line in self.visibility_reset])
+            lines.append("    }")
+            lines.append("});")
+
+        return "\n".join(lines)
+
+
+class TemporalInterval:
+    """Helper for generating JavaScript animations with setInterval."""
+
+    def __init__(
+        self,
+        callback: str or list,
+        interval: int,
+        name: Optional[str] = None,
+        variables: Optional[dict] = None,
+        setup: Optional[str or list] = None,
+    ):
+        self.name = name
+        self.callback = callback if isinstance(callback, list) else [callback]
+        self.interval = interval
+        self.variables = variables or {}
+        self.setup = setup if isinstance(setup, list) or setup is None else [setup]
+
+    def to_js(self) -> str:
+        """Render the temporal interval to a JavaScript string."""
+        lines = []
+        if self.variables:
+            for key, value in self.variables.items():
+                lines.append(f"let {key} = {value};")
+
+        if self.setup:
+            lines.extend(self.setup)
+
+        callback_body = "\n".join([f"    {line.strip()}" for line in self.callback])
+        func = f"function(){{\n{callback_body}\n}}"
 
         if self.name:
-            declaration = f"var {self.name} = setInterval({function}, {self.interval});"
+            lines.append(f"var {self.name} = setInterval({func}, {self.interval});")
         else:
-            declaration = f"setInterval({function}, {self.interval});"
-
-        if self.run_immediately:
-            immediate = f"(function(){{\n{body_block}\n}})();"
-            return immediate + "\n" + declaration
-        return declaration
-
-
-__all__ = ["AnimationLoop", "TemporalInterval"]
+            lines.append(f"setInterval({func}, {self.interval});")
+        return "\n".join(lines)
