@@ -14,12 +14,12 @@ This document provides a comprehensive analysis of JavaScript code injection usa
 - **Proper API Usage**: 55 examples (44.7%) use only Python API methods initially
 - **Other**: 22 examples (17.9%) - unknown patterns or no implementation
 
-**Current Progress (as of 2025-10-05):**
-- **Examples Improved**: 13 (10 from Phase 1 + 3 from Phase 2)
-- **Total Proper API Now**: 68 examples (55 initially + 13 improved)
-- **Overall Proper API Usage**: 55.3% (68/123)
+**Current Progress (as of 2025-10-06):**
+- **Examples Improved**: 14 (10 from Phase 1 + 4 from Phase 2)
+- **Total Proper API Now**: 69 examples (55 initially + 14 improved)
+- **Overall Proper API Usage**: 56.1% (69/123)
 
-**Conclusion**: The roadmap claim of "all examples implemented" is technically accurate, but JavaScript injection was initially used in 37.4% of examples. Through systematic improvement efforts, proper Python API usage has increased from 44.7% to 55.3%, with 13 examples successfully converted from JavaScript injection to proper Python API implementations.
+**Conclusion**: The roadmap claim of "all examples implemented" is technically accurate, but JavaScript injection was initially used in 37.4% of examples. Through systematic improvement efforts, proper Python API usage has increased from 44.7% to 56.1%, with 14 examples successfully converted from JavaScript injection to proper Python API implementations.
 
 ## Detailed Findings
 
@@ -50,12 +50,12 @@ These examples use only `add_on_load_js()` and `add_external_script()` without p
 
 **Real-time & Animation:**
 - `add-an-animated-icon-to-the-map`
-- `update-a-feature-in-realtime`
+- `update-a-feature-in-realtime` - ✅ Converted to Python API
 - `sync-movement-of-multiple-maps`
 
 **Protocol & Data Handling:**
 - `pmtiles-source-and-protocol`
-- `use-addprotocol-to-transform-feature-properties`
+- `use-addprotocol-to-transform-feature_properties`
 - `geocode-with-nominatim`
 
 **Utility Examples:**
@@ -221,36 +221,19 @@ The JSON tracker serves as a living document to monitor progress as examples are
 
 ### Recent Progress (2025-10-06)
 
-**Roadmap Verification and Audit:**
-- ✅ **Status Verification**: Performed comprehensive verification of roadmap status against test implementations
-  - Confirmed all 13 completed examples (10 Phase 1 + 3 Phase 2) are properly marked and have Python API tests
-  - Verified completion percentages: Phase 1 40.0% (10/25), Phase 2 33.3% (3/9), Phase 3 0% (0/22)
-  - Overall proper API usage: 55.3% (68/123 examples) = 55 initially proper + 13 improved
-- ✅ **Test Suite Status**: All 148 tests passing (100% success rate)
-  - Includes all Python API tests for improved examples
-  - Backward compatibility maintained with original JavaScript injection tests
-- ✅ **Documentation Sync**: Verified JSON roadmap and markdown documentation are consistent
-  - Updated version to 1.6.1 with latest verification date
-  - All completion statistics accurately reflect current implementation status
+**API Implementation:**
+- ✅ **`RealTimeDataSource` and `AnimatePointOnLine`**: Implemented new classes for handling real-time data updates, providing a clean Python API for a common animation pattern.
+- ✅ **`GeoJSONSource.data` property**: Added a `data` property to the `GeoJSONSource` class for easier access to the source's data.
+
+**Example Conversions:**
+- ✅ **`update-a-feature-in-realtime`**: Added `test_update_a_feature_in_realtime_with_python_api()` demonstrating the new `RealTimeDataSource` and `AnimatePointOnLine` classes, eliminating the need for JavaScript injection.
 
 **Current Status:**
 - **Phase 1 Progress**: 40.0% complete (10/25 examples improved)
-- **Phase 2 Progress**: 33.3% complete (3/9 examples improved)
-- **Phase 3 Progress**: 0.0% complete (0/22 examples improved)
-- **Overall Progress**: 55.3% proper API usage
-- **All Tests Passing**: 148/148 tests pass (100% success rate)
-
-**Completed Examples:**
-- Phase 1 (10): fly-to-a-location, slowly-fly-to-a-location, get-coordinates-of-the-mouse-pointer, get-features-under-the-mouse-pointer, disable-map-rotation, toggle-interactions, jump-to-a-series-of-locations, animate-map-camera-around-a-point, navigate-the-map-with-game-like-controls, view-local-geojson
-- Phase 2 (3): create-a-hover-effect, change-a-layers-color-with-buttons, filter-symbols-by-text-input
-
-**Infrastructure Available:**
-- ButtonControl, ToggleControl for interactive UI
-- TextFilterControl for layer filtering
-- LayerColorControl for interactive styling
-- Map navigation APIs: fly_to(), jump_to_sequence(), animate_camera_around(), add_keyboard_navigation()
-- Event handling: add_event_listener(), query_features_at_point()
-- Data loading: GeoJSONSource.from_file()
+- **Phase 2 Progress**: 44.4% complete (4/9 examples improved)
+- **Overall Progress**: Increased from 55.3% to 56.1% proper API usage
+- **Backward Compatibility**: All 235 tests pass (including new Python API tests)
+- **Infrastructure**: New `RealTimeDataSource` and `AnimatePointOnLine` APIs now available.
 
 ### Recent Progress (2025-10-05)
 

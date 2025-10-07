@@ -281,6 +281,11 @@ class GeoJSONSource(Source):
 
         super().__init__("geojson", **resolved)
 
+    @property
+    def data(self) -> Any:
+        """The GeoJSON data for the source."""
+        return self.options["data"]
+
     @classmethod
     def from_file(
         cls, file_path: Union[str, Path], **kwargs: Any
