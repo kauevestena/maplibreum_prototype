@@ -451,4 +451,138 @@ __all__ = [
     "ImageSource",
     "VideoSource",
     "CanvasSource",
+    "VideoOverlay",
 ]
+
+
+class VideoOverlay:
+    """
+    Helper class for managing video overlays with playback controls.
+    
+    This class provides an alternative to JavaScript injection for
+    video overlay management by handling source setup and playback control.
+    """
+    
+    def __init__(self, source_id, layer_id, urls, coordinates,
+                 autoplay=True, loop=True, click_to_toggle=True):
+        """Initialize a VideoOverlay.
+        
+        Parameters
+        ----------
+        source_id : str
+            ID for the video source.
+        layer_id : str
+            ID for the video raster layer.
+        urls : list of str
+            List of video URLs (multiple formats for browser compatibility).
+        coordinates : list of [lon, lat] pairs
+            Four corner coordinates for the video overlay (clockwise from top-left).
+        autoplay : bool, optional
+            Whether to autoplay the video (default: True).
+        loop : bool, optional
+            Whether to loop the video (default: True).
+        click_to_toggle : bool, optional
+            Whether clicking the map toggles play/pause (default: True).
+        """
+        self.source_id = source_id
+        self.layer_id = layer_id
+        self.urls = urls if isinstance(urls, list) else [urls]
+        self.coordinates = coordinates
+        self.autoplay = autoplay
+        self.loop = loop
+        self.click_to_toggle = click_to_toggle
+        
+    def get_source_config(self):
+        """Get the video source configuration.
+        
+        Returns
+        -------
+        dict
+            Video source configuration.
+        """
+        return {
+            "type": "video",
+            "urls": self.urls,
+            "coordinates": self.coordinates
+        }
+    
+    def get_layer_config(self):
+        """Get the video layer configuration.
+        
+        Returns
+        -------
+        dict
+            Raster layer configuration for the video.
+        """
+        return {
+            "id": self.layer_id,
+            "type": "raster",
+            "source": self.source_id
+        }
+    
+    def to_js(self):
+        """Generate JavaScript code for video playback control.
+        
+        Returns
+        -------
+        str
+            JavaScript code for controlling video playback.
+        """
+        # Setup code
+        state_var = f"_videoPlaying_{self.source_id.replace('-', '_')}"
+        
+        setup_code = f"""
+(function() {{
+    // Initialize video playback state
+    window.{state_var} = {str(self.autoplay).lower()};
+    
+    // Get video source
+    const videoSource = map.getSource('{self.source_id}');
+    if (!videoSource) {{
+        console.warn('Video source "{self.source_id}" not found');
+        return;
+    }}
+"""
+        
+        # Click handler for toggle
+        if self.click_to_toggle:
+            toggle_code = f"""
+    
+    // Add click handler to toggle playback
+    map.on('click', function() {{
+        if (window.{state_var}) {{
+            videoSource.pause();
+            window.{state_var} = false;
+        }} else {{
+            videoSource.play();
+            window.{state_var} = true;
+        }}
+    }});
+"""
+        else:
+            toggle_code = ""
+        
+        js_code = setup_code + toggle_code + """
+}})();
+"""
+        return js_code
+    
+    def get_play_method(self):
+        """Get JavaScript method call to play the video.
+        
+        Returns
+        -------
+        str
+            JavaScript code to play the video.
+        """
+        return f"map.getSource('{self.source_id}').play();"
+    
+    def get_pause_method(self):
+        """Get JavaScript method call to pause the video.
+        
+        Returns
+        -------
+        str
+            JavaScript code to pause the video.
+        """
+        return f"map.getSource('{self.source_id}').pause();"

@@ -5,121 +5,133 @@ from typing import List, Optional, Tuple
 
 def calculate_bearing(start: Tuple[float, float], end: Tuple[float, float]) -> float:
     """Calculate the bearing between two points in degrees.
-    
+
     Args:
         start: (longitude, latitude) of start point
         end: (longitude, latitude) of end point
-        
+
     Returns:
         Bearing in degrees (0-360)
     """
     lon1, lat1 = math.radians(start[0]), math.radians(start[1])
     lon2, lat2 = math.radians(end[0]), math.radians(end[1])
-    
+
     dLon = lon2 - lon1
     y = math.sin(dLon) * math.cos(lat2)
-    x = math.cos(lat1) * math.sin(lat2) - math.sin(lat1) * math.cos(lat2) * math.cos(dLon)
-    
+    x = math.cos(lat1) * math.sin(lat2) - math.sin(lat1) * math.cos(lat2) * math.cos(
+        dLon
+    )
+
     bearing = math.degrees(math.atan2(y, x))
     return (bearing + 360) % 360
 
 
-def haversine_distance(coord1: Tuple[float, float], coord2: Tuple[float, float]) -> float:
+def haversine_distance(
+    coord1: Tuple[float, float], coord2: Tuple[float, float]
+) -> float:
     """Calculate great circle distance between two points in kilometers.
-    
+
     Args:
         coord1: (longitude, latitude) of first point
         coord2: (longitude, latitude) of second point
-        
+
     Returns:
         Distance in kilometers
     """
     R = 6371  # Earth radius in kilometers
     lon1, lat1 = math.radians(coord1[0]), math.radians(coord1[1])
     lon2, lat2 = math.radians(coord2[0]), math.radians(coord2[1])
-    
+
     dLat = lat2 - lat1
     dLon = lon2 - lon1
-    
-    a = math.sin(dLat/2)**2 + math.cos(lat1) * math.cos(lat2) * math.sin(dLon/2)**2
+
+    a = (
+        math.sin(dLat / 2) ** 2
+        + math.cos(lat1) * math.cos(lat2) * math.sin(dLon / 2) ** 2
+    )
     c = 2 * math.asin(math.sqrt(a))
-    
+
     return R * c
 
 
-def interpolate_along_line(coordinates: List[Tuple[float, float]], steps: int = 500) -> List[Tuple[float, float]]:
+def interpolate_along_line(
+    coordinates: List[Tuple[float, float]], steps: int = 500
+) -> List[Tuple[float, float]]:
     """Create an arc (interpolated points) along a LineString.
-    
+
     Args:
         coordinates: List of (longitude, latitude) tuples defining the line
         steps: Number of interpolation steps
-        
+
     Returns:
         List of interpolated coordinates
     """
     if len(coordinates) < 2:
         return coordinates
-    
+
     # Calculate total distance
     total_distance = 0
     for i in range(len(coordinates) - 1):
         total_distance += haversine_distance(coordinates[i], coordinates[i + 1])
-    
+
     if total_distance == 0:
         return coordinates
-    
+
     # Generate interpolated points
     arc = []
     distance_per_step = total_distance / steps
-    
+
     current_segment = 0
     accumulated_distance = 0
     segment_start = coordinates[0]
     segment_end = coordinates[1]
     segment_distance = haversine_distance(segment_start, segment_end)
-    
+
     for step in range(steps + 1):
         target_distance = step * distance_per_step
-        
+
         # Find the right segment
-        while accumulated_distance + segment_distance < target_distance and current_segment < len(coordinates) - 2:
+        while (
+            accumulated_distance + segment_distance < target_distance
+            and current_segment < len(coordinates) - 2
+        ):
             accumulated_distance += segment_distance
             current_segment += 1
             segment_start = coordinates[current_segment]
             segment_end = coordinates[current_segment + 1]
             segment_distance = haversine_distance(segment_start, segment_end)
-        
+
         # Interpolate within the segment
         if segment_distance > 0:
             ratio = (target_distance - accumulated_distance) / segment_distance
             ratio = max(0, min(1, ratio))  # Clamp to [0, 1]
-            
+
             lon = segment_start[0] + ratio * (segment_end[0] - segment_start[0])
             lat = segment_start[1] + ratio * (segment_end[1] - segment_start[1])
             arc.append((lon, lat))
         else:
             arc.append(segment_start)
-    
+
     return arc
 
 
 class RouteAnimation:
     """Helper for animating a point along a route with Python API.
-    
+
     This class eliminates the need for Turf.js by implementing route
     interpolation and bearing calculation in Python.
     """
-    
+
     def __init__(
         self,
         route_coordinates: List[Tuple[float, float]],
         steps: int = 500,
         route_source_id: str = "route",
         point_source_id: str = "point",
-        replay_button_id: str = "replay"
+        replay_button_id: str = "replay",
     ):
         """Initialize a RouteAnimation.
-        
+
         Args:
             route_coordinates: List of (lon, lat) tuples defining the route
             steps: Number of animation steps
@@ -132,21 +144,21 @@ class RouteAnimation:
         self.route_source_id = route_source_id
         self.point_source_id = point_source_id
         self.replay_button_id = replay_button_id
-        
+
         # Pre-calculate the interpolated arc
         self.arc = interpolate_along_line(route_coordinates, steps)
-        
+
     def to_js(self) -> str:
         """Generate JavaScript code for the route animation.
-        
+
         Returns:
             JavaScript code string
         """
         import json
-        
+
         # Convert arc to JavaScript array format
         arc_js = json.dumps(self.arc)
-        
+
         js_code = f"""
 // Route animation setup
 const routeArc = {arc_js};
@@ -347,7 +359,9 @@ class AnimationLoop:
         lines.append("}")
 
         if self.handle_name:
-            lines.append(f"let {self.handle_name} = requestAnimationFrame({self.name});")
+            lines.append(
+                f"let {self.handle_name} = requestAnimationFrame({self.name});"
+            )
         elif self.start_immediately:
             lines.append(f"requestAnimationFrame({self.name});")
 
