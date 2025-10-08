@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Add a vector tile source</title>
+    <meta property="og:description" content="Add a vector source to a map." />
+    <meta charset='utf-8'>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel='stylesheet' href='https://unpkg.com/maplibre-gl@5.7.3/dist/maplibre-gl.css' />
+    <script src='https://unpkg.com/maplibre-gl@5.7.3/dist/maplibre-gl.js'></script>
+    <style>
+        body { margin: 0; padding: 0; }
+        html, body, #map { height: 100%; }
+    </style>
+</head>
+<body>
+<div class="maplibreum-example-banner">
+  <h1>Add A Vector Tile Source</h1>
+  <p>Original MapLibre example: <a href="https://maplibre.org/maplibre-gl-js/docs/examples/add-a-vector-tile-source/" target="_blank" rel="noopener">https://maplibre.org/maplibre-gl-js/docs/examples/add-a-vector-tile-source/</a></p>
+  <p>Generated from test_add_a_vector_tile_source.py by the automated test suite.</p>
+</div>
+
+<div id="map"></div>
+<script>
+    const map = new maplibregl.Map({
+        container: 'map',
+        style: 'https://tiles.openfreemap.org/styles/bright',
+        zoom: 13,
+        center: [-122.447303, 37.753574]
+    });
+
+    map.on('load', () => {
+        map.addSource('contours', {
+            type: 'vector',
+            url:
+                'https://api.maptiler.com/tiles/contours/tiles.json?key=get_your_own_OpIi9ZULNHzrESv6T2vL'
+        });
+        map.addLayer({
+            'id': 'terrain-data',
+            'type': 'line',
+            'source': 'contours',
+            'source-layer': 'contour',
+            'layout': {
+                'line-join': 'round',
+                'line-cap': 'round'
+            },
+            'paint': {
+                'line-color': '#ff69b4',
+                'line-width': 1
+            }
+        });
+    });
+</script>
+</body>
+</html>

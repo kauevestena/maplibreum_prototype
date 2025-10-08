@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <title>MapLibreum Map</title>
+    <meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no" />
+    <link href="https://unpkg.com/maplibre-gl@3.4.0/dist/maplibre-gl.css" rel="stylesheet" onerror="this.onerror=null;this.href='https://cdn.jsdelivr.net/npm/maplibre-gl@3.4.0/dist/maplibre-gl.css';" />
+    
+    
+    
+    
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+        }
+
+        #maplibreum_ec461631419d49b0ad3b76aaa5c00cb7 {
+            width: 100%;
+            height: 500px;
+            position: relative;
+        }
+
+        .maplibreum-legend {
+            position: absolute;
+            bottom: 10px;
+            left: 10px;
+            background: rgba(255, 255, 255, 0.8);
+            padding: 6px;
+            font-size: 12px;
+            border-radius: 4px;
+        }
+
+        .maplibreum-legend div {
+            display: flex;
+            align-items: center;
+            margin-bottom: 4px;
+        }
+
+        .maplibreum-legend span {
+            display: inline-block;
+            width: 12px;
+            height: 12px;
+            margin-right: 4px;
+
+        }
+
+        #maplibreum_ec461631419d49b0ad3b76aaa5c00cb7 { width: 100%; height: 500px; }
+
+
+
+    </style>
+    
+</head>
+<body>
+<div class="maplibreum-example-banner">
+  <h1>Simple Text Labels</h1>
+  <p>Generated from test_simple_text_labels.py by the automated test suite.</p>
+</div>
+
+    <div id="maplibreum_ec461631419d49b0ad3b76aaa5c00cb7">
+        
+        
+    </div>
+    <!-- MapLibre GL JS with CDN fallbacks -->
+    <script>
+        // Function to load MapLibre GL JS with fallbacks
+        function loadMapLibreGL() {
+            return new Promise((resolve, reject) => {
+                // Try loading from unpkg.com first
+                const script1 = document.createElement('script');
+                script1.src = 'https://unpkg.com/maplibre-gl@3.4.0/dist/maplibre-gl.js';
+                script1.onload = () => resolve();
+                script1.onerror = () => {
+                    // Fallback to jsDelivr
+                    const script2 = document.createElement('script');
+                    script2.src = 'https://cdn.jsdelivr.net/npm/maplibre-gl@3.4.0/dist/maplibre-gl.js';
+                    script2.onload = () => resolve();
+                    script2.onerror = () => {
+                        // Last fallback to cdnjs
+                        const script3 = document.createElement('script');
+                        script3.src = 'https://cdnjs.cloudflare.com/ajax/libs/maplibre-gl/3.4.0/maplibre-gl.min.js';
+                        script3.onload = () => resolve();
+                        script3.onerror = () => reject(new Error('Failed to load MapLibre GL JS from all CDNs'));
+                        document.head.appendChild(script3);
+                    };
+                    document.head.appendChild(script2);
+                };
+                document.head.appendChild(script1);
+            });
+        }
+
+        // Function to show error message when MapLibre fails to load
+        function showMapError(message) {
+            const mapDiv = document.getElementById('maplibreum_ec461631419d49b0ad3b76aaa5c00cb7');
+            if (mapDiv) {
+                mapDiv.innerHTML = `
+                    <div style="
+                        display: flex;
+                        align-items: center;
+                        justify-content: center;
+                        height: 100%;
+                        background-color: #f8f9fa;
+                        border: 2px dashed #dee2e6;
+                        border-radius: 8px;
+                        text-align: center;
+                        padding: 20px;
+                        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+                    ">
+                        <div>
+                            <div style="font-size: 48px; color: #6c757d; margin-bottom: 16px;">🗺️</div>
+                            <div style="font-size: 18px; color: #495057; margin-bottom: 8px;">Map Loading Error</div>
+                            <div style="font-size: 14px; color: #6c757d; margin-bottom: 16px;">${message}</div>
+                            <div style="font-size: 12px; color: #6c757d;">
+                                This may be due to network restrictions or CDN availability issues.
+                                <br>Try refreshing the page or check your internet connection.
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }
+        }
+
+        // Load MapLibre and initialize map
+        loadMapLibreGL().then(() => {
+            // MapLibre loaded successfully, check if it's available
+            if (typeof maplibregl === 'undefined') {
+                throw new Error('MapLibre GL JS loaded but not available');
+            }
+            
+            initializeMap();
+        }).catch(error => {
+            console.error('Failed to load MapLibre GL JS:', error);
+            showMapError('Failed to load MapLibre GL JavaScript library');
+        });
+
+        function initializeMap() {
+            try {
+        // Initialize map
+        var map = new maplibregl.Map({"container": "maplibreum_ec461631419d49b0ad3b76aaa5c00cb7", "style": "https://demotiles.maplibre.org/style.json", "center": [0, 0], "zoom": 2});
+        window.maplibreumMaps = window.maplibreumMaps || {};
+        window.maplibreumMaps["maplibreum_ec461631419d49b0ad3b76aaa5c00cb7"] = map;
+        window.maplibreumMapsLoaded = window.maplibreumMapsLoaded || {};
+        map.once('load', function() {
+            window.maplibreumMapsLoaded["maplibreum_ec461631419d49b0ad3b76aaa5c00cb7"] = true;
+        });
+
+
+// Add controls
+
+
+
+
+
+
+map.on('load', function() {
+    
+    // Add sources
+    
+    map.addSource("cities", {"type": "FeatureCollection", "features": [{"type": "Feature", "geometry": {"type": "Point", "coordinates": [-74.0059, 40.7128]}, "properties": {"name": "New York", "type": "city"}}, {"type": "Feature", "geometry": {"type": "Point", "coordinates": [-0.1276, 51.5074]}, "properties": {"name": "London", "type": "city"}}, {"type": "Feature", "geometry": {"type": "Point", "coordinates": [139.6917, 35.6895]}, "properties": {"name": "Tokyo", "type": "city"}}]});
+    
+
+    // Register images used by style layers
+    
+
+    
+    
+
+    // Add layers
+    
+    map.addLayer({"id": "city-circles", "type": "circle", "source": "cities", "paint": {"circle-radius": 8, "circle-color": "#007cbf", "circle-stroke-color": "#ffffff", "circle-stroke-width": 2}});
+    
+    map.addLayer({"id": "city-labels", "type": "symbol", "source": "cities", "layout": {"text-field": ["get", "name"], "text-font": ["Open Sans Regular"], "text-size": 14, "text-offset": [0, 1.5], "text-anchor": "top"}, "paint": {"text-color": "#333333", "text-halo-color": "#ffffff", "text-halo-width": 1}});
+    
+
+    // Popups
+    
+
+    // Tooltips
+    
+
+    // Tile Layers
+    var tileLayers = [
+    
+    ];
+
+    // Overlay Layers
+    var overlayLayers = [
+    
+    ];
+
+    
+
+    
+
+    // Markers
+    
+
+    
+
+    
+
+    
+
+    
+
+    // Queued camera actions
+    
+});
+
+    
+
+    
+
+    
+
+            } catch (error) {
+                console.error('Error initializing map:', error);
+                showMapError('Error initializing the map: ' + error.message);
+            }
+        }
+    </script>
+    
+    <!-- Load additional libraries with fallbacks -->
+    
+    
+    
+    
+    
+</body>
+
+</html>

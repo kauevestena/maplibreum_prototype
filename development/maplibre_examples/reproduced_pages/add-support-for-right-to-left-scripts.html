@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Add support for right-to-left scripts</title>
+    <meta property="og:description" content="Use the mapbox-gl-rtl-text plugin to support right-to-left languages such as Arabic and Hebrew." />
+    <meta charset='utf-8'>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel='stylesheet' href='https://unpkg.com/maplibre-gl@5.7.3/dist/maplibre-gl.css' />
+    <script src='https://unpkg.com/maplibre-gl@5.7.3/dist/maplibre-gl.js'></script>
+    <style>
+        body { margin: 0; padding: 0; }
+        html, body, #map { height: 100%; }
+    </style>
+</head>
+<body>
+<div class="maplibreum-example-banner">
+  <h1>Add Support For Right To Left Scripts</h1>
+  <p>Original MapLibre example: <a href="https://maplibre.org/maplibre-gl-js/docs/examples/add-support-for-right-to-left-scripts/" target="_blank" rel="noopener">https://maplibre.org/maplibre-gl-js/docs/examples/add-support-for-right-to-left-scripts/</a></p>
+  <p>Generated from test_add_support_for_right_to_left_scripts.py by the automated test suite.</p>
+</div>
+
+<div id="map"></div>
+
+<script>
+    maplibregl.setRTLTextPlugin(
+        'https://unpkg.com/@mapbox/mapbox-gl-rtl-text@0.3.0/dist/mapbox-gl-rtl-text.js',
+        true // Lazy load the plugin
+    );
+
+    const map = new maplibregl.Map({
+        container: 'map',
+        style: 'https://tiles.openfreemap.org/styles/bright',
+        center: [44.3763, 33.2788],
+        zoom: 11
+    });
+</script>
+</body>
+</html>
