@@ -14,12 +14,12 @@ This document provides a comprehensive analysis of JavaScript code injection usa
 - **Proper API Usage**: 55 examples (44.7%) use only Python API methods initially
 - **Other**: 22 examples (17.9%) - unknown patterns or no implementation
 
-**Current Progress (as of 2025-10-06):**
+**Current Progress (as of 2025-10-08):**
 - **Examples Improved**: 15 (10 from Phase 1 + 5 from Phase 2)
-- **Total Proper API Now**: 70 examples (55 initially + 15 improved)
-- **Overall Proper API Usage**: 56.9% (70/123)
+- **Total Proper API Now**: 71 examples (55 initially + 16 improved)
+- **Overall Proper API Usage**: 57.7% (71/123)
 
-**Conclusion**: The roadmap claim of "all examples implemented" is technically accurate, but JavaScript injection was initially used in 37.4% of examples. Through systematic improvement efforts, proper Python API usage has increased from 44.7% to 56.1%, with 14 examples successfully converted from JavaScript injection to proper Python API implementations.
+**Conclusion**: The roadmap claim of "all examples implemented" is technically accurate, but JavaScript injection was initially used in 37.4% of examples. Through systematic improvement efforts, proper Python API usage has increased from 44.7% to 57.7%, with 16 examples successfully converted from JavaScript injection to proper Python API implementations.
 
 ## Detailed Findings
 
@@ -219,6 +219,21 @@ This JSON file provides a detailed progress tracker with:
 
 The JSON tracker serves as a living document to monitor progress as examples are converted from JavaScript injection to proper Python API implementations.
 
+### Recent Progress (2025-10-08)
+
+**API Implementation:**
+- ✅ **`RouteAnimation`**: Implemented a new class for animating points along routes with Python-based calculations, providing a clean Python API that eliminates the Turf.js dependency.
+
+**Example Conversions:**
+- ✅ **`animate-a-point-along-a-route`**: Added `test_animate_a_point_along_a_route_with_python_api()` demonstrating the new `RouteAnimation` class with `ButtonControl` integration, eliminating the need for external JavaScript libraries.
+
+**Current Status:**
+- **Phase 1 Progress**: 40.0% complete (10/25 examples improved)
+- **Phase 2 Progress**: 55.6% complete (5/9 examples improved)
+- **Overall Progress**: Increased from 56.9% to 57.7% proper API usage
+- **Backward Compatibility**: All 237 tests pass (including new Python API tests)
+- **Infrastructure**: New `RouteAnimation` API now available with arc interpolation and bearing calculations.
+
 ### Recent Progress (2025-10-06)
 
 **API Implementation:**
@@ -229,7 +244,7 @@ The JSON tracker serves as a living document to monitor progress as examples are
 
 **Current Status:**
 - **Phase 1 Progress**: 40.0% complete (10/25 examples improved)
-- **Phase 2 Progress**: 55.6% complete (5/9 examples improved)
+- **Phase 2 Progress**: 44.4% complete (4/9 examples improved)
 - **Overall Progress**: Increased from 56.1% to 56.9% proper API usage
 - **Backward Compatibility**: All tests pass (including new Python API tests)
 - **Infrastructure**: New `AnimatedIcon` API now available.

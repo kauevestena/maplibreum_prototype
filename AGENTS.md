@@ -1,11 +1,27 @@
 # Repository Guidelines
 
+## Virtual Environment Setup
+- **ALWAYS use the `.venv` virtual environment** for all Python operations
+- If `.venv` doesn't exist, create it first:
+  ```bash
+  python3 -m venv .venv
+  source .venv/bin/activate
+  pip install -e .
+  pip install pytest jupyter
+  ```
+- Activate before working:
+  ```bash
+  source .venv/bin/activate
+  ```
+- All commands (pytest, pip, python) must run inside `.venv`
+
 ## Coding Style
 - Follow [PEP 8](https://peps.python.org/pep-0008/) for all Python code.
 - Use 4 spaces per indentation level.
 - Group imports into standard library, third-party, and local sections.
 
 ## Testing
+- Activate `.venv` first: `source .venv/bin/activate`
 - Run `pytest` from the repository root to execute the test suite.
 
 ## Template Editing
