@@ -1,6 +1,6 @@
 """Manual Playwright checks for rendered MapLibreum examples.
 
-These tests exercise the generated HTML in ``misc/maplibre_examples/reproduced_pages``
+These tests exercise the generated HTML in ``development/maplibre_examples/reproduced_pages``
 with a real browser. They are intentionally excluded from the default pytest run
 (``pyproject.toml`` limits automated discovery to the ``tests`` package) so they can
 be executed on demand when browser-level validation is required.
@@ -17,8 +17,8 @@ import pytest
 pytest.importorskip("pytest_playwright")
 pytest.importorskip("playwright")
 
-_STATUS_PATH = Path("misc/maplibre_examples/status.json")
-_REPRODUCED_DIR = Path("misc/maplibre_examples/reproduced_pages")
+_STATUS_PATH = Path("development/maplibre_examples/status.json")
+_REPRODUCED_DIR = Path("development/maplibre_examples/reproduced_pages")
 
 
 def _load_example_cases() -> Iterable[Tuple[str, Path, Dict[str, Any]]]:
@@ -48,7 +48,9 @@ def _load_example_cases() -> Iterable[Tuple[str, Path, Dict[str, Any]]]:
     list(_load_example_cases()),
     ids=lambda case: case[0] if isinstance(case, tuple) else case,
 )
-def test_rendered_example_loads(page, slug: str, html_path: Path, metadata: Dict[str, Any]):
+def test_rendered_example_loads(
+    page, slug: str, html_path: Path, metadata: Dict[str, Any]
+):
     """Confirm the generated HTML boots MapLibre GL and exposes style metadata."""
 
     if not html_path.exists():
@@ -84,12 +86,18 @@ def test_rendered_example_loads(page, slug: str, html_path: Path, metadata: Dict
         """
     )
 
-    assert style_summary["layers"] > 0, "Expected the MapLibre style to expose at least one layer"
-    assert style_summary["sources"] > 0, "Expected the MapLibre style to expose at least one source"
+    assert (
+        style_summary["layers"] > 0
+    ), "Expected the MapLibre style to expose at least one layer"
+    assert (
+        style_summary["sources"] > 0
+    ), "Expected the MapLibre style to expose at least one source"
 
     banner_link = page.locator(".maplibreum-example-banner a")
     if metadata.get("url"):
         banner_link.wait_for()
-        assert metadata["url"] in banner_link.get_attribute("href"), "Original example URL missing"
+        assert metadata["url"] in banner_link.get_attribute(
+            "href"
+        ), "Original example URL missing"
     else:
         assert banner_link.count() == 0

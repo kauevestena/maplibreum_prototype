@@ -20,18 +20,18 @@ pip install requests beautifulsoup4
 ### 2. Fetch Latest Examples
 ```bash
 cd /home/kaue/maplibreum_prototype
-python misc/maplibre_examples/scrapping.py
+python development/maplibre_examples/scrapping.py
 ```
 
 ### 3. Check Status
 ```bash
-python -c "import json; data = json.load(open('misc/maplibre_examples/status.json')); print(f'Total examples: {len(data)}'); print(f'Downloaded: {sum(1 for v in data.values() if v[\"source_status\"])}'); print(f'Implemented: {sum(1 for v in data.values() if v[\"task_status\"])}')"
+python -c "import json; data = json.load(open('development/maplibre_examples/status.json')); print(f'Total examples: {len(data)}'); print(f'Downloaded: {sum(1 for v in data.values() if v[\"source_status\"])}'); print(f'Implemented: {sum(1 for v in data.values() if v[\"task_status\"])}')"
 ```
 
 ## Directory Structure
 
 ```
-misc/maplibre_examples/
+development/maplibre_examples/
 ├── README.md           # This file - agent instructions
 ├── scrapping.py        # Fetches examples from maplibre.org
 ├── status.json         # Tracks progress per example
@@ -74,7 +74,7 @@ need to confirm that MapLibre GL initialises correctly in a real browser:
    ```bash
    pytest tests/test_examples -q
    ```
-   This recreates the files in `misc/maplibre_examples/reproduced_pages/`.
+   This recreates the files in `development/maplibre_examples/reproduced_pages/`.
 3. **Launch the browser checks** whenever you want an end-to-end sanity test:
    ```bash
    pytest playwright_tests --browser chromium -m browser
@@ -103,12 +103,12 @@ The `status.json` file tracks each example with:
 
 ```bash
 # Refresh examples from maplibre.org
-python misc/maplibre_examples/scrapping.py
+python development/maplibre_examples/scrapping.py
 
 # Count implementation progress
 python -c "
 import json
-with open('misc/maplibre_examples/status.json') as f:
+with open('development/maplibre_examples/status.json') as f:
     data = json.load(f)
 total = len(data)
 implemented = sum(1 for v in data.values() if v['task_status'])
@@ -118,7 +118,7 @@ print(f'Progress: {implemented}/{total} ({implemented/total*100:.1f}%)')
 # Find next example to implement
 python -c "
 import json
-with open('misc/maplibre_examples/status.json') as f:
+with open('development/maplibre_examples/status.json') as f:
     data = json.load(f)
 for name, info in data.items():
     if not info['task_status']:
@@ -185,7 +185,7 @@ While the gallery coverage is exhaustive, a few MapLibre capabilities still requ
 
 ### Maintenance Workflow
 
-1. Re-run `python misc/maplibre_examples/scrapping.py` whenever the upstream gallery changes.
+1. Re-run `python development/maplibre_examples/scrapping.py` whenever the upstream gallery changes.
 2. Re-generate progress stats with the helper snippets in this directory to confirm the 123/123 milestone.
 3. Add pytest regressions for any new behaviours (e.g. gesture flags, plugin injection, projection tweaks) before flipping `task_status` to `true`.
 4. Update this roadmap with milestone notes and keep the celebration banner alive for future iterations.

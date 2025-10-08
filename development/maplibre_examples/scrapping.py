@@ -5,7 +5,7 @@ import json
 from pathlib import Path
 from typing import Optional
 
-base_folder = "misc/maplibre_examples"
+base_folder = "development/maplibre_examples"
 
 
 base_url = "https://maplibre.org/maplibre-gl-js/docs/examples/"

@@ -224,6 +224,7 @@ def test_add_a_custom_layer_with_tiles_to_a_globe():
     map_.add_on_load_js("map.setProjection({type: 'globe'});")
     map_.add_layer(highlight_layer)
     with open(
-        "misc/maplibre_examples/reproduced_pages/add-a-custom-layer-with-tiles-to-a-globe.html", "w"
+        "development/maplibre_examples/reproduced_pages/add-a-custom-layer-with-tiles-to-a-globe.html",
+        "w",
     ) as f:
         f.write(map_.render())

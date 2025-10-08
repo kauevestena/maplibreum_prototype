@@ -162,11 +162,11 @@ pytest tests/ -v
 
 ### Advanced Testing: MapLibre Examples Validation
 
-To verify that MapLibreum is working properly and to check feature coverage against MapLibre GL JS, use the comprehensive testing suite in `misc/maplibre_examples/`:
+To verify that MapLibreum is working properly and to check feature coverage against MapLibre GL JS, use the comprehensive testing suite in `development/maplibre_examples/`:
 
 #### MapLibre Examples Testing Suite
 
-The `misc/maplibre_examples/` directory contains a systematic testing system that validates MapLibreum's capability to reproduce all official MapLibre GL JS examples. This provides:
+The `development/maplibre_examples/` directory contains a systematic testing system that validates MapLibreum's capability to reproduce all official MapLibre GL JS examples. This provides:
 
 - **Automated validation** of feature coverage  
 - **Regression testing** for new releases
@@ -182,7 +182,7 @@ pip install requests beautifulsoup4
 # Check current implementation progress
 python -c "
 import json
-with open('misc/maplibre_examples/status.json') as f:
+with open('development/maplibre_examples/status.json') as f:
     data = json.load(f)
 total = len(data)
 implemented = sum(1 for v in data.values() if v['task_status'])
@@ -199,12 +199,12 @@ print(f'Examples successfully implemented: {implemented}')
 pytest tests/test_examples/ -v
 
 # Refresh examples from MapLibre.org (optional)
-python misc/maplibre_examples/scrapping.py
+python development/maplibre_examples/scrapping.py
 
 # Find next example to implement
 python -c "
 import json
-with open('misc/maplibre_examples/status.json') as f:
+with open('development/maplibre_examples/status.json') as f:
     data = json.load(f)
 for name, info in data.items():
     if not info['task_status']:
@@ -214,7 +214,7 @@ for name, info in data.items():
 "
 ```
 
-For detailed information about the testing suite, see [misc/maplibre_examples/README.md](misc/maplibre_examples/README.md).
+For detailed information about the testing suite, see [development/maplibre_examples/README.md](development/maplibre_examples/README.md).
 
 ## Contributing
 

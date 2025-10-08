@@ -17,8 +17,8 @@ import pytest
 
 from maplibreum.core import Map
 
-_STATUS_PATH = Path("misc/maplibre_examples/status.json")
-_OUTPUT_DIR = Path("misc/maplibre_examples/reproduced_pages")
+_STATUS_PATH = Path("development/maplibre_examples/status.json")
+_OUTPUT_DIR = Path("development/maplibre_examples/reproduced_pages")
 
 
 def _slug_from_request_path(path: Path) -> str:
@@ -42,7 +42,7 @@ def _get_metadata(slug: str) -> Dict[str, Any]:
     record = _status_lookup().get(slug, {})
     if not record:
         return {}
-    
+
     if isinstance(record, dict) and slug not in record:
         # New clean structure - record is directly the metadata
         return record
@@ -90,7 +90,9 @@ def _load_original_html(path_value: Optional[str]) -> Optional[str]:
 
 
 @pytest.fixture(autouse=True)
-def capture_reproduction_page(monkeypatch: pytest.MonkeyPatch, request: pytest.FixtureRequest) -> None:
+def capture_reproduction_page(
+    monkeypatch: pytest.MonkeyPatch, request: pytest.FixtureRequest
+) -> None:
     """Wrap Map.render to emit a documentation page for each gallery example."""
 
     slug = _slug_from_request_path(Path(str(request.node.fspath)))
@@ -107,13 +109,13 @@ def capture_reproduction_page(monkeypatch: pytest.MonkeyPatch, request: pytest.F
     def _wrapped_render(self, *args, **kwargs):  # type: ignore[override]
         html = original_render(self, *args, **kwargs)
         header_lines = [
-            "<div class=\"maplibreum-example-banner\">",
+            '<div class="maplibreum-example-banner">',
             f"  <h1>{title_text}</h1>",
         ]
         if gallery_url:
             header_lines.append(
                 "  <p>Original MapLibre example: "
-                f"<a href=\"{gallery_url}\" target=\"_blank\" rel=\"noopener\">{gallery_url}</a></p>"
+                f'<a href="{gallery_url}" target="_blank" rel="noopener">{gallery_url}</a></p>'
             )
         header_lines.append(
             f"  <p>Generated from {test_filename} by the automated test suite.</p>"
