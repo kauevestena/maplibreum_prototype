@@ -45,11 +45,11 @@ test = [
 "Changelog" = "https://github.com/kauevestena/maplibreum_prototype/blob/main/CHANGELOG.md"
 
 [tool.setuptools]
-packages = ["maplibreum"]
-include-package-data = false
+packages = ["maplibreum", "maplibreum.experimental"]
+include-package-data = true
 
 [tool.setuptools.package-data]
-maplibreum = ["templates/*.html"]
+maplibreum = ["templates/*.html", "templates/*.js"]
 
 [tool.setuptools.dynamic]
 version = {attr = "maplibreum._version.__version__"}

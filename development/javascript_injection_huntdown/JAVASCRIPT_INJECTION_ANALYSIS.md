@@ -15,13 +15,13 @@ This document provides a comprehensive analysis of JavaScript code injection usa
 - **Other**: 22 examples (17.9%) - unknown patterns or no implementation
 
 **Current Progress (as of 2025-10-09):**
-- **Examples Improved**: 20 (12 from Phase 1 + 8 from Phase 2)
-- **Total Proper API Now**: 75 examples (55 initially + 20 improved)
-- **Overall Proper API Usage**: 61.0% (75/123)
+- **Examples Improved**: 21 (12 from Phase 1 + 9 from Phase 2)
+- **Total Proper API Now**: 76 examples (55 initially + 21 improved)
+- **Overall Proper API Usage**: 61.8% (76/123)
 
-**📊 Phase 2: 88.9% Complete (8/9)** - One example remaining: `add-a-custom-layer-with-tiles-to-a-globe`
+**📊 Phase 2: 73.3% Complete (11/15)** - Four examples remaining.
 
-**Conclusion**: The roadmap claim of "all examples implemented" is technically accurate, but JavaScript injection was initially used in 37.4% of examples. Through systematic improvement efforts, proper Python API usage has increased from 44.7% to 61.0%, with 20 examples successfully converted from JavaScript injection to proper Python API implementations. **Phase 1 is now 48% complete (12/25), and Phase 2 is 88.9% complete (8/9), marking significant progress toward the project goals!**
+**Conclusion**: The roadmap claim of "all examples implemented" is technically accurate, but JavaScript injection was initially used in 37.4% of examples. Through systematic improvement efforts, proper Python API usage has increased from 44.7% to 61.8%, with 21 examples successfully converted from JavaScript injection to proper Python API implementations. **Phase 1 is now 48% complete (12/25), and Phase 2 is 73.3% complete (11/15), marking significant progress toward the project goals!**
 
 ## Detailed Findings
 
@@ -53,7 +53,7 @@ These examples use only `add_on_load_js()` and `add_external_script()` without p
 **Real-time & Animation:**
 - `add-an-animated-icon-to-the-map` - ✅ Converted to Python API
 - `update-a-feature-in-realtime` - ✅ Converted to Python API
-- `sync-movement-of-multiple-maps`
+- `sync-movement-of-multiple-maps` - ✅ Converted to Python API
 
 **Protocol & Data Handling:**
 - `pmtiles-source-and-protocol`
@@ -220,6 +220,21 @@ This JSON file provides a detailed progress tracker with:
 - Migration strategy with success criteria and timeline
 
 The JSON tracker serves as a living document to monitor progress as examples are converted from JavaScript injection to proper Python API implementations.
+
+### Recent Progress (2025-10-09)
+
+**API Implementation:**
+- ✅ **`MapSynchronizer`**: Implemented a new class for synchronizing the movement of multiple maps, providing a clean Python API for a common advanced feature.
+
+**Example Conversions:**
+- ✅ **`sync-movement-of-multiple-maps`**: Added `test_sync_movement_of_multiple_maps_with_python_api()` demonstrating the new `MapSynchronizer` class, eliminating the need for JavaScript injection.
+
+**Current Status:**
+- **Phase 1 Progress**: 48.0% complete (12/25 examples improved)
+- **Phase 2 Progress**: 73.3% complete (11/15 examples improved)
+- **Overall Progress**: Increased from 61.0% to 61.8% proper API usage
+- **Backward Compatibility**: All tests pass (including new Python API tests)
+- **Infrastructure**: New `MapSynchronizer` API now available in the `experimental` module.
 
 ### 📊 Roadmap Tracking Update (2025-10-09)
 

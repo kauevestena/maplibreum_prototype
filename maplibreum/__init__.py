@@ -12,6 +12,7 @@ from .timedimension import TimeDimension
 from . import controls
 from . import sources
 from . import layers
+from . import experimental
 
 __all__ = [
     "Map",
