@@ -15,6 +15,7 @@ from .babylon import BabylonLayer
 from .cluster import ClusteredGeoJson, MarkerCluster
 from .layers import Layer
 from .three import ThreeLayer
+from .custom import CustomGlobeLayer
 from .expressions import get as expr_get
 from .expressions import interpolate, var
 from .markers import BeautifyIcon, DivIcon, Icon  # noqa: F401
@@ -389,6 +390,12 @@ class Map:
             else:
                 raise ValueError(f"Unknown control alias '{control}'")
         else:
+            if hasattr(control, "to_js"):
+                self._extra_js_snippets.append(control.to_js())
+
+            if hasattr(control, "to_css"):
+                self.custom_css += f"\n{control.to_css()}"
+
             control_type = control.__class__.__name__.lower().replace("control", "")
             control_options = control.to_dict()
             if options:
@@ -497,6 +504,9 @@ class Map:
             )
             self.add_on_load_js(layer_definition.js_code)
             layer_definition = layer_definition.to_dict()
+        elif isinstance(layer_definition, CustomGlobeLayer):
+            layer_definition.add_to(self)
+            return layer_definition.id
         else:
             if isinstance(layer_definition, Layer):
                 layer_definition = layer_definition.to_dict()
@@ -1803,7 +1813,7 @@ class Map:
             map_options.update(self.additional_map_options)
 
         include_minimap = any(c["type"] == "minimap" for c in self.controls)
-        include_search = any(c["type"] == "search" for c in self.controls)
+        include_search = any(c["type"] in ["search", "geocoding"] for c in self.controls)
 
         combined_extra_js = "\n".join(
             part for part in [self.extra_js, *self._extra_js_snippets] if part
