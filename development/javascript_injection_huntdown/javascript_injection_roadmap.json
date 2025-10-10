@@ -11,15 +11,15 @@
   },
   "summary": {
     "total_examples": 123,
-    "javascript_injection_only": 26,
+    "javascript_injection_only": 25,
     "mixed_approach": 20,
     "proper_api_only": 55,
     "other_patterns": 22,
     "completion_percentage": {
       "phase_1": 48.0,
-      "phase_2": 80.0,
+      "phase_2": 86.7,
       "phase_3": 0,
-      "overall": 64.2
+      "overall": 65.0
     }
   },
   "implementation_phases": {
@@ -557,22 +557,26 @@
         },
         "geocode-with-nominatim": {
           "test_path": "tests/test_examples/test_geocode_with_nominatim.py",
-          "current_implementation": "javascript_injection",
+          "current_implementation": "improved",
           "issues": [
-            "JavaScript API calls to Nominatim",
-            "No Python geocoding integration"
+            "RESOLVED: Implemented GeocodingControl for Python-based geocoding",
+            "RESOLVED: Eliminated direct JavaScript injection for geocoding"
           ],
           "required_apis": [
-            "GeocodingService",
-            "NominatimGeocoder"
+            "GeocodingControl"
           ],
           "phase": "phase_2",
           "priority": "medium",
           "estimated_effort": "4-6 days",
-          "status": "planned",
-          "assigned_to": null,
-          "completion_date": null,
-          "notes": "Useful for address-based navigation"
+          "status": "completed",
+          "assigned_to": "jules",
+          "completion_date": "2025-10-09",
+          "notes": "Successfully converted using GeocodingControl. Provides a clean Python API for adding a geocoding search box.",
+          "improvements_made": [
+            "Implemented GeocodingControl class in controls.py",
+            "Created a new test to validate the Python API approach",
+            "Maintained backward compatibility with the original test"
+          ]
         },
         "view-local-geojson": {
           "test_path": "tests/test_examples/test_view_local_geojson.py",
