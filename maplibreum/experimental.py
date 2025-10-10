@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import json
 import textwrap
 
 from .core import Map
@@ -65,3 +66,44 @@ class MapSynchronizer:
             }}
             """
         ).strip()
+
+
+class GlobeInteraction:
+    def __init__(self, element_id: str = "fly", zoom_delta: float = 1.5):
+        self.element_id = element_id
+        self.zoom_delta = zoom_delta
+        self._map = None
+
+    def add_to(self, map_obj: Map) -> None:
+        self._map = map_obj
+        self._map.add_on_load_js(self._render_js())
+
+    def _render_js(self) -> str:
+        js_code = f"""
+        let zoomIn = false;
+
+        function getZoomAdjustment(oldLatitude, newLatitude) {{
+            return Math.log2(Math.cos(newLatitude / 180 * Math.PI) / Math.cos(oldLatitude / 180 * Math.PI));
+        }}
+
+        function flyToWithGlobeCompensation() {{
+            const center = [
+                map.getCenter().lng,
+                zoomIn ? 0 : 80,
+            ];
+            const mapZoom = map.getZoom();
+            const delta = (zoomIn ? {self.zoom_delta} : -{self.zoom_delta});
+            const zoom = map.getZoom() + delta + getZoomAdjustment(map.getCenter().lat, center[1]);
+            map.flyTo({{
+                center,
+                zoom,
+                essential: true
+            }});
+            zoomIn = !zoomIn;
+        }}
+
+        document.getElementById('{self.element_id}').addEventListener('click', () => {{
+            flyToWithGlobeCompensation();
+        }});
+        """
+        return textwrap.dedent(js_code)
