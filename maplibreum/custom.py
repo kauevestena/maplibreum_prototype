@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+import json
+
 ON_ADD_JS = """
 function(map, gl) {
     this.shaderMap = new Map();
@@ -212,25 +214,35 @@ class CustomGlobeLayer:
 
     def __init__(self, id: str):
         """Initialize a CustomGlobeLayer.
+
         Args:
             id: The ID of the layer.
         """
+
         self.id = id
 
-    def add_to(self, map_instance) -> None:
+    def add_to(self, map_instance, *, before: str | None = None) -> str:
         """Adds the custom layer to the map instance.
+
         Args:
             map_instance: The map instance to add the layer to.
+            before: Optional layer ID before which to insert this layer.
+
+        Returns:
+            The ID of the layer.
         """
+
+        before_argument = f", {json.dumps(before)}" if before is not None else ""
         js = f"""
         map.addLayer({{
             id: '{self.id}',
             type: 'custom',
             onAdd: {ON_ADD_JS},
             render: {RENDER_JS}
-        }});
+        }}{before_argument});
         """
         map_instance.add_on_load_js(js)
+        return self.id
 
 
 __all__ = ["CustomGlobeLayer"]

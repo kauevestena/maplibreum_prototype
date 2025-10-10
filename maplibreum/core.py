@@ -476,16 +476,6 @@ class Map:
         str
             The ID of the added layer.
         """
-        if isinstance(source, str):
-            # Source is a string, so we assume it's a source name
-            # that has already been added to the map.
-            layer_definition["source"] = source
-        elif source is not None:
-            # Source is a dict or Source wrapper, so we add it to the map.
-            source_name = f"source_{uuid.uuid4().hex}"
-            self.add_source(source_name, source)
-            layer_definition["source"] = source_name
-
         if isinstance(layer_definition, BabylonLayer):
             layer_id = layer_definition.id
             self.add_external_script("https://unpkg.com/babylonjs@5.42.2/babylon.js")
@@ -505,9 +495,20 @@ class Map:
             self.add_on_load_js(layer_definition.js_code)
             layer_definition = layer_definition.to_dict()
         elif isinstance(layer_definition, CustomGlobeLayer):
-            layer_definition.add_to(self)
-            return layer_definition.id
+            if source is not None:
+                raise ValueError("CustomGlobeLayer does not accept a source")
+            return layer_definition.add_to(self, before=before)
         else:
+            if isinstance(source, str):
+                # Source is a string, so we assume it's a source name
+                # that has already been added to the map.
+                layer_definition["source"] = source
+            elif source is not None:
+                # Source is a dict or Source wrapper, so we add it to the map.
+                source_name = f"source_{uuid.uuid4().hex}"
+                self.add_source(source_name, source)
+                layer_definition["source"] = source_name
+
             if isinstance(layer_definition, Layer):
                 layer_definition = layer_definition.to_dict()
 
