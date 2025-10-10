@@ -267,6 +267,7 @@ class Map:
         custom_css="",
         maplibre_version="3.4.0",
         map_options=None,
+        container_id=None,
     ):
         """Initialize a map instance.
 
@@ -333,7 +334,7 @@ class Map:
         self.template = self.env.get_template("map_template.html")
 
         # Unique ID for the map (important if multiple maps displayed in a notebook)
-        self.map_id = f"maplibreum_{uuid.uuid4().hex}"
+        self.map_id = container_id or f"maplibreum_{uuid.uuid4().hex}"
 
     def fit_bounds(self, bounds, padding=None):
         """Store bounds and optional padding for later rendering.

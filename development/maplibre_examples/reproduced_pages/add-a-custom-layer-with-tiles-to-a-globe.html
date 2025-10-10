@@ -1,56 +1,32 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="utf-8" />
-    <title>MapLibreum Map</title>
-    <meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no" />
-    <link href="https://unpkg.com/maplibre-gl@3.4.0/dist/maplibre-gl.css" rel="stylesheet" onerror="this.onerror=null;this.href='https://cdn.jsdelivr.net/npm/maplibre-gl@3.4.0/dist/maplibre-gl.css';" />
-    
-    
-    
-    
+    <title>Add a custom layer with tiles to a globe</title>
+    <meta property="og:description" content="Use custom layer to display arbitrary tiles drawn with a custom WebGL shader on a globe." />
+    <meta charset='utf-8'>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel='stylesheet' href='https://unpkg.com/maplibre-gl@5.7.3/dist/maplibre-gl.css' />
+    <script src='https://unpkg.com/maplibre-gl@5.7.3/dist/maplibre-gl.js'></script>
     <style>
-        body {
-            margin: 0;
-            padding: 0;
-        }
-
-        #maplibreum_6e62073083e442d2b85b67d9a8a90512 {
-            width: 100%;
-            height: 500px;
-            position: relative;
-        }
-
-        .maplibreum-legend {
+        body { margin: 0; padding: 0; }
+        html, body, #map { height: 100%; }
+        #project {
+            display: block;
             position: absolute;
-            bottom: 10px;
-            left: 10px;
-            background: rgba(255, 255, 255, 0.8);
-            padding: 6px;
+            top: 20px;
+            left: 50%;
+            transform: translate(-50%);
+            width: 50%;
+            height: 40px;
+            padding: 10px;
+            border: none;
+            border-radius: 3px;
             font-size: 12px;
-            border-radius: 4px;
+            text-align: center;
+            color: #fff;
+            background: #ee8a65;
         }
-
-        .maplibreum-legend div {
-            display: flex;
-            align-items: center;
-            margin-bottom: 4px;
-        }
-
-        .maplibreum-legend span {
-            display: inline-block;
-            width: 12px;
-            height: 12px;
-            margin-right: 4px;
-
-        }
-
-        #maplibreum_6e62073083e442d2b85b67d9a8a90512 { width: 100%; height: 500px; }
-
-
-
     </style>
-    
 </head>
 <body>
 <div class="maplibreum-example-banner">
@@ -59,175 +35,281 @@
   <p>Generated from test_add_a_custom_layer_with_tiles_to_a_globe.py by the automated test suite.</p>
 </div>
 
-    <div id="maplibreum_6e62073083e442d2b85b67d9a8a90512">
-        
-        
-    </div>
-    <!-- MapLibre GL JS with CDN fallbacks -->
-    <script>
-        // Function to load MapLibre GL JS with fallbacks
-        function loadMapLibreGL() {
-            return new Promise((resolve, reject) => {
-                // Try loading from unpkg.com first
-                const script1 = document.createElement('script');
-                script1.src = 'https://unpkg.com/maplibre-gl@3.4.0/dist/maplibre-gl.js';
-                script1.onload = () => resolve();
-                script1.onerror = () => {
-                    // Fallback to jsDelivr
-                    const script2 = document.createElement('script');
-                    script2.src = 'https://cdn.jsdelivr.net/npm/maplibre-gl@3.4.0/dist/maplibre-gl.js';
-                    script2.onload = () => resolve();
-                    script2.onerror = () => {
-                        // Last fallback to cdnjs
-                        const script3 = document.createElement('script');
-                        script3.src = 'https://cdnjs.cloudflare.com/ajax/libs/maplibre-gl/3.4.0/maplibre-gl.min.js';
-                        script3.onload = () => resolve();
-                        script3.onerror = () => reject(new Error('Failed to load MapLibre GL JS from all CDNs'));
-                        document.head.appendChild(script3);
-                    };
-                    document.head.appendChild(script2);
+<div id="map"></div>
+<br />
+<button id="project">Toggle projection</button>
+<script>
+    // This example demonstrates how to draw a custom layer consisting of
+    // web mercator tiles with a custom shader.
+    // Each drawn tile must be subdivided in order to be properly curved.
+    // This example also handles poles.
+
+    // Note that sometimes you can encounter single-pixel seams between tiles
+    // of different zoom levels. To fix this, first draw all tiles using meshes
+    // *without* borders and mark all drawn pixels in stencil, then draw
+    // all tiles again, this time *with* borders and with stencil set to
+    // fail all previously drawn pixels.
+    // This approach ensures that no pixel that can be drawn inside some tile
+    // will be instead covered by a mesh border (which is likely to contain invalid data).
+    //
+    // MapLibre uses this approach to draw raster tiles on globe. Borders on raster tiles
+    // contain ugly stretched textures, we don't want that to cover pixels that could be
+    // filled with a valid neighboring tile.
+
+    const EXTENT = 8192;
+
+    // Generate an arbitrary list of tiles to render
+    function generateTileList(list, current) {
+        list.push(current);
+        const subdivide = current.z < 2 || (current.x === current.y && current.z < 3) || (current.x === 0 && current.y === 0 && current.z < 7);
+        if (subdivide) {
+            for (let x = 0; x < 2; x++) {
+                for (let y = 0; y < 2; y++) {
+                    generateTileList(list, {
+                        x: current.x * 2 + x,
+                        y: current.y * 2 + y,
+                        z: current.z + 1,
+                        wrap: current.wrap,
+                    });
+                }
+            }
+        }
+    }
+    const tilesToRender = [];
+    for (let i = -1; i <= 1; i++) {
+        generateTileList(tilesToRender, {x: 0, y: 0, z: 0, wrap: i});
+    }
+
+    const map = new maplibregl.Map({
+        container: 'map',
+        style: 'https://demotiles.maplibre.org/style.json',
+        zoom: 2,
+        center: [7.5, 58]
+    });
+
+    map.on('style.load', () => {
+        map.setProjection({
+            type: 'globe', // Set projection to globe
+        });
+    });
+
+    document.getElementById('project').addEventListener('click', () => {
+        // Toggle projection
+        const currentProjection = map.getProjection();
+        map.setProjection({
+            type: currentProjection.type === 'globe' ? 'mercator' : 'globe',
+        });
+    });
+
+    const uniforms = [
+        'u_matrix',
+        'u_projection_fallback_matrix',
+        'u_projection_matrix',
+        'u_projection_clipping_plane',
+        'u_projection_transition',
+        'u_projection_tile_mercator_coords',
+    ];
+
+    // create a custom style layer to implement the WebGL content
+    const highlightLayer = {
+        id: 'highlight',
+        type: 'custom',
+        shaderMap: new Map(),
+        meshMap: new Map(),
+
+        // Helper method for creating a shader based on current map projection - globe will automatically switch to mercator when some condition is fulfilled.
+        getShader(gl, shaderDescription) {
+            if (this.shaderMap.has(shaderDescription.variantName)) {
+                return this.shaderMap.get(shaderDescription.variantName);
+            }
+
+            // Create GLSL source for vertex shader
+            // Note: we pass in-tile position in range 0..EXTENT to projectTile.
+            // By default the uniforms for custom layers are set up so that "projectTile" accepts mercator coordinates in range 0..1,
+            // but in this example we set the uniforms ourselves to accept range 0..EXTENT just like regular MapLibre rendering.
+            const vertexSource = `#version 300 es
+            ${shaderDescription.vertexShaderPrelude}
+            ${shaderDescription.define}
+
+            in vec2 a_pos;
+            out mediump vec2 v_pos;
+
+            void main() {
+
+                gl_Position = projectTile(a_pos);
+                // We divide by EXTENT here just so we have something reasonable to display in the pixel shader.
+                v_pos = a_pos / float(${EXTENT});
+            }`;
+
+            // create GLSL source for fragment shader
+            const fragmentSource = `#version 300 es
+
+            precision mediump float;
+
+            in vec2 v_pos;
+
+            out highp vec4 fragColor;
+            void main() {
+                float alpha = 0.5;
+                fragColor = vec4(v_pos, 0.0, 1.0) * alpha;
+            }`;
+
+            // create a vertex shader
+            const vertexShader = gl.createShader(gl.VERTEX_SHADER);
+            gl.shaderSource(vertexShader, vertexSource);
+            gl.compileShader(vertexShader);
+
+            // create a fragment shader
+            const fragmentShader = gl.createShader(gl.FRAGMENT_SHADER);
+            gl.shaderSource(fragmentShader, fragmentSource);
+            gl.compileShader(fragmentShader);
+
+            // link the two shaders into a WebGL program
+            const program = gl.createProgram();
+            gl.attachShader(program, vertexShader);
+            gl.attachShader(program, fragmentShader);
+            gl.linkProgram(program);
+
+            this.aPos = gl.getAttribLocation(program, 'a_pos');
+
+            const locations = {};
+
+            for (const uniform of uniforms) {
+                locations[uniform] = gl.getUniformLocation(program, uniform);
+            }
+
+            const result = {
+                program,
+                locations
+            };
+
+            this.shaderMap.set(shaderDescription.variantName, result);
+
+            return result;
+        },
+
+        getTileMesh(gl, x, y, z, border) {
+            // What granularity should we use? Query MapLibre's projection object's granularity settings.
+            const granularity = map.style.projection.subdivisionGranularity.tile.getGranularityForZoomLevel(z);
+            // Do we want north pole geometry?
+            const north = y === 0;
+            // Do we want south pole geometry?
+            const south = y === (1 << z) - 1;
+            const key = `${granularity}_${north}_${south}_${border}`;
+            if (this.meshMap.has(key)) {
+                return this.meshMap.get(key);
+            }
+
+            const meshBuffers = maplibregl.createTileMesh({
+                granularity,
+                generateBorders: border,
+                extendToNorthPole: north,
+                extendToSouthPole: south,
+            }, '16bit');
+
+            const vbo = gl.createBuffer();
+            gl.bindBuffer(gl.ARRAY_BUFFER, vbo);
+            gl.bufferData(
+                gl.ARRAY_BUFFER,
+                meshBuffers.vertices,
+                gl.STATIC_DRAW
+            );
+            gl.bindBuffer(gl.ARRAY_BUFFER, null);
+            const ibo = gl.createBuffer();
+            gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, ibo);
+            gl.bufferData(
+                gl.ELEMENT_ARRAY_BUFFER,
+                meshBuffers.indices,
+                gl.STATIC_DRAW
+            );
+            gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, null);
+
+            const mesh = {
+                vbo,
+                ibo,
+                indexCount: meshBuffers.indices.byteLength / 2,
+            };
+            this.meshMap.set(key, mesh);
+            return mesh;
+        },
+
+        onAdd (map, gl) {
+            // Nothing to do.
+        },
+
+        // method fired on each animation frame
+        render (gl, args) {
+            const {program, locations} = this.getShader(gl, args.shaderData);
+
+            const isBorderDemo = true;
+
+            gl.disable(gl.DEPTH_TEST);
+            gl.disable(gl.STENCIL_TEST);
+            gl.disable(gl.CULL_FACE);
+            gl.enable(gl.BLEND);
+            gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
+
+            gl.useProgram(program);
+
+            const isGlobeProjection = args.shaderData.variantName === 'globe';
+
+            for (const tile of tilesToRender) {
+                if (isGlobeProjection && tile.wrap !== 0) {
+                    continue; // No need to draw wrapped tiles on a globe.
+                }
+
+                const tileID = {
+                    wrap: tile.wrap,
+                    canonical: {
+                        x: tile.x,
+                        y: tile.y,
+                        z: tile.z,
+                    }
                 };
-                document.head.appendChild(script1);
-            });
-        }
 
-        // Function to show error message when MapLibre fails to load
-        function showMapError(message) {
-            const mapDiv = document.getElementById('maplibreum_6e62073083e442d2b85b67d9a8a90512');
-            if (mapDiv) {
-                mapDiv.innerHTML = `
-                    <div style="
-                        display: flex;
-                        align-items: center;
-                        justify-content: center;
-                        height: 100%;
-                        background-color: #f8f9fa;
-                        border: 2px dashed #dee2e6;
-                        border-radius: 8px;
-                        text-align: center;
-                        padding: 20px;
-                        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
-                    ">
-                        <div>
-                            <div style="font-size: 48px; color: #6c757d; margin-bottom: 16px;">🗺️</div>
-                            <div style="font-size: 18px; color: #495057; margin-bottom: 8px;">Map Loading Error</div>
-                            <div style="font-size: 14px; color: #6c757d; margin-bottom: 16px;">${message}</div>
-                            <div style="font-size: 12px; color: #6c757d;">
-                                This may be due to network restrictions or CDN availability issues.
-                                <br>Try refreshing the page or check your internet connection.
-                            </div>
-                        </div>
-                    </div>
-                `;
+                const projectionData = map.transform.getProjectionData({overscaledTileID: tileID, applyGlobeMatrix: true});
+
+                gl.uniform4f(
+                    locations['u_projection_clipping_plane'],
+                    ...projectionData.clippingPlane // vec4
+                );
+                gl.uniform1f(
+                    locations['u_projection_transition'],
+                    projectionData.projectionTransition // float
+                );
+
+                // Set tile mercator extents accordingly
+                const tileSize = 1.0 / (1 << tile.z);
+                gl.uniform4f(
+                    locations['u_projection_tile_mercator_coords'],
+                    ...projectionData.tileMercatorCoords // vec4
+                );
+
+                // Shader variant name effectively tells us what projection code path should be used.
+                gl.uniformMatrix4fv(
+                    locations['u_projection_matrix'],
+                    false,
+                    projectionData.mainMatrix
+                );
+                gl.uniformMatrix4fv(
+                    locations['u_projection_fallback_matrix'],
+                    false,
+                    projectionData.fallbackMatrix
+                );
+                const mesh = this.getTileMesh(gl, tile.x, tile.y, tile.z, false);
+                gl.bindBuffer(gl.ARRAY_BUFFER, mesh.vbo);
+                gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, mesh.ibo);
+                gl.enableVertexAttribArray(this.aPos);
+                gl.vertexAttribPointer(this.aPos, 2, gl.SHORT, false, 0, 0);
+                gl.drawElements(gl.TRIANGLES, mesh.indexCount, gl.UNSIGNED_SHORT, 0);
             }
         }
+    };
 
-        // Load MapLibre and initialize map
-        loadMapLibreGL().then(() => {
-            // MapLibre loaded successfully, check if it's available
-            if (typeof maplibregl === 'undefined') {
-                throw new Error('MapLibre GL JS loaded but not available');
-            }
-            
-            initializeMap();
-        }).catch(error => {
-            console.error('Failed to load MapLibre GL JS:', error);
-            showMapError('Failed to load MapLibre GL JavaScript library');
-        });
-
-        function initializeMap() {
-            try {
-        // Initialize map
-        var map = new maplibregl.Map({"container": "maplibreum_6e62073083e442d2b85b67d9a8a90512", "style": "https://demotiles.maplibre.org/style.json", "center": [7.5, 58], "zoom": 2, "hash": false});
-        window.maplibreumMaps = window.maplibreumMaps || {};
-        window.maplibreumMaps["maplibreum_6e62073083e442d2b85b67d9a8a90512"] = map;
-        window.maplibreumMapsLoaded = window.maplibreumMapsLoaded || {};
-        map.once('load', function() {
-            window.maplibreumMapsLoaded["maplibreum_6e62073083e442d2b85b67d9a8a90512"] = true;
-        });
-
-
-// Add controls
-
-
-
-
-
-
-map.on('load', function() {
-    
-    // Add sources
-    
-
-    // Register images used by style layers
-    
-
-    
-    
-
-    // Add layers
-    
-    map.addLayer({"id": "highlight", "type": "custom", "onAdd": "\nfunction(map, gl) {\n    this.shaderMap = new Map();\n    this.meshMap = new Map();\n}\n", "render": "\nfunction(gl, args) {\n    const EXTENT = 8192;\n    const uniforms = [\n        'u_matrix',\n        'u_projection_fallback_matrix',\n        'u_projection_matrix',\n        'u_projection_clipping_plane',\n        'u_projection_transition',\n        'u_projection_tile_mercator_coords',\n    ];\n    const tilesToRender = [];\n\n    function generateTileList(list, current) {\n        list.push(current);\n        const subdivide = current.z < 2 || (current.x === current.y && current.z < 3) || (current.x === 0 && current.y === 0 && current.z < 7);\n        if (subdivide) {\n            for (let x = 0; x < 2; x++) {\n                for (let y = 0; y < 2; y++) {\n                    generateTileList(list, {\n                        x: current.x * 2 + x,\n                        y: current.y * 2 + y,\n                        z: current.z + 1,\n                        wrap: current.wrap,\n                    });\n                }\n            }\n        }\n    }\n\n    for (let i = -1; i <= 1; i++) {\n        generateTileList(tilesToRender, {x: 0, y: 0, z: 0, wrap: i});\n    }\n\n    const getShader = (gl, shaderDescription) => {\n        if (this.shaderMap.has(shaderDescription.variantName)) {\n            return this.shaderMap.get(shaderDescription.variantName);\n        }\n\n        const vertexSource = `#version 300 es\n        ${shaderDescription.vertexShaderPrelude}\n        ${shaderDescription.define}\n\n        in vec2 a_pos;\n        out mediump vec2 v_pos;\n\n        void main() {\n\n            gl_Position = projectTile(a_pos);\n            v_pos = a_pos / float(${EXTENT});\n        }`;\n\n        const fragmentSource = `#version 300 es\n\n        precision mediump float;\n\n        in vec2 v_pos;\n\n        out highp vec4 fragColor;\n        void main() {\n            float alpha = 0.5;\n            fragColor = vec4(v_pos, 0.0, 1.0) * alpha;\n        }`;\n\n        const vertexShader = gl.createShader(gl.VERTEX_SHADER);\n        gl.shaderSource(vertexShader, vertexSource);\n        gl.compileShader(vertexShader);\n\n        const fragmentShader = gl.createShader(gl.FRAGMENT_SHADER);\n        gl.shaderSource(fragmentShader, fragmentSource);\n        gl.compileShader(fragmentShader);\n\n        const program = gl.createProgram();\n        gl.attachShader(program, vertexShader);\n        gl.attachShader(program, fragmentShader);\n        gl.linkProgram(program);\n\n        this.aPos = gl.getAttribLocation(program, 'a_pos');\n\n        const locations = {};\n\n        for (const uniform of uniforms) {\n            locations[uniform] = gl.getUniformLocation(program, uniform);\n        }\n\n        const result = {\n            program,\n            locations\n        };\n\n        this.shaderMap.set(shaderDescription.variantName, result);\n\n        return result;\n    };\n\n    const getTileMesh = (gl, x, y, z, border) => {\n        const granularity = map.style.projection.subdivisionGranularity.tile.getGranularityForZoomLevel(z);\n        const north = y === 0;\n        const south = y === (1 << z) - 1;\n        const key = `${granularity}_${north}_${south}_${border}`;\n        if (this.meshMap.has(key)) {\n            return this.meshMap.get(key);\n        }\n\n        const meshBuffers = maplibregl.createTileMesh({\n            granularity,\n            generateBorders: border,\n            extendToNorthPole: north,\n            extendToSouthPole: south,\n        }, '16bit');\n\n        const vbo = gl.createBuffer();\n        gl.bindBuffer(gl.ARRAY_BUFFER, vbo);\n        gl.bufferData(\n            gl.ARRAY_BUFFER,\n            meshBuffers.vertices,\n            gl.STATIC_DRAW\n        );\n        gl.bindBuffer(gl.ARRAY_BUFFER, null);\n        const ibo = gl.createBuffer();\n        gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, ibo);\n        gl.bufferData(\n            gl.ELEMENT_ARRAY_BUFFER,\n            meshBuffers.indices,\n            gl.STATIC_DRAW\n        );\n        gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, null);\n\n        const mesh = {\n            vbo,\n            ibo,\n            indexCount: meshBuffers.indices.byteLength / 2,\n        };\n        this.meshMap.set(key, mesh);\n        return mesh;\n    };\n\n    const {program, locations} = getShader(gl, args.shaderData);\n\n    gl.disable(gl.DEPTH_TEST);\n    gl.disable(gl.STENCIL_TEST);\n    gl.disable(gl.CULL_FACE);\n    gl.enable(gl.BLEND);\n    gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);\n\n    gl.useProgram(program);\n\n    const isGlobeProjection = args.shaderData.variantName === 'globe';\n\n    for (const tile of tilesToRender) {\n        if (isGlobeProjection && tile.wrap !== 0) {\n            continue;\n        }\n\n        const tileID = {\n            wrap: tile.wrap,\n            canonical: {\n                x: tile.x,\n                y: tile.y,\n                z: tile.z,\n            }\n        };\n\n        const projectionData = map.transform.getProjectionData({overscaledTileID: tileID, applyGlobeMatrix: true});\n\n        gl.uniform4f(\n            locations['u_projection_clipping_plane'],\n            ...projectionData.clippingPlane\n        );\n        gl.uniform1f(\n            locations['u_projection_transition'],\n            projectionData.projectionTransition\n        );\n\n        gl.uniform4f(\n            locations['u_projection_tile_mercator_coords'],\n            ...projectionData.tileMercatorCoords\n        );\n\n        gl.uniformMatrix4fv(\n            locations['u_projection_matrix'],\n            false,\n            projectionData.mainMatrix\n        );\n        gl.uniformMatrix4fv(\n            locations['u_projection_fallback_matrix'],\n            false,\n            projectionData.fallbackMatrix\n        );\n        const mesh = getTileMesh(gl, tile.x, tile.y, tile.z, false);\n        gl.bindBuffer(gl.ARRAY_BUFFER, mesh.vbo);\n        gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, mesh.ibo);\n        gl.enableVertexAttribArray(this.aPos);\n        gl.vertexAttribPointer(this.aPos, 2, gl.SHORT, false, 0, 0);\n        gl.drawElements(gl.TRIANGLES, mesh.indexCount, gl.UNSIGNED_SHORT, 0);\n    }\n}\n"});
-    
-
-    // Popups
-    
-
-    // Tooltips
-    
-
-    // Tile Layers
-    var tileLayers = [
-    
-    ];
-
-    // Overlay Layers
-    var overlayLayers = [
-    
-    ];
-
-    
-
-    
-
-    // Markers
-    
-
-    
-
-    
-
-    
-    (function(map) {
-        map.setProjection({type: 'globe'});
-    })(map);
-    
-
-    
-
-    // Queued camera actions
-    
-});
-
-    
-
-    
-
-    
-
-            } catch (error) {
-                console.error('Error initializing map:', error);
-                showMapError('Error initializing the map: ' + error.message);
-            }
-        }
-    </script>
-    
-    <!-- Load additional libraries with fallbacks -->
-    
-    
-    
-    
-    
+    // add the custom style layer to the map
+    map.on('load', () => {
+        map.addLayer(highlightLayer, 'countries-label');
+    });
+</script>
 </body>
-
 </html>

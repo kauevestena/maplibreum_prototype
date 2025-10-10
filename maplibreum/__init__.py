@@ -13,6 +13,7 @@ from . import controls
 from . import sources
 from . import layers
 from . import experimental
+from .custom import CustomGlobeLayer
 
 __all__ = [
     "Map",
@@ -41,4 +42,5 @@ __all__ = [
     "layers",
     "AnimationLoop",
     "TemporalInterval",
+    "CustomGlobeLayer",
 ]
