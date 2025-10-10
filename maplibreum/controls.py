@@ -426,6 +426,118 @@ class MeasurementTool:
         return js_code
 
 
+class GeocodingControl:
+    """A geocoding control that uses a custom geocoding API.
+
+    This control provides an alternative to JavaScript injection for
+    adding a geocoding search box to the map.
+    """
+
+    def __init__(
+        self,
+        api_url=None,
+        position="top-left",
+        placeholder="Search",
+        marker=True,
+        show_result_popup=True,
+        **kwargs,
+    ):
+        """Initialize a GeocodingControl.
+
+        Parameters
+        ----------
+        api_url : str, optional
+            The URL of the geocoding API. If not provided, a mock API is used.
+        position : str, optional
+            Position on the map (e.g. 'top-left', 'top-right').
+        placeholder : str, optional
+            Placeholder text for the search input.
+        marker : bool, optional
+            Whether to show a marker at the geocoded location.
+        show_result_popup : bool, optional
+            Whether to show a popup with the result.
+        kwargs : dict
+            Additional options for the geocoder.
+        """
+        self.api_url = api_url
+        self.position = position
+        self.placeholder = placeholder
+        self.marker = marker
+        self.show_result_popup = show_result_popup
+        self.kwargs = kwargs
+        self.id = f"geocoding_{uuid.uuid4().hex}"
+
+    def to_dict(self):
+        """Serialize configuration for template usage."""
+        return {
+            "id": self.id,
+            "api_url": self.api_url,
+            "position": self.position,
+            "placeholder": self.placeholder,
+            "marker": self.marker,
+            "show_result_popup": self.show_result_popup,
+            **self.kwargs,
+        }
+
+    def to_js(self):
+        """Generate JavaScript code for the geocoding control.
+
+        Returns
+        -------
+        str
+            JavaScript code that creates and manages the geocoding control.
+        """
+        geocoder_api_js = (
+            f'{{ forwardGeocode: async (config) => {{ const features = []; const resp = await fetch(`{self.api_url}?q=${{config.query}}&format=json`); const data = await resp.json(); if (data && data.length > 0) {{ const feature = data[0]; const center = [parseFloat(feature.lon), parseFloat(feature.lat)]; features.push({{ type: "Feature", geometry: {{ type: "Point", coordinates: center }}, place_name: feature.display_name, properties: feature, text: feature.display_name, center: center }}); }} return {{ features: features }}; }} }}'
+            if self.api_url
+            else """
+            {
+                forwardGeocode: async (config) => {
+                    const nominatimResponse = {
+                        features: [
+                            {
+                                bbox: [-87.627815, 41.867576, -87.615211, 41.87221],
+                                properties: { display_name: 'Museum Campus, Chicago, Illinois, United States' },
+                            },
+                        ],
+                    };
+                    const featureCollection = nominatimResponse.features.map((feature) => {
+                        const center = [
+                            feature.bbox[0] + (feature.bbox[2] - feature.bbox[0]) / 2,
+                            feature.bbox[1] + (feature.bbox[3] - feature.bbox[1]) / 2,
+                        ];
+                        return {
+                            type: 'Feature',
+                            geometry: { type: 'Point', coordinates: center },
+                            place_name: feature.properties.display_name,
+                            properties: feature.properties,
+                            text: feature.properties.display_name,
+                            place_type: ['place'],
+                            center,
+                        };
+                    });
+                    return { features: featureCollection };
+                },
+            }
+            """
+        )
+
+        js_code = f"""
+(function() {{
+    const geocoderApi = {geocoder_api_js};
+    const geocoder = new MaplibreGeocoder(geocoderApi, {{
+        maplibregl: maplibregl,
+        placeholder: '{self.placeholder}',
+        marker: {str(self.marker).lower()},
+        showResultPopup: {str(self.show_result_popup).lower()},
+        ...{self.kwargs}
+    }});
+    map.addControl(geocoder, '{self.position}');
+}})();
+"""
+        return js_code
+
+
 class ButtonControl:
     """A button control that can trigger Python API actions.
 

@@ -1,47 +1,18 @@
-from __future__ import annotations
+"""Custom Layer"""
 
-ON_ADD_JS = """
-function(map, gl) {
-    this.shaderMap = new Map();
-    this.meshMap = new Map();
-}
-"""
+from jinja2 import Template
 
-RENDER_JS = """
-function(gl, args) {
-    const EXTENT = 8192;
-    const uniforms = [
-        'u_matrix',
-        'u_projection_fallback_matrix',
-        'u_projection_matrix',
-        'u_projection_clipping_plane',
-        'u_projection_transition',
-        'u_projection_tile_mercator_coords',
-    ];
-    const tilesToRender = [];
+from maplibreum.layers import Layer
 
-    function generateTileList(list, current) {
-        list.push(current);
-        const subdivide = current.z < 2 || (current.x === current.y && current.z < 3) || (current.x === 0 && current.y === 0 && current.z < 7);
-        if (subdivide) {
-            for (let x = 0; x < 2; x++) {
-                for (let y = 0; y < 2; y++) {
-                    generateTileList(list, {
-                        x: current.x * 2 + x,
-                        y: current.y * 2 + y,
-                        z: current.z + 1,
-                        wrap: current.wrap,
-                    });
-                }
-            }
-        }
-    }
+CUSTOM_GLOBE_LAYER_GL_JS = Template(
+    """
+const highlightLayer_{{ id }} = {
+    id: '{{ id }}',
+    type: 'custom',
+    shaderMap: new Map(),
+    meshMap: new Map(),
 
-    for (let i = -1; i <= 1; i++) {
-        generateTileList(tilesToRender, {x: 0, y: 0, z: 0, wrap: i});
-    }
-
-    const getShader = (gl, shaderDescription) => {
+    getShader(gl, shaderDescription) {
         if (this.shaderMap.has(shaderDescription.variantName)) {
             return this.shaderMap.get(shaderDescription.variantName);
         }
@@ -54,17 +25,13 @@ function(gl, args) {
         out mediump vec2 v_pos;
 
         void main() {
-
             gl_Position = projectTile(a_pos);
-            v_pos = a_pos / float(${EXTENT});
+            v_pos = a_pos / float(8192);
         }`;
 
         const fragmentSource = `#version 300 es
-
         precision mediump float;
-
         in vec2 v_pos;
-
         out highp vec4 fragColor;
         void main() {
             float alpha = 0.5;
@@ -76,7 +43,7 @@ function(gl, args) {
         gl.compileShader(vertexShader);
 
         const fragmentShader = gl.createShader(gl.FRAGMENT_SHADER);
-        gl.shaderSource(fragmentSource, fragmentSource);
+        gl.shaderSource(fragmentShader, fragmentSource);
         gl.compileShader(fragmentShader);
 
         const program = gl.createProgram();
@@ -87,6 +54,14 @@ function(gl, args) {
         this.aPos = gl.getAttribLocation(program, 'a_pos');
 
         const locations = {};
+        const uniforms = [
+            'u_matrix',
+            'u_projection_fallback_matrix',
+            'u_projection_matrix',
+            'u_projection_clipping_plane',
+            'u_projection_transition',
+            'u_projection_tile_mercator_coords',
+        ];
 
         for (const uniform of uniforms) {
             locations[uniform] = gl.getUniformLocation(program, uniform);
@@ -100,9 +75,9 @@ function(gl, args) {
         this.shaderMap.set(shaderDescription.variantName, result);
 
         return result;
-    };
+    },
 
-    const getTileMesh = (gl, x, y, z, border) => {
+    getTileMesh(gl, x, y, z, border) {
         const granularity = map.style.projection.subdivisionGranularity.tile.getGranularityForZoomLevel(z);
         const north = y === 0;
         const south = y === (1 << z) - 1;
@@ -142,95 +117,107 @@ function(gl, args) {
         };
         this.meshMap.set(key, mesh);
         return mesh;
-    };
+    },
 
-    const {program, locations} = getShader(gl, args.shaderData);
+    onAdd (map, gl) {
+        // Nothing to do.
+    },
 
-    gl.disable(gl.DEPTH_TEST);
-    gl.disable(gl.STENCIL_TEST);
-    gl.disable(gl.CULL_FACE);
-    gl.enable(gl.BLEND);
-    gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
+    render (gl, args) {
+        const {program, locations} = this.getShader(gl, args.shaderData);
 
-    gl.useProgram(program);
+        gl.disable(gl.DEPTH_TEST);
+        gl.disable(gl.STENCIL_TEST);
+        gl.disable(gl.CULL_FACE);
+        gl.enable(gl.BLEND);
+        gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
 
-    const isGlobeProjection = args.shaderData.variantName === 'globe';
+        gl.useProgram(program);
 
-    for (const tile of tilesToRender) {
-        if (isGlobeProjection && tile.wrap !== 0) {
-            continue;
+        const isGlobeProjection = args.shaderData.variantName === 'globe';
+
+        const tilesToRender = [];
+        function generateTileList(list, current) {
+            list.push(current);
+            const subdivide = current.z < 2 || (current.x === current.y && current.z < 3) || (current.x === 0 && current.y === 0 && current.z < 7);
+            if (subdivide) {
+                for (let x = 0; x < 2; x++) {
+                    for (let y = 0; y < 2; y++) {
+                        generateTileList(list, {
+                            x: current.x * 2 + x,
+                            y: current.y * 2 + y,
+                            z: current.z + 1,
+                            wrap: current.wrap,
+                        });
+                    }
+                }
+            }
+        }
+        for (let i = -1; i <= 1; i++) {
+            generateTileList(tilesToRender, {x: 0, y: 0, z: 0, wrap: i});
         }
 
-        const tileID = {
-            wrap: tile.wrap,
-            canonical: {
-                x: tile.x,
-                y: tile.y,
-                z: tile.z,
+        for (const tile of tilesToRender) {
+            if (isGlobeProjection && tile.wrap !== 0) {
+                continue;
             }
-        };
 
-        const projectionData = map.transform.getProjectionData({overscaledTileID: tileID, applyGlobeMatrix: true});
+            const tileID = {
+                wrap: tile.wrap,
+                canonical: {
+                    x: tile.x,
+                    y: tile.y,
+                    z: tile.z,
+                }
+            };
 
-        gl.uniform4f(
-            locations['u_projection_clipping_plane'],
-            ...projectionData.clippingPlane
-        );
-        gl.uniform1f(
-            locations['u_projection_transition'],
-            projectionData.projectionTransition
-        );
+            const projectionData = map.transform.getProjectionData({overscaledTileID: tileID, applyGlobeMatrix: true});
 
-        gl.uniform4f(
-            locations['u_projection_tile_mercator_coords'],
-            ...projectionData.tileMercatorCoords
-        );
+            gl.uniform4f(
+                locations['u_projection_clipping_plane'],
+                ...projectionData.clippingPlane
+            );
+            gl.uniform1f(
+                locations['u_projection_transition'],
+                projectionData.projectionTransition
+            );
 
-        gl.uniformMatrix4fv(
-            locations['u_projection_matrix'],
-            false,
-            projectionData.mainMatrix
-        );
-        gl.uniformMatrix4fv(
-            locations['u_projection_fallback_matrix'],
-            false,
-            projectionData.fallbackMatrix
-        );
-        const mesh = getTileMesh(gl, tile.x, tile.y, tile.z, false);
-        gl.bindBuffer(gl.ARRAY_BUFFER, mesh.vbo);
-        gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, mesh.ibo);
-        gl.enableVertexAttribArray(this.aPos);
-        gl.vertexAttribPointer(this.aPos, 2, gl.SHORT, false, 0, 0);
-        gl.drawElements(gl.TRIANGLES, mesh.indexCount, gl.UNSIGNED_SHORT, 0);
+            gl.uniform4f(
+                locations['u_projection_tile_mercator_coords'],
+                ...projectionData.tileMercatorCoords
+            );
+
+            gl.uniformMatrix4fv(
+                locations['u_projection_matrix'],
+                false,
+                projectionData.mainMatrix
+            );
+            gl.uniformMatrix4fv(
+                locations['u_projection_fallback_matrix'],
+                false,
+                projectionData.fallbackMatrix
+            );
+            const mesh = this.getTileMesh(gl, tile.x, tile.y, tile.z, false);
+            gl.bindBuffer(gl.ARRAY_BUFFER, mesh.vbo);
+            gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, mesh.ibo);
+            gl.enableVertexAttribArray(this.aPos);
+            gl.vertexAttribPointer(this.aPos, 2, gl.SHORT, false, 0, 0);
+            gl.drawElements(gl.TRIANGLES, mesh.indexCount, gl.UNSIGNED_SHORT, 0);
+        }
     }
-}
+};
 """
+)
 
 
-class CustomGlobeLayer:
-    """Represents a custom layer for rendering tiles on a globe projection."""
+class CustomGlobeLayer(Layer):
+    """Custom Globe Layer"""
 
-    def __init__(self, id: str):
-        """Initialize a CustomGlobeLayer.
-        Args:
-            id: The ID of the layer.
-        """
-        self.id = id
+    def __init__(self, id: str, **kwargs):
+        super().__init__(id=id, type="custom", **kwargs)
 
-    def add_to(self, map_instance) -> None:
-        """Adds the custom layer to the map instance.
-        Args:
-            map_instance: The map instance to add the layer to.
-        """
-        js = f"""
-        map.addLayer({{
-            id: '{self.id}',
-            type: 'custom',
-            onAdd: {ON_ADD_JS},
-            render: {RENDER_JS}
-        }});
-        """
-        map_instance.add_on_load_js(js)
-
-
-__all__ = ["CustomGlobeLayer"]
+    def add_to(self, map_):
+        js_code = CUSTOM_GLOBE_LAYER_GL_JS.render(id=self.id)
+        map_.add_on_load_js(js_code)
+        # It is important to call addLayer with the JS object, not a dict
+        map_.add_on_load_js(f"map.addLayer(highlightLayer_{self.id});")
