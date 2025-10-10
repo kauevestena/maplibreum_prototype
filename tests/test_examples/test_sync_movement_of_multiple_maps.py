@@ -103,3 +103,36 @@ def test_sync_movement_of_multiple_maps() -> None:
     assert "syncMaps(map, map2, map3)" in html
     assert "mapbox-gl-sync-move" in html
     assert "window._maplibreumSyncedMaps" in html
+
+
+def test_sync_movement_of_multiple_maps_with_python_api() -> None:
+    """Test the MapSynchronizer class."""
+    map_1 = Map(
+        map_style="https://demotiles.maplibre.org/style.json",
+        center=[0, 0],
+        zoom=1,
+    )
+
+    map_2 = Map(
+        map_style="https://basemaps.cartocdn.com/gl/positron-gl-style/style.json",
+        center=[0, 0],
+        zoom=1,
+    )
+
+    map_3 = Map(
+        map_style="https://basemaps.cartocdn.com/gl/dark-matter-gl-style/style.json",
+        center=[0, 0],
+        zoom=1,
+    )
+
+    from maplibreum.experimental import MapSynchronizer
+
+    synchronizer = MapSynchronizer([map_1, map_2, map_3])
+    synchronizer.add_to(map_1)
+
+    html = map_1.render()
+    assert "mapbox-gl-sync-move" in html
+    assert f"var primaryContainer = document.getElementById('{map_1.map_id}');" in html
+    assert "syncMaps.apply(null, allMaps);" in html
+    assert f"container: '{map_1.map_id}-secondary-0'" in html
+    assert f"container: '{map_1.map_id}-secondary-1'" in html
