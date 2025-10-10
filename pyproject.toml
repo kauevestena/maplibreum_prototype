@@ -45,7 +45,7 @@ test = [
 "Changelog" = "https://github.com/kauevestena/maplibreum_prototype/blob/main/CHANGELOG.md"
 
 [tool.setuptools]
-packages = ["maplibreum", "maplibreum.experimental"]
+packages = ["maplibreum"]
 include-package-data = true
 
 [tool.setuptools.package-data]
