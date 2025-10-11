@@ -232,6 +232,7 @@ class CustomGlobeLayer:
             The ID of the layer.
         """
 
+        # Create the JavaScript code to add the custom layer.
         before_argument = f", {json.dumps(before)}" if before is not None else ""
         js = f"""
         map.addLayer({{
