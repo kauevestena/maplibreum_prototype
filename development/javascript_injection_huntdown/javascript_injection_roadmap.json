@@ -1,7 +1,7 @@
 {
   "metadata": {
     "title": "MapLibreum JavaScript Injection Analysis and Improvement Roadmap",
-    "version": "3.5.0",
+    "version": "3.4.0",
     "created_date": "2024-12-21",
     "last_updated": "2025-10-11",
     "total_examples": 123,
@@ -11,15 +11,15 @@
   },
   "summary": {
     "total_examples": 123,
-    "javascript_injection_only": 23,
+    "javascript_injection_only": 24,
     "mixed_approach": 20,
     "proper_api_only": 55,
     "other_patterns": 22,
     "completion_percentage": {
-      "phase_1": 52.0,
+      "phase_1": 48.0,
       "phase_2": 100.0,
       "phase_3": 0,
-      "overall": 67.5
+      "overall": 66.7
     }
   },
   "implementation_phases": {
@@ -40,9 +40,9 @@
         "ToggleControl"
       ],
       "completion_status": {
-        "completed": 13,
+        "completed": 12,
         "in_progress": 0,
-        "planned": 12
+        "planned": 13
       }
     },
     "phase_2": {
@@ -603,26 +603,22 @@
         },
         "view-local-geojson-experimental": {
           "test_path": "tests/test_examples/test_view_local_geojson.py",
-          "current_implementation": "improved",
+          "current_implementation": "javascript_injection",
           "issues": [
-            "RESOLVED: Implemented Python API for experimental local file handling",
-            "RESOLVED: Eliminated JavaScript-based file loading using File System Access API"
+            "Experimental local file handling",
+            "Similar to view-local-geojson"
           ],
           "required_apis": [
-            "GeoJSONSource.from_file()"
+            "LocalFileLoader",
+            "ExperimentalGeoJSONLoader"
           ],
-          "phase": "phase_1",
+          "phase": "phase_2",
           "priority": "low",
-          "estimated_effort": "1 day",
-          "status": "completed",
-          "assigned_to": "jules",
-          "completion_date": "2025-10-11",
-          "notes": "Replaced the experimental client-side File System Access API with the established server-side GeoJSONSource.from_file() method to unify the Python API.",
-          "improvements_made": [
-            "Added a new test to validate the Python API approach for the experimental case",
-            "Maintained backward compatibility with the original test",
-            "Unified the Python API for both standard and experimental local GeoJSON loading"
-          ]
+          "estimated_effort": "2-3 days",
+          "status": "planned",
+          "assigned_to": null,
+          "completion_date": null,
+          "notes": "Variant of local GeoJSON loading"
         },
         "zoom-and-planet-size-relation-on-globe": {
           "test_path": "tests/test_examples/test_zoom_and_planet_size_relation_on_globe.py",
