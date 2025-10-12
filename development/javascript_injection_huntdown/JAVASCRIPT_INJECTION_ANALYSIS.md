@@ -63,7 +63,7 @@ These examples use only `add_on_load_js()` and `add_external_script()` without p
 **Utility Examples:**
 - `disable-map-rotation`
 - `view-local-geojson` - ✅ Converted to Python API
-- `view-local-geojson-experimental`
+- `view-local-geojson-experimental` - ✅ Converted to Python API
 - `zoom-and-planet-size-relation-on-globe` - ✅ Converted to Python API
 
 ### Examples Using Mixed Approach (20 examples)
@@ -384,6 +384,21 @@ The JSON tracker serves as a living document to monitor progress as examples are
 - **Overall Progress**: Increased from 56.9% to 57.7% proper API usage
 - **Backward Compatibility**: All 237 tests pass (including new Python API tests)
 - **Infrastructure**: New `RouteAnimation` API now available with arc interpolation and bearing calculations.
+
+### Recent Progress (2025-10-11)
+
+**API Implementation:**
+- ✅ **`GeoJSONFilePicker`**: Added a high-level helper that wraps the File System Access API and hidden file input fallback, delivering a Python-friendly interface for loading local GeoJSON files from the map UI.
+
+**Example Conversions:**
+- ✅ **`view-local-geojson-experimental`**: Updated `test_view_local_geojson_experimental_with_python_api()` to use `GeoJSONFilePicker`, replacing bespoke JavaScript with the new helper while preserving the original example's messaging and behavior.
+
+**Current Status:**
+- **Phase 1 Progress**: 40.0% complete (10/25 examples improved)
+- **Phase 2 Progress**: 55.6% complete (5/9 examples improved)
+- **Overall Progress**: Increased from 56.1% to 56.9% proper API usage
+- **Backward Compatibility**: All 235 tests pass (including new Python API tests)
+- **Infrastructure**: New `GeoJSONFilePicker` helper available in `maplibreum.experimental`.
 
 ### Recent Progress (2025-10-06)
 
