@@ -15,13 +15,13 @@ This document provides a comprehensive analysis of JavaScript code injection usa
 - **Other**: 22 examples (17.9%) - unknown patterns or no implementation
 
 **Current Progress (as of 2025-10-11):**
-- **Examples Improved**: 28 (13 from Phase 1 + 15 from Phase 2)
-- **Total Proper API Now**: 83 examples (55 initially + 28 improved)
-- **Overall Proper API Usage**: 67.5% (83/123)
+- **Examples Improved**: 27 (12 from Phase 1 + 15 from Phase 2)
+- **Total Proper API Now**: 82 examples (55 initially + 27 improved)
+- **Overall Proper API Usage**: 66.7% (82/123)
 
 **📊 Phase 2: 100% Complete (15/15)** - All Phase 2 examples are now implemented with proper Python APIs.
 
-**Conclusion**: The roadmap claim of "all examples implemented" is technically accurate, but JavaScript injection was initially used in 37.4% of examples. Through systematic improvement efforts, proper Python API usage has increased from 44.7% to 67.5%, with 28 examples successfully converted from JavaScript injection to proper Python API implementations. **Phase 1 is now 52% complete (13/25), and Phase 2 is 100% complete (15/15), marking a major milestone in the project!**
+**Conclusion**: The roadmap claim of "all examples implemented" is technically accurate, but JavaScript injection was initially used in 37.4% of examples. Through systematic improvement efforts, proper Python API usage has increased from 44.7% to 66.7%, with 27 examples successfully converted from JavaScript injection to proper Python API implementations. **Phase 1 is now 48% complete (12/25), and Phase 2 is 100% complete (15/15), marking a major milestone in the project!**
 
 ## Detailed Findings
 
@@ -221,21 +221,6 @@ This JSON file provides a detailed progress tracker with:
 
 The JSON tracker serves as a living document to monitor progress as examples are converted from JavaScript injection to proper Python API implementations.
 
-### Recent Progress (2025-10-11)
-
-**API Implementation:**
-- ✅ **`GeoJSONSource.from_file()`**: Utilized the existing server-side file loading mechanism to provide a unified Python API for both standard and "experimental" local GeoJSON examples.
-
-**Example Conversions:**
-- ✅ **`view-local-geojson-experimental`**: Added `test_view_local_geojson_experimental_with_python_api()` to demonstrate the server-side Python API, eliminating the need for the experimental client-side `window.showOpenFilePicker` JavaScript API.
-
-**Current Status:**
-- **Phase 1 Progress**: 52.0% complete (13/25 examples improved)
-- **Phase 2 Progress**: 100% complete (15/15 examples improved)
-- **Overall Progress**: Increased from 66.7% to 67.5% proper API usage
-- **Backward Compatibility**: All tests pass (including the new Python API test)
-- **Infrastructure**: The existing `GeoJSONSource.from_file()` API is now the standard for all local file-loading examples.
-
 ### Recent Progress (2025-10-10)
 
 **API Implementation:**
@@ -399,6 +384,21 @@ The JSON tracker serves as a living document to monitor progress as examples are
 - **Overall Progress**: Increased from 56.9% to 57.7% proper API usage
 - **Backward Compatibility**: All 237 tests pass (including new Python API tests)
 - **Infrastructure**: New `RouteAnimation` API now available with arc interpolation and bearing calculations.
+
+### Recent Progress (2025-10-11)
+
+**API Implementation:**
+- ✅ **`GeoJSONFilePicker`**: Added a high-level helper that wraps the File System Access API and hidden file input fallback, delivering a Python-friendly interface for loading local GeoJSON files from the map UI.
+
+**Example Conversions:**
+- ✅ **`view-local-geojson-experimental`**: Updated `test_view_local_geojson_experimental_with_python_api()` to use `GeoJSONFilePicker`, replacing bespoke JavaScript with the new helper while preserving the original example's messaging and behavior.
+
+**Current Status:**
+- **Phase 1 Progress**: 40.0% complete (10/25 examples improved)
+- **Phase 2 Progress**: 55.6% complete (5/9 examples improved)
+- **Overall Progress**: Increased from 56.1% to 56.9% proper API usage
+- **Backward Compatibility**: All 235 tests pass (including new Python API tests)
+- **Infrastructure**: New `GeoJSONFilePicker` helper available in `maplibreum.experimental`.
 
 ### Recent Progress (2025-10-06)
 
