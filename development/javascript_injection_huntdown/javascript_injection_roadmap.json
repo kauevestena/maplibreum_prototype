@@ -1,7 +1,7 @@
 {
   "metadata": {
     "title": "MapLibreum JavaScript Injection Analysis and Improvement Roadmap",
-    "version": "3.4.0",
+    "version": "3.5.0",
     "created_date": "2024-12-21",
     "last_updated": "2025-10-11",
     "total_examples": 123,
@@ -18,8 +18,8 @@
     "completion_percentage": {
       "phase_1": 48.0,
       "phase_2": 100.0,
-      "phase_3": 0,
-      "overall": 66.7
+      "phase_3": 4.5,
+      "overall": 67.5
     }
   },
   "implementation_phases": {
@@ -77,9 +77,9 @@
         "ProtocolExtension"
       ],
       "completion_status": {
-        "completed": 0,
+        "completed": 1,
         "in_progress": 0,
-        "planned": 22
+        "planned": 21
       }
     }
   },
@@ -315,22 +315,26 @@
         },
         "add-a-3d-model-using-threejs": {
           "test_path": "tests/test_examples/test_add_a_3d_model_using_threejs.py",
-          "current_implementation": "javascript_injection",
+          "current_implementation": "improved",
           "issues": [
-            "External Three.js library loading",
-            "No Python wrapper for 3D models"
+            "RESOLVED: External Three.js library loading",
+            "RESOLVED: No Python wrapper for 3D models"
           ],
           "required_apis": [
-            "ThreeJSLayer",
-            "Model3D"
+            "ThreeJSLayer"
           ],
           "phase": "phase_3",
           "priority": "lower",
           "estimated_effort": "10-15 days",
-          "status": "planned",
-          "assigned_to": null,
-          "completion_date": null,
-          "notes": "Requires comprehensive Three.js integration"
+          "status": "completed",
+          "assigned_to": "jules",
+          "completion_date": "2025-10-11",
+          "notes": "Implemented ThreeJSLayer to provide a Python API for adding 3D models.",
+          "improvements_made": [
+            "Created ThreeJSLayer class in maplibreum/threejs.py",
+            "Added a new test to validate the Python API approach",
+            "Maintained backward compatibility with the original test"
+          ]
         },
         "add-a-3d-model-to-globe-using-threejs": {
           "test_path": "tests/test_examples/test_add_a_3d_model_to_globe_using_threejs.py",
