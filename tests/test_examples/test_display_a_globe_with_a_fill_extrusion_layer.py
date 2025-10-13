@@ -1,6 +1,6 @@
-"""Test for display-a-globe-with-a-fill-extrusion-layer MapLibre example."""
 
-from maplibreum import Map, layers
+from maplibreum import Map
+from maplibreum import layers
 
 
 def test_display_a_globe_with_a_fill_extrusion_layer():
@@ -66,6 +66,6 @@ def test_display_a_globe_with_a_fill_extrusion_layer():
     m.add_layer(extrusion_layer.to_dict())
 
     html = m.render()
-    assert '"projection": "globe"' in html
+    assert '"projection": {"name": "globe"}' in html
     assert "fill-extrusion-color" in html
     assert "fill-extrusion-height" in html

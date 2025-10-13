@@ -3,6 +3,7 @@
 from textwrap import dedent
 
 from maplibreum import Map
+from maplibreum.threejs import ThreeJSLayer
 
 
 def test_add_a_3d_model_to_globe_using_threejs_configuration():
@@ -145,3 +146,45 @@ def test_add_a_3d_model_to_globe_using_threejs_configuration():
     assert "map.transform.getMatrixForModel" in html
     assert "map.addLayer(customLayer);" in html
     assert ".maplibreum-projection-toggle" in html
+
+
+def test_add_a_3d_model_to_globe_using_threejs_with_python_api():
+    """Test for the add-a-3d-model-to-globe-using-threejs MapLibre example with Python API."""
+
+    m = Map(
+        map_style="https://demotiles.maplibre.org/style.json",
+        center=[150.16546137527212, -35.017179237129994],
+        zoom=5.5,
+        pitch=70,
+        projection="globe",
+        map_options={
+            "maxPitch": 80,
+            "canvasContextAttributes": {"antialias": True},
+        },
+    )
+
+    threejs_layer = ThreeJSLayer(
+        id="3d-model",
+        model_uri="https://maplibre.org/maplibre-gl-js/docs/assets/34M_17/34M_17.gltf",
+        model_origin=[148.9819, -35.39847],
+        model_altitude=0.0,
+        model_scale=10000.0,
+        globe=True,
+    )
+
+    m.add_layer(threejs_layer)
+
+    html = m.render()
+
+    assert "three.min.js" in html
+    assert "GLTFLoader.js" in html
+    assert "new THREE.GLTFLoader()" in html
+    assert (
+        "https://maplibre.org/maplibre-gl-js/docs/assets/34M_17/34M_17.gltf" in html
+    )
+    assert "map.addLayer" in html
+    assert "const modelOrigin = [148.9819, -35.39847];" in html
+    assert "const modelAltitude = 0.0;" in html
+    assert "const scaling = 10000.0;" in html
+    assert '{"name": "globe"}' in html
+    assert "map.transform.getMatrixForModel" in html

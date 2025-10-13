@@ -1,4 +1,3 @@
-"""Test for the globe with atmosphere example."""
 
 from maplibreum import Map
 
@@ -16,4 +15,4 @@ def test_display_globe_with_atmosphere():
     html = m.render()
     assert '"type": "sky"' in html
     assert "map.setFog" in html
-    assert '"projection": "globe"' in html
+    assert '"projection": {"name": "globe"}' in html
