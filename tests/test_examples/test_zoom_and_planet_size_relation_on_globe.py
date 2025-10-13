@@ -1,5 +1,7 @@
+
 from maplibreum import Map
 from maplibreum.experimental import GlobeInteraction
+
 
 def test_zoom_and_planet_size_relation_on_globe():
     button_html = '<button id="fly">Go to pole or equator</button>'
@@ -40,7 +42,7 @@ def test_zoom_and_planet_size_relation_on_globe():
 
     m.add_on_load_js(js_code)
     html = m.render()
-    assert '"projection": "globe"' in html
+    assert '"projection": {"name": "globe"}' in html
     assert "const map =" in html
     assert "Go to pole or equator" in html
 
@@ -59,6 +61,6 @@ def test_zoom_and_planet_size_relation_on_globe_with_python_api():
     globe_interaction.add_to(m)
 
     html = m.render()
-    assert '"projection": "globe"' in html
+    assert '"projection": {"name": "globe"}' in html
     assert "flyToWithGlobeCompensation" in html
     assert "Go to pole or equator" in html

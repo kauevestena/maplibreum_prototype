@@ -1,6 +1,7 @@
-"""Test port of the heatmap-on-globe MapLibre example."""
 
-from maplibreum import Map, controls
+from maplibreum import Map
+from maplibreum import layers
+from maplibreum import controls
 
 
 def test_heatmap_globe_with_terrain():
@@ -47,7 +48,7 @@ def test_heatmap_globe_with_terrain():
 
     html = m.render()
     assert '"type": "heatmap"' in html
-    assert '"projection": "globe"' in html
+    assert '"projection": {"name": "globe"}' in html
     assert "map.addControl(new maplibregl.GlobeControl" in html
     assert "map.setTerrain" in html
     assert "earthquakes" in html

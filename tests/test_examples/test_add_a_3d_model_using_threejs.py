@@ -154,10 +154,10 @@ def test_add_a_3d_model_using_threejs_with_python_api():
     )
 
     threejs_layer = ThreeJSLayer(
-        layer_id="3d-model",
-        model_url="https://maplibre.org/maplibre-gl-js/docs/assets/34M_17/34M_17.gltf",
+        id="3d-model",
+        model_uri="https://maplibre.org/maplibre-gl-js/docs/assets/34M_17/34M_17.gltf",
         model_origin=[148.9819, -35.39847],
-        model_altitude=0,
+        model_altitude=0.0,
         model_rotate=[90, 0, 0],
     )
 
@@ -167,9 +167,9 @@ def test_add_a_3d_model_using_threejs_with_python_api():
 
     assert "three.min.js" in html
     assert "GLTFLoader.js" in html
-    assert "var modelOrigin = [148.9819, -35.39847];" in html
-    assert "var modelAltitude = 0;" in html
-    assert "var modelRotate = [1.5707963267948966, 0.0, 0.0];" in html
+    assert "const modelOrigin = [148.9819, -35.39847];" in html
+    assert "const modelAltitude = 0.0;" in html
+    assert "const modelRotate = [1.5707963267948966, 0.0, 0.0];" in html
     assert "id: '3d-model'" in html
     assert "type: 'custom'" in html
     assert "renderingMode: '3d'" in html

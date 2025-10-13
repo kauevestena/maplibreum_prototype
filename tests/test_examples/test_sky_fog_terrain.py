@@ -1,6 +1,6 @@
-"""Tests for the Sky/Fog/Terrain MapLibre example."""
 
-from maplibreum import Map, controls
+from maplibreum import Map
+from maplibreum import controls
 
 
 def test_sky_fog_terrain_configuration():
@@ -53,4 +53,4 @@ def test_sky_fog_terrain_configuration():
     assert '"type": "sky"' in html
     assert "map.addControl(new maplibregl.TerrainControl" in html
     assert "map.addControl(new maplibregl.GlobeControl" in html
-    assert '"projection": "globe"' in html
+    assert '"projection": {"name": "globe"}' in html

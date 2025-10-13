@@ -268,6 +268,7 @@ class Map:
         extra_js="",
         custom_css="",
         maplibre_version="3.4.0",
+        projection=None,
         map_options=None,
         container_id=None,
     ):
@@ -337,6 +338,9 @@ class Map:
 
         # Unique ID for the map (important if multiple maps displayed in a notebook)
         self.map_id = container_id or f"maplibreum_{uuid.uuid4().hex}"
+
+        if projection is not None:
+            self.set_projection(projection)
 
     def fit_bounds(self, bounds, padding=None):
         """Store bounds and optional padding for later rendering.
@@ -496,7 +500,7 @@ class Map:
             self.add_on_load_js(layer_definition.js_code)
             layer_definition = layer_definition.to_dict()
         elif isinstance(layer_definition, ThreeJSLayer):
-            layer_id = layer_definition.layer_id
+            layer_id = layer_definition.id
             for script in layer_definition.scripts:
                 self.add_external_script(script, defer=True)
             self.add_on_load_js(layer_definition.add_to(before_layer_id=before))
@@ -1819,6 +1823,9 @@ class Map:
             map_options["centerClampedToGround"] = self.center_clamped_to_ground
         if self.additional_map_options:
             map_options.update(self.additional_map_options)
+
+        if isinstance(map_options.get("projection"), str):
+            map_options["projection"] = {"name": map_options["projection"]}
 
         include_minimap = any(c["type"] == "minimap" for c in self.controls)
         include_search = any(c["type"] in ["search", "geocoding"] for c in self.controls)
