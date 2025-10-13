@@ -9,14 +9,39 @@ class ThreeJSLayer:
 
     def __init__(
         self,
-        id: str,
-        model_uri: str,
-        model_origin: list,
+        id: str = None,
+        model_uri: str = None,
+        model_origin: list = None,
         model_altitude: float = 0,
-        model_scale: float = 1.0,
         model_rotate: list = None,
+        model_scale: float = 1.0,
         globe: bool = False,
+        *,
+        layer_id: str = None,
+        model_url: str = None,
     ):
+        if id is None:
+            id = layer_id
+        elif layer_id is not None and id != layer_id:
+            raise ValueError("Conflicting values provided for 'id' and 'layer_id'.")
+
+        if model_uri is None:
+            model_uri = model_url
+        elif model_url is not None and model_uri != model_url:
+            raise ValueError("Conflicting values provided for 'model_uri' and 'model_url'.")
+
+        if id is None:
+            raise ValueError("ThreeJSLayer requires an 'id' (or 'layer_id').")
+
+        if model_uri is None:
+            raise ValueError("ThreeJSLayer requires a 'model_uri' (or 'model_url').")
+
+        if model_origin is None:
+            raise ValueError("ThreeJSLayer requires 'model_origin'.")
+
+        if model_scale is None:
+            model_scale = 1.0
+
         if model_rotate is None:
             model_rotate = [math.pi / 2, 0, 0]
         else:
