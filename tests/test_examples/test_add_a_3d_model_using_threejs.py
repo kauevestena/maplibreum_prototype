@@ -173,3 +173,29 @@ def test_add_a_3d_model_using_threejs_with_python_api():
     assert "id: '3d-model'" in html
     assert "type: 'custom'" in html
     assert "renderingMode: '3d'" in html
+
+
+def test_threejslayer_backward_compatible_positional_args():
+    """Ensure the legacy positional signature remains functional."""
+    map_instance = Map(
+        map_style="https://tiles.openfreemap.org/styles/bright",
+        center=[148.9819, -35.3981],
+        zoom=18,
+        pitch=60,
+        map_options={"canvasContextAttributes": {"antialias": True}},
+    )
+
+    threejs_layer = ThreeJSLayer(
+        "3d-model",
+        "https://maplibre.org/maplibre-gl-js/docs/assets/34M_17/34M_17.gltf",
+        [148.9819, -35.39847],
+        0.0,
+        [90, 0, 0],
+    )
+
+    map_instance.add_layer(threejs_layer)
+
+    html = map_instance.render()
+
+    assert "const scaling = 1.0;" in html
+    assert "const modelRotate = [1.5707963267948966, 0.0, 0.0];" in html
