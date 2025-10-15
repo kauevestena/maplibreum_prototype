@@ -16,6 +16,7 @@ from .cluster import ClusteredGeoJson, MarkerCluster
 from .layers import Layer
 from .three import ThreeLayer
 from .threejs import ThreeJSLayer
+from .deckgl import DeckGLLayer
 from .custom import CustomGlobeLayer
 from .expressions import get as expr_get
 from .expressions import interpolate, var
@@ -500,6 +501,12 @@ class Map:
             self.add_on_load_js(layer_definition.js_code)
             layer_definition = layer_definition.to_dict()
         elif isinstance(layer_definition, ThreeJSLayer):
+            layer_id = layer_definition.id
+            for script in layer_definition.scripts:
+                self.add_external_script(script, defer=True)
+            self.add_on_load_js(layer_definition.add_to(before_layer_id=before))
+            return layer_id
+        elif isinstance(layer_definition, DeckGLLayer):
             layer_id = layer_definition.id
             for script in layer_definition.scripts:
                 self.add_external_script(script, defer=True)
