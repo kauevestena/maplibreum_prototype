@@ -1,6 +1,7 @@
 import json
 
 from maplibreum import Map, layers, sources
+from maplibreum.threejs import ThreeJSLayer
 
 SCRIPT = """
 async function main() {
@@ -143,4 +144,56 @@ def test_adding_3d_models_using_threejs_on_terrain():
         "https://cdn.jsdelivr.net/npm/three@0.169.0/examples/js/loaders/GLTFLoader.js"
     )
     map_object.add_on_load_js(SCRIPT)
+    map_object.render()
+
+
+def test_adding_3d_models_using_threejs_on_terrain_with_python_api():
+    map_options = dict(
+        center=[11.5257, 47.668],
+        zoom=16.27,
+        pitch=60,
+        bearing=-28.5,
+        antialias=True,
+    )
+    terrain_source = sources.RasterDemSource(
+        url="https://demotiles.maplibre.org/terrain-tiles/tiles.json",
+        tileSize=256,
+    )
+    hillshade_source = sources.RasterDemSource(
+        url="https://demotiles.maplibre.org/terrain-tiles/tiles.json",
+        tileSize=256,
+    )
+    base_color_layer = layers.Layer(
+        id="baseColor",
+        type="background",
+        paint={"background-color": "#fff", "background-opacity": 1.0},
+    )
+    hills_layer = layers.HillshadeLayer(
+        id="hills",
+        source="hillshadeSource",
+        layout={"visibility": "visible"},
+        paint={"hillshade-shadow-color": "#473B24"},
+    )
+    map_style = {
+        "version": 8,
+        "layers": [base_color_layer.to_dict(), hills_layer.to_dict()],
+        "terrain": {"source": "terrainSource", "exaggeration": 1},
+        "sources": {
+            "terrainSource": terrain_source.to_dict(),
+            "hillshadeSource": hillshade_source.to_dict(),
+        },
+    }
+    map_object = Map(map_options=map_options, map_style=map_style)
+
+    model_url = "https://maplibre.org/maplibre-gl-js/docs/assets/34M_17/34M_17.gltf"
+    threejs_layer = ThreeJSLayer(
+        id="3d-model",
+        terrain=True,
+        scene_origin=[11.5255, 47.6677],
+        models=[
+            {"uri": model_url, "location": [11.527, 47.6678]},
+            {"uri": model_url, "location": [11.5249, 47.6676]},
+        ],
+    )
+    map_object.add_layer(threejs_layer)
     map_object.render()

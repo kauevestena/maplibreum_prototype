@@ -1,9 +1,9 @@
 {
   "metadata": {
     "title": "MapLibreum JavaScript Injection Analysis and Improvement Roadmap",
-    "version": "3.6.0",
+    "version": "3.7.0",
     "created_date": "2024-12-21",
-    "last_updated": "2025-10-12",
+    "last_updated": "2025-10-13",
     "total_examples": 123,
     "analysis_source": "JAVASCRIPT_INJECTION_ANALYSIS.md",
     "progress_tracker": true,
@@ -18,8 +18,8 @@
     "completion_percentage": {
       "phase_1": 48.0,
       "phase_2": 100.0,
-      "phase_3": 9.1,
-      "overall": 68.3
+      "phase_3": 13.6,
+      "overall": 69.1
     }
   },
   "implementation_phases": {
@@ -77,9 +77,9 @@
         "ProtocolExtension"
       ],
       "completion_status": {
-        "completed": 2,
+        "completed": 3,
         "in_progress": 0,
-        "planned": 20
+        "planned": 19
       }
     }
   },
@@ -362,10 +362,10 @@
         },
         "adding-3d-models-using-threejs-on-terrain": {
           "test_path": "tests/test_examples/test_adding_3d_models_using_threejs_on_terrain.py",
-          "current_implementation": "javascript_injection",
+          "current_implementation": "improved",
           "issues": [
-            "Three.js with terrain elevation",
-            "Complex elevation-aware positioning"
+            "RESOLVED: Three.js with terrain elevation",
+            "RESOLVED: Complex elevation-aware positioning"
           ],
           "required_apis": [
             "ThreeJSLayer",
@@ -374,10 +374,15 @@
           "phase": "phase_3",
           "priority": "lower",
           "estimated_effort": "15-20 days",
-          "status": "planned",
-          "assigned_to": null,
-          "completion_date": null,
-          "notes": "Most complex 3D terrain integration"
+          "status": "completed",
+          "assigned_to": "jules",
+          "completion_date": "2025-10-13",
+          "notes": "Most complex 3D terrain integration",
+          "improvements_made": [
+            "Enhanced ThreeJSLayer to support terrain-aware models",
+            "Added a new test to validate the Python API approach",
+            "Maintained backward compatibility with the original test"
+          ]
         },
         "create-deckgl-layer-using-rest-api": {
           "test_path": "tests/test_examples/test_create_deckgl_layer_using_rest_api.py",

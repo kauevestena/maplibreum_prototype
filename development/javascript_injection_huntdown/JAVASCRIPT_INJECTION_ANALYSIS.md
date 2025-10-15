@@ -14,14 +14,14 @@ This document provides a comprehensive analysis of JavaScript code injection usa
 - **Proper API Usage**: 55 examples (44.7%) use only Python API methods initially
 - **Other**: 22 examples (17.9%) - unknown patterns or no implementation
 
-**Current Progress (as of 2025-10-11):**
-- **Examples Improved**: 28 (12 from Phase 1 + 15 from Phase 2 + 1 from Phase 3)
-- **Total Proper API Now**: 83 examples (55 initially + 28 improved)
-- **Overall Proper API Usage**: 67.5% (83/123)
+**Current Progress (as of 2025-10-13):**
+- **Examples Improved**: 29 (12 from Phase 1 + 15 from Phase 2 + 2 from Phase 3)
+- **Total Proper API Now**: 84 examples (55 initially + 29 improved)
+- **Overall Proper API Usage**: 68.3% (84/123)
 
 **📊 Phase 2: 100% Complete (15/15)** - All Phase 2 examples are now implemented with proper Python APIs.
 
-**Conclusion**: The roadmap claim of "all examples implemented" is technically accurate, but JavaScript injection was initially used in 37.4% of examples. Through systematic improvement efforts, proper Python API usage has increased from 44.7% to 67.5%, with 28 examples successfully converted from JavaScript injection to proper Python API implementations. **Phase 1 is now 48% complete (12/25), Phase 2 is 100% complete (15/15), and Phase 3 has begun (4.5% complete)!**
+**Conclusion**: The roadmap claim of "all examples implemented" is technically accurate, but JavaScript injection was initially used in 37.4% of examples. Through systematic improvement efforts, proper Python API usage has increased from 44.7% to 68.3%, with 29 examples successfully converted from JavaScript injection to proper Python API implementations. **Phase 1 is now 48% complete (12/25), Phase 2 is 100% complete (15/15), and Phase 3 has progressed to 9.1% complete!**
 
 ## Detailed Findings
 
@@ -44,7 +44,7 @@ These examples use only `add_on_load_js()` and `add_external_script()` without p
 **External Library Integration:**
 - `add-a-3d-model-using-threejs` - ✅ Converted to Python API
 - `add-a-3d-model-to-globe-using-threejs`
-- `adding-3d-models-using-threejs-on-terrain`
+- `adding-3d-models-using-threejs-on-terrain` - ✅ Converted to Python API
 - `create-deckgl-layer-using-rest-api`
 - `toggle-deckgl-layer`
 - `draw-geometries-with-terra-draw`
@@ -220,6 +220,22 @@ This JSON file provides a detailed progress tracker with:
 - Migration strategy with success criteria and timeline
 
 The JSON tracker serves as a living document to monitor progress as examples are converted from JavaScript injection to proper Python API implementations.
+
+### Recent Progress (2025-10-13)
+
+**API Implementation:**
+- ✅ **`ThreeJSLayer`**: Enhanced the existing class to support terrain-aware 3D models, providing a clean Python API that encapsulates the underlying JavaScript logic for positioning models on terrain.
+
+**Example Conversions:**
+- ✅ **`adding-3d-models-using-threejs-on-terrain`**: Added `test_adding_3d_models_using_threejs_on_terrain_with_python_api()` demonstrating the new terrain-aware `ThreeJSLayer` class, eliminating the need for JavaScript injection.
+
+**Current Status:**
+- **Phase 1 Progress**: 48.0% complete (12/25 examples improved)
+- **Phase 2 Progress**: 100% complete (15/15 examples improved)
+- **Phase 3 Progress**: 9.1% complete (2/22 examples improved)
+- **Overall Progress**: Increased from 67.5% to 68.3% proper API usage
+- **Backward Compatibility**: All tests pass (including new Python API tests)
+- **Infrastructure**: `ThreeJSLayer` API now supports terrain-aware models.
 
 ### Recent Progress (2025-10-11)
 
