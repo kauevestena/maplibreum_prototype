@@ -2,6 +2,14 @@
 
 This directory contains example notebooks and rendered HTML outputs that showcase MapLibreum features.
 
+## Available Notebooks
+
+- **usage.ipynb** - Basic usage examples showing core MapLibreum features
+- **new_features.ipynb** - Demonstrations of newly added features
+- **creative_maplibreum_examples.ipynb** - Creative examples and tutorials
+- **event_handling.ipynb** - Examples of event handling and map interactions
+- **popup_and_float_image_examples.ipynb** - Advanced popup templating with Jinja2 and floating image overlays
+
 ## Displaying maps inside notebooks
 
 Simply creating a `Map` instance (for example `m = Map(...)`) and evaluating `m` in a notebook cell now renders the map inside an embedded `<iframe>` thanks to the object's `_repr_html_` implementation.
