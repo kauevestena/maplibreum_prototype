@@ -9,6 +9,7 @@ This directory contains example notebooks and rendered HTML outputs that showcas
 - **creative_maplibreum_examples.ipynb** - Creative examples and tutorials
 - **event_handling.ipynb** - Examples of event handling and map interactions
 - **popup_and_float_image_examples.ipynb** - Advanced popup templating with Jinja2 and floating image overlays
+- **clustering_large_datasets.ipynb** - Performance benchmarks and examples for clustering large datasets (10k-50k+ points)
 
 ## Displaying maps inside notebooks
 
