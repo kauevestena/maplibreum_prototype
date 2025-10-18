@@ -12,5 +12,6 @@ Welcome to maplibreum's documentation!
 
    README
    api
+   maplibre_examples
    CHANGELOG
    TODO
