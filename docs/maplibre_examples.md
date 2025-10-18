@@ -24,67 +24,67 @@ For each example:
 The examples are organized by functionality:
 
 ### 3D and Terrain
-- [3D Terrain](https://maplibre.org/maplibre-gl-js/docs/examples/3d-terrain/) - [Test](https://github.com/kauevestena/maplibreum_prototype/blob/main/tests/test_examples/test_3d_terrain.py)
-- [Add a 3D Model to Globe Using Three.js](https://maplibre.org/maplibre-gl-js/docs/examples/add-a-3d-model-to-globe-using-threejs/) - [Test](https://github.com/kauevestena/maplibreum_prototype/blob/main/tests/test_examples/test_add_a_3d_model_to_globe_using_threejs.py)
-- [Add a 3D Model Using Three.js](https://maplibre.org/maplibre-gl-js/docs/examples/add-a-3d-model-using-threejs/) - [Test](https://github.com/kauevestena/maplibreum_prototype/blob/main/tests/test_examples/test_add_a_3d_model_using_threejs.py)
-- [Add a 3D Model with Babylon.js](https://maplibre.org/maplibre-gl-js/docs/examples/add-a-3d-model-with-babylonjs/) - [Test](https://github.com/kauevestena/maplibreum_prototype/blob/main/tests/test_examples/test_add_a_3d_model_with_babylonjs.py)
-- [Add a 3D Model with Shadow Using Three.js](https://maplibre.org/maplibre-gl-js/docs/examples/add-a-3d-model-with-shadow-using-threejs/) - [Test](https://github.com/kauevestena/maplibreum_prototype/blob/main/tests/test_examples/test_add_a_3d_model_with_shadow_using_threejs.py)
-- [Adding 3D Models Using Three.js on Terrain](https://maplibre.org/maplibre-gl-js/docs/examples/adding-3d-models-using-threejs-on-terrain/) - [Test](https://github.com/kauevestena/maplibreum_prototype/blob/main/tests/test_examples/test_adding_3d_models_using_threejs_on_terrain.py)
-- [Display Buildings in 3D](https://maplibre.org/maplibre-gl-js/docs/examples/display-buildings-in-3d/) - [Test](https://github.com/kauevestena/maplibreum_prototype/blob/main/tests/test_examples/test_display_buildings_in_3d.py)
-- [Extrude Polygons for 3D Indoor Mapping](https://maplibre.org/maplibre-gl-js/docs/examples/extrude-polygons-for-3d-indoor-mapping/) - [Test](https://github.com/kauevestena/maplibreum_prototype/blob/main/tests/test_examples/test_extrude_polygons_for_3d_indoor_mapping.py)
+- [3D Terrain](https://maplibre.org/maplibre-gl-js/docs/examples/3d-terrain/) - [Test](../tests/test_examples/test_3d_terrain.py)
+- [Add a 3D Model to Globe Using Three.js](https://maplibre.org/maplibre-gl-js/docs/examples/add-a-3d-model-to-globe-using-threejs/) - [Test](../tests/test_examples/test_add_a_3d_model_to_globe_using_threejs.py)
+- [Add a 3D Model Using Three.js](https://maplibre.org/maplibre-gl-js/docs/examples/add-a-3d-model-using-threejs/) - [Test](../tests/test_examples/test_add_a_3d_model_using_threejs.py)
+- [Add a 3D Model with Babylon.js](https://maplibre.org/maplibre-gl-js/docs/examples/add-a-3d-model-with-babylonjs/) - [Test](../tests/test_examples/test_add_a_3d_model_with_babylonjs.py)
+- [Add a 3D Model with Shadow Using Three.js](https://maplibre.org/maplibre-gl-js/docs/examples/add-a-3d-model-with-shadow-using-threejs/) - [Test](../tests/test_examples/test_add_a_3d_model_with_shadow_using_threejs.py)
+- [Adding 3D Models Using Three.js on Terrain](https://maplibre.org/maplibre-gl-js/docs/examples/adding-3d-models-using-threejs-on-terrain/) - [Test](../tests/test_examples/test_adding_3d_models_using_threejs_on_terrain.py)
+- [Display Buildings in 3D](https://maplibre.org/maplibre-gl-js/docs/examples/display-buildings-in-3d/) - [Test](../tests/test_examples/test_display_buildings_in_3d.py)
+- [Extrude Polygons for 3D Indoor Mapping](https://maplibre.org/maplibre-gl-js/docs/examples/extrude-polygons-for-3d-indoor-mapping/) - [Test](../tests/test_examples/test_extrude_polygons_for_3d_indoor_mapping.py)
 
 ### Markers and Symbols
-- [Add a Default Marker](https://maplibre.org/maplibre-gl-js/docs/examples/add-a-default-marker/) - [Test](https://github.com/kauevestena/maplibreum_prototype/blob/main/tests/test_examples/test_add_a_default_marker.py)
-- [Add a Generated Icon to the Map](https://maplibre.org/maplibre-gl-js/docs/examples/add-a-generated-icon-to-the-map/) - [Test](https://github.com/kauevestena/maplibreum_prototype/blob/main/tests/test_examples/test_add_a_generated_icon_to_the_map.py)
-- [Add an Icon to the Map](https://maplibre.org/maplibre-gl-js/docs/examples/add-an-icon-to-the-map/) - [Test](https://github.com/kauevestena/maplibreum_prototype/blob/main/tests/test_examples/test_add_an_icon_to_the_map.py)
-- [Add an Animated Icon to the Map](https://maplibre.org/maplibre-gl-js/docs/examples/add-an-animated-icon-to-the-map/) - [Test](https://github.com/kauevestena/maplibreum_prototype/blob/main/tests/test_examples/test_add_an_animated_icon_to_the_map.py)
-- [Add Custom Icons with Markers](https://maplibre.org/maplibre-gl-js/docs/examples/add-custom-icons-with-markers/) - [Test](https://github.com/kauevestena/maplibreum_prototype/blob/main/tests/test_examples/test_add_custom_icons_with_markers.py)
-- [Animate a Marker](https://maplibre.org/maplibre-gl-js/docs/examples/animate-a-marker/) - [Test](https://github.com/kauevestena/maplibreum_prototype/blob/main/tests/test_examples/test_animate_a_marker.py)
-- [Attach a Popup to a Marker Instance](https://maplibre.org/maplibre-gl-js/docs/examples/attach-a-popup-to-a-marker-instance/) - [Test](https://github.com/kauevestena/maplibreum_prototype/blob/main/tests/test_examples/test_attach_a_popup_to_a_marker_instance.py)
+- [Add a Default Marker](https://maplibre.org/maplibre-gl-js/docs/examples/add-a-default-marker/) - [Test](../tests/test_examples/test_add_a_default_marker.py)
+- [Add a Generated Icon to the Map](https://maplibre.org/maplibre-gl-js/docs/examples/add-a-generated-icon-to-the-map/) - [Test](../tests/test_examples/test_add_a_generated_icon_to_the_map.py)
+- [Add an Icon to the Map](https://maplibre.org/maplibre-gl-js/docs/examples/add-an-icon-to-the-map/) - [Test](../tests/test_examples/test_add_an_icon_to_the_map.py)
+- [Add an Animated Icon to the Map](https://maplibre.org/maplibre-gl-js/docs/examples/add-an-animated-icon-to-the-map/) - [Test](../tests/test_examples/test_add_an_animated_icon_to_the_map.py)
+- [Add Custom Icons with Markers](https://maplibre.org/maplibre-gl-js/docs/examples/add-custom-icons-with-markers/) - [Test](../tests/test_examples/test_add_custom_icons_with_markers.py)
+- [Animate a Marker](https://maplibre.org/maplibre-gl-js/docs/examples/animate-a-marker/) - [Test](../tests/test_examples/test_animate_a_marker.py)
+- [Attach a Popup to a Marker Instance](https://maplibre.org/maplibre-gl-js/docs/examples/attach-a-popup-to-a-marker-instance/) - [Test](../tests/test_examples/test_attach_a_popup_to_a_marker_instance.py)
 
 ### Data Sources
-- [Add a Canvas Source](https://maplibre.org/maplibre-gl-js/docs/examples/add-a-canvas-source/) - [Test](https://github.com/kauevestena/maplibreum_prototype/blob/main/tests/test_examples/test_add_a_canvas_source.py)
-- [Add a COG Raster Source](https://maplibre.org/maplibre-gl-js/docs/examples/add-a-cog-raster-source/) - [Test](https://github.com/kauevestena/maplibreum_prototype/blob/main/tests/test_examples/test_add_a_cog_raster_source.py)
-- [Add a Raster Tile Source](https://maplibre.org/maplibre-gl-js/docs/examples/add-a-raster-tile-source/) - [Test](https://github.com/kauevestena/maplibreum_prototype/blob/main/tests/test_examples/test_add_a_raster_tile_source.py)
-- [Add a Vector Tile Source](https://maplibre.org/maplibre-gl-js/docs/examples/add-a-vector-tile-source/) - [Test](https://github.com/kauevestena/maplibreum_prototype/blob/main/tests/test_examples/test_add_a_vector_tile_source.py)
-- [Add a WMS Source](https://maplibre.org/maplibre-gl-js/docs/examples/add-a-wms-source/) - [Test](https://github.com/kauevestena/maplibreum_prototype/blob/main/tests/test_examples/test_add_a_wms_source.py)
+- [Add a Canvas Source](https://maplibre.org/maplibre-gl-js/docs/examples/add-a-canvas-source/) - [Test](../tests/test_examples/test_add_a_canvas_source.py)
+- [Add a COG Raster Source](https://maplibre.org/maplibre-gl-js/docs/examples/add-a-cog-raster-source/) - [Test](../tests/test_examples/test_add_a_cog_raster_source.py)
+- [Add a Raster Tile Source](https://maplibre.org/maplibre-gl-js/docs/examples/add-a-raster-tile-source/) - [Test](../tests/test_examples/test_add_a_raster_tile_source.py)
+- [Add a Vector Tile Source](https://maplibre.org/maplibre-gl-js/docs/examples/add-a-vector-tile-source/) - [Test](../tests/test_examples/test_add_a_vector_tile_source.py)
+- [Add a WMS Source](https://maplibre.org/maplibre-gl-js/docs/examples/add-a-wms-source/) - [Test](../tests/test_examples/test_add_a_wms_source.py)
 
 ### Layers and Styling
-- [Add a GeoJSON Line](https://maplibre.org/maplibre-gl-js/docs/examples/add-a-geojson-line/) - [Test](https://github.com/kauevestena/maplibreum_prototype/blob/main/tests/test_examples/test_add_a_geojson_line.py)
-- [Add a GeoJSON Polygon](https://maplibre.org/maplibre-gl-js/docs/examples/add-a-geojson-polygon/) - [Test](https://github.com/kauevestena/maplibreum_prototype/blob/main/tests/test_examples/test_add_a_geojson_polygon.py)
-- [Add a Color Relief Layer](https://maplibre.org/maplibre-gl-js/docs/examples/add-a-color-relief-layer/) - [Test](https://github.com/kauevestena/maplibreum_prototype/blob/main/tests/test_examples/test_add_a_color_relief_layer.py)
-- [Add a Hillshade Layer](https://maplibre.org/maplibre-gl-js/docs/examples/add-a-hillshade-layer/) - [Test](https://github.com/kauevestena/maplibreum_prototype/blob/main/tests/test_examples/test_add_a_hillshade_layer.py)
-- [Add a Multidirectional Hillshade Layer](https://maplibre.org/maplibre-gl-js/docs/examples/add-a-multidirectional-hillshade-layer/) - [Test](https://github.com/kauevestena/maplibreum_prototype/blob/main/tests/test_examples/test_add_a_multidirectional_hillshade_layer.py)
-- [Add a New Layer Below Labels](https://maplibre.org/maplibre-gl-js/docs/examples/add-a-new-layer-below-labels/) - [Test](https://github.com/kauevestena/maplibreum_prototype/blob/main/tests/test_examples/test_add_a_new_layer_below_labels.py)
-- [Add a Pattern to a Polygon](https://maplibre.org/maplibre-gl-js/docs/examples/add-a-pattern-to-a-polygon/) - [Test](https://github.com/kauevestena/maplibreum_prototype/blob/main/tests/test_examples/test_add_a_pattern_to_a_polygon.py)
-- [Add a Stretchable Image to the Map](https://maplibre.org/maplibre-gl-js/docs/examples/add-a-stretchable-image-to-the-map/) - [Test](https://github.com/kauevestena/maplibreum_prototype/blob/main/tests/test_examples/test_add_a_stretchable_image_to_the_map.py)
-- [Add Contour Lines](https://maplibre.org/maplibre-gl-js/docs/examples/add-contour-lines/) - [Test](https://github.com/kauevestena/maplibreum_prototype/blob/main/tests/test_examples/test_add_contour_lines.py)
-- [Add Multiple Geometries from One GeoJSON Source](https://maplibre.org/maplibre-gl-js/docs/examples/add-multiple-geometries-from-one-geojson-source/) - [Test](https://github.com/kauevestena/maplibreum_prototype/blob/main/tests/test_examples/test_add_multiple_geometries_from_one_geojson_source.py)
+- [Add a GeoJSON Line](https://maplibre.org/maplibre-gl-js/docs/examples/add-a-geojson-line/) - [Test](../tests/test_examples/test_add_a_geojson_line.py)
+- [Add a GeoJSON Polygon](https://maplibre.org/maplibre-gl-js/docs/examples/add-a-geojson-polygon/) - [Test](../tests/test_examples/test_add_a_geojson_polygon.py)
+- [Add a Color Relief Layer](https://maplibre.org/maplibre-gl-js/docs/examples/add-a-color-relief-layer/) - [Test](../tests/test_examples/test_add_a_color_relief_layer.py)
+- [Add a Hillshade Layer](https://maplibre.org/maplibre-gl-js/docs/examples/add-a-hillshade-layer/) - [Test](../tests/test_examples/test_add_a_hillshade_layer.py)
+- [Add a Multidirectional Hillshade Layer](https://maplibre.org/maplibre-gl-js/docs/examples/add-a-multidirectional-hillshade-layer/) - [Test](../tests/test_examples/test_add_a_multidirectional_hillshade_layer.py)
+- [Add a New Layer Below Labels](https://maplibre.org/maplibre-gl-js/docs/examples/add-a-new-layer-below-labels/) - [Test](../tests/test_examples/test_add_a_new_layer_below_labels.py)
+- [Add a Pattern to a Polygon](https://maplibre.org/maplibre-gl-js/docs/examples/add-a-pattern-to-a-polygon/) - [Test](../tests/test_examples/test_add_a_pattern_to_a_polygon.py)
+- [Add a Stretchable Image to the Map](https://maplibre.org/maplibre-gl-js/docs/examples/add-a-stretchable-image-to-the-map/) - [Test](../tests/test_examples/test_add_a_stretchable_image_to_the_map.py)
+- [Add Contour Lines](https://maplibre.org/maplibre-gl-js/docs/examples/add-contour-lines/) - [Test](../tests/test_examples/test_add_contour_lines.py)
+- [Add Multiple Geometries from One GeoJSON Source](https://maplibre.org/maplibre-gl-js/docs/examples/add-multiple-geometries-from-one-geojson-source/) - [Test](../tests/test_examples/test_add_multiple_geometries_from_one_geojson_source.py)
 
 ### Animation
-- [Animate a Line](https://maplibre.org/maplibre-gl-js/docs/examples/animate-a-line/) - [Test](https://github.com/kauevestena/maplibreum_prototype/blob/main/tests/test_examples/test_animate_a_line.py)
-- [Animate a Point](https://maplibre.org/maplibre-gl-js/docs/examples/animate-a-point/) - [Test](https://github.com/kauevestena/maplibreum_prototype/blob/main/tests/test_examples/test_animate_a_point.py)
-- [Animate a Point Along a Route](https://maplibre.org/maplibre-gl-js/docs/examples/animate-a-point-along-a-route/) - [Test](https://github.com/kauevestena/maplibreum_prototype/blob/main/tests/test_examples/test_animate_a_point_along_a_route.py)
-- [Animate a Series of Images](https://maplibre.org/maplibre-gl-js/docs/examples/animate-a-series-of-images/) - [Test](https://github.com/kauevestena/maplibreum_prototype/blob/main/tests/test_examples/test_animate_a_series_of_images.py)
-- [Animate Map Camera Around a Point](https://maplibre.org/maplibre-gl-js/docs/examples/animate-map-camera-around-a-point/) - [Test](https://github.com/kauevestena/maplibreum_prototype/blob/main/tests/test_examples/test_animate_map_camera_around_a_point.py)
-- [Animate Symbol to Follow the Mouse](https://maplibre.org/maplibre-gl-js/docs/examples/animate-symbol-to-follow-the-mouse/) - [Test](https://github.com/kauevestena/maplibreum_prototype/blob/main/tests/test_examples/test_animate_symbol_to_follow_the_mouse.py)
+- [Animate a Line](https://maplibre.org/maplibre-gl-js/docs/examples/animate-a-line/) - [Test](../tests/test_examples/test_animate_a_line.py)
+- [Animate a Point](https://maplibre.org/maplibre-gl-js/docs/examples/animate-a-point/) - [Test](../tests/test_examples/test_animate_a_point.py)
+- [Animate a Point Along a Route](https://maplibre.org/maplibre-gl-js/docs/examples/animate-a-point-along-a-route/) - [Test](../tests/test_examples/test_animate_a_point_along_a_route.py)
+- [Animate a Series of Images](https://maplibre.org/maplibre-gl-js/docs/examples/animate-a-series-of-images/) - [Test](../tests/test_examples/test_animate_a_series_of_images.py)
+- [Animate Map Camera Around a Point](https://maplibre.org/maplibre-gl-js/docs/examples/animate-map-camera-around-a-point/) - [Test](../tests/test_examples/test_animate_map_camera_around_a_point.py)
+- [Animate Symbol to Follow the Mouse](https://maplibre.org/maplibre-gl-js/docs/examples/animate-symbol-to-follow-the-mouse/) - [Test](../tests/test_examples/test_animate_symbol_to_follow_the_mouse.py)
 
 ### Interactive Features
-- [Center the Map on a Clicked Symbol](https://maplibre.org/maplibre-gl-js/docs/examples/center-the-map-on-a-clicked-symbol/) - [Test](https://github.com/kauevestena/maplibreum_prototype/blob/main/tests/test_examples/test_center_the_map_on_a_clicked_symbol.py)
-- [Change a Layer's Color with Buttons](https://maplibre.org/maplibre-gl-js/docs/examples/change-a-layers-color-with-buttons/) - [Test](https://github.com/kauevestena/maplibreum_prototype/blob/main/tests/test_examples/test_change_a_layers_color_with_buttons.py)
-- [Create a Draggable Marker](https://maplibre.org/maplibre-gl-js/docs/examples/create-a-draggable-marker/) - [Test](https://github.com/kauevestena/maplibreum_prototype/blob/main/tests/test_examples/test_create_a_draggable_marker.py)
-- [Create a Draggable Point](https://maplibre.org/maplibre-gl-js/docs/examples/create-a-draggable-point/) - [Test](https://github.com/kauevestena/maplibreum_prototype/blob/main/tests/test_examples/test_create_a_draggable_point.py)
+- [Center the Map on a Clicked Symbol](https://maplibre.org/maplibre-gl-js/docs/examples/center-the-map-on-a-clicked-symbol/) - [Test](../tests/test_examples/test_center_the_map_on_a_clicked_symbol.py)
+- [Change a Layer's Color with Buttons](https://maplibre.org/maplibre-gl-js/docs/examples/change-a-layers-color-with-buttons/) - [Test](../tests/test_examples/test_change_a_layers_color_with_buttons.py)
+- [Create a Draggable Marker](https://maplibre.org/maplibre-gl-js/docs/examples/create-a-draggable-marker/) - [Test](../tests/test_examples/test_create_a_draggable_marker.py)
+- [Create a Draggable Point](https://maplibre.org/maplibre-gl-js/docs/examples/create-a-draggable-point/) - [Test](../tests/test_examples/test_create_a_draggable_point.py)
 
 ### Real-time Data
-- [Add Live Realtime Data](https://maplibre.org/maplibre-gl-js/docs/examples/add-live-realtime-data/) - [Test](https://github.com/kauevestena/maplibreum_prototype/blob/main/tests/test_examples/test_add_live_realtime_data.py)
-- [Update a Feature in Realtime](https://maplibre.org/maplibre-gl-js/docs/examples/update-a-feature-in-realtime/) - [Test](https://github.com/kauevestena/maplibreum_prototype/blob/main/tests/test_examples/test_update_a_feature_in_realtime.py)
+- [Add Live Realtime Data](https://maplibre.org/maplibre-gl-js/docs/examples/add-live-realtime-data/) - [Test](../tests/test_examples/test_add_live_realtime_data.py)
+- [Update a Feature in Realtime](https://maplibre.org/maplibre-gl-js/docs/examples/update-a-feature-in-realtime/) - [Test](../tests/test_examples/test_update_a_feature_in_realtime.py)
 
 ### Video and Media
-- [Add a Video](https://maplibre.org/maplibre-gl-js/docs/examples/add-a-video/) - [Test](https://github.com/kauevestena/maplibreum_prototype/blob/main/tests/test_examples/test_add_a_video.py)
+- [Add a Video](https://maplibre.org/maplibre-gl-js/docs/examples/add-a-video/) - [Test](../tests/test_examples/test_add_a_video.py)
 
 ### Custom Layers
-- [Add a Custom Layer with Tiles to a Globe](https://maplibre.org/maplibre-gl-js/docs/examples/add-a-custom-layer-with-tiles-to-a-globe/) - [Test](https://github.com/kauevestena/maplibreum_prototype/blob/main/tests/test_examples/test_add_a_custom_layer_with_tiles_to_a_globe.py)
-- [Add a Custom Style Layer](https://maplibre.org/maplibre-gl-js/docs/examples/add-a-custom-style-layer/) - [Test](https://github.com/kauevestena/maplibreum_prototype/blob/main/tests/test_examples/test_add_a_custom_style_layer.py)
+- [Add a Custom Layer with Tiles to a Globe](https://maplibre.org/maplibre-gl-js/docs/examples/add-a-custom-layer-with-tiles-to-a-globe/) - [Test](../tests/test_examples/test_add_a_custom_layer_with_tiles_to_a_globe.py)
+- [Add a Custom Style Layer](https://maplibre.org/maplibre-gl-js/docs/examples/add-a-custom-style-layer/) - [Test](../tests/test_examples/test_add_a_custom_style_layer.py)
 
 ## Viewing Examples Locally
 
@@ -104,7 +104,7 @@ pytest tests/test_examples/ -v
 
 ## Full Example List
 
-All 123 examples are fully implemented and tested. For a complete list with implementation status, see the [status.json](https://github.com/kauevestena/maplibreum_prototype/blob/main/development/maplibre_examples/status.json) file.
+All 123 examples are fully implemented and tested. For a complete list with implementation status, see the [status.json](../development/maplibre_examples/status.json) file.
 
 ## Implementation Notes
 
@@ -136,4 +136,4 @@ To add new MapLibre examples:
 
 - [MapLibre GL JS Documentation](https://maplibre.org/maplibre-gl-js/docs/)
 - [maplibreum GitHub Repository](https://github.com/kauevestena/maplibreum_prototype)
-- [MapLibre Examples Testing Suite README](https://github.com/kauevestena/maplibreum_prototype/blob/main/development/maplibre_examples/README.md)
+- [MapLibre Examples Testing Suite README](../development/maplibre_examples/README.md)
