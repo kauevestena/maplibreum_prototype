@@ -2,7 +2,6 @@
 
 ## Backlog
 
-- [ ] Add notebook examples showcasing popup templating and floating image overlays.
 - [ ] Benchmark marker clustering performance on large (>50k point) datasets and record guidance.
 - [ ] Integrate GeoDataFrames -> geopandas will become a major requirement, and the library will mimic this functionality of folium, that makes for better integration with mainstream python geospatial tools;
 - [ ] In the official documentation page, create a section with "recreated MapLibre examples" having at the top of each example page the original rendered maplibre example (available at development/maplibre_examples/pages ) and at the bottom the recreated one (development/maplibre_examples/reproduced_pages), and additional info such as a link for that on maplibre's documentation, so the user can check it. (more details at development/maplibre_examples/README.md ) 
@@ -10,6 +9,7 @@
 
 ## Completed
 
+- [x] Add notebook examples showcasing popup templating and floating image overlays.
 - [x] Document the MiniMap, measure, and search controls in the README and Sphinx docs.
 - [x] MiniMap plugin for overview map
 - [x] Measure control to calculate distances and areas

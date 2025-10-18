@@ -5,19 +5,19 @@
     <title>MapLibreum Map</title>
     <meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no" />
     <link href="https://unpkg.com/maplibre-gl@3.4.0/dist/maplibre-gl.css" rel="stylesheet" onerror="this.onerror=null;this.href='https://cdn.jsdelivr.net/npm/maplibre-gl@3.4.0/dist/maplibre-gl.css';" />
-
-
-
+    
+    
+    
     <link href="https://unpkg.com/@maplibre/maplibre-gl-geocoder@latest/dist/maplibre-gl-geocoder.css" rel="stylesheet" onerror="console.warn('Failed to load geocoder CSS')" />
-
-
+    
+    
     <style>
         body {
             margin: 0;
             padding: 0;
         }
 
-        #maplibreum_d5456fcbf98346389755d720836e687e {
+        #maplibreum_0662f2f042d6404393608fa08fc4c894 {
             width: 100%;
             height: 500px;
             position: relative;
@@ -47,12 +47,12 @@
 
         }
 
-        #maplibreum_d5456fcbf98346389755d720836e687e { width: 100%; height: 500px; }
+        #maplibreum_0662f2f042d6404393608fa08fc4c894 { width: 100%; height: 500px; }
 
 
 
     </style>
-
+    
 </head>
 <body>
 <div class="maplibreum-example-banner">
@@ -60,9 +60,9 @@
   <p>Generated from test_geocode_with_nominatim_with_python_api.py by the automated test suite.</p>
 </div>
 
-    <div id="maplibreum_d5456fcbf98346389755d720836e687e">
-
-
+    <div id="maplibreum_0662f2f042d6404393608fa08fc4c894">
+        
+        
     </div>
     <!-- MapLibre GL JS with CDN fallbacks -->
     <script>
@@ -94,7 +94,7 @@
 
         // Function to show error message when MapLibre fails to load
         function showMapError(message) {
-            const mapDiv = document.getElementById('maplibreum_d5456fcbf98346389755d720836e687e');
+            const mapDiv = document.getElementById('maplibreum_0662f2f042d6404393608fa08fc4c894');
             if (mapDiv) {
                 mapDiv.innerHTML = `
                     <div style="
@@ -129,7 +129,7 @@
             if (typeof maplibregl === 'undefined') {
                 throw new Error('MapLibre GL JS loaded but not available');
             }
-
+            
             initializeMap();
         }).catch(error => {
             console.error('Failed to load MapLibre GL JS:', error);
@@ -139,12 +139,12 @@
         function initializeMap() {
             try {
         // Initialize map
-        var map = new maplibregl.Map({"container": "maplibreum_d5456fcbf98346389755d720836e687e", "style": "https://tiles.openfreemap.org/styles/bright", "center": [-87.61694, 41.86625], "zoom": 15.99, "pitch": 40, "bearing": 20});
+        var map = new maplibregl.Map({"container": "maplibreum_0662f2f042d6404393608fa08fc4c894", "style": "https://tiles.openfreemap.org/styles/bright", "center": [-87.61694, 41.86625], "zoom": 15.99, "pitch": 40, "bearing": 20});
         window.maplibreumMaps = window.maplibreumMaps || {};
-        window.maplibreumMaps["maplibreum_d5456fcbf98346389755d720836e687e"] = map;
+        window.maplibreumMaps["maplibreum_0662f2f042d6404393608fa08fc4c894"] = map;
         window.maplibreumMapsLoaded = window.maplibreumMapsLoaded || {};
         map.once('load', function() {
-            window.maplibreumMapsLoaded["maplibreum_d5456fcbf98346389755d720836e687e"] = true;
+            window.maplibreumMapsLoaded["maplibreum_0662f2f042d6404393608fa08fc4c894"] = true;
         });
 
 
@@ -158,61 +158,61 @@
 
 
 map.on('load', function() {
-
+    
     // Add sources
-
+    
 
     // Register images used by style layers
+    
 
-
-
-
+    
+    
 
     // Add layers
-
+    
 
     // Popups
-
+    
 
     // Tooltips
-
+    
 
     // Tile Layers
     var tileLayers = [
-
+    
     ];
 
     // Overlay Layers
     var overlayLayers = [
-
+    
     ];
 
+    
 
-
-
+    
 
     // Markers
+    
 
+    
 
+    
 
+    
 
-
-
-
-
-
+    
 
     // Queued camera actions
-
+    
 });
 
+    
 
+    
 
-
-
-
+    
 (function() {
-    const geocoderApi =
+    const geocoderApi = 
             {
                 forwardGeocode: async (config) => {
                     const nominatimResponse = {
@@ -259,15 +259,15 @@ map.on('load', function() {
             }
         }
     </script>
-
+    
     <!-- Load additional libraries with fallbacks -->
-
-
-
-
-
+    
+    
+    
+    
+    
     <script src="https://unpkg.com/@maplibre/maplibre-gl-geocoder@latest/dist/maplibre-gl-geocoder.min.js" onerror="console.warn('Failed to load geocoder')"></script>
-
+    
 </body>
 
 </html>
