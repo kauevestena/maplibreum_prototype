@@ -1,188 +1,168 @@
-# Next Steps for JavaScript Injection Reduction - October 9, 2025
+# Next Steps for JavaScript Injection Reduction - October 14, 2025
 
 ## 🎯 Current Status
 
 After completing the tracking audit (see [PROGRESS_REPORT_2025_10_09_TRACKING_AUDIT.md](PROGRESS_REPORT_2025_10_09_TRACKING_AUDIT.md)), the roadmap is now accurate:
 
-- **Overall Progress**: 61.0% (75/123 examples)
+- **Overall Progress**: 69.1% (85/123 examples)
 - **Phase 1**: 48.0% (12/25 examples)
-- **Phase 2**: 88.9% (8/9 examples, 1 remaining)
-- **Phase 3**: 0% (0/22 examples)
+- **Phase 2**: 100% (15/15 examples)
+- **Phase 3**: 13.6% (3/22 examples)
 
 ## 🚀 Recommended Path Forward
 
-### Priority 1: Complete Phase 2 (88.9% → 100%)
+### Priority 1: Ship Protocol & Deck.GL Conversions (high-impact backlog)
 
-**Target Example**: `add-a-custom-layer-with-tiles-to-a-globe`
+**Target Examples**:
+- `pmtiles-source-and-protocol`
+- `toggle-deckgl-layer`
+- `use-addprotocol-to-transform-feature-properties`
 
 **Why This Matters:**
-- Achieves 100% Phase 2 completion (major milestone)
-- Demonstrates advanced WebGL/custom layer capabilities
-- Sets strong precedent for handling complex rendering APIs
-- Completes the "Enhanced Features" phase entirely
+- Unlocks modern PMTiles delivery and protocol extension stories demanded by data-heavy workflows
+- Demonstrates that the new `DeckGLLayer` stack can support dynamic toggling without manual JavaScript
+- Establishes a reusable protocol-extension interface that Phase 3 examples can build upon
+- Raises overall completion by ~2.4 percentage points once all three land
 
 **Implementation Requirements:**
-1. **CustomGlobeLayer API**: Python wrapper for WebGL tile rendering on globe projection
-2. **GlobeTileRenderer**: Helper for managing shaders, meshes, and tile generation
-3. **Shader Management**: Python-friendly interface for vertex/fragment shader configuration
+1. **PMTilesProtocol / PMTilesSource**: register PMTiles handlers from Python and expose friendly configuration hooks
+2. **DeckGLLayer.toggle() support**: expose deck.gl layer lifecycle controls and pair them with a `LayerToggleControl`
+3. **ProtocolExtension & FeatureTransformer APIs**: surface `map.addProtocol()` equivalents with validation and transform callbacks
 
-**Estimated Effort**: Medium-High (2-4 hours)
-- Complex WebGL code needs careful abstraction
-- Shader management requires thoughtful API design
-- Tile mesh generation logic needs Python interface
+**Estimated Effort**: Medium-High (collectively 6-9 engineering days)
+- Protocol registration requires async-safe resource loading and cache management
+- Deck.GL toggling must coordinate with existing layer management abstractions
+- Protocol extensions need guardrails to prevent unsafe JavaScript execution
 
-**Test File**: `tests/test_examples/test_add_a_custom_layer_with_tiles_to_a_globe.py`
+**Test Files**:
+- `tests/test_examples/test_pmtiles_source_and_protocol.py`
+- `tests/test_examples/test_toggle_deckgl_layer.py`
+- `tests/test_examples/test_use_addprotocol_to_transform_feature_properties.py`
 
-**Current Implementation**: Uses `CustomLayer` with raw JavaScript for `on_add` and `render` methods
+**Current Implementation**: Direct JavaScript hooks (`map.addProtocol`, manual Deck.GL toggles) executed through `add_on_load_js()` with no Python visibility.
 
-**Improvement Goal**: Create Python API that generates the shader and rendering logic
-
----
-
-### Priority 2: Continue Phase 1 Medium-Priority Examples
-
-After completing Phase 2, focus on medium-priority Phase 1 examples:
-
-#### Quick Win Examples (Lower Complexity)
-
-**A. view-local-geojson-experimental**
-- Priority: Low
-- Effort: Low
-- Can leverage existing `GeoJSONSource.from_file()` API
-- Minor enhancements for experimental features
-
-**B. zoom-and-planet-size-relation-on-globe**
-- Priority: Low
-- Effort: Low-Medium
-- Requires `GlobeInteraction` and `ZoomHandler` APIs
-- Educational/demonstration example
-
-#### Medium Complexity Examples (External Dependencies)
-
-**C. sync-movement-of-multiple-maps**
-- Priority: Medium
-- Effort: Medium
-- Requires: `MapSynchronizer`, `MultiMapContainer` APIs
-- Niche but useful feature
-- Currently uses external `@mapbox/mapbox-gl-sync-move` library
-
-**D. geocode-with-nominatim**
-- Priority: Medium
-- Effort: Medium
-- Requires: `GeocodingService`, `NominatimGeocoder` APIs
-- Currently uses `@maplibre/maplibre-gl-geocoder` library
-- Common use case, high value
-
-**E. pmtiles-source-and-protocol**
-- Priority: Medium
-- Effort: Medium-High
-- Requires: `PMTilesProtocol`, `PMTilesSource` APIs
-- Modern tile format, growing adoption
-- Protocol extension implementation
+**Improvement Goal**: Provide first-class Python APIs for registering protocols, wiring deck.gl toggles, and applying feature transforms so notebooks never need custom injection for these workflows.
 
 ---
 
-### Priority 3: Begin Phase 3 Planning
+### Priority 2: Complete Drawing Tool Wrappers
 
-Phase 3 focuses on external library integration (22 examples):
+**Target Examples**:
+- `draw-geometries-with-terra-draw`
+- `draw-polygon-with-mapbox-gl-draw`
 
-#### Three.js Integration (4 examples)
-- add-a-3d-model-using-threejs
-- add-a-3d-model-to-globe-using-threejs
-- adding-3d-models-using-threejs-on-terrain
-- Requires: `ThreeJSLayer`, `Model3D` APIs
+**Why This Matters:**
+- Finishes the outstanding third-party drawing integrations in Phase 3
+- Establishes a common drawing-tool abstraction that subsequent geospatial editing features can reuse
+- Eliminates the final external-library dependencies that still require raw script tags
 
-#### Deck.GL Integration (2 examples)
-- create-deckgl-layer-using-rest-api
-- toggle-deckgl-layer
-- Requires: `DeckGLLayer`, `RESTDataSource` APIs
+**Implementation Requirements:**
+1. **TerraDrawWrapper**: manage lifecycle, mode switching, and event callbacks for Terra Draw
+2. **MapboxDrawWrapper / PolygonDrawTool**: expose shape editing, styling, and export helpers for Mapbox GL Draw
+3. Shared **DrawingTools** base class: unify enable/disable semantics and event propagation
 
-#### Drawing Tools Integration (2 examples)
-- draw-geometries-with-terra-draw
-- draw-polygon-with-mapbox-gl-draw
-- Requires: `TerraDrawWrapper`, `MapboxDrawWrapper` APIs
+**Estimated Effort**: Medium (4-6 engineering days combined)
+- Both libraries require bundling assets and mapping their event systems into Python callbacks
+- Need robust serialization helpers so tests can assert drawn geometry without browser interaction
 
-#### Other Advanced Features (14 examples)
-- Various protocol extensions, custom integrations
+**Test Files**:
+- `tests/test_examples/test_draw_geometries_with_terra_draw.py`
+- `tests/test_examples/test_draw_polygon_with_mapbox_gl_draw.py`
 
-**Phase 3 Strategy:**
-1. Design consistent wrapper pattern for external libraries
-2. Implement one example from each category as proof-of-concept
-3. Standardize API patterns across similar integrations
-4. Document best practices for library wrappers
+**Current Implementation**: Adds external scripts and inline JavaScript to register drawing tools and emit geometry events.
+
+**Improvement Goal**: Deliver Python-native drawing APIs that configure the tools, surface draw events, and serialize results directly to notebook outputs.
+
+---
+
+### Priority 3: Raise Phase 1 Completion (13 examples remaining)
+
+Phase 1 still has 13 JavaScript-injection-first demos that rely on `add_on_load_js()` for navigation, pointer inspection, or bespoke UI toggles.
+
+**Focus Areas:**
+- Harden the navigation utilities (`Map.fly_to`, `Map.ease_to`, sequencing helpers) so every tutorial-level map interaction is injection-free
+- Standardize pointer feedback patterns (hover tooltips, feature-inspection popups) with reusable event handlers
+- Provide lightweight control factories for any lingering checkbox/button demos that still wire DOM listeners manually
+
+**Why This Matters:**
+- Completing the core API phase pushes overall proper-API usage toward the 80% goal faster than advanced integrations alone
+- Reduces onboarding friction for new users who primarily copy Phase 1 examples
+- Ensures the infrastructure built for Phase 2 can be consumed consistently across entry-level demos
+
+**Implementation Approach:**
+1. Audit the remaining Phase 1 tests to catalog the specific interaction gaps
+2. Apply existing control/event abstractions before introducing new APIs
+3. Reserve new helper implementations for behaviors that appear in multiple remaining examples
 
 ---
 
 ## 📊 Impact Analysis
 
-### Completing Phase 2 (Option A)
-- **Progress Impact**: +0.8% (61.0% → 61.8%)
-- **Phase Completion**: Phase 2 reaches 100% ✅
-- **Milestone Value**: High (complete phase milestone)
-- **Technical Value**: High (demonstrates advanced capabilities)
-- **User Value**: Medium (niche use case)
+### Option A: Deliver protocol & Deck.GL conversions (Priority 1)
+- **Progress Impact**: ~+2.4% (69.1% → ~71.5%) from three example upgrades
+- **Phase Completion**: Phase 3 jumps from 13.6% (3/22) → 27.3% (6/22)
+- **Milestone Value**: High — completes all protocol-centric backlog items
+- **Technical Value**: High — exercises new data pipeline abstractions and deck.gl lifecycle management
+- **User Value**: High — unblocks common "bring your own tiles" and deck.gl toggling workflows
 
-### Continuing Phase 1 (Option B)
-- **Progress Impact**: +0.8% per example (up to +10.4% for all 13 remaining)
-- **Phase Completion**: Phase 1 could reach 100% ✅
-- **Milestone Value**: Very High (complete core API phase)
-- **Technical Value**: Medium-High (core functionality)
-- **User Value**: High (common use cases)
+### Option B: Finish drawing wrappers (Priority 2)
+- **Progress Impact**: ~+1.6% (two examples)
+- **Phase Completion**: Phase 3 would reach 22.7% (5/22) if done before Option A, or 36.4% (8/22) after it
+- **Milestone Value**: Medium-High — closes remaining third-party integration category
+- **Technical Value**: Medium — focuses on lifecycle wiring and event plumbing
+- **User Value**: Medium-High — interactive editing is a visible differentiator in demos
 
-### Beginning Phase 3 (Option C)
-- **Progress Impact**: +0.8% per example (up to +17.9% for all 22)
-- **Phase Completion**: Phase 3 begins progress
-- **Milestone Value**: Medium (starting new phase)
-- **Technical Value**: Medium (advanced features)
-- **User Value**: Medium (specialized use cases)
+### Option C: Accelerate Phase 1 conversions (Priority 3)
+- **Progress Impact**: ~+0.8% per example (e.g., +3.2% for four conversions)
+- **Phase Completion**: 48.0% → 64.0% (12/25 → 16/25) with four quick wins
+- **Milestone Value**: High — puts the foundational API phase within striking distance of 80%
+- **Technical Value**: Medium — leans on existing controls/events with limited new infrastructure
+- **User Value**: High — these examples represent the most-used getting-started workflows
 
 ---
 
 ## 🎯 Recommended Action Plan
 
-### Week 1: Complete Phase 2
-1. Implement `CustomGlobeLayer` and `GlobeTileRenderer` APIs
-2. Convert `add-a-custom-layer-with-tiles-to-a-globe` example
-3. Test and document the new APIs
-4. **Milestone**: 🎉 Phase 2 100% Complete!
+### Week 1-2: Protocol & Deck.GL backlog
+1. Implement `PMTilesProtocol`/`PMTilesSource` with caching + credential support
+2. Add Deck.GL layer toggle support (Python lifecycle + control wiring)
+3. Introduce protocol-extension helpers for feature transformers
+4. Ship updated tests + docs for all three examples
 
-### Week 2-3: Phase 1 Quick Wins
-5. Convert `view-local-geojson-experimental` (leverage existing API)
-6. Convert `zoom-and-planet-size-relation-on-globe` (globe interactions)
-7. Convert `geocode-with-nominatim` (high-value feature)
-8. Convert `sync-movement-of-multiple-maps` (useful feature)
+### Week 3: Drawing tool wrappers
+5. Build `TerraDrawWrapper` + shared drawing base class
+6. Implement `MapboxDrawWrapper`/`PolygonDrawTool`
+7. Document drawing APIs and finalize the two remaining examples
 
-### Week 4+: Phase 1 Medium Priority
-9. Convert `pmtiles-source-and-protocol` (modern tile format)
-10. Design drawing tools wrapper strategy
-11. Implement one drawing tool example as proof-of-concept
+### Week 4+: Phase 1 acceleration
+8. Audit remaining Phase 1 examples for reusable patterns
+9. Convert 3-4 quick wins using existing controls/events each sprint
+10. Track incremental progress toward 80% proper API usage goal
 
-### Long-term: Phase 3 Strategy
-12. Design external library wrapper pattern
-13. Implement Three.js integration examples
-14. Implement Deck.GL integration examples
-15. Complete drawing tools integration
-16. **Milestone**: 🎉 All Phases Complete!
+### Long-term: Phase 3 depth
+11. Generalize protocol/drawing patterns to other external integrations
+12. Expand test coverage for advanced data streams and multi-layer synchronization
+13. **Milestone**: 🎉 Phase 3 ≥40% complete and Phase 1 ≥80% complete
 
 ---
 
 ## 📈 Success Metrics
 
 ### Short-term Goals (Next 2 Weeks)
-- ✅ Phase 2: 100% complete (1 example remaining)
-- ✅ Phase 1: 56%+ complete (14+ examples, +2 examples)
-- ✅ Overall: 63%+ complete (77+ examples)
+- ✅ Protocol & Deck.GL conversions merged (Phase 3 ≥27.3%, 6/22)
+- ✅ Overall progress ≥71.5% (88/123 examples)
+- ✅ New PMTiles/Deck.GL/protocol APIs documented and tested
 
 ### Medium-term Goals (Next Month)
-- ✅ Phase 1: 72%+ complete (18+ examples, +6 examples)
-- ✅ Overall: 66%+ complete (81+ examples)
-- ✅ Begin Phase 3 planning and proof-of-concept
+- ✅ Drawing wrappers delivered (Phase 3 ≥36.4%, 8/22)
+- ✅ Phase 1 ≥56% complete (14/25 examples) through quick-win conversions
+- ✅ Overall progress ≥73.5% (90/123 examples)
 
 ### Long-term Goals (3 Months)
-- ✅ Phase 1: 100% complete (25 examples)
-- ✅ Phase 2: 100% complete (9 examples)
-- ✅ Phase 3: 40%+ complete (9+ examples)
-- ✅ Overall: 80%+ complete (98+ examples)
+- ✅ Phase 1 ≥80% complete (20/25 examples)
+- ✅ Phase 3 ≥45% complete (10/22 examples)
+- ✅ Overall progress ≥78% (96/123 examples)
+- ✅ External-integration APIs share consistent lifecycle + testing patterns
 
 ---
 
@@ -211,13 +191,13 @@ Phase 3 focuses on external library integration (22 examples):
 
 ## 📝 Conclusion
 
-The JavaScript injection reduction effort is progressing well at 61.0% completion. The immediate recommendation is to **complete Phase 2** by implementing the final custom layer example, achieving a 100% Phase 2 milestone. This would demonstrate advanced API capabilities and set a strong foundation for continuing Phase 1 work.
+With Phase 2 now fully complete and overall progress at 69.1%, the roadmap turns to the remaining high-impact injection hotspots. The immediate priority is to **replace the protocol and deck.gl JavaScript shims with native Python APIs**, raising Phase 3 coverage to 27.3% and unlocking PMTiles, deck.gl toggling, and custom protocol workflows for users.
 
-After Phase 2 completion, focus should shift to medium-priority Phase 1 examples, prioritizing common use cases like geocoding and modern features like PMTiles support. Phase 3 planning can begin once Phase 1 reaches 70%+ completion.
+Once those integrations land, finish the drawing-tool wrappers and reinvest momentum into the 13 outstanding Phase 1 demos. This cadence keeps the spotlight on visible wins while steadily marching toward the 80% proper-API usage objective and, ultimately, a zero-injection example gallery.
 
 ---
 
-**Document Date**: October 9, 2025  
-**Status**: Active Roadmap  
-**Next Review**: After Phase 2 completion  
-**Roadmap Version**: v3.1.0
+**Document Date**: October 14, 2025
+**Status**: Active Roadmap
+**Next Review**: After protocol & Deck.GL conversions land
+**Roadmap Version**: v3.8.0
