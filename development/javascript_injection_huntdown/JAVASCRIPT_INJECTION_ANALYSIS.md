@@ -6,22 +6,22 @@ This document provides a comprehensive analysis of JavaScript code injection usa
 
 ## Executive Summary
 
-**Analysis Results:**
+**Analysis Results (baseline classification):**
 - **Total Examples**: 123 (100% implementation coverage as claimed)
 - **JavaScript Injection Usage**: 46 examples (37.4% of total)
   - JavaScript Injection Only: 26 examples (21.1%)
   - Mixed Approach: 20 examples (16.3%)
-- **Proper API Usage**: 55 examples (44.7%) use only Python API methods initially
+- **Proper API Usage**: 55 examples (44.7%) used only Python API methods before the roadmap work began
 - **Other**: 22 examples (17.9%) - unknown patterns or no implementation
 
-**Current Progress (as of 2025-10-14):**
-- **Examples Improved**: 30 (12 from Phase 1 + 15 from Phase 2 + 3 from Phase 3)
-- **Total Proper API Now**: 85 examples (55 initially + 30 improved)
-- **Overall Proper API Usage**: 69.1% (85/123)
+**Current Progress (as of 2025-10-15):**
+- **Examples Improved**: 31 (12 from Phase 1 + 15 from Phase 2 + 4 from Phase 3)
+- **Total Proper API Now**: 86 examples (55 baseline + 31 improved)
+- **Overall Proper API Usage**: 69.9% (86/123)
 
 **📊 Phase 2: 100% Complete (15/15)** - All Phase 2 examples are now implemented with proper Python APIs.
 
-**Conclusion**: The roadmap claim of "all examples implemented" is technically accurate, but JavaScript injection was initially used in 37.4% of examples. Through systematic improvement efforts, proper Python API usage has increased from 44.7% to 69.1%, with 30 examples successfully converted from JavaScript injection to proper Python API implementations. **Phase 1 is now 48% complete (12/25), Phase 2 is 100% complete (15/15), and Phase 3 has progressed to 13.6% complete!**
+**Conclusion**: The roadmap claim of "all examples implemented" is technically accurate, but JavaScript injection was initially used in 37.4% of examples. Through systematic improvement efforts, proper Python API usage has increased from 44.7% to 69.9%, with 31 examples successfully converted from JavaScript injection to proper Python API implementations. **Phase 1 is now 48% complete (12/25), Phase 2 is 100% complete (15/15), and Phase 3 has progressed to 18.2% complete!**
 
 ## Detailed Findings
 
@@ -43,7 +43,7 @@ These examples use only `add_on_load_js()` and `add_external_script()` without p
 
 **External Library Integration:**
 - `add-a-3d-model-using-threejs` - ✅ Converted to Python API
-- `add-a-3d-model-to-globe-using-threejs`
+- `add-a-3d-model-to-globe-using-threejs` - ✅ Converted to Python API
 - `adding-3d-models-using-threejs-on-terrain` - ✅ Converted to Python API
 - `create-deckgl-layer-using-rest-api` - ✅ Converted to Python API
 - `toggle-deckgl-layer`
@@ -233,8 +233,8 @@ The JSON tracker serves as a living document to monitor progress as examples are
 **Current Status:**
 - **Phase 1 Progress**: 48.0% complete (12/25 examples improved)
 - **Phase 2 Progress**: 100% complete (15/15 examples improved)
-- **Phase 3 Progress**: 13.6% complete (3/22 examples improved)
-- **Overall Progress**: Increased from 68.3% to 69.1% proper API usage
+- **Phase 3 Progress**: 18.2% complete (4/22 examples improved)
+- **Overall Progress**: Increased from 68.3% to 69.9% proper API usage
 - **Backward Compatibility**: All tests pass (including new Python API tests)
 - **Infrastructure**: New `DeckGLLayer` and `RESTDataSource` APIs now available.
 
