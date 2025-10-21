@@ -1,9 +1,9 @@
 {
   "metadata": {
     "title": "MapLibreum JavaScript Injection Analysis and Improvement Roadmap",
-    "version": "3.8.0",
+    "version": "3.8.1",
     "created_date": "2024-12-21",
-    "last_updated": "2025-10-14",
+    "last_updated": "2025-10-15",
     "total_examples": 123,
     "analysis_source": "JAVASCRIPT_INJECTION_ANALYSIS.md",
     "progress_tracker": true,
@@ -11,15 +11,15 @@
   },
   "summary": {
     "total_examples": 123,
-    "javascript_injection_only": 23,
+    "javascript_injection_only": 26,
     "mixed_approach": 20,
     "proper_api_only": 55,
     "other_patterns": 22,
     "completion_percentage": {
       "phase_1": 48.0,
       "phase_2": 100.0,
-      "phase_3": 13.6,
-      "overall": 69.1
+      "phase_3": 18.2,
+      "overall": 50.0
     }
   },
   "implementation_phases": {
@@ -84,9 +84,9 @@
     }
   },
   "examples": {
-    "note": "This section provides detailed tracking for high-priority examples. The 'javascript_injection_only' section tracks 25 of the 26 total JavaScript-only examples. The 'mixed_approach' section tracks 9 of the 20 total mixed examples. See JAVASCRIPT_INJECTION_ANALYSIS.md for the complete list of all 46 examples using JavaScript injection.",
+    "note": "This section provides detailed tracking for high-priority examples. Count values reflect the total inventory, while the detailed listings currently cover 25 of the 26 JavaScript-only examples and 9 of the 20 mixed examples. See JAVASCRIPT_INJECTION_ANALYSIS.md for the complete catalog of all 46 examples using JavaScript injection.",
     "javascript_injection_only": {
-      "count": 25,
+      "count": 26,
       "description": "Examples that use only JavaScript injection without proper Python API methods (detailed tracking)",
       "examples": {
         "fly-to-a-location": {
@@ -670,7 +670,7 @@
       }
     },
     "mixed_approach": {
-      "count": 9,
+      "count": 20,
       "description": "Examples that use both Python API methods AND JavaScript injection (detailed tracking)",
       "examples": {
         "animate-a-point-along-a-route": {
