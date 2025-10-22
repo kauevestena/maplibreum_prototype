@@ -1,15 +1,8 @@
 from maplibreum import Map
+from maplibreum.protocols import PMTilesProtocol, PMTilesSource
 
 PMTILES_ARCHIVE = "https://pmtiles.io/protomaps(vector)ODbL_firenze.pmtiles"
 PMTILES_SCRIPT = "https://unpkg.com/pmtiles@3.2.0/dist/pmtiles.js"
-
-
-PROTOCOL_JS = """
-const protocol = new pmtiles.Protocol();
-maplibregl.addProtocol('pmtiles', protocol.tile);
-const archive = new pmtiles.PMTiles('https://pmtiles.io/protomaps(vector)ODbL_firenze.pmtiles');
-protocol.add(archive);
-"""
 
 
 STYLE = {
@@ -47,7 +40,39 @@ STYLE = {
 }
 
 
-def test_pmtiles_source_and_protocol():
+LEGACY_PROTOCOL_JS = """
+const protocol = new pmtiles.Protocol();
+maplibregl.addProtocol('pmtiles', protocol.tile);
+const archive = new pmtiles.PMTiles('https://pmtiles.io/protomaps(vector)ODbL_firenze.pmtiles');
+protocol.add(archive);
+"""
+
+
+def test_pmtiles_helpers_register_protocol_and_source():
+    m = Map(
+        map_style=STYLE,
+        center=[11.255, 43.7696],
+        zoom=12,
+    )
+
+    protocol = PMTilesProtocol(credentials="include")
+    m.add_pmtiles_protocol(protocol)
+    m.add_pmtiles_source(PMTilesSource(archive_url=PMTILES_ARCHIVE, protocol=protocol.name))
+
+    html = m.render()
+
+    assert PMTILES_SCRIPT in html
+    assert html.count(PMTILES_SCRIPT) == 1
+    assert "pmtiles.Protocol" in html
+    assert f"maplibregl.addProtocol('{protocol.name}'" in html
+    assert "credentials" in html
+    assert f"pmtiles://{PMTILES_ARCHIVE}" in html
+    assert '"example_source"' in html
+    assert '"source-layer": "landuse"' in html.replace("\n", "")
+    assert '"source-layer": "roads"' in html.replace("\n", "")
+
+
+def test_pmtiles_manual_injection_still_supported():
     m = Map(
         map_style=STYLE,
         center=[11.255, 43.7696],
@@ -55,7 +80,7 @@ def test_pmtiles_source_and_protocol():
     )
 
     m.add_external_script(PMTILES_SCRIPT)
-    m.add_on_load_js(PROTOCOL_JS)
+    m.add_on_load_js(LEGACY_PROTOCOL_JS)
 
     html = m.render()
 
@@ -63,6 +88,3 @@ def test_pmtiles_source_and_protocol():
     assert "pmtiles.Protocol" in html
     assert "maplibregl.addProtocol('pmtiles'" in html
     assert f"pmtiles://{PMTILES_ARCHIVE}" in html
-    assert '"example_source"' in html
-    assert '"source-layer": "landuse"' in html.replace("\n", "")
-    assert '"source-layer": "roads"' in html.replace("\n", "")

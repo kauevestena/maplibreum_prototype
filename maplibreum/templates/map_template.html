@@ -160,6 +160,44 @@
                 console.warn('Failed to configure RTL text plugin', rtlError);
             }
             {% endif %}
+            {% if pmtiles_protocols %}
+            if (typeof pmtiles === 'undefined') {
+                console.warn('PMTiles support requested but the pmtiles library is unavailable');
+            } else {
+                window.maplibreumPmtilesProtocols = window.maplibreumPmtilesProtocols || {};
+                {% for protocol in pmtiles_protocols %}
+                (function() {
+                    if (window.maplibreumPmtilesProtocols['{{ protocol.name }}']) {
+                        return;
+                    }
+                    var protocolOptions = {};
+                    {% if protocol.credentials is defined %}
+                    protocolOptions.fetch = function(url, init) {
+                        var next = Object.assign({}, init || {});
+                        next.credentials = {{ protocol.credentials | tojson }};
+                        return fetch(url, next);
+                    };
+                    {% endif %}
+                    var protocolInstance = new pmtiles.Protocol(protocolOptions);
+                    maplibregl.addProtocol('{{ protocol.name }}', protocolInstance.tile);
+                    window.maplibreumPmtilesProtocols['{{ protocol.name }}'] = protocolInstance;
+                })();
+                {% endfor %}
+                {% if pmtiles_sources %}
+                {% for source in pmtiles_sources %}
+                (function() {
+                    var protocol = window.maplibreumPmtilesProtocols['{{ source.protocol }}'];
+                    if (!protocol) {
+                        console.warn('PMTiles protocol {{ source.protocol }} is not registered');
+                        return;
+                    }
+                    var archive = new pmtiles.PMTiles({{ source.archive | tojson }});
+                    protocol.add(archive);
+                })();
+                {% endfor %}
+                {% endif %}
+            }
+            {% endif %}
             initializeMap();
         }).catch(error => {
             console.error('Failed to load MapLibre GL JS:', error);
