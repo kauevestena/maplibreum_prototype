@@ -13,5 +13,6 @@ Welcome to maplibreum's documentation!
    README
    api
    maplibre_examples
+   advanced/protocols
    CHANGELOG
    TODO

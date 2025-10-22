@@ -5,7 +5,7 @@ import os
 import subprocess
 import uuid
 from dataclasses import dataclass, field
-from typing import Any, Dict, Iterable, List, Mapping, Optional
+from typing import Any, Dict, Iterable, List, Mapping, Optional, Set
 from urllib.parse import quote
 
 from IPython.display import IFrame, display
@@ -26,6 +26,7 @@ from . import sources as source_wrappers
 from .sources import Source as SourceDefinition
 from .styles import MAP_STYLES
 from .animation import AnimatedIcon
+from .protocols import DEFAULT_PM_TILES_SCRIPT, PMTilesProtocol, PMTilesSource
 
 
 class Tooltip:
@@ -331,6 +332,10 @@ class Map:
         self.animations: List[str] = []
         self.rtl_text_plugin: Optional[Dict[str, Any]] = None
         self.external_scripts: List[Dict[str, Any]] = []
+        self._pmtiles_protocols: Dict[str, Dict[str, Any]] = {}
+        self._pmtiles_protocol_scripts: Dict[str, str] = {}
+        self._pmtiles_sources: List[Dict[str, Any]] = []
+        self._pmtiles_script_urls: Set[str] = set()
 
         template_dir = os.path.join(os.path.dirname(__file__), "templates")
         self.env = Environment(loader=FileSystemLoader(template_dir))
@@ -683,6 +688,99 @@ class Map:
 
         self.external_scripts.append({"src": src, "attributes": attr_map})
         return src
+
+    def _ensure_pmtiles_script(self, script_url: str) -> None:
+        """Include the PMTiles runtime bundle only once."""
+
+        if script_url in self._pmtiles_script_urls:
+            return
+
+        self.add_external_script(script_url)
+        self._pmtiles_script_urls.add(script_url)
+
+    def add_pmtiles_protocol(
+        self, protocol: Optional[PMTilesProtocol] = None, **kwargs: Any
+    ) -> PMTilesProtocol:
+        """Register a :class:`PMTilesProtocol` for client-side initialisation."""
+
+        if protocol is None:
+            protocol = PMTilesProtocol(**kwargs)
+        elif kwargs:
+            raise TypeError(
+                "Cannot pass keyword arguments when providing a PMTilesProtocol instance"
+            )
+
+        if not isinstance(protocol, PMTilesProtocol):
+            raise TypeError("protocol must be a PMTilesProtocol instance")
+
+        existing = self._pmtiles_protocols.get(protocol.name)
+        if existing is not None:
+            stored_script = self._pmtiles_protocol_scripts.get(protocol.name)
+            if stored_script is not None and stored_script != protocol.script_url:
+                raise ValueError(
+                    f"Protocol '{protocol.name}' already registered with script {stored_script}"
+                )
+            existing_credentials = existing.get("credentials")
+            if protocol.credentials is not None and protocol.credentials != existing_credentials:
+                raise ValueError(
+                    f"Protocol '{protocol.name}' already registered with different credentials"
+                )
+        else:
+            payload = protocol.to_render_payload()
+            self._pmtiles_protocols[protocol.name] = payload
+            self._pmtiles_protocol_scripts[protocol.name] = protocol.script_url
+
+        self._ensure_pmtiles_script(protocol.script_url)
+        return protocol
+
+    def add_pmtiles_source(
+        self, source: Optional[PMTilesSource] = None, **kwargs: Any
+    ) -> PMTilesSource:
+        """Register a PMTiles archive so it is preloaded for MapLibre."""
+
+        if source is None:
+            source = PMTilesSource(**kwargs)
+        elif kwargs:
+            raise TypeError(
+                "Cannot pass keyword arguments when providing a PMTilesSource instance"
+            )
+
+        if not isinstance(source, PMTilesSource):
+            raise TypeError("source must be a PMTilesSource instance")
+
+        protocol_payload = self._pmtiles_protocols.get(source.protocol)
+        if protocol_payload is None:
+            inferred = PMTilesProtocol(
+                name=source.protocol,
+                credentials=source.credentials,
+                script_url=self._pmtiles_protocol_scripts.get(
+                    source.protocol, DEFAULT_PM_TILES_SCRIPT
+                ),
+            )
+            self.add_pmtiles_protocol(inferred)
+            protocol_payload = self._pmtiles_protocols[source.protocol]
+        elif (
+            source.credentials is not None
+            and protocol_payload.get("credentials") != source.credentials
+        ):
+            raise ValueError(
+                f"Protocol '{source.protocol}' already registered with different credentials"
+            )
+
+        payload = source.to_render_payload()
+        duplicate = any(
+            existing["protocol"] == payload["protocol"]
+            and existing["archive"] == payload["archive"]
+            for existing in self._pmtiles_sources
+        )
+        if not duplicate:
+            self._pmtiles_sources.append(payload)
+
+        script_url = self._pmtiles_protocol_scripts.get(
+            source.protocol, DEFAULT_PM_TILES_SCRIPT
+        )
+        self._ensure_pmtiles_script(script_url)
+        return source
 
     def add_image(self, name, url=None, data=None, options=None):
         """Register a style image so it can be referenced by layers.
@@ -1883,6 +1981,8 @@ class Map:
             animations=self.animations,
             rtl_text_plugin=self.rtl_text_plugin,
             external_scripts=self.external_scripts,
+            pmtiles_protocols=list(self._pmtiles_protocols.values()),
+            pmtiles_sources=self._pmtiles_sources,
         )
 
     def _repr_html_(self):
