@@ -296,6 +296,8 @@ class Map:
         self.controls = controls if controls is not None else []
         self.sources = []
         self.layers = layers if layers is not None else []
+        self.deckgl_overlays: List[Dict[str, Any]] = []
+        self._deckgl_overlay_lookup: Dict[str, Dict[str, Any]] = {}
         self.tile_layers = []
         self.overlays = []
         self.popups = popups if popups is not None else []
@@ -396,13 +398,19 @@ class Map:
             else:
                 raise ValueError(f"Unknown control alias '{control}'")
         else:
+            if hasattr(control, "bind_to_map"):
+                control.bind_to_map(self)
             if hasattr(control, "to_js"):
                 self._extra_js_snippets.append(control.to_js())
 
             if hasattr(control, "to_css"):
                 self.custom_css += f"\n{control.to_css()}"
 
-            control_type = control.__class__.__name__.lower().replace("control", "")
+            control_type = getattr(
+                control,
+                "control_type",
+                control.__class__.__name__.lower().replace("control", ""),
+            )
             control_options = control.to_dict()
             if options:
                 control_options.update(options)
@@ -510,7 +518,19 @@ class Map:
             layer_id = layer_definition.id
             for script in layer_definition.scripts:
                 self.add_external_script(script, defer=True)
-            self.add_on_load_js(layer_definition.add_to(before_layer_id=before))
+            config = layer_definition.serialize(before_layer_id=before)
+            config.setdefault("enabled", True)
+            self._deckgl_overlay_lookup[layer_id] = config
+            self.deckgl_overlays.append(config)
+            self.layers.append(
+                {
+                    "id": layer_id,
+                    "definition": None,
+                    "before": before,
+                    "kind": "deckgl_overlay",
+                    "overlay": config,
+                }
+            )
             return layer_id
         elif isinstance(layer_definition, CustomGlobeLayer):
             if source is not None:
@@ -538,6 +558,42 @@ class Map:
         )
 
         return layer_id
+
+    def set_deckgl_overlay_initial_state(self, overlay_id: str, enabled: bool) -> None:
+        """Mark a Deck.GL overlay as enabled/disabled when the map loads."""
+
+        config = self._deckgl_overlay_lookup.get(overlay_id)
+        if config is None:
+            raise KeyError(f"Unknown Deck.GL overlay '{overlay_id}'")
+        config["enabled"] = bool(enabled)
+
+    def add_deckgl_overlay(self, overlay_id: str) -> str:
+        """Return JS snippet to activate a registered Deck.GL overlay."""
+
+        if overlay_id not in self._deckgl_overlay_lookup:
+            raise KeyError(f"Unknown Deck.GL overlay '{overlay_id}'")
+        manager_expr = (
+            "window.maplibreumDeckOverlayManagers && "
+            f"window.maplibreumDeckOverlayManagers[{json.dumps(self.map_id)}]"
+        )
+        return (
+            f"const overlayManager = {manager_expr};"
+            f" if (overlayManager) {{ overlayManager.addOverlay({json.dumps(overlay_id)}); }}"
+        )
+
+    def remove_deckgl_overlay(self, overlay_id: str) -> str:
+        """Return JS snippet to remove a registered Deck.GL overlay."""
+
+        if overlay_id not in self._deckgl_overlay_lookup:
+            raise KeyError(f"Unknown Deck.GL overlay '{overlay_id}'")
+        manager_expr = (
+            "window.maplibreumDeckOverlayManagers && "
+            f"window.maplibreumDeckOverlayManagers[{json.dumps(self.map_id)}]"
+        )
+        return (
+            f"const overlayManager = {manager_expr};"
+            f" if (overlayManager) {{ overlayManager.removeOverlay({json.dumps(overlay_id)}); }}"
+        )
 
     def add_tile_layer(
         self,
@@ -1851,6 +1907,7 @@ class Map:
             include_minimap=include_minimap,
             include_search=include_search,
             layers=self.layers,
+            deckgl_overlays=self.deckgl_overlays,
             tile_layers=self.tile_layers,
             overlays=self.overlays,
             layer_control=self.layer_control,

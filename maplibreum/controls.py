@@ -1,4 +1,6 @@
 import uuid
+from typing import Optional
+
 from .styles import MAP_STYLES
 
 
@@ -88,6 +90,56 @@ class SearchControl:
             data["apiKey"] = self.api_key
         data.update(self.options)
         return data
+
+
+class DeckGLLayerToggle:
+    """Helper control that toggles a registered Deck.GL overlay."""
+
+    control_type = "toggle"
+
+    def __init__(
+        self,
+        layer_id: str,
+        label: Optional[str] = None,
+        *,
+        initial_state: bool = True,
+        control_id: Optional[str] = None,
+    ) -> None:
+        if not layer_id:
+            raise ValueError("DeckGLLayerToggle requires a target layer_id")
+        self.layer_id = layer_id
+        self.label = label or layer_id
+        self.initial_state = bool(initial_state)
+        self.control_id = control_id
+        self._on_action: Optional[str] = None
+        self._off_action: Optional[str] = None
+
+    def bind_to_map(self, map_instance):
+        """Bind the toggle to a :class:`~maplibreum.core.Map` instance."""
+
+        try:
+            map_instance.set_deckgl_overlay_initial_state(
+                self.layer_id, self.initial_state
+            )
+            self._on_action = map_instance.add_deckgl_overlay(self.layer_id)
+            self._off_action = map_instance.remove_deckgl_overlay(self.layer_id)
+        except KeyError as exc:  # pragma: no cover - defensive guard
+            raise KeyError(
+                f"Deck.GL overlay '{self.layer_id}' is not registered with the map"
+            ) from exc
+
+    def to_dict(self):
+        if self._on_action is None or self._off_action is None:
+            raise RuntimeError(
+                "DeckGLLayerToggle must be bound to a map before serialising"
+            )
+        return {
+            "id": self.control_id,
+            "label": self.label,
+            "initial_state": self.initial_state,
+            "on_action": self._on_action,
+            "off_action": self._off_action,
+        }
 
 
 class MeasureControl:
