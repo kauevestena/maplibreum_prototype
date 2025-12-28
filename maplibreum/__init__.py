@@ -14,9 +14,12 @@ from . import sources
 from . import layers
 from . import experimental
 from .custom import CustomGlobeLayer
+from .pmtiles import PMTilesProtocol, PMTilesSource
 
 __all__ = [
     "Map",
+    "PMTilesProtocol",
+    "PMTilesSource",
     "Marker",
     "GeoJson", 
     "Legend",

@@ -1,9 +1,9 @@
 {
   "metadata": {
     "title": "MapLibreum JavaScript Injection Analysis and Improvement Roadmap",
-    "version": "3.8.1",
+    "version": "3.9.0",
     "created_date": "2024-12-21",
-    "last_updated": "2025-10-15",
+    "last_updated": "2025-10-16",
     "total_examples": 123,
     "analysis_source": "JAVASCRIPT_INJECTION_ANALYSIS.md",
     "progress_tracker": true,
@@ -18,8 +18,8 @@
     "completion_percentage": {
       "phase_1": 48.0,
       "phase_2": 100.0,
-      "phase_3": 18.2,
-      "overall": 50.0
+      "phase_3": 27.3,
+      "overall": 71.5
     }
   },
   "implementation_phases": {
@@ -77,9 +77,9 @@
         "ProtocolExtension"
       ],
       "completion_status": {
-        "completed": 4,
+        "completed": 6,
         "in_progress": 0,
-        "planned": 18
+        "planned": 16
       }
     }
   },
@@ -411,10 +411,10 @@
         },
         "toggle-deckgl-layer": {
           "test_path": "tests/test_examples/test_toggle_deckgl_layer.py",
-          "current_implementation": "javascript_injection",
+          "current_implementation": "improved",
           "issues": [
-            "JavaScript layer toggling for Deck.GL",
-            "No Python layer management"
+            "RESOLVED: JavaScript layer toggling for Deck.GL",
+            "RESOLVED: No Python layer management"
           ],
           "required_apis": [
             "DeckGLLayer",
@@ -423,10 +423,15 @@
           "phase": "phase_3",
           "priority": "medium",
           "estimated_effort": "4-6 days",
-          "status": "planned",
-          "assigned_to": null,
-          "completion_date": null,
-          "notes": "Depends on DeckGLLayer implementation"
+          "status": "completed",
+          "assigned_to": "jules",
+          "completion_date": "2025-10-16",
+          "notes": "Successfully converted using DeckGLLayer and DeckGLLayerToggle.",
+          "improvements_made": [
+            "Used DeckGLLayer for layer management",
+            "Used DeckGLLayerToggle for layer visibility control",
+            "Verified test implementation uses proper Python API"
+          ]
         },
         "draw-geometries-with-terra-draw": {
           "test_path": "tests/test_examples/test_draw_geometries_with_terra_draw.py",
@@ -539,10 +544,10 @@
         },
         "pmtiles-source-and-protocol": {
           "test_path": "tests/test_examples/test_pmtiles_source_and_protocol.py",
-          "current_implementation": "javascript_injection",
+          "current_implementation": "improved",
           "issues": [
-            "JavaScript protocol registration",
-            "No Python PMTiles support"
+            "RESOLVED: JavaScript protocol registration",
+            "RESOLVED: No Python PMTiles support"
           ],
           "required_apis": [
             "PMTilesProtocol",
@@ -551,10 +556,15 @@
           "phase": "phase_3",
           "priority": "medium",
           "estimated_effort": "6-9 days",
-          "status": "planned",
-          "assigned_to": null,
-          "completion_date": null,
-          "notes": "Important for efficient tile delivery"
+          "status": "completed",
+          "assigned_to": "jules",
+          "completion_date": "2025-10-16",
+          "notes": "Successfully converted using PMTilesProtocol and PMTilesSource.",
+          "improvements_made": [
+            "Implemented PMTilesProtocol for protocol registration",
+            "Implemented PMTilesSource for source management",
+            "Updated test to use Python API"
+          ]
         },
         "use-addprotocol-to-transform-feature-properties": {
           "test_path": "tests/test_examples/test_use_addprotocol_to_transform_feature_properties.py",
@@ -1342,6 +1352,22 @@
           "Eliminates JavaScript injection for custom globe layers",
           "Encapsulates complex WebGL logic in a reusable Python class",
           "Simplifies creating custom globe visualizations"
+        ]
+      },
+      {
+        "name": "PMTiles and DeckGL Toggle APIs",
+        "description": "Implemented PMTilesProtocol and DeckGLLayerToggle support.",
+        "date": "2025-10-16",
+        "impact": "Unlocks modern PMTiles delivery and dynamic layer toggling, converting two Phase 3 examples.",
+        "files_modified": [
+          "maplibreum/pmtiles.py",
+          "tests/test_examples/test_pmtiles_source_and_protocol.py",
+          "tests/test_examples/test_toggle_deckgl_layer.py"
+        ],
+        "benefits": [
+          "Clean Python API for PMTiles protocol registration",
+          "Consistent layer toggling interface",
+          "Eliminated manual JavaScript injection for these use cases"
         ]
       }
     ]
