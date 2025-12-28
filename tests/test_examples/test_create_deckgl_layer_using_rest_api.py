@@ -142,9 +142,9 @@ def test_create_deckgl_layer_using_rest_api_with_python_api():
     html = m.render()
 
     assert DECKGL_SCRIPT in html
-    assert "new deck.ScatterplotLayer" in html
+    assert '"layerType": "ScatterplotLayer"' in html
     assert "fetch('https://data.iledefrance.fr/api/explore/v2.1/catalog/datasets/principaux-sites-touristiques-en-ile-de-france0/records?limit=100')" in html
-    assert "then(data => data.results)" in html
-    assert "getFillColor: d =>" in html
-    assert "onClick: info =>" in html
+    assert ".then(data => data.results)" in html
+    assert "getFillColor" in html
+    assert "onClick" in html
     assert "map.addControl(overlay)" not in html
