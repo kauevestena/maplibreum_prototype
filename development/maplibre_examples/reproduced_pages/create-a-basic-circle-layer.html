@@ -15,7 +15,7 @@
             padding: 0;
         }
 
-        #maplibreum_231310cf7a844bffa441d7d0bc63a421 {
+        #maplibreum_31885e8751d543eaac53816fd060f77c { //TODO: in this example are many hashes as this one, they created merge conflicts, since theyre unique per run. Maybe we will need another solution globally? I am not sure if i do like them, it looks like the output code gets bloated, but this needs to be addressed carefully
             width: 100%;
             height: 500px;
             position: relative;
@@ -45,7 +45,7 @@
 
         }
 
-        #maplibreum_231310cf7a844bffa441d7d0bc63a421 { width: 100%; height: 500px; }
+        #maplibreum_31885e8751d543eaac53816fd060f77c { width: 100%; height: 500px; }
 
 
 
@@ -58,7 +58,7 @@
   <p>Generated from test_create_a_basic_circle_layer.py by the automated test suite.</p>
 </div>
 
-    <div id="maplibreum_231310cf7a844bffa441d7d0bc63a421">
+    <div id="maplibreum_31885e8751d543eaac53816fd060f77c">
         
         
     </div>
@@ -92,7 +92,7 @@
 
         // Function to show error message when MapLibre fails to load
         function showMapError(message) {
-            const mapDiv = document.getElementById('maplibreum_231310cf7a844bffa441d7d0bc63a421');
+            const mapDiv = document.getElementById('maplibreum_31885e8751d543eaac53816fd060f77c');
             if (mapDiv) {
                 mapDiv.innerHTML = `
                     <div style="
@@ -308,12 +308,12 @@
         function initializeMap() {
             try {
         // Initialize map
-        var map = new maplibregl.Map({"container": "maplibreum_231310cf7a844bffa441d7d0bc63a421", "style": "https://demotiles.maplibre.org/style.json", "center": [0, 0], "zoom": 2});
+        var map = new maplibregl.Map({"container": "maplibreum_31885e8751d543eaac53816fd060f77c", "style": "https://demotiles.maplibre.org/style.json", "center": [0, 0], "zoom": 2});
         window.maplibreumMaps = window.maplibreumMaps || {};
-        window.maplibreumMaps["maplibreum_231310cf7a844bffa441d7d0bc63a421"] = map;
+        window.maplibreumMaps["maplibreum_31885e8751d543eaac53816fd060f77c"] = map;
         window.maplibreumMapsLoaded = window.maplibreumMapsLoaded || {};
         map.once('load', function() {
-            window.maplibreumMapsLoaded["maplibreum_231310cf7a844bffa441d7d0bc63a421"] = true;
+            window.maplibreumMapsLoaded["maplibreum_31885e8751d543eaac53816fd060f77c"] = true;
         });
 
 
