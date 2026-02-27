@@ -2060,6 +2060,759 @@ class Map:
         return self._search_data.get(self.map_id)
 
 
+class GeoJson:
+    """Representation of a GeoJSON overlay."""
+
+    def __init__(
+        self,
+        data,
+        style_function=None,
+        name=None,
+        popup=None,
+        tooltip=None,
+    ):
+        """Initialize a GeoJson overlay.
+
+        Parameters
+        ----------
+        data : dict
+            The GeoJSON data.
+        style_function : callable, optional
+            A function that takes a feature and returns a style dictionary.
+        name : str, optional
+            The name of the GeoJSON layer.
+        popup : str or GeoJsonPopup, optional
+            A popup to display when a feature is clicked.
+        tooltip : str or GeoJsonTooltip, optional
+            A tooltip to display when hovering over a feature.
+        """
+        self.data = data
+        self.name = name if name else f"geojson_{uuid.uuid4().hex}"
+        self.popup = popup
+        self.tooltip = tooltip
+
+        if style_function:
+            self.style_function = style_function
+        else:
+            self.style_function = lambda feature: {
+                "stroke": True,
+                "color": "#007cbf",
+                "weight": 2,
+                "opacity": 1,
+                "fill": True,
+                "fillColor": "#007cbf",
+                "fillOpacity": 0.6,
+                "radius": 6,
+            }
+
+    def add_to(self, map_instance):
+        """Add this GeoJSON object to a map instance.
+
+        The geometry type of each feature is inspected and appropriate layers
+        (``fill`` for polygons, ``line`` for polylines and ``circle`` for
+        points) are created. The ``style_function`` is used to populate feature
+        properties such as ``stroke``, ``weight`` and ``fillColor`` which are
+        then referenced by the layer paint definitions.
+        """
+        # Apply the style function to each feature and update its properties
+        features = self.data.get("features", [])
+        for feature in features:
+            style = self.style_function(feature)
+            feature.setdefault("properties", {}).update(style)
+            if self.popup:
+                feature["properties"]["_popup"] = self.popup.render(feature)
+            if self.tooltip:
+                feature["properties"]["_tooltip"] = self.tooltip.render(feature)
+
+        source_id = f"{self.name}_source"
+        source = {"type": "geojson", "data": self.data}
+        map_instance.add_source(source_id, source)
+
+        def _get(prop):
+            return expr_get(prop, ["properties"])
+
+        geometry_types = [
+            f.get("geometry", {}).get("type") for f in features if f.get("geometry")
+        ]
+
+        layer_ids = []
+
+        if any(t in ("Polygon", "MultiPolygon") for t in geometry_types):
+            fill_layer = {
+                "id": f"{self.name}_fill",
+                "type": "fill",
+                "paint": {
+                    "fill-color": _get("fillColor"),
+                    "fill-opacity": _get("fillOpacity"),
+                    "fill-outline-color": _get("color"),
+                },
+            }
+            map_instance.add_layer(fill_layer, source=source_id)
+            layer_ids.append(fill_layer["id"])
+
+        if any(t in ("LineString", "MultiLineString") for t in geometry_types):
+            line_layer = {
+                "id": f"{self.name}_line",
+                "type": "line",
+                "paint": {
+                    "line-color": _get("color"),
+                    "line-width": _get("weight"),
+                    "line-opacity": _get("opacity"),
+                },
+            }
+            map_instance.add_layer(line_layer, source=source_id)
+            layer_ids.append(line_layer["id"])
+
+        if any(t in ("Point", "MultiPoint") for t in geometry_types):
+            circle_layer = {
+                "id": f"{self.name}_circle",
+                "type": "circle",
+                "paint": {
+                    "circle-color": _get("fillColor"),
+                    "circle-opacity": _get("fillOpacity"),
+                    "circle-radius": _get("radius"),
+                    "circle-stroke-color": _get("color"),
+                    "circle-stroke-width": _get("weight"),
+                    "circle-stroke-opacity": _get("opacity"),
+                },
+            }
+            map_instance.add_layer(circle_layer, source=source_id)
+            layer_ids.append(circle_layer["id"])
+
+        if self.popup:
+            for lid in layer_ids:
+                map_instance.add_popup(layer_id=lid, prop="_popup")
+        if self.tooltip:
+            for lid in layer_ids:
+                map_instance.add_tooltip(layer_id=lid, prop="_tooltip")
+
+
+class Circle:
+    """Draw a circle with radius in meters."""
+
+    def __init__(
+        self,
+        location,
+        radius=1000,
+        color="#3388ff",
+        fill=True,
+        fill_color=None,
+        fill_opacity=0.5,
+        popup=None,
+        tooltip=None,
+    ):
+        """Initialize a Circle.
+
+        Parameters
+        ----------
+        location : list or tuple
+            The ``[lng, lat]`` center of the circle.
+        radius : int, optional
+            The radius of the circle in meters.
+        color : str, optional
+            The color of the circle's outline.
+        fill : bool, optional
+            Whether to fill the circle.
+        fill_color : str, optional
+            The fill color of the circle.
+        fill_opacity : float, optional
+            The fill opacity of the circle.
+        popup : str, optional
+            A popup to display when the circle is clicked.
+        tooltip : str, optional
+            A tooltip to display when hovering over the circle.
+        """
+        self.location = location
+        self.radius = radius
+        self.color = color
+        self.fill = fill
+        self.fill_color = fill_color if fill_color else color
+        self.fill_opacity = fill_opacity
+        self.popup = popup
+        self.tooltip = tooltip
+
+    def _circle_polygon(self, center, radius, num_sides=64):
+        """Create a GeoJSON polygon for a circle."""
+        lng, lat = center
+        coords = []
+        for i in range(num_sides):
+            angle = 2 * math.pi * i / num_sides
+            dx = radius * math.cos(angle)
+            dy = radius * math.sin(angle)
+            delta_lng = dx / (111320 * math.cos(math.radians(lat)))
+            delta_lat = dy / 110540
+            coords.append([lng + delta_lng, lat + delta_lat])
+        coords.append(coords[0])
+        return [coords]
+
+    def add_to(self, map_instance):
+        """Add the circle to a map instance.
+
+        Parameters
+        ----------
+        map_instance : maplibreum.Map
+            The map instance to which the circle will be added.
+        """
+        layer_id = f"circle_{uuid.uuid4().hex}"
+        polygon = self._circle_polygon(self.location, self.radius)
+        source = {
+            "type": "geojson",
+            "data": {
+                "type": "FeatureCollection",
+                "features": [
+                    {
+                        "type": "Feature",
+                        "geometry": {"type": "Polygon", "coordinates": polygon},
+                        "properties": {},
+                    }
+                ],
+            },
+        }
+        paint = {
+            "fill-color": self.fill_color if self.fill else "rgba(0,0,0,0)",
+            "fill-opacity": self.fill_opacity if self.fill else 0,
+            "fill-outline-color": self.color,
+        }
+        layer = {"id": layer_id, "type": "fill", "source": layer_id, "paint": paint}
+        map_instance.add_layer(layer, source=source)
+        if self.popup:
+            map_instance.add_popup(html=self.popup, layer_id=layer_id)
+        if self.tooltip:
+            map_instance.add_tooltip(self.tooltip, layer_id=layer_id)
+
+
+class CircleMarker:
+    """Circle marker with radius in pixels."""
+
+    def __init__(
+        self,
+        location,
+        radius=6,
+        color="#3388ff",
+        fill=True,
+        fill_color=None,
+        fill_opacity=1.0,
+        popup=None,
+        tooltip=None,
+    ):
+        """Initialize a CircleMarker.
+
+        Parameters
+        ----------
+        location : list or tuple
+            The ``[lng, lat]`` center of the circle marker.
+        radius : int, optional
+            The radius of the circle marker in pixels.
+        color : str, optional
+            The color of the circle marker's outline.
+        fill : bool, optional
+            Whether to fill the circle marker.
+        fill_color : str, optional
+            The fill color of the circle marker.
+        fill_opacity : float, optional
+            The fill opacity of the circle marker.
+        popup : str, optional
+            A popup to display when the circle marker is clicked.
+        tooltip : str, optional
+            A tooltip to display when hovering over the circle marker.
+        """
+        self.location = location
+        self.radius = radius
+        self.color = color
+        self.fill = fill
+        self.fill_color = fill_color if fill_color else color
+        self.fill_opacity = fill_opacity
+        self.popup = popup
+        self.tooltip = tooltip
+
+    def add_to(self, map_instance):
+        """Add the circle marker to a map instance.
+
+        Parameters
+        ----------
+        map_instance : maplibreum.Map
+            The map instance to which the circle marker will be added.
+        """
+        layer_id = f"circlemarker_{uuid.uuid4().hex}"
+        source = {
+            "type": "geojson",
+            "data": {
+                "type": "FeatureCollection",
+                "features": [
+                    {
+                        "type": "Feature",
+                        "geometry": {"type": "Point", "coordinates": self.location},
+                        "properties": {},
+                    }
+                ],
+            },
+        }
+        paint = {
+            "circle-radius": self.radius,
+            "circle-color": self.fill_color if self.fill else "rgba(0,0,0,0)",
+            "circle-opacity": self.fill_opacity if self.fill else 0,
+            "circle-stroke-color": self.color,
+            "circle-stroke-width": 1,
+        }
+        layer = {"id": layer_id, "type": "circle", "source": layer_id, "paint": paint}
+        map_instance.add_layer(layer, source=source)
+        if self.popup:
+            map_instance.add_popup(html=self.popup, layer_id=layer_id)
+        if self.tooltip:
+            map_instance.add_tooltip(self.tooltip, layer_id=layer_id)
+
+
+class PolyLine:
+    """A polyline on the map."""
+
+    def __init__(self, locations, color="#3388ff", weight=2, popup=None, tooltip=None):
+        """Initialize a PolyLine.
+
+        Parameters
+        ----------
+        locations : list
+            A list of ``[lng, lat]`` coordinates.
+        color : str, optional
+            The color of the polyline.
+        weight : int, optional
+            The width of the polyline.
+        popup : str, optional
+            A popup to display when the polyline is clicked.
+        tooltip : str, optional
+            A tooltip to display when hovering over the polyline.
+        """
+        self.locations = locations
+        self.color = color
+        self.weight = weight
+        self.popup = popup
+        self.tooltip = tooltip
+
+    def add_to(self, map_instance):
+        """Add the polyline to a map instance.
+
+        Parameters
+        ----------
+        map_instance : maplibreum.Map
+            The map instance to which the polyline will be added.
+        """
+        layer_id = f"polyline_{uuid.uuid4().hex}"
+        source = {
+            "type": "geojson",
+            "data": {
+                "type": "FeatureCollection",
+                "features": [
+                    {
+                        "type": "Feature",
+                        "geometry": {
+                            "type": "LineString",
+                            "coordinates": self.locations,
+                        },
+                        "properties": {},
+                    }
+                ],
+            },
+        }
+        paint = {"line-color": self.color, "line-width": self.weight}
+        layer = {"id": layer_id, "type": "line", "source": layer_id, "paint": paint}
+        map_instance.add_layer(layer, source=source)
+        if self.popup:
+            map_instance.add_popup(html=self.popup, layer_id=layer_id)
+        if self.tooltip:
+            map_instance.add_tooltip(self.tooltip, layer_id=layer_id)
+
+
+class Polygon:
+    """A polygon on the map."""
+
+    def __init__(
+        self,
+        locations,
+        color="#3388ff",
+        weight=2,
+        fill=True,
+        fill_color=None,
+        fill_opacity=0.5,
+        popup=None,
+        tooltip=None,
+    ):
+        """Initialize a Polygon.
+
+        Parameters
+        ----------
+        locations : list
+            A list of ``[lng, lat]`` coordinates.
+        color : str, optional
+            The color of the polygon's outline.
+        weight : int, optional
+            The width of the polygon's outline.
+        fill : bool, optional
+            Whether to fill the polygon.
+        fill_color : str, optional
+            The fill color of the polygon.
+        fill_opacity : float, optional
+            The fill opacity of the polygon.
+        popup : str, optional
+            A popup to display when the polygon is clicked.
+        tooltip : str, optional
+            A tooltip to display when hovering over the polygon.
+        """
+        self.locations = locations
+        self.color = color
+        self.weight = weight
+        self.fill = fill
+        self.fill_color = fill_color if fill_color else color
+        self.fill_opacity = fill_opacity
+        self.popup = popup
+        self.tooltip = tooltip
+
+    def add_to(self, map_instance):
+        """Add the polygon to a map instance.
+
+        Parameters
+        ----------
+        map_instance : maplibreum.Map
+            The map instance to which the polygon will be added.
+        """
+        layer_id = f"polygon_{uuid.uuid4().hex}"
+        coords = self.locations
+        if coords[0] != coords[-1]:
+            coords = coords + [coords[0]]
+        source = {
+            "type": "geojson",
+            "data": {
+                "type": "FeatureCollection",
+                "features": [
+                    {
+                        "type": "Feature",
+                        "geometry": {"type": "Polygon", "coordinates": [coords]},
+                        "properties": {},
+                    }
+                ],
+            },
+        }
+        paint = {
+            "fill-color": self.fill_color if self.fill else "rgba(0,0,0,0)",
+            "fill-opacity": self.fill_opacity if self.fill else 0,
+            "fill-outline-color": self.color,
+        }
+        fill_layer = {
+            "id": layer_id,
+            "type": "fill",
+            "source": layer_id,
+            "paint": paint,
+        }
+        map_instance.add_layer(fill_layer, source=source)
+        if self.weight:
+            outline_layer = {
+                "id": f"{layer_id}_outline",
+                "type": "line",
+                "source": layer_id,
+                "paint": {"line-color": self.color, "line-width": self.weight},
+            }
+            map_instance.add_layer(outline_layer, source=layer_id)
+        if self.popup:
+            map_instance.add_popup(html=self.popup, layer_id=layer_id)
+        if self.tooltip:
+            map_instance.add_tooltip(self.tooltip, layer_id=layer_id)
+
+
+class Rectangle:
+    """Axis-aligned rectangle defined by southwest and northeast corners."""
+
+    def __init__(
+        self,
+        southwest,
+        northeast,
+        color="#3388ff",
+        weight=2,
+        fill=True,
+        fill_color=None,
+        fill_opacity=0.5,
+        popup=None,
+        tooltip=None,
+    ):
+        """Initialize a Rectangle.
+
+        Parameters
+        ----------
+        southwest : list or tuple
+            The southwest corner of the rectangle as ``[lng, lat]``.
+        northeast : list or tuple
+            The northeast corner of the rectangle as ``[lng, lat]``.
+        color : str, optional
+            The color of the rectangle's outline.
+        weight : int, optional
+            The width of the rectangle's outline.
+        fill : bool, optional
+            Whether to fill the rectangle.
+        fill_color : str, optional
+            The fill color of the rectangle.
+        fill_opacity : float, optional
+            The fill opacity of the rectangle.
+        popup : str, optional
+            A popup to display when the rectangle is clicked.
+        tooltip : str, optional
+            A tooltip to display when hovering over the rectangle.
+        """
+        self.southwest = southwest
+        self.northeast = northeast
+        self.color = color
+        self.weight = weight
+        self.fill = fill
+        self.fill_color = fill_color if fill_color else color
+        self.fill_opacity = fill_opacity
+        self.popup = popup
+        self.tooltip = tooltip
+
+    def add_to(self, map_instance):
+        """Add the rectangle to a map instance.
+
+        Parameters
+        ----------
+        map_instance : maplibreum.Map
+            The map instance to which the rectangle will be added.
+        """
+        sw_lng, sw_lat = self.southwest
+        ne_lng, ne_lat = self.northeast
+        coords = [
+            [sw_lng, sw_lat],
+            [sw_lng, ne_lat],
+            [ne_lng, ne_lat],
+            [ne_lng, sw_lat],
+        ]
+        polygon = Polygon(
+            coords,
+            color=self.color,
+            weight=self.weight,
+            fill=self.fill,
+            fill_color=self.fill_color,
+            fill_opacity=self.fill_opacity,
+            popup=self.popup,
+            tooltip=self.tooltip,
+        )
+        polygon.add_to(map_instance)
+
+
+class ImageOverlay:
+    """Overlay a georeferenced image on the map."""
+
+    def __init__(
+        self,
+        image,
+        bounds=None,
+        coordinates=None,
+        opacity=1.0,
+        attribution=None,
+        name=None,
+    ):
+        """Create an ImageOverlay.
+
+        Parameters
+        ----------
+        image : str
+            URL or local path to the image.
+        bounds : list, optional
+            Bounds of the image as ``[west, south, east, north]`` or
+            ``[[west, south], [east, north]]``.
+        coordinates : list, optional
+            Four corner coordinates of the image specified as
+            ``[[west, north], [east, north], [east, south], [west, south]]``.
+            If provided, ``bounds`` is ignored.
+        opacity : float, optional
+            Opacity of the raster layer, defaults to ``1.0``.
+        attribution : str, optional
+            Attribution text for the source.
+        name : str, optional
+            Layer identifier. If omitted, a unique one is generated.
+        """
+
+        self.image = image
+        self.attribution = attribution
+        self.opacity = opacity
+        self.name = name or f"imageoverlay_{uuid.uuid4().hex}"
+
+        if coordinates is not None:
+            self.coordinates = coordinates
+        elif bounds is not None:
+            if len(bounds) == 2 and all(len(b) == 2 for b in bounds):
+                west, south = bounds[0]
+                east, north = bounds[1]
+            else:
+                west, south, east, north = bounds
+            self.coordinates = [
+                [west, north],
+                [east, north],
+                [east, south],
+                [west, south],
+            ]
+        else:
+            raise ValueError("Either coordinates or bounds must be provided")
+
+    def add_to(self, map_instance):
+        """Add the image overlay to a map instance.
+
+        Parameters
+        ----------
+        map_instance : maplibreum.Map
+            The map instance to which the image overlay will be added.
+
+        Returns
+        -------
+        self
+        """
+        source = {
+            "type": "image",
+            "url": self.image,
+            "coordinates": self.coordinates,
+        }
+        if self.attribution:
+            source["attribution"] = self.attribution
+
+        layer = {"id": self.name, "type": "raster", "source": self.name}
+        if self.opacity is not None:
+            layer["paint"] = {"raster-opacity": self.opacity}
+
+        map_instance.add_layer(layer, source=source)
+        return self
+
+
+class FloatImage:
+    """Add an image floating above the map at a fixed position."""
+
+    _POSITION_STYLES = {
+        "top-left": "top: 0px; left: 0px;",
+        "top-right": "top: 0px; right: 0px;",
+        "bottom-left": "bottom: 0px; left: 0px;",
+        "bottom-right": "bottom: 0px; right: 0px;",
+    }
+
+    def __init__(self, image_url, position="top-left", width=None):
+        """Initialize a FloatImage.
+
+        Parameters
+        ----------
+        image_url : str
+            The URL of the image.
+        position : str, optional
+            The position of the image on the map.
+        width : int, optional
+            The width of the image in pixels.
+        """
+        self.image_url = image_url
+        self.position = position
+        self.width = width
+
+    @property
+    def style(self):
+        """Get the CSS style for the floating image."""
+        base = self._POSITION_STYLES.get(self.position, "")
+        if self.width is not None:
+            base += f" width: {self.width}px;"
+        return base
+
+    def add_to(self, map_instance):
+        """Add the floating image to a map instance.
+
+        Parameters
+        ----------
+        map_instance : maplibreum.Map
+            The map instance to which the floating image will be added.
+
+        Returns
+        -------
+        self
+        """
+        map_instance.float_images.append(self)
+        return self
+
+
+class VideoOverlay:
+    """Overlay a georeferenced video on the map."""
+
+    def __init__(
+        self,
+        videos,
+        bounds=None,
+        coordinates=None,
+        opacity=1.0,
+        attribution=None,
+        name=None,
+    ):
+        """Create a VideoOverlay.
+
+        Parameters
+        ----------
+        videos : str or list
+            URL or local path to the video, or a list of URLs for different
+            formats.
+        bounds : list, optional
+            Bounds of the video as ``[west, south, east, north]`` or
+            ``[[west, south], [east, north]]``.
+        coordinates : list, optional
+            Four corner coordinates of the video specified as
+            ``[[west, north], [east, north], [east, south], [west, south]]``.
+            If provided, ``bounds`` is ignored.
+        opacity : float, optional
+            Opacity of the raster layer, defaults to ``1.0``.
+        attribution : str, optional
+            Attribution text for the source.
+        name : str, optional
+            Layer identifier. If omitted, a unique one is generated.
+        """
+
+        if isinstance(videos, str):
+            self.urls = [videos]
+        else:
+            self.urls = list(videos)
+        self.attribution = attribution
+        self.opacity = opacity
+        self.name = name or f"videooverlay_{uuid.uuid4().hex}"
+
+        if coordinates is not None:
+            self.coordinates = coordinates
+        elif bounds is not None:
+            if len(bounds) == 2 and all(len(b) == 2 for b in bounds):
+                west, south = bounds[0]
+                east, north = bounds[1]
+            else:
+                west, south, east, north = bounds
+            self.coordinates = [
+                [west, north],
+                [east, north],
+                [east, south],
+                [west, south],
+            ]
+        else:
+            raise ValueError("Either coordinates or bounds must be provided")
+
+    def add_to(self, map_instance):
+        """Add the video overlay to a map instance.
+
+        Parameters
+        ----------
+        map_instance : maplibreum.Map
+            The map instance to which the video overlay will be added.
+
+        Returns
+        -------
+        self
+        """
+        source = {
+            "type": "video",
+            "urls": self.urls,
+            "coordinates": self.coordinates,
+        }
+        if self.attribution:
+            source["attribution"] = self.attribution
+
+        layer = {"id": self.name, "type": "raster", "source": self.name}
+        if self.opacity is not None:
+            layer["paint"] = {"raster-opacity": self.opacity}
+
+        map_instance.add_layer(layer, source=source)
+        return self
+
+
 class FeatureGroup:
     """Group multiple layers so they can be toggled together."""
 
