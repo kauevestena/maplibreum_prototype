@@ -368,6 +368,13 @@
                 {% endif %}
             }
             {% endif %}
+            {% if custom_protocols %}
+            {% for protocol in custom_protocols %}
+            maplibregl.addProtocol('{{ protocol.name }}', async (params, callback) => {
+                {{ protocol.definition | safe }}
+            });
+            {% endfor %}
+            {% endif %}
             initializeMap();
         }).catch(error => {
             console.error('Failed to load MapLibre GL JS:', error);
@@ -378,6 +385,9 @@
             try {
         // Initialize map
         var map = new maplibregl.Map({{ map_options | tojson | safe }});
+        {% if transform_request %}
+        map.setTransformRequest({{ transform_request | safe }});
+        {% endif %}
         window.maplibreumMaps = window.maplibreumMaps || {};
         window.maplibreumMaps["{{ map_id }}"] = map;
         window.maplibreumMapsLoaded = window.maplibreumMapsLoaded || {};

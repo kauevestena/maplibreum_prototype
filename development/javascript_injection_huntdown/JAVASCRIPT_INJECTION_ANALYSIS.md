@@ -15,13 +15,13 @@ This document provides a comprehensive analysis of JavaScript code injection usa
 - **Other**: 22 examples (17.9%) - unknown patterns or no implementation
 
 **Current Progress (as of 2025-10-17):**
-- **Examples Improved**: 35 (12 from Phase 1 + 15 from Phase 2 + 8 from Phase 3)
-- **Total Proper API Now**: 90 examples (55 baseline + 35 improved)
-- **Overall Proper API Usage**: 73.1% (90/123)
+- **Examples Improved**: 36 (12 from Phase 1 + 15 from Phase 2 + 9 from Phase 3)
+- **Total Proper API Now**: 91 examples (55 baseline + 36 improved)
+- **Overall Proper API Usage**: 73.9% (91/123)
 
 **📊 Phase 2: 100% Complete (15/15)** - All Phase 2 examples are now implemented with proper Python APIs.
 
-**Conclusion**: The roadmap claim of "all examples implemented" is technically accurate, but JavaScript injection was initially used in 37.4% of examples. Through systematic improvement efforts, proper Python API usage has increased from 44.7% to 73.1%, with 35 examples successfully converted from JavaScript injection to proper Python API implementations. **Phase 1 is now 48% complete (12/25), Phase 2 is 100% complete (15/15), and Phase 3 has progressed to 36.4% complete (8/22)!**
+**Conclusion**: The roadmap claim of "all examples implemented" is technically accurate, but JavaScript injection was initially used in 37.4% of examples. Through systematic improvement efforts, proper Python API usage has increased from 44.7% to 73.9%, with 36 examples successfully converted from JavaScript injection to proper Python API implementations. **Phase 1 is now 48% complete (12/25), Phase 2 is 100% complete (15/15), and Phase 3 has progressed to 40.9% complete (9/22)!**
 
 ## Detailed Findings
 
@@ -220,6 +220,24 @@ This JSON file provides a detailed progress tracker with:
 - Migration strategy with success criteria and timeline
 
 The JSON tracker serves as a living document to monitor progress as examples are converted from JavaScript injection to proper Python API implementations.
+
+### Recent Progress (2025-10-17)
+
+**API Implementation:**
+- ✅ **`FeatureTransformProtocol`**: Implemented a class for creating custom protocols to transform vector tiles on the fly.
+- ✅ **`Map.add_protocol`**: Added method to register custom protocols.
+- ✅ **`Map.set_transform_request`**: Added method to intercept and modify tile requests.
+
+**Example Conversions:**
+- ✅ **`use-addprotocol-to-transform-feature-properties`**: Updated test to use `FeatureTransformProtocol` instead of manual `addProtocol` JavaScript injection.
+
+**Current Status:**
+- **Phase 1 Progress**: 48.0% complete (12/25 examples improved)
+- **Phase 2 Progress**: 100% complete (15/15 examples improved)
+- **Phase 3 Progress**: 40.9% complete (9/22 examples improved)
+- **Overall Progress**: Increased from 73.1% to 73.9% proper API usage
+- **Backward Compatibility**: All tests pass.
+- **Infrastructure**: New `FeatureTransformProtocol` and request interception APIs available.
 
 ### Recent Progress (2025-10-17)
 

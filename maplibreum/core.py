@@ -26,7 +26,12 @@ from . import sources as source_wrappers
 from .sources import Source as SourceDefinition
 from .styles import MAP_STYLES
 from .animation import AnimatedIcon
-from .protocols import DEFAULT_PM_TILES_SCRIPT, PMTilesProtocol, PMTilesSource
+from .protocols import (
+    DEFAULT_PM_TILES_SCRIPT,
+    PMTilesProtocol,
+    PMTilesSource,
+    Protocol,
+)
 
 
 class Tooltip:
@@ -338,6 +343,8 @@ class Map:
         self._pmtiles_protocol_scripts: Dict[str, str] = {}
         self._pmtiles_sources: List[Dict[str, Any]] = []
         self._pmtiles_script_urls: Set[str] = set()
+        self.custom_protocols: List[Protocol] = []
+        self.transform_request: Optional[str] = None
 
         template_dir = os.path.join(os.path.dirname(__file__), "templates")
         self.env = Environment(loader=FileSystemLoader(template_dir))
@@ -1154,6 +1161,27 @@ class Map:
         
         if disable_js:
             self.add_on_load_js("\n".join(disable_js))
+
+    def add_protocol(self, protocol: Protocol) -> None:
+        """Register a custom protocol.
+
+        Parameters
+        ----------
+        protocol : Protocol
+            The protocol definition to register.
+        """
+        self.custom_protocols.append(protocol)
+
+    def set_transform_request(self, js_code: str) -> None:
+        """Set a custom request transformer.
+
+        Parameters
+        ----------
+        js_code : str
+            JavaScript callback function string for transforming requests.
+            The function should accept (url, resourceType) and return a RequestParameters object or undefined.
+        """
+        self.transform_request = js_code
 
     def enable_rtl_text_plugin(
         self,
@@ -2058,6 +2086,8 @@ class Map:
             external_scripts=self.external_scripts,
             pmtiles_protocols=list(self._pmtiles_protocols.values()),
             pmtiles_sources=self._pmtiles_sources,
+            custom_protocols=self.custom_protocols,
+            transform_request=self.transform_request,
         )
 
     def _repr_html_(self):
