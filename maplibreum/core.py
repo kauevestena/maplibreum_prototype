@@ -29,6 +29,12 @@ from .animation import AnimatedIcon
 from .protocols import DEFAULT_PM_TILES_SCRIPT, PMTilesProtocol, PMTilesSource
 
 
+# Approximate meters per degree of latitude
+METERS_PER_DEGREE_LATITUDE = 110540
+# Approximate meters per degree of longitude at the equator
+METERS_PER_DEGREE_LONGITUDE_EQUATOR = 111320
+
+
 class Tooltip:
     """Simple representation of a tooltip bound to a layer."""
 
@@ -2535,8 +2541,10 @@ class Circle:
             angle = 2 * math.pi * i / num_sides
             dx = radius * math.cos(angle)
             dy = radius * math.sin(angle)
-            delta_lng = dx / (111320 * math.cos(math.radians(lat)))
-            delta_lat = dy / 110540
+            delta_lng = dx / (
+                METERS_PER_DEGREE_LONGITUDE_EQUATOR * math.cos(math.radians(lat))
+            )
+            delta_lat = dy / METERS_PER_DEGREE_LATITUDE
             coords.append([lng + delta_lng, lat + delta_lat])
         coords.append(coords[0])
         return [coords]
