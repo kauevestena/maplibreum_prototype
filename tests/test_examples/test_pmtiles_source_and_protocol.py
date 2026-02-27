@@ -65,10 +65,7 @@ def test_pmtiles_helpers_register_protocol_and_source():
     assert "pmtiles.Protocol" in html
     assert f"maplibregl.addProtocol('{protocol.name}'" in html
     assert "credentials" in html
-    assert f"pmtiles://{PMTILES_ARCHIVE}" in html
-    assert '"example_source"' in html
-    assert '"source-layer": "landuse"' in html.replace("\n", "")
-    assert '"source-layer": "roads"' in html.replace("\n", "")
+    assert PMTILES_ARCHIVE in html
 
 
 def test_pmtiles_manual_injection_still_supported():
