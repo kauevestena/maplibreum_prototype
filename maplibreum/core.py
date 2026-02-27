@@ -11,7 +11,7 @@ from urllib.parse import quote
 from IPython.display import IFrame, display
 from jinja2 import Environment, FileSystemLoader
 
-from .babylon import BabylonLayer
+from .babylon import BABYLON_JS_URL, BABYLON_LOADERS_JS_URL, BabylonLayer
 from .cluster import ClusteredGeoJson, MarkerCluster
 from .layers import Layer
 from .three import ThreeLayer
@@ -515,10 +515,8 @@ class Map:
         """
         if isinstance(layer_definition, BabylonLayer):
             layer_id = layer_definition.id
-            self.add_external_script("https://unpkg.com/babylonjs@5.42.2/babylon.js")
-            self.add_external_script(
-                "https://unpkg.com/babylonjs-loaders@5.42.2/babylonjs.loaders.min.js"
-            )
+            self.add_external_script(BABYLON_JS_URL)
+            self.add_external_script(BABYLON_LOADERS_JS_URL)
             self.add_on_load_js(layer_definition.js_code)
             layer_definition = layer_definition.to_dict()
         elif isinstance(layer_definition, ThreeLayer):
