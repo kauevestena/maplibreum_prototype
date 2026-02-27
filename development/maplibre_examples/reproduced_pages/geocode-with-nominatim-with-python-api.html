@@ -17,7 +17,7 @@
             padding: 0;
         }
 
-        #maplibreum_800e0eb0c85b4670806e5512b6d5554a {
+        #maplibreum_6601fe04e1604c11a9f3c6238074ba87 {
             width: 100%;
             height: 500px;
             position: relative;
@@ -47,7 +47,7 @@
 
         }
 
-        #maplibreum_800e0eb0c85b4670806e5512b6d5554a { width: 100%; height: 500px; }
+        #maplibreum_6601fe04e1604c11a9f3c6238074ba87 { width: 100%; height: 500px; }
 
 
 
@@ -60,7 +60,7 @@
   <p>Generated from test_geocode_with_nominatim_with_python_api.py by the automated test suite.</p>
 </div>
 
-    <div id="maplibreum_800e0eb0c85b4670806e5512b6d5554a">
+    <div id="maplibreum_6601fe04e1604c11a9f3c6238074ba87">
         
         
     </div>
@@ -94,7 +94,7 @@
 
         // Function to show error message when MapLibre fails to load
         function showMapError(message) {
-            const mapDiv = document.getElementById('maplibreum_800e0eb0c85b4670806e5512b6d5554a');
+            const mapDiv = document.getElementById('maplibreum_6601fe04e1604c11a9f3c6238074ba87');
             if (mapDiv) {
                 mapDiv.innerHTML = `
                     <div style="
@@ -300,7 +300,6 @@
                 throw new Error('MapLibre GL JS loaded but not available');
             }
             
-
             initializeMap();
         }).catch(error => {
             console.error('Failed to load MapLibre GL JS:', error);
@@ -310,16 +309,18 @@
         function initializeMap() {
             try {
         // Initialize map
-        var map = new maplibregl.Map({"container": "maplibreum_800e0eb0c85b4670806e5512b6d5554a", "style": "https://tiles.openfreemap.org/styles/bright", "center": [-87.61694, 41.86625], "zoom": 15.99, "pitch": 40, "bearing": 20});
+        var map = new maplibregl.Map({"container": "maplibreum_6601fe04e1604c11a9f3c6238074ba87", "style": "https://tiles.openfreemap.org/styles/bright", "center": [-87.61694, 41.86625], "zoom": 15.99, "pitch": 40, "bearing": 20});
         window.maplibreumMaps = window.maplibreumMaps || {};
-        window.maplibreumMaps["maplibreum_800e0eb0c85b4670806e5512b6d5554a"] = map;
+        window.maplibreumMaps["maplibreum_6601fe04e1604c11a9f3c6238074ba87"] = map;
         window.maplibreumMapsLoaded = window.maplibreumMapsLoaded || {};
         map.once('load', function() {
-            window.maplibreumMapsLoaded["maplibreum_800e0eb0c85b4670806e5512b6d5554a"] = true;
+            window.maplibreumMapsLoaded["maplibreum_6601fe04e1604c11a9f3c6238074ba87"] = true;
         });
 
 
 // Add controls
+
+
 
 
 
@@ -436,6 +437,7 @@ map.on('load', function() {
     
     
     
+
     <script src="https://unpkg.com/@maplibre/maplibre-gl-geocoder@latest/dist/maplibre-gl-geocoder.min.js" onerror="console.warn('Failed to load geocoder')"></script>
     
 </body>
