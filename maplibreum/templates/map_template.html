@@ -5,7 +5,7 @@
     <title>{{ title }}</title>
     <meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no" />
     <link href="https://unpkg.com/maplibre-gl@{{ maplibre_version }}/dist/maplibre-gl.css" rel="stylesheet" onerror="this.onerror=null;this.href='https://cdn.jsdelivr.net/npm/maplibre-gl@{{ maplibre_version }}/dist/maplibre-gl.css';" />
-    {% if draw_control or measure_control %}
+    {% if measure_control %}
     <link href="https://unpkg.com/@mapbox/mapbox-gl-draw@latest/dist/mapbox-gl-draw.css" rel="stylesheet" onerror="console.warn('Failed to load draw control CSS')" />
     {% endif %}
     {% if include_minimap %}
@@ -641,21 +641,6 @@ map.addControl(new maplibregl.GlobeControl({{ ctrl.options | tojson }}), "{{ ctr
 {% endif %}
 {% endfor %}
 
-{% if draw_control %}
-var draw = new MapboxDraw({{ draw_control_options | tojson }});
-map.addControl(draw);
-function updateDrawn() {
-    var data = draw.getAll();
-    if (window.Jupyter && Jupyter.notebook && Jupyter.notebook.kernel) {
-        var cmd = "from maplibreum.core import Map; Map._store_drawn_features('" + "{{ map_id }}" + "', '" + JSON.stringify(data).replace(/'/g, "\\'") + "')";
-        Jupyter.notebook.kernel.execute(cmd);
-    }
-}
-map.on('draw.create', updateDrawn);
-map.on('draw.update', updateDrawn);
-map.on('draw.delete', updateDrawn);
-{% endif %}
-
 {% if measure_control %}
 function _storeMeasure(data) {
     if (window.Jupyter && Jupyter.notebook && Jupyter.notebook.kernel) {
@@ -993,9 +978,6 @@ map.on('load', function() {
     <!-- Load additional libraries with fallbacks -->
     {% if include_minimap %}
     <script src="https://unpkg.com/maplibregl-minimap/dist/minimap-control.js" onerror="console.warn('Failed to load minimap control')"></script>
-    {% endif %}
-    {% if draw_control %}
-    <script src="https://unpkg.com/@mapbox/mapbox-gl-draw@latest/dist/mapbox-gl-draw.js" onerror="console.warn('Failed to load draw control')"></script>
     {% endif %}
     {% if measure_control %}
     <script src="https://unpkg.com/maplibre-gl-measures@latest/dist/maplibre-gl-measures.js" onerror="console.warn('Failed to load measure control')"></script>
