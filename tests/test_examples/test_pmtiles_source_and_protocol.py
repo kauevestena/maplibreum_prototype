@@ -10,7 +10,7 @@ STYLE = {
     "sources": {
         "example_source": {
             "type": "vector",
-            "url": "pmtiles://" + PMTILES_ARCHIVE,
+            "url": "pmtiles://" + PMTILES_ARCHIVE, # TODO: check whether is this the best way to define an url
             "attribution": '© <a href="https://openstreetmap.org/copyright">OpenStreetMap</a>',
         }
     },
@@ -50,7 +50,6 @@ protocol.add(archive);
 
 def test_pmtiles_helpers_register_protocol_and_source():
     m = Map(
-        map_style=STYLE,
         center=[11.255, 43.7696],
         zoom=12,
     )

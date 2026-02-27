@@ -18,6 +18,8 @@ from .protocols import PMTilesProtocol, PMTilesSource
 
 __all__ = [
     "Map",
+    "PMTilesProtocol",
+    "PMTilesSource",
     "Marker",
     "GeoJson", 
     "Legend",
