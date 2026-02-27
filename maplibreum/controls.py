@@ -1165,6 +1165,125 @@ class MapboxDrawControl(DrawingTools):
         return js_code
 
 
+class PolygonDrawTool(MapboxDrawControl):
+    """A tool for drawing polygons and calculating their area.
+
+    This tool extends MapboxDrawControl to provide area calculation features
+    using Turf.js, replicating the functionality of the 'draw-polygon-with-mapbox-gl-draw'
+    example.
+    """
+
+    _TURF_SCRIPT = "https://unpkg.com/@turf/turf@6/turf.min.js"
+
+    def __init__(self, **kwargs):
+        """Initialize a PolygonDrawTool.
+
+        Parameters
+        ----------
+        **kwargs
+            Arguments forwarded to MapboxDrawControl.
+        """
+        super().__init__(**kwargs)
+        self._calculation_box_css = """
+.calculation-box {
+    height: 75px;
+    width: 150px;
+    position: absolute;
+    bottom: 40px;
+    left: 10px;
+    background-color: rgba(255, 255, 255, 0.9);
+    padding: 15px;
+    text-align: center;
+    z-index: 1000;
+}
+.calculation-box p {
+    font-family: 'Open Sans';
+    margin: 0;
+    font-size: 13px;
+}
+"""
+
+    def bind_to_map(self, map_instance):
+        """Bind the tool to a map instance."""
+        super().bind_to_map(map_instance)
+        map_instance.add_external_script(self._TURF_SCRIPT)
+        map_instance.custom_css += f"\\n{self._calculation_box_css}"
+
+    def to_js(self):
+        """Generate JavaScript code for the Polygon Draw tool."""
+        base_js = super().to_js()
+
+        area_calc_js = f"""
+(function() {{
+    // Add calculation box
+    var box = document.querySelector('.calculation-box');
+    if (!box) {{
+        box = document.createElement('div');
+        box.className = 'calculation-box';
+        box.innerHTML = '<p>Draw a polygon using the draw tools.</p><div id="calculated-area"></div>';
+        document.body.appendChild(box);
+    }}
+
+    var output = document.getElementById('calculated-area');
+
+    function updateArea(e) {{
+        // Get draw instance
+        var draw = window.maplibreumDraw && window.maplibreumDraw['{self.id}'];
+        if (!draw) return;
+
+        var data = draw.getAll();
+        if (data.features.length > 0) {{
+            if (typeof turf !== 'undefined' && turf.area) {{
+                var area = turf.area(data);
+                var rounded = Math.round(area * 100) / 100;
+                if (output) {{
+                    output.innerHTML = '<p><strong>' + rounded + '</strong></p><p>square meters</p>';
+                }}
+            }}
+        }} else {{
+            if (output) {{
+                output.innerHTML = '';
+            }}
+        }}
+    }}
+
+    map.on('draw.create', updateArea);
+    map.on('draw.delete', updateArea);
+    map.on('draw.update', updateArea);
+}})();
+"""
+        return base_js + area_calc_js
+
+
+class TerraDrawControl(DrawingTools):
+    """A control for drawing geometries using Terra Draw.
+
+    This control provides an alternative to JavaScript injection for
+    adding drawing capabilities to the map.
+    """
+
+    _TERRA_DRAW_SCRIPT = (
+        "https://cdn.jsdelivr.net/npm/@watergis/maplibre-gl-terradraw@1.0.1/dist/"
+        "maplibre-gl-terradraw.umd.js"
+    )
+    _TERRA_DRAW_CSS = (
+        "@import url('https://cdn.jsdelivr.net/npm/@watergis/maplibre-gl-terradraw@1.0.1/dist/"
+        "maplibre-gl-terradraw.css');"
+    )
+
+    control_type = "terradraw"
+
+    def __init__(
+        self,
+        modes: Optional[List[str]] = None,
+        open: bool = False,
+        position: str = "top-left",
+    ):
+        super().__init__()
+        """Initialize a TerraDrawControl.
+
+        Parameters
+        ----------
         modes : list of str, optional
             List of drawing modes to enable. Defaults to all available modes if None.
             Available modes: 'point', 'linestring', 'polygon', 'rectangle', 'circle',
