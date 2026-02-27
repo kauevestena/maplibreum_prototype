@@ -14,7 +14,7 @@ from . import sources
 from . import layers
 from . import experimental
 from .custom import CustomGlobeLayer
-from .pmtiles import PMTilesProtocol, PMTilesSource
+from .protocols import PMTilesProtocol, PMTilesSource
 
 __all__ = [
     "Map",
@@ -46,4 +46,6 @@ __all__ = [
     "AnimationLoop",
     "TemporalInterval",
     "CustomGlobeLayer",
+    "PMTilesProtocol",
+    "PMTilesSource",
 ]
