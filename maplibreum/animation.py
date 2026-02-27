@@ -1,4 +1,4 @@
-import uuid
+from .utils import get_id
 import math
 from typing import List, Optional, Tuple
 
@@ -257,7 +257,7 @@ class AnimatedIcon:
             color: The main color of the icon.
             pulse_color: The color of the pulsing animation.
         """
-        self.icon_id = f"pulsing-dot-{uuid.uuid4().hex[:6]}"
+        self.icon_id = get_id("pulsing-dot-")
         self.size = size
         self.color = color
         self.pulse_color = pulse_color

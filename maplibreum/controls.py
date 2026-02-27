@@ -1,5 +1,5 @@
-import uuid
 from typing import Optional, List, Dict, Any
+from .utils import get_id
 
 from .styles import MAP_STYLES
 
@@ -211,7 +211,7 @@ class MeasurementTool:
         self.line_color = line_color
         self.point_radius = point_radius
         self.line_width = line_width
-        self.id = f"measurement_{uuid.uuid4().hex}"
+        self.id = get_id("measurement_")
 
     def _calculate_haversine_distance(self, coords):
         """Calculate distance along a line using Haversine formula.
@@ -517,7 +517,7 @@ class GeocodingControl:
         self.marker = marker
         self.show_result_popup = show_result_popup
         self.kwargs = kwargs
-        self.id = f"geocoding_{uuid.uuid4().hex}"
+        self.id = get_id("geocoding_")
 
     def to_dict(self):
         """Serialize configuration for template usage."""
@@ -630,11 +630,7 @@ class ButtonControl:
         self.css_class = css_class
         self.style = style or {}
         self.onclick_js = onclick_js
-        self.id = (
-            f"button_{uuid.uuid4().hex}"
-            if "uuid" in globals()
-            else f"button_{hash(label)}"
-        )
+        self.id = get_id("button_")
 
     def to_dict(self):
         """Serialize configuration for template usage."""
@@ -723,11 +719,7 @@ class TextFilterControl:
         self.placeholder = placeholder
         self.position = position
         self.match_mode = match_mode
-        self.id = (
-            f"text_filter_{uuid.uuid4().hex}"
-            if "uuid" in globals()
-            else f"text_filter_{hash(placeholder)}"
-        )
+        self.id = get_id("text_filter_")
 
     def to_dict(self):
         """Serialize configuration for template usage."""
@@ -766,11 +758,7 @@ class LayerColorControl:
         self.colors = colors
         self.position = position
         self.title = title
-        self.id = (
-            f"layer_color_{uuid.uuid4().hex}"
-            if "uuid" in globals()
-            else f"layer_color_{hash(title)}"
-        )
+        self.id = get_id("layer_color_")
 
     def to_dict(self):
         """Serialize configuration for template usage."""
@@ -855,7 +843,7 @@ class SliderControl:
         self.show_legend = show_legend
         self.legend_gradient = legend_gradient
         self.legend_label = legend_label
-        self.id = f"slider_{uuid.uuid4().hex}"
+        self.id = get_id("slider_")
 
     def to_dict(self):
         """Serialize configuration for template usage."""
@@ -1119,7 +1107,7 @@ class MapboxDrawControl(DrawingTools):
         # Filter out None values to let defaults prevail
         self.options = {k: v for k, v in self.options.items() if v is not None}
         self.position = position
-        self.id = f"mapbox_draw_{uuid.uuid4().hex}"
+        self.id = get_id("mapbox_draw_")
 
     def bind_to_map(self, map_instance):
         """Bind the control to a map instance."""
@@ -1311,7 +1299,7 @@ class TerraDrawControl(DrawingTools):
         ]
         self.open = open
         self.position = position
-        self.id = f"terradraw_{uuid.uuid4().hex}"
+        self.id = get_id("terradraw_")
 
     def bind_to_map(self, map_instance):
         """Bind the control to a map instance.
