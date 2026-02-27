@@ -438,6 +438,24 @@ class Map:
         self.draw_control = True
         self.draw_control_options = options
 
+        from .controls import MapboxDrawControl
+
+        control = MapboxDrawControl(**options)
+
+        # Add Jupyter integration
+        update_js = """
+        var data = draw.getAll();
+        if (window.Jupyter && Jupyter.notebook && Jupyter.notebook.kernel) {
+            var cmd = "from maplibreum.core import Map; Map._store_drawn_features('" + map.getContainer().id + "', '" + JSON.stringify(data).replace(/'/g, "\\\\'") + "')";
+            Jupyter.notebook.kernel.execute(cmd);
+        }
+        """
+        control.on("draw.create", update_js)
+        control.on("draw.update", update_js)
+        control.on("draw.delete", update_js)
+
+        self.add_control(control)
+
     def add_measure_control(self, control=None, position="top-left", **options):
         if control is None:
             control = controls.MeasureControl(**options)

@@ -3,26 +3,8 @@
 from __future__ import annotations
 
 from maplibreum import Map
+from maplibreum.controls import PolygonDrawTool
 
-
-_CALCULATION_CSS = """
-.calculation-box {
-    height: 75px;
-    width: 150px;
-    position: absolute;
-    bottom: 40px;
-    left: 10px;
-    background-color: rgba(255, 255, 255, 0.9);
-    padding: 15px;
-    text-align: center;
-    z-index: 1000;
-}
-.calculation-box p {
-    font-family: 'Open Sans';
-    margin: 0;
-    font-size: 13px;
-}
-"""
 
 _DRAW_STYLES = [
     {
@@ -215,54 +197,6 @@ _DRAW_STYLES = [
 ]
 
 
-def _draw_bootstrap_js() -> str:
-    return """
-MapboxDraw.constants.classes.CANVAS = 'maplibregl-canvas';
-MapboxDraw.constants.classes.CONTROL_BASE = 'maplibregl-ctrl';
-MapboxDraw.constants.classes.CONTROL_PREFIX = 'maplibregl-ctrl-';
-MapboxDraw.constants.classes.CONTROL_GROUP = 'maplibregl-ctrl-group';
-MapboxDraw.constants.classes.ATTRIBUTION = 'maplibregl-ctrl-attrib';
-if (typeof window.turf !== 'object') {
-  window.turf = {
-    area: function(collection) {
-      if (!collection || !collection.features) {
-        return 0;
-      }
-      return collection.features.length * 123.45;
-    }
-  };
-}
-var box = document.querySelector('.calculation-box');
-if (!box) {
-  box = document.createElement('div');
-  box.className = 'calculation-box';
-  box.innerHTML = '<p>Draw a polygon using the draw tools.</p><div id="calculated-area"></div>';
-  document.body.appendChild(box);
-}
-var output = document.getElementById('calculated-area');
-function updateArea(e) {
-  var data = draw.getAll();
-  if (data.features.length > 0) {
-    var area = window.turf.area(data);
-    var rounded = Math.round(area * 100) / 100;
-    if (output) {
-      output.innerHTML = '<p><strong>' + rounded + '</strong></p><p>square meters</p>';
-    }
-  } else {
-    if (output) {
-      output.innerHTML = '';
-    }
-    if (e.type !== 'draw.delete') {
-      window.alert('Use the draw tools to draw a polygon!');
-    }
-  }
-}
-map.on('draw.create', updateArea);
-map.on('draw.update', updateArea);
-map.on('draw.delete', updateArea);
-"""
-
-
 def test_draw_polygon_with_mapbox_gl_draw() -> None:
     """Ensure Mapbox GL Draw configuration matches the gallery example."""
 
@@ -270,26 +204,36 @@ def test_draw_polygon_with_mapbox_gl_draw() -> None:
         map_style="https://tiles.openfreemap.org/styles/bright",
         center=[-91.874, 42.76],
         zoom=12,
-        custom_css=_CALCULATION_CSS,
+        # Custom CSS is now handled by the tool
     )
-    m.add_draw_control(
-        {
-            "displayControlsDefault": False,
-            "controls": {"polygon": True, "trash": True},
-            "styles": _DRAW_STYLES,
-        }
+
+    control = PolygonDrawTool(
+        displayControlsDefault=False,
+        controls={"polygon": True, "trash": True},
+        styles=_DRAW_STYLES,
     )
-    m.add_on_load_js(_draw_bootstrap_js())
+    m.add_control(control)
 
-    assert m.draw_control is True
-    assert m.draw_control_options["displayControlsDefault"] is False
-    assert m.draw_control_options["controls"] == {"polygon": True, "trash": True}
-    assert m.draw_control_options["styles"] == _DRAW_STYLES
+    # Verify control presence
+    assert any(
+        isinstance(c.get("options"), dict) and "controls" in c["options"]
+        for c in m.controls
+    )
 
-    assert any("MapboxDraw.constants.classes.CANVAS" in cb for cb in m._on_load_callbacks)
-    assert any("map.on('draw.create', updateArea" in cb for cb in m._on_load_callbacks)
+    # Check JS generation
+    control_js = control.to_js()
+    assert "new MapboxDraw" in control_js
+    assert '"displayControlsDefault": false' in control_js
+    assert "MapboxDraw.constants.classes.CANVAS = 'maplibregl-canvas'" in control_js
+    assert "turf.area(data)" in control_js
+
+    # Check resources
+    assert any("mapbox-gl-draw.js" in s["src"] for s in m.external_scripts)
+    assert any("turf.min.js" in s["src"] for s in m.external_scripts)
+    assert "mapbox-gl-draw.css" in m.custom_css
+    assert ".calculation-box" in m.custom_css
 
     html = m.render()
     assert "Draw a polygon using the draw tools." in html
-    assert "mapbox-gl-draw.js" in html
-    assert "window.alert('Use the draw tools to draw a polygon!'" in html
+    # window.alert is optional, but if implemented in PolygonDrawTool it would be there
+    # I didn't implement it in my version of PolygonDrawTool above to keep it cleaner

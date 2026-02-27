@@ -1027,7 +1027,235 @@ class SliderControl:
 """
 
 
-class TerraDrawControl:
+class DrawingTools:
+    """Base class for drawing tools."""
+
+    def __init__(self):
+        self.events = {}
+
+    def on(self, event, js_code):
+        """Register a JavaScript event handler.
+
+        Parameters
+        ----------
+        event : str
+            The event name (e.g., 'draw.create').
+        js_code : str
+            The JavaScript code to execute when the event fires.
+        """
+        self.events[event] = js_code
+
+
+class MapboxDrawControl(DrawingTools):
+    """A control for drawing geometries using Mapbox GL Draw.
+
+    This control provides an alternative to JavaScript injection for
+    adding drawing capabilities to the map using Mapbox GL Draw.
+    """
+
+    _SCRIPT_URL = "https://unpkg.com/@mapbox/mapbox-gl-draw@latest/dist/mapbox-gl-draw.js"
+    _CSS_URL = "https://unpkg.com/@mapbox/mapbox-gl-draw@latest/dist/mapbox-gl-draw.css"
+
+    def __init__(
+        self,
+        keybindings=True,
+        touch_enabled=True,
+        box_select=True,
+        click_buffer=2,
+        touch_buffer=25,
+        controls=None,
+        display_controls_default=True,
+        styles=None,
+        modes=None,
+        default_mode="simple_select",
+        user_properties=False,
+        position="top-left",
+        **kwargs,
+    ):
+        """Initialize a MapboxDrawControl.
+
+        Parameters
+        ----------
+        keybindings : bool, optional
+            Whether to enable keybindings (default True).
+        touch_enabled : bool, optional
+            Whether to enable touch interactions (default True).
+        box_select : bool, optional
+            Whether to enable box selection (default True).
+        click_buffer : int, optional
+            Number of pixels to buffer click (default 2).
+        touch_buffer : int, optional
+            Number of pixels to buffer touch (default 25).
+        controls : dict, optional
+            Which controls to display.
+        display_controls_default : bool, optional
+            Whether to display controls by default (default True).
+        styles : list, optional
+            List of map styles.
+        modes : dict, optional
+            Custom modes.
+        default_mode : str, optional
+            The default mode (default 'simple_select').
+        user_properties : bool, optional
+            Whether to include user properties (default False).
+        position : str, optional
+            Position on the map (default 'top-left').
+        """
+        super().__init__()
+        self.options = {
+            "keybindings": keybindings,
+            "touchEnabled": touch_enabled,
+            "boxSelect": box_select,
+            "clickBuffer": click_buffer,
+            "touchBuffer": touch_buffer,
+            "controls": controls,
+            "displayControlsDefault": display_controls_default,
+            "styles": styles,
+            "modes": modes,
+            "defaultMode": default_mode,
+            "userProperties": user_properties,
+        }
+        self.options.update(kwargs)
+        # Filter out None values to let defaults prevail
+        self.options = {k: v for k, v in self.options.items() if v is not None}
+        self.position = position
+        self.id = f"mapbox_draw_{uuid.uuid4().hex}"
+
+    def bind_to_map(self, map_instance):
+        """Bind the control to a map instance."""
+        map_instance.add_external_script(self._SCRIPT_URL)
+        map_instance.custom_css += f'\\n@import url("{self._CSS_URL}");'
+
+    def to_dict(self):
+        """Serialize configuration for template usage."""
+        return self.options
+
+    def to_js(self):
+        """Generate JavaScript code for the Mapbox Draw control."""
+        import json
+
+        options_js = json.dumps(self.options)
+
+        event_handlers = ""
+        for event, handler in self.events.items():
+            event_handlers += f"map.on('{event}', function(e) {{ {handler} }});\\n"
+
+        js_code = f"""
+(function() {{
+    if (typeof MapboxDraw === 'undefined') {{
+        console.warn('MapboxDraw not loaded yet');
+        return;
+    }}
+
+    // MapLibre compatibility
+    MapboxDraw.constants.classes.CANVAS = 'maplibregl-canvas';
+    MapboxDraw.constants.classes.CONTROL_BASE = 'maplibregl-ctrl';
+    MapboxDraw.constants.classes.CONTROL_PREFIX = 'maplibregl-ctrl-';
+    MapboxDraw.constants.classes.CONTROL_GROUP = 'maplibregl-ctrl-group';
+    MapboxDraw.constants.classes.ATTRIBUTION = 'maplibregl-ctrl-attrib';
+
+    var draw = new MapboxDraw({options_js});
+    map.addControl(draw, '{self.position}');
+    window.maplibreumDraw = window.maplibreumDraw || {{}};
+    window.maplibreumDraw['{self.id}'] = draw;
+
+    {event_handlers}
+}})();
+"""
+        return js_code
+
+
+class PolygonDrawTool(MapboxDrawControl):
+    """A tool for drawing polygons and calculating their area.
+
+    This tool extends MapboxDrawControl to provide area calculation features
+    using Turf.js, replicating the functionality of the 'draw-polygon-with-mapbox-gl-draw'
+    example.
+    """
+
+    _TURF_SCRIPT = "https://unpkg.com/@turf/turf@6/turf.min.js"
+
+    def __init__(self, **kwargs):
+        """Initialize a PolygonDrawTool.
+
+        Parameters
+        ----------
+        **kwargs
+            Arguments forwarded to MapboxDrawControl.
+        """
+        super().__init__(**kwargs)
+        self._calculation_box_css = """
+.calculation-box {
+    height: 75px;
+    width: 150px;
+    position: absolute;
+    bottom: 40px;
+    left: 10px;
+    background-color: rgba(255, 255, 255, 0.9);
+    padding: 15px;
+    text-align: center;
+    z-index: 1000;
+}
+.calculation-box p {
+    font-family: 'Open Sans';
+    margin: 0;
+    font-size: 13px;
+}
+"""
+
+    def bind_to_map(self, map_instance):
+        """Bind the tool to a map instance."""
+        super().bind_to_map(map_instance)
+        map_instance.add_external_script(self._TURF_SCRIPT)
+        map_instance.custom_css += f"\\n{self._calculation_box_css}"
+
+    def to_js(self):
+        """Generate JavaScript code for the Polygon Draw tool."""
+        base_js = super().to_js()
+
+        area_calc_js = f"""
+(function() {{
+    // Add calculation box
+    var box = document.querySelector('.calculation-box');
+    if (!box) {{
+        box = document.createElement('div');
+        box.className = 'calculation-box';
+        box.innerHTML = '<p>Draw a polygon using the draw tools.</p><div id="calculated-area"></div>';
+        document.body.appendChild(box);
+    }}
+
+    var output = document.getElementById('calculated-area');
+
+    function updateArea(e) {{
+        // Get draw instance
+        var draw = window.maplibreumDraw && window.maplibreumDraw['{self.id}'];
+        if (!draw) return;
+
+        var data = draw.getAll();
+        if (data.features.length > 0) {{
+            if (typeof turf !== 'undefined' && turf.area) {{
+                var area = turf.area(data);
+                var rounded = Math.round(area * 100) / 100;
+                if (output) {{
+                    output.innerHTML = '<p><strong>' + rounded + '</strong></p><p>square meters</p>';
+                }}
+            }}
+        }} else {{
+            if (output) {{
+                output.innerHTML = '';
+            }}
+        }}
+    }}
+
+    map.on('draw.create', updateArea);
+    map.on('draw.delete', updateArea);
+    map.on('draw.update', updateArea);
+}})();
+"""
+        return base_js + area_calc_js
+
+
+class TerraDrawControl(DrawingTools):
     """A control for drawing geometries using Terra Draw.
 
     This control provides an alternative to JavaScript injection for
@@ -1051,6 +1279,7 @@ class TerraDrawControl:
         open: bool = False,
         position: str = "top-left",
     ):
+        super().__init__()
         """Initialize a TerraDrawControl.
 
         Parameters
