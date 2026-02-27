@@ -1,7 +1,7 @@
 {
   "metadata": {
     "title": "MapLibreum JavaScript Injection Analysis and Improvement Roadmap",
-    "version": "3.9.0",
+    "version": "3.10.0",
     "created_date": "2024-12-21",
     "last_updated": "2025-10-16",
     "total_examples": 123,
@@ -18,8 +18,8 @@
     "completion_percentage": {
       "phase_1": 48.0,
       "phase_2": 100.0,
-      "phase_3": 27.3,
-      "overall": 71.5
+      "phase_3": 31.8,
+      "overall": 72.3
     }
   },
   "implementation_phases": {
@@ -77,9 +77,9 @@
         "ProtocolExtension"
       ],
       "completion_status": {
-        "completed": 6,
+        "completed": 7,
         "in_progress": 0,
-        "planned": 16
+        "planned": 15
       }
     }
   },
@@ -435,22 +435,25 @@
         },
         "draw-geometries-with-terra-draw": {
           "test_path": "tests/test_examples/test_draw_geometries_with_terra_draw.py",
-          "current_implementation": "javascript_injection",
+          "current_implementation": "improved",
           "issues": [
-            "External Terra Draw library",
-            "No Python drawing tools integration"
+            "RESOLVED: External Terra Draw library",
+            "RESOLVED: No Python drawing tools integration"
           ],
           "required_apis": [
-            "TerraDrawWrapper",
-            "DrawingTools"
+            "TerraDrawControl"
           ],
           "phase": "phase_3",
           "priority": "medium",
           "estimated_effort": "10-14 days",
-          "status": "planned",
-          "assigned_to": null,
-          "completion_date": null,
-          "notes": "Important for interactive geometry creation"
+          "status": "completed",
+          "assigned_to": "jules",
+          "completion_date": "2025-10-17",
+          "notes": "Successfully converted using TerraDrawControl.",
+          "improvements_made": [
+            "Implemented TerraDrawControl for adding drawing capabilities",
+            "Updated test to use Python API"
+          ]
         },
         "draw-polygon-with-mapbox-gl-draw": {
           "test_path": "tests/test_examples/test_draw_polygon_with_mapbox_gl_draw.py",
@@ -1368,6 +1371,21 @@
           "Clean Python API for PMTiles protocol registration",
           "Consistent layer toggling interface",
           "Eliminated manual JavaScript injection for these use cases"
+        ]
+      },
+      {
+        "name": "TerraDrawControl Implementation",
+        "description": "Implemented TerraDrawControl for adding drawing capabilities to the map.",
+        "date": "2025-10-17",
+        "impact": "Provides a clean Python API for adding Terra Draw, replacing manual JavaScript injection.",
+        "files_modified": [
+          "maplibreum/controls.py",
+          "tests/test_examples/test_draw_geometries_with_terra_draw.py"
+        ],
+        "benefits": [
+          "Eliminates manual JavaScript injection for Terra Draw",
+          "Simplifies adding drawing capabilities to maps",
+          "Provides a Python API for configuring drawing modes"
         ]
       }
     ]

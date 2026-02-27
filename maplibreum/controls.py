@@ -1,5 +1,5 @@
 import uuid
-from typing import Optional
+from typing import Optional, List, Dict, Any
 
 from .styles import MAP_STYLES
 
@@ -1025,3 +1025,122 @@ class SliderControl:
     cursor: ew-resize;
 }}
 """
+
+
+class TerraDrawControl:
+    """A control for drawing geometries using Terra Draw.
+
+    This control provides an alternative to JavaScript injection for
+    adding drawing capabilities to the map.
+    """
+
+    _TERRA_DRAW_SCRIPT = (
+        "https://cdn.jsdelivr.net/npm/@watergis/maplibre-gl-terradraw@1.0.1/dist/"
+        "maplibre-gl-terradraw.umd.js"
+    )
+    _TERRA_DRAW_CSS = (
+        "@import url('https://cdn.jsdelivr.net/npm/@watergis/maplibre-gl-terradraw@1.0.1/dist/"
+        "maplibre-gl-terradraw.css');"
+    )
+
+    control_type = "terradraw"
+
+    def __init__(
+        self,
+        modes: Optional[List[str]] = None,
+        open: bool = False,
+        position: str = "top-left",
+    ):
+        """Initialize a TerraDrawControl.
+
+        Parameters
+        ----------
+        modes : list of str, optional
+            List of drawing modes to enable. Defaults to all available modes if None.
+            Available modes: 'point', 'linestring', 'polygon', 'rectangle', 'circle',
+            'freehand', 'angled-rectangle', 'sensor', 'sector', 'select',
+            'delete-selection', 'delete', 'download'.
+        open : bool, optional
+            Whether the control should be open by default.
+        position : str, optional
+            Position on the map (e.g. 'top-left', 'top-right').
+        """
+        self.modes = modes or [
+            "point",
+            "linestring",
+            "polygon",
+            "rectangle",
+            "circle",
+            "freehand",
+            "angled-rectangle",
+            "sensor",
+            "sector",
+            "select",
+            "delete-selection",
+            "delete",
+            "download",
+        ]
+        self.open = open
+        self.position = position
+        self.id = f"terradraw_{uuid.uuid4().hex}"
+
+    def bind_to_map(self, map_instance):
+        """Bind the control to a map instance.
+
+        Parameters
+        ----------
+        map_instance : maplibreum.Map
+            The map instance to bind to.
+        """
+        map_instance.add_external_script(self._TERRA_DRAW_SCRIPT)
+        map_instance.custom_css += f"\n{self._TERRA_DRAW_CSS}"
+
+    def to_dict(self):
+        """Serialize configuration for template usage."""
+        return {
+            "modes": self.modes,
+            "open": self.open,
+            "position": self.position,
+        }
+
+    def to_js(self):
+        """Generate JavaScript code for the Terra Draw control.
+
+        Returns
+        -------
+        str
+            JavaScript code that creates and adds the control to the map.
+        """
+        modes_js = ", ".join(f"'{mode}'" for mode in self.modes)
+        open_js = "true" if self.open else "false"
+
+        js_code = f"""
+(function() {{
+    var terraNamespace = window.MaplibreTerradrawControl || (window.MaplibreTerradrawControl = {{}});
+
+    // Ensure the control class is available or wait for it/mock it if script loading is delayed
+    if (typeof terraNamespace.MaplibreTerradrawControl !== 'function') {{
+        // Basic mock if library hasn't loaded yet (mostly for testing/offline scenarios without network)
+        // In a real browser with network, the script loaded via add_external_script should take precedence
+        // if it loads before this executes. However, scripts are often async.
+        // For robustness, we check if it exists.
+
+        // If it doesn't exist, we might be in a test environment or offline.
+        // We'll define a placeholder that warns or mimics basic behavior.
+        if (typeof MaplibreTerradrawControl !== 'undefined') {{
+             terraNamespace.MaplibreTerradrawControl = MaplibreTerradrawControl;
+        }}
+    }}
+
+    if (typeof terraNamespace.MaplibreTerradrawControl === 'function') {{
+        var terraControl = new terraNamespace.MaplibreTerradrawControl({{
+            modes: [{modes_js}],
+            open: {open_js}
+        }});
+        map.addControl(terraControl, '{self.position}');
+    }} else {{
+        console.warn('MaplibreTerradrawControl not found. Ensure the library is loaded.');
+    }}
+}})();
+"""
+        return js_code

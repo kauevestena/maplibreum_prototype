@@ -3,16 +3,9 @@
 from __future__ import annotations
 
 from maplibreum import Map
+from maplibreum.controls import TerraDrawControl
 
 
-_TERRA_DRAW_SCRIPT = (
-    "https://cdn.jsdelivr.net/npm/@watergis/maplibre-gl-terradraw@1.0.1/dist/"
-    "maplibre-gl-terradraw.umd.js"
-)
-_TERRA_DRAW_CSS = (
-    "@import url('https://cdn.jsdelivr.net/npm/@watergis/maplibre-gl-terradraw@1.0.1/dist/"
-    "maplibre-gl-terradraw.css');"
-)
 _TERRA_MODES = [
     "point",
     "linestring",
@@ -30,56 +23,40 @@ _TERRA_MODES = [
 ]
 
 
-def _terra_bootstrap_js() -> str:
-    modes_js = ", ".join(f"'{mode}'" for mode in _TERRA_MODES)
-    return f"""
-var terraNamespace = window.MaplibreTerradrawControl || (window.MaplibreTerradrawControl = {{}});
-if (typeof terraNamespace.MaplibreTerradrawControl !== 'function') {{
-  terraNamespace.MaplibreTerradrawControl = function(options) {{
-    this.options = options || {{}};
-    this.name = 'mock-terradraw-control';
-    this.position = null;
-  }};
-  terraNamespace.MaplibreTerradrawControl.prototype.onAdd = function(mapInstance) {{
-    this._map = mapInstance;
-    var container = document.createElement('div');
-    container.className = 'mock-terradraw-control';
-    container.textContent = 'TerraDraw';
-    return container;
-  }};
-  terraNamespace.MaplibreTerradrawControl.prototype.onRemove = function() {{
-    this._map = null;
-  }};
-}}
-var terraControl = new terraNamespace.MaplibreTerradrawControl({{
-  modes: [{modes_js}],
-  open: true
-}});
-if (typeof map.addControl === 'function') {{
-  map.addControl(terraControl, 'top-left');
-}}
-"""
-
-
 def test_draw_geometries_with_terra_draw() -> None:
-    """Ensure Terra Draw integration mirrors the gallery example."""
+    """Ensure Terra Draw integration works using the Python API."""
 
     m = Map(
         map_style="https://tiles.openfreemap.org/styles/bright",
         center=[-91.874, 42.76],
         zoom=12,
-        custom_css=_TERRA_DRAW_CSS,
     )
-    m.add_external_script(_TERRA_DRAW_SCRIPT)
-    m.add_on_load_js(_terra_bootstrap_js())
 
-    assert m.external_scripts[0]["src"] == _TERRA_DRAW_SCRIPT
-    assert _TERRA_DRAW_CSS in m.custom_css
-    assert len(m._on_load_callbacks) == 1
-    assert "MaplibreTerradrawControl" in m._on_load_callbacks[0]
-    assert "modes: ['point', 'linestring'" in m._on_load_callbacks[0]
+    control = TerraDrawControl(
+        modes=_TERRA_MODES,
+        open=True,
+    )
+    m.add_control(control)
+
+    # Verify script and CSS are added via the control
+    assert any(
+        "maplibre-gl-terradraw.umd.js" in script["src"] for script in m.external_scripts
+    ), "Terra Draw script not found in external scripts"
+    assert "maplibre-gl-terradraw.css" in m.custom_css, "Terra Draw CSS not found in custom CSS"
+
+    # Verify control JS generation
+    control_js = control.to_js()
+    assert "MaplibreTerradrawControl" in control_js
+    assert "modes: ['point', 'linestring', 'polygon'" in control_js
+    assert "open: true" in control_js
+    assert "map.addControl(terraControl, 'top-left')" in control_js
+
+    # Verify JS injection into map
+    assert any(
+        "MaplibreTerradrawControl" in js for js in m._extra_js_snippets
+    ), "Terra Draw JS snippet not found in extra JS snippets"
 
     html = m.render()
-    assert _TERRA_DRAW_SCRIPT in html
-    assert "mock-terradraw-control" in html
-    assert "modes: ['point', 'linestring', 'polygon'" in html
+    assert "maplibre-gl-terradraw.umd.js" in html
+    assert "maplibre-gl-terradraw.css" in html
+    assert "MaplibreTerradrawControl" in html
