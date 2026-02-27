@@ -15,7 +15,7 @@
             padding: 0;
         }
 
-        #maplibreum_b01ec516b83f4086898b9b4ca5647cc5 {
+        #maplibreum_c1a7baedf6fb42599a1a738dd42494c1 {
             width: 100%;
             height: 500px;
             position: relative;
@@ -45,7 +45,7 @@
 
         }
 
-        #maplibreum_b01ec516b83f4086898b9b4ca5647cc5 { width: 100%; height: 500px; }
+        #maplibreum_c1a7baedf6fb42599a1a738dd42494c1 { width: 100%; height: 500px; }
 
 
 
@@ -58,7 +58,7 @@
   <p>Generated from test_create_a_basic_line_layer.py by the automated test suite.</p>
 </div>
 
-    <div id="maplibreum_b01ec516b83f4086898b9b4ca5647cc5">
+    <div id="maplibreum_c1a7baedf6fb42599a1a738dd42494c1">
         
         
     </div>
@@ -92,7 +92,7 @@
 
         // Function to show error message when MapLibre fails to load
         function showMapError(message) {
-            const mapDiv = document.getElementById('maplibreum_b01ec516b83f4086898b9b4ca5647cc5');
+            const mapDiv = document.getElementById('maplibreum_c1a7baedf6fb42599a1a738dd42494c1');
             if (mapDiv) {
                 mapDiv.innerHTML = `
                     <div style="
@@ -298,6 +298,7 @@
                 throw new Error('MapLibre GL JS loaded but not available');
             }
             
+
             initializeMap();
         }).catch(error => {
             console.error('Failed to load MapLibre GL JS:', error);
@@ -307,18 +308,16 @@
         function initializeMap() {
             try {
         // Initialize map
-        var map = new maplibregl.Map({"container": "maplibreum_b01ec516b83f4086898b9b4ca5647cc5", "style": "https://demotiles.maplibre.org/style.json", "center": [0, 0], "zoom": 3});
+        var map = new maplibregl.Map({"container": "maplibreum_c1a7baedf6fb42599a1a738dd42494c1", "style": "https://demotiles.maplibre.org/style.json", "center": [0, 0], "zoom": 3});
         window.maplibreumMaps = window.maplibreumMaps || {};
-        window.maplibreumMaps["maplibreum_b01ec516b83f4086898b9b4ca5647cc5"] = map;
+        window.maplibreumMaps["maplibreum_c1a7baedf6fb42599a1a738dd42494c1"] = map;
         window.maplibreumMapsLoaded = window.maplibreumMapsLoaded || {};
         map.once('load', function() {
-            window.maplibreumMapsLoaded["maplibreum_b01ec516b83f4086898b9b4ca5647cc5"] = true;
+            window.maplibreumMapsLoaded["maplibreum_c1a7baedf6fb42599a1a738dd42494c1"] = true;
         });
 
 
 // Add controls
-
-
 
 
 
@@ -394,7 +393,6 @@ map.on('load', function() {
     </script>
     
     <!-- Load additional libraries with fallbacks -->
-    
     
     
     
