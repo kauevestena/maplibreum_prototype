@@ -20,13 +20,43 @@ from .deckgl import DeckGLLayer
 from .custom import CustomGlobeLayer
 from .expressions import get as expr_get
 from .expressions import interpolate, var
-from .markers import BeautifyIcon, DivIcon, Icon  # noqa: F401
+from .markers import BeautifyIcon, DivIcon, Icon
 from . import controls
 from . import sources as source_wrappers
 from .sources import Source as SourceDefinition
 from .styles import MAP_STYLES
 from .animation import AnimatedIcon
 from .protocols import DEFAULT_PM_TILES_SCRIPT, PMTilesProtocol, PMTilesSource
+
+
+__all__ = [
+    "BeautifyIcon",
+    "Circle",
+    "CircleMarker",
+    "DivIcon",
+    "EventBinding",
+    "FeatureGroup",
+    "FloatImage",
+    "GeoJson",
+    "GeoJsonPopup",
+    "GeoJsonTooltip",
+    "Icon",
+    "ImageOverlay",
+    "LatLngPopup",
+    "LayerControl",
+    "Legend",
+    "Map",
+    "Marker",
+    "MiniMapControl",
+    "PolyLine",
+    "Polygon",
+    "Popup",
+    "Rectangle",
+    "SearchControl",
+    "StateToggle",
+    "Tooltip",
+    "VideoOverlay",
+]
 
 
 class Tooltip:
