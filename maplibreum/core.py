@@ -271,6 +271,9 @@ SearchControl = controls.SearchControl
 
 
 _RTL_CALLBACK_UNSET = object()
+DEFAULT_RTL_PLUGIN_URL = (
+    "https://unpkg.com/maplibre-gl-rtl-text@latest/dist/maplibre-gl-rtl-text.js"
+)
 
 
 class Map:
@@ -1185,7 +1188,7 @@ class Map:
 
     def enable_rtl_text_plugin(
         self,
-        url="https://unpkg.com/maplibre-gl-rtl-text@latest/dist/maplibre-gl-rtl-text.js",
+        url=DEFAULT_RTL_PLUGIN_URL,
         *,
         callback=_RTL_CALLBACK_UNSET,
         lazy=False,
