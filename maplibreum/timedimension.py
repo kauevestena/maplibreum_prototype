@@ -1,4 +1,4 @@
-import uuid
+from .utils import get_id
 from typing import Any, Dict, Optional
 
 
@@ -21,7 +21,7 @@ class TimeDimension:
         """Initialize a TimeDimension."""
         self.data = data
         self.options = options or {}
-        self.name = f"timedimension_{uuid.uuid4().hex}"
+        self.name = get_id("timedimension_")
 
     def add_to(self, map_instance: Any) -> "TimeDimension":
         """Add this time dimension data to a map instance."""
