@@ -3,8 +3,8 @@ import json
 import math
 import os
 import subprocess
+import uuid
 from dataclasses import dataclass, field
-from .utils import get_id
 from typing import Any, Dict, Iterable, List, Mapping, Optional, Set
 from urllib.parse import quote
 
@@ -26,7 +26,12 @@ from . import sources as source_wrappers
 from .sources import Source as SourceDefinition
 from .styles import MAP_STYLES
 from .animation import AnimatedIcon
-from .protocols import DEFAULT_PM_TILES_SCRIPT, PMTilesProtocol, PMTilesSource
+from .protocols import (
+    DEFAULT_PM_TILES_SCRIPT,
+    PMTilesProtocol,
+    PMTilesSource,
+    Protocol,
+)
 from .overlays import ImageOverlay, VideoOverlay
 
 
@@ -372,6 +377,8 @@ class Map:
         self._pmtiles_protocol_scripts: Dict[str, str] = {}
         self._pmtiles_sources: List[Dict[str, Any]] = []
         self._pmtiles_script_urls: Set[str] = set()
+        self.custom_protocols: List[Protocol] = []
+        self.transform_request: Optional[str] = None
 
         template_dir = os.path.join(os.path.dirname(__file__), "templates")
         self.env = Environment(loader=FileSystemLoader(template_dir))
@@ -379,7 +386,7 @@ class Map:
         self.template = self.env.get_template("map_template.html")
 
         # Unique ID for the map (important if multiple maps displayed in a notebook)
-        self.map_id = container_id or get_id("maplibreum_")
+        self.map_id = container_id or f"maplibreum_{uuid.uuid4().hex}"
 
         if projection is not None:
             self.set_projection(projection)
@@ -598,14 +605,14 @@ class Map:
                 layer_definition["source"] = source
             elif source is not None:
                 # Source is a dict or Source wrapper, so we add it to the map.
-                source_name = get_id("source_")
+                source_name = f"source_{uuid.uuid4().hex}"
                 self.add_source(source_name, source)
                 layer_definition["source"] = source_name
 
             if isinstance(layer_definition, Layer):
                 layer_definition = layer_definition.to_dict()
 
-            layer_id = layer_definition.get("id", get_id("layer_"))
+            layer_id = layer_definition.get("id", f"layer_{uuid.uuid4().hex}")
             layer_definition["id"] = layer_id
 
         self.layers.append(
@@ -696,7 +703,7 @@ class Map:
             configuration.
         """
 
-        layer_id = name or get_id("tilelayer_")
+        layer_id = name or f"tilelayer_{uuid.uuid4().hex}"
 
         if "{s}" in url and subdomains:
             tiles = [url.replace("{s}", s) for s in subdomains]
@@ -1186,6 +1193,27 @@ class Map:
         
         if disable_js:
             self.add_on_load_js("\n".join(disable_js))
+
+    def add_protocol(self, protocol: Protocol) -> None:
+        """Register a custom protocol.
+
+        Parameters
+        ----------
+        protocol : Protocol
+            The protocol definition to register.
+        """
+        self.custom_protocols.append(protocol)
+
+    def set_transform_request(self, js_code: str) -> None:
+        """Set a custom request transformer.
+
+        Parameters
+        ----------
+        js_code : str
+            JavaScript callback function string for transforming requests.
+            The function should accept (url, resourceType) and return a RequestParameters object or undefined.
+        """
+        self.transform_request = js_code
 
     def enable_rtl_text_plugin(
         self,
@@ -2090,6 +2118,8 @@ class Map:
             external_scripts=self.external_scripts,
             pmtiles_protocols=list(self._pmtiles_protocols.values()),
             pmtiles_sources=self._pmtiles_sources,
+            custom_protocols=self.custom_protocols,
+            transform_request=self.transform_request,
         )
 
     def _repr_html_(self):
@@ -2280,7 +2310,7 @@ class Marker:
         is_feature_group = map_instance.__class__.__name__ == "FeatureGroup"
 
         if isinstance(self.icon, Icon):
-            layer_id = get_id("marker_")
+            layer_id = f"marker_{uuid.uuid4().hex}"
             source = {
                 "type": "geojson",
                 "data": {
@@ -2318,7 +2348,7 @@ class Marker:
             return self
 
         if is_feature_group:
-            layer_id = get_id("marker_")
+            layer_id = f"marker_{uuid.uuid4().hex}"
             source = {
                 "type": "geojson",
                 "data": {
@@ -2354,7 +2384,7 @@ class Marker:
                 map_instance.add_tooltip(self.tooltip, layer_id=layer_id)
             return self
 
-        self.id = get_id("marker_")
+        self.id = f"marker_{uuid.uuid4().hex}"
 
         if self.popup is not None and callable(getattr(self.popup, "render", None)):
             popup_content = self.popup.render({})
@@ -2415,7 +2445,7 @@ class GeoJson:
             A tooltip to display when hovering over a feature.
         """
         self.data = data
-        self.name = name if name else get_id("geojson_")
+        self.name = name if name else f"geojson_{uuid.uuid4().hex}"
         self.popup = popup
         self.tooltip = tooltip
 
@@ -2581,7 +2611,7 @@ class Circle:
         map_instance : maplibreum.Map
             The map instance to which the circle will be added.
         """
-        layer_id = get_id("circle_")
+        layer_id = f"circle_{uuid.uuid4().hex}"
         polygon = self._circle_polygon(self.location, self.radius)
         source = {
             "type": "geojson",
@@ -2661,7 +2691,7 @@ class CircleMarker:
         map_instance : maplibreum.Map
             The map instance to which the circle marker will be added.
         """
-        layer_id = get_id("circlemarker_")
+        layer_id = f"circlemarker_{uuid.uuid4().hex}"
         source = {
             "type": "geojson",
             "data": {
@@ -2723,7 +2753,7 @@ class PolyLine:
         map_instance : maplibreum.Map
             The map instance to which the polyline will be added.
         """
-        layer_id = get_id("polyline_")
+        layer_id = f"polyline_{uuid.uuid4().hex}"
         source = {
             "type": "geojson",
             "data": {
@@ -2801,7 +2831,7 @@ class Polygon:
         map_instance : maplibreum.Map
             The map instance to which the polygon will be added.
         """
-        layer_id = get_id("polygon_")
+        layer_id = f"polygon_{uuid.uuid4().hex}"
         coords = self.locations
         if coords[0] != coords[-1]:
             coords = coords + [coords[0]]
@@ -2982,7 +3012,7 @@ class FeatureGroup:
         name : str, optional
             The name of the feature group.
         """
-        self.name = name or get_id("featuregroup_")
+        self.name = name or f"featuregroup_{uuid.uuid4().hex}"
         self.sources = []
         self.layers = []
         self.popups = []
@@ -3023,11 +3053,11 @@ class FeatureGroup:
         if isinstance(source, str):
             layer_definition["source"] = source
         elif source is not None:
-            source_name = get_id("source_")
+            source_name = f"source_{uuid.uuid4().hex}"
             self.add_source(source_name, source)
             layer_definition["source"] = source_name
 
-        layer_id = layer_definition.get("id", get_id("layer_"))
+        layer_id = layer_definition.get("id", f"layer_{uuid.uuid4().hex}")
         layer_definition["id"] = layer_id
         self.layers.append(
             {"id": layer_id, "definition": layer_definition, "before": before}

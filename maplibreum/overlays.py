@@ -1,4 +1,4 @@
-from .utils import get_id
+import uuid
 
 class ImageOverlay:
     """Overlay a georeferenced image on the map."""
@@ -36,7 +36,7 @@ class ImageOverlay:
         self.image = image
         self.attribution = attribution
         self.opacity = opacity
-        self.name = name or get_id("imageoverlay_")
+        self.name = name or f"imageoverlay_{uuid.uuid4().hex}"
 
         if coordinates is not None:
             self.coordinates = coordinates
@@ -123,7 +123,7 @@ class VideoOverlay:
             self.urls = list(videos)
         self.attribution = attribution
         self.opacity = opacity
-        self.name = name or get_id("videooverlay_")
+        self.name = name or f"videooverlay_{uuid.uuid4().hex}"
 
         if coordinates is not None:
             self.coordinates = coordinates
