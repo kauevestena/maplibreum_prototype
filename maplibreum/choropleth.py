@@ -1,7 +1,7 @@
 import math
+import uuid  # for generating unique layer/source identifiers
 
 from .expressions import get as expr_get
-from .utils import get_id
 
 
 class Choropleth:
@@ -117,12 +117,12 @@ class Choropleth:
             color = self._color_for_value(value, bins)
             feat.setdefault("properties", {})["fillColor"] = color
 
-        source_id = f"{get_id('choropleth_')}_source"
+        source_id = f"choropleth_{uuid.uuid4().hex}_source"
         source = {"type": "geojson", "data": self.geojson}
         map_instance.add_source(source_id, source)
 
         layer = {
-            "id": get_id("choropleth_"),
+            "id": f"choropleth_{uuid.uuid4().hex}",
             "type": "fill",
             "source": source_id,
             "paint": {

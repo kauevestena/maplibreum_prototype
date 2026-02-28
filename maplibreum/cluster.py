@@ -1,6 +1,6 @@
+import uuid
 
 from .expressions import get as expr_get
-from .utils import get_id
 
 
 class MarkerCluster:
@@ -18,7 +18,7 @@ class MarkerCluster:
         cluster_max_zoom : int, optional
             The maximum zoom level at which to cluster points.
         """
-        self.name = name or get_id("markercluster_")
+        self.name = name or f"markercluster_{uuid.uuid4().hex}"
         self.cluster_radius = cluster_radius
         self.cluster_max_zoom = cluster_max_zoom
         self.features = []
@@ -148,7 +148,7 @@ class ClusteredGeoJson:
             The maximum zoom level at which to cluster points.
         """
         self.data = data
-        self.name = name or get_id("clustered_geojson_")
+        self.name = name or f"clustered_geojson_{uuid.uuid4().hex}"
         self.cluster_radius = cluster_radius
         self.cluster_max_zoom = cluster_max_zoom
         self.map = None
