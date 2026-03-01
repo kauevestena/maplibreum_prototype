@@ -11,7 +11,7 @@ from urllib.parse import quote
 from IPython.display import IFrame, display
 from jinja2 import Environment, FileSystemLoader
 
-from .babylon import BabylonLayer
+from .babylon import BABYLON_JS_URL, BABYLON_LOADERS_JS_URL, BabylonLayer
 from .cluster import ClusteredGeoJson, MarkerCluster
 from .layers import Layer
 from .three import ThreeLayer
@@ -20,13 +20,49 @@ from .deckgl import DeckGLLayer
 from .custom import CustomGlobeLayer
 from .expressions import get as expr_get
 from .expressions import interpolate, var
-from .markers import BeautifyIcon, DivIcon, Icon  # noqa: F401
+from .markers import BeautifyIcon, DivIcon, Icon
 from . import controls
 from . import sources as source_wrappers
 from .sources import Source as SourceDefinition
 from .styles import MAP_STYLES
 from .animation import AnimatedIcon
-from .protocols import DEFAULT_PM_TILES_SCRIPT, PMTilesProtocol, PMTilesSource
+from .protocols import (
+    DEFAULT_PM_TILES_SCRIPT,
+    PMTilesProtocol,
+    PMTilesSource,
+    Protocol,
+)
+from .overlays import ImageOverlay, VideoOverlay
+
+
+__all__ = [
+    "BeautifyIcon",
+    "Circle",
+    "CircleMarker",
+    "DivIcon",
+    "EventBinding",
+    "FeatureGroup",
+    "FloatImage",
+    "GeoJson",
+    "GeoJsonPopup",
+    "GeoJsonTooltip",
+    "Icon",
+    "ImageOverlay",
+    "LatLngPopup",
+    "LayerControl",
+    "Legend",
+    "Map",
+    "Marker",
+    "MiniMapControl",
+    "PolyLine",
+    "Polygon",
+    "Popup",
+    "Rectangle",
+    "SearchControl",
+    "StateToggle",
+    "Tooltip",
+    "VideoOverlay",
+]
 
 
 class Tooltip:
@@ -241,6 +277,9 @@ SearchControl = controls.SearchControl
 
 
 _RTL_CALLBACK_UNSET = object()
+DEFAULT_RTL_PLUGIN_URL = (
+    "https://unpkg.com/maplibre-gl-rtl-text@latest/dist/maplibre-gl-rtl-text.js"
+)
 
 
 class Map:
@@ -338,6 +377,8 @@ class Map:
         self._pmtiles_protocol_scripts: Dict[str, str] = {}
         self._pmtiles_sources: List[Dict[str, Any]] = []
         self._pmtiles_script_urls: Set[str] = set()
+        self.custom_protocols: List[Protocol] = []
+        self.transform_request: Optional[str] = None
 
         template_dir = os.path.join(os.path.dirname(__file__), "templates")
         self.env = Environment(loader=FileSystemLoader(template_dir))
@@ -515,10 +556,8 @@ class Map:
         """
         if isinstance(layer_definition, BabylonLayer):
             layer_id = layer_definition.id
-            self.add_external_script("https://unpkg.com/babylonjs@5.42.2/babylon.js")
-            self.add_external_script(
-                "https://unpkg.com/babylonjs-loaders@5.42.2/babylonjs.loaders.min.js"
-            )
+            self.add_external_script(BABYLON_JS_URL)
+            self.add_external_script(BABYLON_LOADERS_JS_URL)
             self.add_on_load_js(layer_definition.js_code)
             layer_definition = layer_definition.to_dict()
         elif isinstance(layer_definition, ThreeLayer):
@@ -1155,9 +1194,30 @@ class Map:
         if disable_js:
             self.add_on_load_js("\n".join(disable_js))
 
+    def add_protocol(self, protocol: Protocol) -> None:
+        """Register a custom protocol.
+
+        Parameters
+        ----------
+        protocol : Protocol
+            The protocol definition to register.
+        """
+        self.custom_protocols.append(protocol)
+
+    def set_transform_request(self, js_code: str) -> None:
+        """Set a custom request transformer.
+
+        Parameters
+        ----------
+        js_code : str
+            JavaScript callback function string for transforming requests.
+            The function should accept (url, resourceType) and return a RequestParameters object or undefined.
+        """
+        self.transform_request = js_code
+
     def enable_rtl_text_plugin(
         self,
-        url="https://unpkg.com/maplibre-gl-rtl-text@latest/dist/maplibre-gl-rtl-text.js",
+        url=DEFAULT_RTL_PLUGIN_URL,
         *,
         callback=_RTL_CALLBACK_UNSET,
         lazy=False,
@@ -2058,6 +2118,8 @@ class Map:
             external_scripts=self.external_scripts,
             pmtiles_protocols=list(self._pmtiles_protocols.values()),
             pmtiles_sources=self._pmtiles_sources,
+            custom_protocols=self.custom_protocols,
+            transform_request=self.transform_request,
         )
 
     def _repr_html_(self):
@@ -2889,89 +2951,6 @@ class Rectangle:
         polygon.add_to(map_instance)
 
 
-class ImageOverlay:
-    """Overlay a georeferenced image on the map."""
-
-    def __init__(
-        self,
-        image,
-        bounds=None,
-        coordinates=None,
-        opacity=1.0,
-        attribution=None,
-        name=None,
-    ):
-        """Create an ImageOverlay.
-
-        Parameters
-        ----------
-        image : str
-            URL or local path to the image.
-        bounds : list, optional
-            Bounds of the image as ``[west, south, east, north]`` or
-            ``[[west, south], [east, north]]``.
-        coordinates : list, optional
-            Four corner coordinates of the image specified as
-            ``[[west, north], [east, north], [east, south], [west, south]]``.
-            If provided, ``bounds`` is ignored.
-        opacity : float, optional
-            Opacity of the raster layer, defaults to ``1.0``.
-        attribution : str, optional
-            Attribution text for the source.
-        name : str, optional
-            Layer identifier. If omitted, a unique one is generated.
-        """
-
-        self.image = image
-        self.attribution = attribution
-        self.opacity = opacity
-        self.name = name or f"imageoverlay_{uuid.uuid4().hex}"
-
-        if coordinates is not None:
-            self.coordinates = coordinates
-        elif bounds is not None:
-            if len(bounds) == 2 and all(len(b) == 2 for b in bounds):
-                west, south = bounds[0]
-                east, north = bounds[1]
-            else:
-                west, south, east, north = bounds
-            self.coordinates = [
-                [west, north],
-                [east, north],
-                [east, south],
-                [west, south],
-            ]
-        else:
-            raise ValueError("Either coordinates or bounds must be provided")
-
-    def add_to(self, map_instance):
-        """Add the image overlay to a map instance.
-
-        Parameters
-        ----------
-        map_instance : maplibreum.Map
-            The map instance to which the image overlay will be added.
-
-        Returns
-        -------
-        self
-        """
-        source = {
-            "type": "image",
-            "url": self.image,
-            "coordinates": self.coordinates,
-        }
-        if self.attribution:
-            source["attribution"] = self.attribution
-
-        layer = {"id": self.name, "type": "raster", "source": self.name}
-        if self.opacity is not None:
-            layer["paint"] = {"raster-opacity": self.opacity}
-
-        map_instance.add_layer(layer, source=source)
-        return self
-
-
 class FloatImage:
     """Add an image floating above the map at a fixed position."""
 
@@ -3019,93 +2998,6 @@ class FloatImage:
         self
         """
         map_instance.float_images.append(self)
-        return self
-
-
-class VideoOverlay:
-    """Overlay a georeferenced video on the map."""
-
-    def __init__(
-        self,
-        videos,
-        bounds=None,
-        coordinates=None,
-        opacity=1.0,
-        attribution=None,
-        name=None,
-    ):
-        """Create a VideoOverlay.
-
-        Parameters
-        ----------
-        videos : str or list
-            URL or local path to the video, or a list of URLs for different
-            formats.
-        bounds : list, optional
-            Bounds of the video as ``[west, south, east, north]`` or
-            ``[[west, south], [east, north]]``.
-        coordinates : list, optional
-            Four corner coordinates of the video specified as
-            ``[[west, north], [east, north], [east, south], [west, south]]``.
-            If provided, ``bounds`` is ignored.
-        opacity : float, optional
-            Opacity of the raster layer, defaults to ``1.0``.
-        attribution : str, optional
-            Attribution text for the source.
-        name : str, optional
-            Layer identifier. If omitted, a unique one is generated.
-        """
-
-        if isinstance(videos, str):
-            self.urls = [videos]
-        else:
-            self.urls = list(videos)
-        self.attribution = attribution
-        self.opacity = opacity
-        self.name = name or f"videooverlay_{uuid.uuid4().hex}"
-
-        if coordinates is not None:
-            self.coordinates = coordinates
-        elif bounds is not None:
-            if len(bounds) == 2 and all(len(b) == 2 for b in bounds):
-                west, south = bounds[0]
-                east, north = bounds[1]
-            else:
-                west, south, east, north = bounds
-            self.coordinates = [
-                [west, north],
-                [east, north],
-                [east, south],
-                [west, south],
-            ]
-        else:
-            raise ValueError("Either coordinates or bounds must be provided")
-
-    def add_to(self, map_instance):
-        """Add the video overlay to a map instance.
-
-        Parameters
-        ----------
-        map_instance : maplibreum.Map
-            The map instance to which the video overlay will be added.
-
-        Returns
-        -------
-        self
-        """
-        source = {
-            "type": "video",
-            "urls": self.urls,
-            "coordinates": self.coordinates,
-        }
-        if self.attribution:
-            source["attribution"] = self.attribution
-
-        layer = {"id": self.name, "type": "raster", "source": self.name}
-        if self.opacity is not None:
-            layer["paint"] = {"raster-opacity": self.opacity}
-
-        map_instance.add_layer(layer, source=source)
         return self
 
 
