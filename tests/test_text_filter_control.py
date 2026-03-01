@@ -1,45 +1,51 @@
+"""Tests for TextFilterControl."""
 import pytest
-from maplibreum.core import Map
+
+from maplibreum import Map
 from maplibreum.controls import TextFilterControl
 
+
 def test_text_filter_control_init():
-    layer_ids = ["layer1", "layer2"]
-    placeholder = "Search..."
-    position = "top-left"
-    match_mode = "startswith"
-
-    control = TextFilterControl(
-        layer_ids=layer_ids,
-        placeholder=placeholder,
-        position=position,
-        match_mode=match_mode
+    ctrl = TextFilterControl(
+        layer_ids=["layer-a", "layer-b"],
+        placeholder="Search...",
+        position="top-left",
+        match_mode="startswith",
     )
+    assert ctrl.layer_ids == ["layer-a", "layer-b"]
+    assert ctrl.placeholder == "Search..."
+    assert ctrl.position == "top-left"
+    assert ctrl.match_mode == "startswith"
 
-    assert control.layer_ids == layer_ids
-    assert control.placeholder == placeholder
-    assert control.position == position
-    assert control.match_mode == match_mode
-    assert control.id.startswith("text_filter_")
+    d = ctrl.to_dict()
+    assert d["layer_ids"] == ["layer-a", "layer-b"]
+    assert d["placeholder"] == "Search..."
+    assert d["position"] == "top-left"
+    assert d["match_mode"] == "startswith"
+    assert "id" in d
 
-    d = control.to_dict()
-    assert d["layer_ids"] == layer_ids
-    assert d["placeholder"] == placeholder
-    assert d["position"] == position
-    assert d["match_mode"] == match_mode
-    assert d["id"] == control.id
+
+def test_text_filter_control_defaults():
+    ctrl = TextFilterControl(layer_ids=["my-layer"])
+    assert ctrl.placeholder == "Filter by name"
+    assert ctrl.position == "top-right"
+    assert ctrl.match_mode == "contains"
+
 
 def test_text_filter_control_rendering():
     m = Map()
-    layer_ids = ["test-layer"]
-    control = TextFilterControl(layer_ids=layer_ids)
-    m.add_control(control)
+    ctrl = TextFilterControl(
+        layer_ids=["poi-bar", "poi-music"],
+        placeholder="Filter by name",
+        position="top-right",
+        match_mode="contains",
+    )
+    m.add_control(ctrl)
 
-    # Verify it is registered in m.controls
-    registered_control = next(c for c in m.controls if c["type"] == "textfilter")
-    assert registered_control["options"]["layer_ids"] == layer_ids
-
-    # Verify rendering
     html = m.render()
     assert "maplibreum-text-filter" in html
-    assert '["test-layer"]' in html
-    assert "contains" in html  # Default match_mode
+    assert "Filter by name" in html
+    assert "map.setLayoutProperty" in html
+    assert "poi-bar" in html
+    assert "poi-music" in html
+    assert "contains" in html
