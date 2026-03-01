@@ -1,9 +1,9 @@
 {
   "metadata": {
     "title": "MapLibreum JavaScript Injection Analysis and Improvement Roadmap",
-    "version": "3.9.0",
+    "version": "3.12.0",
     "created_date": "2024-12-21",
-    "last_updated": "2025-10-16",
+    "last_updated": "2025-10-17",
     "total_examples": 123,
     "analysis_source": "JAVASCRIPT_INJECTION_ANALYSIS.md",
     "progress_tracker": true,
@@ -18,8 +18,8 @@
     "completion_percentage": {
       "phase_1": 48.0,
       "phase_2": 100.0,
-      "phase_3": 27.3,
-      "overall": 71.5
+      "phase_3": 40.9,
+      "overall": 73.9
     }
   },
   "implementation_phases": {
@@ -77,9 +77,9 @@
         "ProtocolExtension"
       ],
       "completion_status": {
-        "completed": 6,
+        "completed": 9,
         "in_progress": 0,
-        "planned": 16
+        "planned": 13
       }
     }
   },
@@ -435,29 +435,32 @@
         },
         "draw-geometries-with-terra-draw": {
           "test_path": "tests/test_examples/test_draw_geometries_with_terra_draw.py",
-          "current_implementation": "javascript_injection",
+          "current_implementation": "improved",
           "issues": [
-            "External Terra Draw library",
-            "No Python drawing tools integration"
+            "RESOLVED: External Terra Draw library",
+            "RESOLVED: No Python drawing tools integration"
           ],
           "required_apis": [
-            "TerraDrawWrapper",
-            "DrawingTools"
+            "TerraDrawControl"
           ],
           "phase": "phase_3",
           "priority": "medium",
           "estimated_effort": "10-14 days",
-          "status": "planned",
-          "assigned_to": null,
-          "completion_date": null,
-          "notes": "Important for interactive geometry creation"
+          "status": "completed",
+          "assigned_to": "jules",
+          "completion_date": "2025-10-17",
+          "notes": "Successfully converted using TerraDrawControl.",
+          "improvements_made": [
+            "Implemented TerraDrawControl for adding drawing capabilities",
+            "Updated test to use Python API"
+          ]
         },
         "draw-polygon-with-mapbox-gl-draw": {
           "test_path": "tests/test_examples/test_draw_polygon_with_mapbox_gl_draw.py",
-          "current_implementation": "javascript_injection",
+          "current_implementation": "improved",
           "issues": [
-            "Mapbox GL Draw library dependency",
-            "JavaScript-only drawing interface"
+            "RESOLVED: Mapbox GL Draw library dependency",
+            "RESOLVED: JavaScript-only drawing interface"
           ],
           "required_apis": [
             "MapboxDrawWrapper",
@@ -466,10 +469,15 @@
           "phase": "phase_3",
           "priority": "medium",
           "estimated_effort": "8-10 days",
-          "status": "planned",
-          "assigned_to": null,
-          "completion_date": null,
-          "notes": "Alternative to Terra Draw"
+          "status": "completed",
+          "assigned_to": "jules",
+          "completion_date": "2025-10-17",
+          "notes": "Successfully converted using MapboxDrawControl and PolygonDrawTool.",
+          "improvements_made": [
+            "Implemented MapboxDrawControl as a generic wrapper for Mapbox GL Draw",
+            "Implemented PolygonDrawTool for the specific area calculation example",
+            "Updated tests to use Python API instead of JavaScript injection"
+          ]
         },
         "add-an-animated-icon-to-the-map": {
           "test_path": "tests/test_examples/test_add_an_animated_icon_to_the_map.py",
@@ -568,10 +576,10 @@
         },
         "use-addprotocol-to-transform-feature-properties": {
           "test_path": "tests/test_examples/test_use_addprotocol_to_transform_feature_properties.py",
-          "current_implementation": "javascript_injection",
+          "current_implementation": "improved",
           "issues": [
-            "Custom protocol implementation in JavaScript",
-            "No Python protocol extension API"
+            "RESOLVED: Custom protocol implementation in JavaScript",
+            "RESOLVED: No Python protocol extension API"
           ],
           "required_apis": [
             "ProtocolExtension",
@@ -580,10 +588,15 @@
           "phase": "phase_3",
           "priority": "lower",
           "estimated_effort": "10-12 days",
-          "status": "planned",
-          "assigned_to": null,
-          "completion_date": null,
-          "notes": "Advanced data transformation feature"
+          "status": "completed",
+          "assigned_to": "jules",
+          "completion_date": "2025-10-17",
+          "notes": "Successfully converted using FeatureTransformProtocol and Map.set_transform_request.",
+          "improvements_made": [
+            "Implemented generic Protocol and FeatureTransformProtocol in protocols.py",
+            "Added Map.add_protocol() and Map.set_transform_request() to core.py",
+            "Updated test to use Python API instead of raw JS"
+          ]
         },
         "geocode-with-nominatim": {
           "test_path": "tests/test_examples/test_geocode_with_nominatim.py",
@@ -1368,6 +1381,55 @@
           "Clean Python API for PMTiles protocol registration",
           "Consistent layer toggling interface",
           "Eliminated manual JavaScript injection for these use cases"
+        ]
+      },
+      {
+        "name": "TerraDrawControl Implementation",
+        "description": "Implemented TerraDrawControl for adding drawing capabilities to the map.",
+        "date": "2025-10-17",
+        "impact": "Provides a clean Python API for adding Terra Draw, replacing manual JavaScript injection.",
+        "files_modified": [
+          "maplibreum/controls.py",
+          "tests/test_examples/test_draw_geometries_with_terra_draw.py"
+        ],
+        "benefits": [
+          "Eliminates manual JavaScript injection for Terra Draw",
+          "Simplifies adding drawing capabilities to maps",
+          "Provides a Python API for configuring drawing modes"
+        ]
+      },
+      {
+        "name": "MapboxDrawControl and PolygonDrawTool Implementation",
+        "description": "Implemented MapboxDrawControl and PolygonDrawTool for adding drawing capabilities with Mapbox GL Draw.",
+        "date": "2025-10-17",
+        "impact": "Provides a clean Python API for adding Mapbox GL Draw and calculating polygon areas, replacing manual JavaScript injection.",
+        "files_modified": [
+          "maplibreum/controls.py",
+          "maplibreum/core.py",
+          "maplibreum/templates/map_template.html",
+          "tests/test_examples/test_draw_polygon_with_mapbox_gl_draw.py"
+        ],
+        "benefits": [
+          "Eliminates manual JavaScript injection for Mapbox GL Draw",
+          "Encapsulates area calculation logic in PolygonDrawTool",
+          "Provides a consistent API for drawing controls"
+        ]
+      },
+      {
+        "name": "FeatureTransformProtocol API",
+        "description": "Implemented FeatureTransformProtocol and Map.set_transform_request for advanced feature manipulation.",
+        "date": "2025-10-17",
+        "impact": "Provides a Python API for intercepting and transforming vector tiles, removing raw JS injection.",
+        "files_modified": [
+          "maplibreum/protocols.py",
+          "maplibreum/core.py",
+          "maplibreum/templates/map_template.html",
+          "tests/test_examples/test_use_addprotocol_to_transform_feature_properties.py"
+        ],
+        "benefits": [
+          "Allows defining custom protocols in Python",
+          "Encapsulates complex PBF parsing and transformation logic",
+          "Exposes setTransformRequest via Python API"
         ]
       }
     ]

@@ -14,14 +14,14 @@ This document provides a comprehensive analysis of JavaScript code injection usa
 - **Proper API Usage**: 55 examples (44.7%) used only Python API methods before the roadmap work began
 - **Other**: 22 examples (17.9%) - unknown patterns or no implementation
 
-**Current Progress (as of 2025-10-16):**
-- **Examples Improved**: 33 (12 from Phase 1 + 15 from Phase 2 + 6 from Phase 3)
-- **Total Proper API Now**: 88 examples (55 baseline + 33 improved)
-- **Overall Proper API Usage**: 71.5% (88/123)
+**Current Progress (as of 2025-10-17):**
+- **Examples Improved**: 36 (12 from Phase 1 + 15 from Phase 2 + 9 from Phase 3)
+- **Total Proper API Now**: 91 examples (55 baseline + 36 improved)
+- **Overall Proper API Usage**: 73.9% (91/123)
 
 **📊 Phase 2: 100% Complete (15/15)** - All Phase 2 examples are now implemented with proper Python APIs.
 
-**Conclusion**: The roadmap claim of "all examples implemented" is technically accurate, but JavaScript injection was initially used in 37.4% of examples. Through systematic improvement efforts, proper Python API usage has increased from 44.7% to 71.5%, with 33 examples successfully converted from JavaScript injection to proper Python API implementations. **Phase 1 is now 48% complete (12/25), Phase 2 is 100% complete (15/15), and Phase 3 has progressed to 27.3% complete (6/22)!**
+**Conclusion**: The roadmap claim of "all examples implemented" is technically accurate, but JavaScript injection was initially used in 37.4% of examples. Through systematic improvement efforts, proper Python API usage has increased from 44.7% to 73.9%, with 36 examples successfully converted from JavaScript injection to proper Python API implementations. **Phase 1 is now 48% complete (12/25), Phase 2 is 100% complete (15/15), and Phase 3 has progressed to 40.9% complete (9/22)!**
 
 ## Detailed Findings
 
@@ -47,8 +47,8 @@ These examples use only `add_on_load_js()` and `add_external_script()` without p
 - `adding-3d-models-using-threejs-on-terrain` - ✅ Converted to Python API
 - `create-deckgl-layer-using-rest-api` - ✅ Converted to Python API
 - `toggle-deckgl-layer` - ✅ Converted to Python API
-- `draw-geometries-with-terra-draw`
-- `draw-polygon-with-mapbox-gl-draw`
+- `draw-geometries-with-terra-draw` - ✅ Converted to Python API
+- `draw-polygon-with-mapbox-gl-draw` - ✅ Converted to Python API
 
 **Real-time & Animation:**
 - `add-an-animated-icon-to-the-map` - ✅ Converted to Python API
@@ -220,6 +220,57 @@ This JSON file provides a detailed progress tracker with:
 - Migration strategy with success criteria and timeline
 
 The JSON tracker serves as a living document to monitor progress as examples are converted from JavaScript injection to proper Python API implementations.
+
+### Recent Progress (2025-10-17)
+
+**API Implementation:**
+- ✅ **`FeatureTransformProtocol`**: Implemented a class for creating custom protocols to transform vector tiles on the fly.
+- ✅ **`Map.add_protocol`**: Added method to register custom protocols.
+- ✅ **`Map.set_transform_request`**: Added method to intercept and modify tile requests.
+
+**Example Conversions:**
+- ✅ **`use-addprotocol-to-transform-feature-properties`**: Updated test to use `FeatureTransformProtocol` instead of manual `addProtocol` JavaScript injection.
+
+**Current Status:**
+- **Phase 1 Progress**: 48.0% complete (12/25 examples improved)
+- **Phase 2 Progress**: 100% complete (15/15 examples improved)
+- **Phase 3 Progress**: 40.9% complete (9/22 examples improved)
+- **Overall Progress**: Increased from 73.1% to 73.9% proper API usage
+- **Backward Compatibility**: All tests pass.
+- **Infrastructure**: New `FeatureTransformProtocol` and request interception APIs available.
+
+### Recent Progress (2025-10-17)
+
+**API Implementation:**
+- ✅ **`MapboxDrawControl`**: Implemented a generic wrapper for Mapbox GL Draw, providing a clean Python API for adding drawing capabilities.
+- ✅ **`PolygonDrawTool`**: Implemented a specialized tool for polygon drawing and area calculation, encapsulating Turf.js integration.
+
+**Example Conversions:**
+- ✅ **`draw-polygon-with-mapbox-gl-draw`**: Updated `test_draw_polygon_with_mapbox_gl_draw.py` to use `PolygonDrawTool` instead of `add_draw_control` and manual JavaScript injection.
+
+**Current Status:**
+- **Phase 1 Progress**: 48.0% complete (12/25 examples improved)
+- **Phase 2 Progress**: 100% complete (15/15 examples improved)
+- **Phase 3 Progress**: 36.4% complete (8/22 examples improved)
+- **Overall Progress**: Increased from 72.3% to 73.1% proper API usage
+- **Backward Compatibility**: All tests pass.
+- **Infrastructure**: New `MapboxDrawControl` and `PolygonDrawTool` APIs available.
+
+### Recent Progress (2025-10-17)
+
+**API Implementation:**
+- ✅ **`TerraDrawControl`**: Implemented a new class for adding Terra Draw capabilities to the map, providing a clean Python API that encapsulates the underlying JavaScript logic.
+
+**Example Conversions:**
+- ✅ **`draw-geometries-with-terra-draw`**: Updated `test_draw_geometries_with_terra_draw.py` to use `TerraDrawControl` instead of manual JavaScript injection.
+
+**Current Status:**
+- **Phase 1 Progress**: 48.0% complete (12/25 examples improved)
+- **Phase 2 Progress**: 100% complete (15/15 examples improved)
+- **Phase 3 Progress**: 31.8% complete (7/22 examples improved)
+- **Overall Progress**: Increased from 71.5% to 72.3% proper API usage
+- **Backward Compatibility**: All tests pass.
+- **Infrastructure**: New TerraDrawControl API available.
 
 ### Recent Progress (2025-10-16)
 
