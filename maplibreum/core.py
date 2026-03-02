@@ -294,7 +294,7 @@ class Map:
         self,
         title="MapLibreum Map",
         map_style="basic",
-        center=[0, 0],
+        center=None,
         zoom=2,
         pitch=None,
         bearing=None,
@@ -325,7 +325,7 @@ class Map:
             self.map_style = MAP_STYLES[map_style]
         else:
             self.map_style = map_style
-        self.center = center
+        self.center = center if center is not None else [0, 0]
         self.zoom = zoom
         self.pitch = pitch
         self.bearing = bearing
