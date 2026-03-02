@@ -1373,3 +1373,156 @@ class TerraDrawControl(DrawingTools):
 }})();
 """
         return js_code
+
+class SidebarControl:
+    """A sidebar control that can slide in and out of the map and adjust padding.
+
+    This provides a Python API for creating interactive sidebars.
+    """
+
+    def __init__(self, position="left", html_content="", width=300, css_class="sidebar-content"):
+        """Initialize a SidebarControl.
+
+        Parameters
+        ----------
+        position : str, optional
+            Position of the sidebar ('left' or 'right').
+        html_content : str, optional
+            The HTML content of the sidebar.
+        width : int, optional
+            Width of the sidebar in pixels.
+        css_class : str, optional
+            CSS class for the sidebar content.
+        """
+        self.position = position
+        self.html_content = html_content
+        self.width = width
+        self.css_class = css_class
+
+    def to_dict(self):
+        """Get the dictionary representation of the control."""
+        return {
+            "type": "sidebar",
+            "position": self.position,
+            "width": self.width,
+            "html_content": self.html_content,
+            "css_class": self.css_class,
+        }
+
+    def to_js(self):
+        """Generate JavaScript code for the sidebar control.
+
+        Returns
+        -------
+        str
+            JavaScript code that creates and manages the sidebar.
+        """
+        toggle_arrow = "&rarr;" if self.position == "left" else "&larr;"
+
+        return f"""
+        (function() {{
+            const id = '{self.position}';
+            const width = {self.width};
+            const sidebar = document.createElement('div');
+            sidebar.id = id;
+            sidebar.className = 'maplibreum-sidebar flex-center {self.position} collapsed';
+            sidebar.innerHTML = `
+                <div class="{self.css_class} rounded-rect flex-center">
+                    {self.html_content}
+                    <div class="sidebar-toggle rounded-rect {self.position}">{toggle_arrow}</div>
+                </div>
+            `;
+            map.getContainer().appendChild(sidebar);
+
+            sidebar.querySelector('.sidebar-toggle').addEventListener('click', () => {{
+                const classes = sidebar.className.split(' ');
+                const collapsed = classes.indexOf('collapsed') !== -1;
+                const padding = {{}};
+
+                // Get current padding
+                const currentPadding = map.getPadding() || {{}};
+                Object.assign(padding, currentPadding);
+
+                if (collapsed) {{
+                    classes.splice(classes.indexOf('collapsed'), 1);
+                    padding[id] = width;
+                    map.easeTo({{ padding, duration: 1000 }});
+                }} else {{
+                    padding[id] = 0;
+                    classes.push('collapsed');
+                    map.easeTo({{ padding, duration: 1000 }});
+                }}
+                sidebar.className = classes.join(' ');
+            }});
+
+            // Trigger initial open
+            sidebar.querySelector('.sidebar-toggle').click();
+        }})();
+        """
+
+class PanelControl:
+    """A floating panel control that can contain arbitrary HTML and forms.
+
+    This provides a Python API for creating interactive map overlays.
+    """
+
+    def __init__(self, position="top-left", html_content="", js_content="", css_class="map-overlay"):
+        """Initialize a PanelControl.
+
+        Parameters
+        ----------
+        position : str, optional
+            Position on the map ('top-left', 'top-right', 'bottom-left', 'bottom-right').
+        html_content : str, optional
+            The HTML content of the panel.
+        js_content : str, optional
+            JavaScript code to execute after the panel is added to the DOM.
+        css_class : str, optional
+            CSS class for the panel container.
+        """
+        self.position = position
+        self.html_content = html_content
+        self.js_content = js_content
+        self.css_class = css_class
+
+    def to_dict(self):
+        """Get the dictionary representation of the control."""
+        return {
+            "type": "panel",
+            "position": self.position,
+            "html_content": self.html_content,
+            "js_content": self.js_content,
+            "css_class": self.css_class,
+        }
+
+    def to_js(self):
+        """Generate JavaScript code for the panel control.
+
+        Returns
+        -------
+        str
+            JavaScript code that creates and manages the panel.
+        """
+        position_classes = {
+            "top-left": "top left",
+            "top-right": "top right",
+            "bottom-left": "bottom left",
+            "bottom-right": "bottom right",
+        }
+        pos_class = position_classes.get(self.position, "top left")
+
+        return f"""
+        (function() {{
+            const overlay = document.createElement('div');
+            overlay.className = '{self.css_class} {pos_class}';
+            overlay.innerHTML = `{self.html_content}`;
+
+            // Wait for map container to be available
+            setTimeout(() => {{
+                if (map && map.getContainer()) {{
+                    map.getContainer().appendChild(overlay);
+                    {self.js_content}
+                }}
+            }}, 100);
+        }})();
+        """
