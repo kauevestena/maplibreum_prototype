@@ -16,10 +16,10 @@
     "proper_api_only": 55,
     "other_patterns": 22,
     "completion_percentage": {
-      "phase_1": 48.0,
+      "phase_1": 60.0,
       "phase_2": 100.0,
       "phase_3": 40.9,
-      "overall": 73.9
+      "overall": 76.4
     }
   },
   "implementation_phases": {
@@ -37,12 +37,14 @@
         "Map.on_hover()",
         "Map.on_mousemove()",
         "ButtonControl",
-        "ToggleControl"
+        "ToggleControl",
+        "SidebarControl",
+        "PanelControl"
       ],
       "completion_status": {
-        "completed": 12,
+        "completed": 15,
         "in_progress": 0,
-        "planned": 13
+        "planned": 10
       }
     },
     "phase_2": {
