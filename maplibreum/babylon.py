@@ -6,6 +6,9 @@ from typing import Any, Dict, List, Optional
 
 from .layers import Layer
 
+BABYLON_JS_URL = "https://unpkg.com/babylonjs@5.42.2/babylon.js"
+BABYLON_LOADERS_JS_URL = "https://unpkg.com/babylonjs-loaders@5.42.2/babylonjs.loaders.min.js"
+
 
 class BabylonLayer(Layer):
     """Represents a babylon.js custom layer for rendering 3D models."""

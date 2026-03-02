@@ -49,3 +49,49 @@ class PMTilesSource:
         if self.credentials is not None:
             payload["credentials"] = self.credentials
         return payload
+
+
+@dataclass
+class Protocol:
+    """Generic custom protocol definition."""
+
+    name: str
+    definition: str
+
+
+@dataclass
+class FeatureTransformProtocol:
+    """Protocol for transforming vector tile features on the fly."""
+
+    name: str
+    process_feature_js: str
+
+    @property
+    def definition(self) -> str:
+        """Return the JavaScript implementation of the protocol."""
+        return f"""
+        const url = params.url.replace('{self.name}://', '');
+        const [{{ default: Protobuf }}, {{ VectorTile }}, {{ default: tileToProtobuf }}] = await Promise.all([
+            import('https://unpkg.com/pbf@4.0.1/dist/pbf.min.js'),
+            import('https://esm.run/@mapbox/vector-tile@2.0.3/index.js'),
+            import('https://esm.run/vt-pbf@3.1.3/index.js'),
+        ]);
+        const response = await fetch(url);
+        const data = await response.arrayBuffer();
+        const tile = new VectorTile(new Protobuf(data));
+        const layers = Object.fromEntries(
+            Object.entries(tile.layers).map(([layerId, layer]) => [
+                layerId,
+                {{
+                    ...layer,
+                    feature: (index) => {{
+                        const feature = layer.feature(index);
+                        {self.process_feature_js}
+                        return feature;
+                    }},
+                }},
+            ])
+        );
+        const encoded = tileToProtobuf({{ layers }});
+        return {{ data: encoded.buffer }};
+        """
