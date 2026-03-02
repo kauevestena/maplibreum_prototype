@@ -128,6 +128,67 @@
             }
         }
 
+        function evaluateDeckExpression(expr, data) {
+            if (!Array.isArray(expr) || expr.length === 0) {
+                return expr;
+            }
+            const op = expr[0];
+            if (op === 'get') {
+                const propName = expr[1];
+                if (data && data.properties && propName in data.properties) {
+                    return data.properties[propName];
+                }
+                if (data && propName in data) {
+                    return data[propName];
+                }
+                return undefined;
+            }
+            if (op === 'has') {
+                const propName = expr[1];
+                if (data && data.properties && propName in data.properties) {
+                    return true;
+                }
+                if (data && propName in data) {
+                    return true;
+                }
+                return false;
+            }
+            if (op === 'literal') {
+                return expr[1];
+            }
+            if (['+', '-', '*', '/'].includes(op)) {
+                const a = evaluateDeckExpression(expr[1], data);
+                const b = evaluateDeckExpression(expr[2], data);
+                if (op === '+') return a + b;
+                if (op === '-') return a - b;
+                if (op === '*') return a * b;
+                if (op === '/') return a / b;
+            }
+            if (['==', '!=', '>', '<', '>=', '<='].includes(op)) {
+                const a = evaluateDeckExpression(expr[1], data);
+                const b = evaluateDeckExpression(expr[2], data);
+                if (op === '==') return a === b;
+                if (op === '!=') return a !== b;
+                if (op === '>') return a > b;
+                if (op === '<') return a < b;
+                if (op === '>=') return a >= b;
+                if (op === '<=') return a <= b;
+            }
+            return expr;
+        }
+
+        function evaluateDeckProps(value) {
+            if (Array.isArray(value)) {
+                if (value.length > 0 && typeof value[0] === 'string' && ['get', 'has', 'literal', '+', '-', '*', '/', '==', '!=', '>', '<', '>=', '<='].includes(value[0])) {
+                    return function(d) {
+                        return evaluateDeckExpression(value, d);
+                    };
+                }
+                return value;
+            }
+            return value;
+        }
+
         class MaplibreumDeckGLOverlayManager {
             constructor(map, overlays) {
                 this.map = map;
@@ -140,7 +201,6 @@
                     const props = normalised.props || {};
                     normalised.props = {
                         json: Object.assign({}, props.json || {}),
-                        raw: Object.assign({}, props.raw || {}),
                     };
                     this.configs[normalised.id] = normalised;
                 });
@@ -199,14 +259,9 @@
 
             _buildProps(config, data) {
                 const jsonProps = (config.props && config.props.json) || {};
-                const props = Object.assign({ data }, jsonProps);
-                const rawProps = (config.props && config.props.raw) || {};
-                Object.entries(rawProps).forEach(([key, value]) => {
-                    try {
-                        props[key] = eval('(' + value + ')');
-                    } catch (error) {
-                        console.warn(`Failed to evaluate Deck.GL property '${key}'`, error);
-                    }
+                const props = { data };
+                Object.entries(jsonProps).forEach(([key, value]) => {
+                    props[key] = evaluateDeckProps(value);
                 });
                 return props;
             }
