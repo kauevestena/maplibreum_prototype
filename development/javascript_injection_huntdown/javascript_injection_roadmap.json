@@ -16,10 +16,10 @@
     "proper_api_only": 55,
     "other_patterns": 22,
     "completion_percentage": {
-      "phase_1": 60.0,
+      "phase_1": 72.0,
       "phase_2": 100.0,
       "phase_3": 40.9,
-      "overall": 76.4
+      "overall": 78.9
     }
   },
   "implementation_phases": {
@@ -33,18 +33,20 @@
         "Map.fly_to()",
         "Map.ease_to()",
         "Map.pan_to()",
+        "Map.rotate_to()",
         "Map.on_click()",
         "Map.on_hover()",
         "Map.on_mousemove()",
         "ButtonControl",
         "ToggleControl",
         "SidebarControl",
-        "PanelControl"
+        "PanelControl",
+        "LanguageControl"
       ],
       "completion_status": {
-        "completed": 15,
+        "completed": 18,
         "in_progress": 0,
-        "planned": 10
+        "planned": 7
       }
     },
     "phase_2": {
@@ -1077,6 +1079,25 @@
   },
   "infrastructure_improvements": {
     "completed": [
+      {
+        "name": "Map.rotate_to() API and LanguageControl",
+        "description": "Implemented Map.rotate_to() for camera rotations and LanguageControl for interactive language switching.",
+        "date": "2025-10-19",
+        "impact": "Eliminated manual JavaScript injection for simple map rotations and language toggles.",
+        "files_modified": [
+          "maplibreum/core.py",
+          "maplibreum/controls.py",
+          "maplibreum/templates/map_template.html",
+          "tests/test_examples/test_variable_label_placement.py",
+          "tests/test_examples/test_variable_label_placement_with_offset.py",
+          "tests/test_examples/test_change_a_maps_language.py"
+        ],
+        "benefits": [
+          "Provides a Pythonic API for camera rotation",
+          "Creates interactive language UI natively",
+          "Increases Phase 1 completion by 3 examples"
+        ]
+      },
       {
         "name": "ButtonControl Template Integration",
         "description": "Added button control support to map_template.html",

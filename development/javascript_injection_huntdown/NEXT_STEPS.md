@@ -1,11 +1,11 @@
-# Next Steps for JavaScript Injection Reduction - October 14, 2025
+# Next Steps for JavaScript Injection Reduction - October 19, 2025
 
 ## 🎯 Current Status
 
 After completing the tracking audit (see [PROGRESS_REPORT_2025_10_09_TRACKING_AUDIT.md](PROGRESS_REPORT_2025_10_09_TRACKING_AUDIT.md)), the roadmap is now accurate:
 
-- **Overall Progress**: 76.4% (94/123 examples)
-- **Phase 1**: 60.0% (15/25 examples)
+- **Overall Progress**: 78.9% (97/123 examples)
+- **Phase 1**: 72.0% (18/25 examples)
 - **Phase 2**: 100% (15/15 examples)
 - **Phase 3**: 40.9% (9/22 examples)
 
@@ -155,14 +155,14 @@ Phase 1 still has 13 JavaScript-injection-first demos that rely on `add_on_load_
 
 ### Medium-term Goals (Next Month)
 - ✅ Drawing wrappers delivered (Phase 3 ≥36.4%, 8/22)
-- ✅ Phase 1 ≥56% complete (14/25 examples) through quick-win conversions
-- ✅ Overall progress ≥73.5% (90/123 examples)
+- ✅ Phase 1 ≥72% complete (18/25 examples) through quick-win conversions
+- ✅ Overall progress ≥78.9% (97/123 examples)
 
 ### Long-term Goals (3 Months)
-- ✅ Phase 1 ≥80% complete (20/25 examples)
-- ✅ Phase 3 ≥45% complete (10/22 examples)
-- ✅ Overall progress ≥78% (96/123 examples)
-- ✅ External-integration APIs share consistent lifecycle + testing patterns
+- 🔲 Phase 1 ≥80% complete (20/25 examples)
+- 🔲 Phase 3 ≥45% complete (10/22 examples)
+- 🔲 Overall progress ≥80% (99/123 examples)
+- 🔲 External-integration APIs share consistent lifecycle + testing patterns
 
 ---
 
