@@ -98,7 +98,19 @@ class Popup:
             A Jinja2 template string for the popup content.
         """
         self.html = html
-        self.template = template
+        self._template_str = template
+        self._compiled_template = None
+
+    @property
+    def template(self):
+        """The Jinja2 template string for the popup content."""
+        return self._template_str
+
+    @template.setter
+    def template(self, value):
+        if self._template_str != value:
+            self._template_str = value
+            self._compiled_template = None
 
     def render(self, context=None):
         """Render the popup content.
@@ -116,9 +128,10 @@ class Popup:
         str
             The rendered HTML content.
         """
-        if self.template is not None:
-            tmpl = self._env.from_string(self.template)
-            return tmpl.render(context or {})
+        if self._template_str is not None:
+            if self._compiled_template is None:
+                self._compiled_template = self._env.from_string(self._template_str)
+            return self._compiled_template.render(context or {})
         return self.html or ""
 
 
