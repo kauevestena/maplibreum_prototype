@@ -4,18 +4,9 @@ from __future__ import annotations
 
 import json
 from textwrap import dedent
-from typing import Any, Dict, Tuple
+from typing import Any, Dict
 
 from .datasources import RESTDataSource
-
-
-def _is_js_literal(value: Any) -> bool:
-    """Return ``True`` when *value* should be embedded as raw JavaScript."""
-
-    if not isinstance(value, str):
-        return False
-    stripped = value.strip()
-    return "=>" in stripped or stripped.startswith("function")
 
 
 def _to_camel_case(key: str) -> str:
@@ -51,23 +42,19 @@ class DeckGLLayer:
 
         return ["https://unpkg.com/deck.gl@8.9.33/dist.min.js"]
 
-    def _serialise_props(self) -> Tuple[Dict[str, Any], Dict[str, str]]:
-        """Split Deck.GL properties into JSON-safe and raw-JS dictionaries."""
+    def _serialise_props(self) -> Dict[str, Any]:
+        """Convert Deck.GL properties into JSON-safe dictionary."""
 
         json_props: Dict[str, Any] = {"id": f"{self.id}-layer"}
-        raw_props: Dict[str, str] = {}
 
         for key, value in self.kwargs.items():
             camel_key = _to_camel_case(key)
             if camel_key == "data":
                 # ``data`` is injected at runtime once the promise resolves.
                 continue
-            if _is_js_literal(value):
-                raw_props[camel_key] = value
-            else:
-                json_props[camel_key] = value
+            json_props[camel_key] = value
 
-        return json_props, raw_props
+        return json_props
 
     def serialize(self, before_layer_id: str | None = None) -> Dict[str, Any]:
         """Return a JSON-serialisable configuration for the Deck.GL overlay."""
@@ -80,14 +67,14 @@ class DeckGLLayer:
         else:
             data_config = {"mode": "inline", "value": self.data}
 
-        json_props, raw_props = self._serialise_props()
+        json_props = self._serialise_props()
 
         return {
             "id": self.id,
             "before": before_layer_id,
             "layerType": self.layer_type,
             "data": data_config,
-            "props": {"json": json_props, "raw": raw_props},
+            "props": {"json": json_props},
         }
 
     def add_to(self, before_layer_id: str | None = None) -> str:
@@ -101,17 +88,13 @@ class DeckGLLayer:
             data_promise = f"Promise.resolve({json.dumps(config['data']['value'])})"
 
         json_props = config["props"]["json"].copy()
-        raw_props = dict(config["props"]["raw"])
 
         props_str_parts = ["                                    data: data"]
 
         for key, value in json_props.items():
             props_str_parts.append(
-                f"                                    {_to_camel_case(key)}: {json.dumps(value)}"
+                f"                                    {_to_camel_case(key)}: evaluateDeckProps({json.dumps(value)})"
             )
-
-        for key, value in raw_props.items():
-            props_str_parts.append(f"                                    {key}: {value}")
 
         props_str = ",\\n".join(props_str_parts)
 
