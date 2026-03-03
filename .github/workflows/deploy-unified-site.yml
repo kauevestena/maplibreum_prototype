@@ -81,7 +81,16 @@ jobs:
       # Create examples index page
       - name: Create examples index page
         run: |
-          cat > site/examples/index.html << 'EOF'
+          # Generate example list items from actual HTML files
+          EXAMPLE_ITEMS=""
+          for htmlfile in site/examples/*.html; do
+            filename=$(basename "$htmlfile")
+            # Create a human-readable title from the filename
+            title=$(echo "$filename" | sed 's/\.html$//' | sed 's/_/ /g' | sed 's/\b\(.\)/\u\1/g')
+            EXAMPLE_ITEMS="${EXAMPLE_ITEMS}              <li class=\"example-item\"><a href=\"${filename}\">${title}</a></li>\n"
+          done
+          
+          cat > site/examples/index.html << ENDOFFILE
           <!DOCTYPE html>
           <html lang="en">
           <head>
@@ -136,11 +145,6 @@ jobs:
                   .example-item a:hover {
                       color: #3498db;
                   }
-                  .description {
-                      color: #666;
-                      font-size: 0.9em;
-                      margin-top: 5px;
-                  }
                   .footer {
                       margin-top: 40px;
                       padding-top: 20px;
@@ -161,22 +165,7 @@ jobs:
               <p>Interactive MapLibre maps created with MapLibreum - a Python library for building beautiful, interactive maps.</p>
               
               <ul class="example-list">
-                  <li class="example-item">
-                      <a href="creative_maplibreum_examples.html">Creative MapLibreum Examples & Tutorials</a>
-                      <div class="description">Comprehensive collection of creative examples showcasing MapLibreum's features including markers, styling, and interactive elements.</div>
-                  </li>
-                  <li class="example-item">
-                      <a href="usage.html">Basic Usage Examples</a>
-                      <div class="description">Fundamental usage patterns for creating maps with controls, GeoJSON layers, and popups.</div>
-                  </li>
-                  <li class="example-item">
-                      <a href="new_features.html">New Features Demo</a>
-                      <div class="description">Demonstration of the latest MapLibreum features including sources, layers, and advanced controls.</div>
-                  </li>
-                  <li class="example-item">
-                      <a href="event_handling.html">Event Handling</a>
-                      <div class="description">Interactive examples showing how to handle map events like clicks and movements with callback functions.</div>
-                  </li>
+          $(echo -e "$EXAMPLE_ITEMS")
               </ul>
               
               <div class="footer">
@@ -185,7 +174,7 @@ jobs:
               </div>
           </body>
           </html>
-          EOF
+          ENDOFFILE
           
       # Create main landing page
       - name: Create main landing page
