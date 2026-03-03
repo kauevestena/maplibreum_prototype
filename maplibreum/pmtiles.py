@@ -15,6 +15,10 @@ class PMTilesProtocol:
 
     def register(self, map_instance: "Map") -> None:
         """Register the PMTiles protocol on the map instance."""
+        # Ensure we don't register the protocol twice
+        if getattr(map_instance, "_pmtiles_registered", False):
+            return
+
         map_instance.add_external_script(self.script_url)
 
         js_code = """
@@ -28,6 +32,7 @@ class PMTilesProtocol:
 })();
 """
         map_instance.add_on_load_js(js_code)
+        map_instance._pmtiles_registered = True
 
 
 class PMTilesSource(Source):

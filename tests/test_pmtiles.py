@@ -108,14 +108,13 @@ def test_pmtiles_protocol_register_multiple_times():
     protocol.register(m)
     protocol.register(m)
 
-    # The `add_external_script` doesn't enforce uniqueness, so it should be appended twice
-    # based on current implementation in `core.py`.
     scripts_urls = [s.get("src") for s in m.external_scripts]
-    assert scripts_urls.count(protocol.script_url) == 2
+    # Should only be appended once to avoid duplicate injection
+    assert scripts_urls.count(protocol.script_url) == 1
 
     js_code = "\n".join(m._on_load_callbacks)
-    # The registration script should appear twice
-    assert js_code.count("maplibregl.addProtocol('pmtiles'") == 2
+    # The registration script should appear only once to prevent maplibregl exceptions
+    assert js_code.count("maplibregl.addProtocol('pmtiles'") == 1
 
 
 def test_pmtiles_protocol_playwright(page):
