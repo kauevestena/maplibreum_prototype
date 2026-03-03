@@ -80,3 +80,60 @@ def test_live_data_fetcher_base():
 
     js_code = fetcher.to_js()
     assert "// No transformation applied" in js_code
+    assert "map.flyTo" in js_code
+    assert "speed: 0.5" in js_code
+
+
+def test_live_data_fetcher_with_transform():
+    """Test LiveDataFetcher with a custom transform function."""
+    fetcher = LiveDataFetcher(
+        source_id="test",
+        url="http://example.com/data.json",
+        transform_fn="function(data) { return {type: 'Feature'}; }"
+    )
+
+    js_code = fetcher.to_js()
+    assert "const transformData = function(data) { return {type: 'Feature'}; };" in js_code
+    assert "json = transformData(json);" in js_code
+    assert "// No transformation applied" not in js_code
+
+
+def test_live_data_fetcher_no_fly():
+    """Test LiveDataFetcher with fly_to disabled."""
+    fetcher = LiveDataFetcher(
+        source_id="test",
+        url="http://example.com/data.json",
+        fly_to=False
+    )
+
+    js_code = fetcher.to_js()
+    assert "// Fly-to disabled" in js_code
+    assert "map.flyTo" not in js_code
+
+
+def test_live_data_fetcher_custom_fly_speed():
+    """Test LiveDataFetcher with custom fly_speed."""
+    fetcher = LiveDataFetcher(
+        source_id="test",
+        url="http://example.com/data.json",
+        fly_speed=1.5
+    )
+
+    js_code = fetcher.to_js()
+    assert "map.flyTo" in js_code
+    assert "speed: 1.5" in js_code
+
+
+def test_live_data_fetcher_custom_initial_data():
+    """Test LiveDataFetcher with custom initial data."""
+    custom_data = {
+        "type": "FeatureCollection",
+        "features": []
+    }
+    fetcher = LiveDataFetcher(
+        source_id="test",
+        url="http://example.com/data.json",
+        initial_data=custom_data
+    )
+
+    assert fetcher.get_initial_data() == custom_data
