@@ -225,7 +225,13 @@ class MeasurementTool:
         -------
         float
             Distance in the configured units.
+
         """
+        if len(coords) < 2:
+            import warnings
+            warnings.warn("At least two coordinates are required to calculate distance.")
+            return 0.0
+
         import math
 
         def haversine(lon1, lat1, lon2, lat2):
@@ -305,6 +311,21 @@ class MeasurementTool:
             "layout": {"line-cap": "round", "line-join": "round"},
             "paint": {"line-color": self.line_color, "line-width": self.line_width},
             "filter": ["in", "$type", "LineString"],
+        }
+
+    def to_dict(self):
+        """Serialize configuration for template usage."""
+        return {
+            "source_id": self.source_id,
+            "points_layer_id": self.points_layer_id,
+            "lines_layer_id": self.lines_layer_id,
+            "position": self.position,
+            "units": self.units,
+            "point_color": self.point_color,
+            "line_color": self.line_color,
+            "point_radius": self.point_radius,
+            "line_width": self.line_width,
+            "id": self.id,
         }
 
     def to_css(self):
