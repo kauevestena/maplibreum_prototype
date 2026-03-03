@@ -3,6 +3,60 @@
 from maplibreum.core import Map
 
 
+def test_offset_the_vanishing_point_using_padding_with_python_api():
+    from maplibreum.controls import SidebarControl
+
+    sidebar_css = "\n".join(
+        [
+            ".rounded-rect { background: white; border-radius: 10px; box-shadow: 0 0 50px -25px black; }",
+            ".flex-center { position: absolute; display: flex; justify-content: center; align-items: center; }",
+            ".flex-center.left { left: 0; }",
+            ".flex-center.right { right: 0; }",
+            ".sidebar-content { position: absolute; width: 95%; height: 95%; font-family: Arial, Helvetica, sans-serif; font-size: 32px; color: gray; }",
+            ".sidebar-toggle { position: absolute; width: 1.3em; height: 1.3em; display: flex; justify-content: center; align-items: center; cursor: pointer; }",
+            ".sidebar-toggle.left { right: -1.5em; }",
+            ".sidebar-toggle.right { left: -1.5em; }",
+            ".maplibreum-sidebar { transition: transform 1s; z-index: 1; width: 300px; height: 100%; }",
+            ".left.collapsed { transform: translateX(-295px); }",
+            ".right.collapsed { transform: translateX(295px); }",
+        ]
+    )
+
+    m = Map(
+        map_style="https://demotiles.maplibre.org/style.json",
+        center=[-77.01866, 38.888],
+        zoom=4,
+        pitch=60,
+        custom_css=sidebar_css,
+    )
+
+    m.add_marker(coordinates=[-77.01866, 38.888])
+
+    left_sidebar = SidebarControl(
+        position="left",
+        html_content="Left Sidebar",
+        css_class="sidebar-content"
+    )
+
+    right_sidebar = SidebarControl(
+        position="right",
+        html_content="Right Sidebar",
+        css_class="sidebar-content"
+    )
+
+    m.add_control(left_sidebar)
+    m.add_control(right_sidebar)
+
+    html = m.render()
+
+    assert '"style": "https://demotiles.maplibre.org/style.json"' in html
+    assert '"center": [-77.01866, 38.888]' in html
+    assert '"zoom": 4' in html
+    assert '"pitch": 60' in html
+    assert "map.easeTo({ padding, duration: 1000 });" in html
+    assert "padding[id] = width" in html
+
+
 def test_offset_the_vanishing_point_using_padding():
     sidebar_css = "\n".join(
         [
