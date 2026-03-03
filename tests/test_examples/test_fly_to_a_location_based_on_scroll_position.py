@@ -84,41 +84,20 @@ def test_fly_to_a_location_based_on_scroll_position():
         ]
     )
 
-    scroll_js = "\n".join(
-        [
-            "const story = document.createElement('div');",
-            "story.id = 'features';",
-            "story.className = 'maplibreum-story';",
-            f"story.innerHTML = `{story_html}`;",
-            "document.body.appendChild(story);",
-            chapters_js,
-            "window.onscroll = function () {",
-            "    const chapterNames = Object.keys(chapters);",
-            "    for (let i = 0; i < chapterNames.length; i++) {",
-            "        const chapterName = chapterNames[i];",
-            "        if (isElementOnScreen(chapterName)) {",
-            "            setActiveChapter(chapterName);",
-            "            break;",
-            "        }",
-            "    }",
-            "};",
-            "let activeChapterName = 'baker';",
-            "function setActiveChapter(chapterName) {",
-            "    if (chapterName === activeChapterName) return;",
-            "    map.flyTo(chapters[chapterName]);",
-            "    document.getElementById(chapterName).classList.add('active');",
-            "    document.getElementById(activeChapterName).classList.remove('active');",
-            "    activeChapterName = chapterName;",
-            "}",
-            "function isElementOnScreen(id) {",
-            "    const element = document.getElementById(id);",
-            "    const bounds = element.getBoundingClientRect();",
-            "    return bounds.top < window.innerHeight && bounds.bottom > 0;",
-            "}",
-        ]
-    )
+    chapters_dict = {
+        'baker': {'bearing': 27, 'center': [-0.15591514, 51.51830379], 'zoom': 15.5, 'pitch': 20},
+        'aldgate': {'duration': 6000, 'center': [-0.07571203, 51.51424049], 'bearing': 150, 'zoom': 15, 'pitch': 0},
+        'london-bridge': {'bearing': 90, 'center': [-0.08533793, 51.50438536], 'zoom': 13, 'speed': 0.6, 'pitch': 40},
+        'woolwich': {'bearing': 90, 'center': [0.05991101, 51.48752939], 'zoom': 12.3},
+        'gloucester': {'bearing': 45, 'center': [-0.18335806, 51.49439521], 'zoom': 15.3, 'pitch': 20, 'speed': 0.5},
+        'caulfield-gardens': {'bearing': 180, 'center': [-0.19684993, 51.5033856], 'zoom': 12.3},
+        'telegraph': {'bearing': 90, 'center': [-0.10669358, 51.51433123], 'zoom': 17.3, 'pitch': 40},
+        'charing-cross': {'bearing': 90, 'center': [-0.12416858, 51.50779757], 'zoom': 14.3, 'pitch': 20},
+    }
 
-    m.add_on_load_js(scroll_js)
+    from maplibreum import StorytellingControl
+    story_control = StorytellingControl(story_html=story_html, chapters=chapters_dict)
+    m.add_control(story_control)
 
     html = m.render()
 
@@ -128,4 +107,6 @@ def test_fly_to_a_location_based_on_scroll_position():
     assert '"bearing": 27' in html
     assert '"pitch": 45' in html
     assert "map.flyTo(chapters[chapterName]);" in html
-    assert "window.onscroll" in html
+    assert "window.addEventListener('scroll'" in html
+    assert "baker" in html
+    assert "Arthur Cadogan West" in html

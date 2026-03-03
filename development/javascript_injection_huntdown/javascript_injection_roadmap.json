@@ -16,10 +16,10 @@
     "proper_api_only": 55,
     "other_patterns": 22,
     "completion_percentage": {
-      "phase_1": 72.0,
+      "phase_1": 76.0,
       "phase_2": 100.0,
       "phase_3": 40.9,
-      "overall": 78.9
+      "overall": 79.7
     }
   },
   "implementation_phases": {
@@ -44,9 +44,9 @@
         "LanguageControl"
       ],
       "completion_status": {
-        "completed": 18,
+        "completed": 19,
         "in_progress": 0,
-        "planned": 7
+        "planned": 6
       }
     },
     "phase_2": {
@@ -692,6 +692,27 @@
             "Implemented GlobeInteraction class in experimental module",
             "Created a new test to validate the Python API approach",
             "Maintained backward compatibility with the original test"
+          ]
+        },
+        "fly-to-a-location-based-on-scroll-position": {
+          "test_path": "tests/test_examples/test_fly_to_a_location_based_on_scroll_position.py",
+          "current_implementation": "improved",
+          "issues": [
+            "RESOLVED: Implemented StorytellingControl for scroll-based chapter navigation",
+            "RESOLVED: Removed manual DOM manipulation and event listeners"
+          ],
+          "required_apis": [
+            "StorytellingControl"
+          ],
+          "phase": "phase_1",
+          "priority": "medium",
+          "status": "completed",
+          "assigned_to": "copilot",
+          "completion_date": "2025-10-19",
+          "notes": "Added StorytellingControl to handle chapter-based scroll navigation without raw JS injection.",
+          "improvements_made": [
+            "Implemented StorytellingControl class in controls.py",
+            "Updated test to utilize StorytellingControl instead of `add_on_load_js`"
           ]
         }
       }
