@@ -2192,6 +2192,10 @@ class Map:
         """
         from tempfile import NamedTemporaryFile
 
+        # Ensure the filepath does not start with a dash by making it absolute
+        # to prevent argument injection into the CLI tool.
+        abs_filepath = os.path.abspath(filepath)
+
         html = self.render()
         tmp = NamedTemporaryFile("w", suffix=".html", delete=False, encoding="utf-8")
         tmp.write(html)
@@ -2199,16 +2203,19 @@ class Map:
 
         cmd = [
             "npx",
+            "--yes",
+            "--",
             "@maplibre/maplibre-gl-export",
             "--input",
             tmp.name,
             "--output",
-            filepath,
+            abs_filepath,
         ]
-        if width:
-            cmd.extend(["--width", str(width)])
-        if height:
-            cmd.extend(["--height", str(height)])
+        if width is not None:
+            # Cast to int to ensure no arbitrary strings (e.g., shell commands) are injected
+            cmd.extend(["--width", str(int(width))])
+        if height is not None:
+            cmd.extend(["--height", str(int(height))])
 
         try:
             subprocess.run(cmd, check=True)
