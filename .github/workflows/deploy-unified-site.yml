@@ -165,7 +165,7 @@ jobs:
               <p>Interactive MapLibre maps created with MapLibreum - a Python library for building beautiful, interactive maps.</p>
               
               <ul class="example-list">
-          $(echo -e "$EXAMPLE_ITEMS")
+          $(printf '%b' "$EXAMPLE_ITEMS")
               </ul>
               
               <div class="footer">
