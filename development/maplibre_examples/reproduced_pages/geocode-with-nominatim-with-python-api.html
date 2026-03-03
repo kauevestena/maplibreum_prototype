@@ -17,7 +17,7 @@
             padding: 0;
         }
 
-        #maplibreum_ba3f43d1f0294550b4b0001e783bb465 {
+        #maplibreum_0 {
             width: 100%;
             height: 500px;
             position: relative;
@@ -47,7 +47,7 @@
 
         }
 
-        #maplibreum_ba3f43d1f0294550b4b0001e783bb465 { width: 100%; height: 500px; }
+        #maplibreum_0 { width: 100%; height: 500px; }
 
 
 
@@ -60,7 +60,7 @@
   <p>Generated from test_geocode_with_nominatim_with_python_api.py by the automated test suite.</p>
 </div>
 
-    <div id="maplibreum_ba3f43d1f0294550b4b0001e783bb465">
+    <div id="maplibreum_0">
         
         
     </div>
@@ -94,7 +94,7 @@
 
         // Function to show error message when MapLibre fails to load
         function showMapError(message) {
-            const mapDiv = document.getElementById('maplibreum_ba3f43d1f0294550b4b0001e783bb465');
+            const mapDiv = document.getElementById('maplibreum_0');
             if (mapDiv) {
                 mapDiv.innerHTML = `
                     <div style="
@@ -123,6 +123,67 @@
             }
         }
 
+        function evaluateDeckExpression(expr, data) {
+            if (!Array.isArray(expr) || expr.length === 0) {
+                return expr;
+            }
+            const op = expr[0];
+            if (op === 'get') {
+                const propName = expr[1];
+                if (data && data.properties && propName in data.properties) {
+                    return data.properties[propName];
+                }
+                if (data && propName in data) {
+                    return data[propName];
+                }
+                return undefined;
+            }
+            if (op === 'has') {
+                const propName = expr[1];
+                if (data && data.properties && propName in data.properties) {
+                    return true;
+                }
+                if (data && propName in data) {
+                    return true;
+                }
+                return false;
+            }
+            if (op === 'literal') {
+                return expr[1];
+            }
+            if (['+', '-', '*', '/'].includes(op)) {
+                const a = evaluateDeckExpression(expr[1], data);
+                const b = evaluateDeckExpression(expr[2], data);
+                if (op === '+') return a + b;
+                if (op === '-') return a - b;
+                if (op === '*') return a * b;
+                if (op === '/') return a / b;
+            }
+            if (['==', '!=', '>', '<', '>=', '<='].includes(op)) {
+                const a = evaluateDeckExpression(expr[1], data);
+                const b = evaluateDeckExpression(expr[2], data);
+                if (op === '==') return a === b;
+                if (op === '!=') return a !== b;
+                if (op === '>') return a > b;
+                if (op === '<') return a < b;
+                if (op === '>=') return a >= b;
+                if (op === '<=') return a <= b;
+            }
+            return expr;
+        }
+
+        function evaluateDeckProps(value) {
+            if (Array.isArray(value)) {
+                if (value.length > 0 && typeof value[0] === 'string' && ['get', 'has', 'literal', '+', '-', '*', '/', '==', '!=', '>', '<', '>=', '<='].includes(value[0])) {
+                    return function(d) {
+                        return evaluateDeckExpression(value, d);
+                    };
+                }
+                return value;
+            }
+            return value;
+        }
+
         class MaplibreumDeckGLOverlayManager {
             constructor(map, overlays) {
                 this.map = map;
@@ -135,7 +196,6 @@
                     const props = normalised.props || {};
                     normalised.props = {
                         json: Object.assign({}, props.json || {}),
-                        raw: Object.assign({}, props.raw || {}),
                     };
                     this.configs[normalised.id] = normalised;
                 });
@@ -194,14 +254,9 @@
 
             _buildProps(config, data) {
                 const jsonProps = (config.props && config.props.json) || {};
-                const props = Object.assign({ data }, jsonProps);
-                const rawProps = (config.props && config.props.raw) || {};
-                Object.entries(rawProps).forEach(([key, value]) => {
-                    try {
-                        props[key] = eval('(' + value + ')');
-                    } catch (error) {
-                        console.warn(`Failed to evaluate Deck.GL property '${key}'`, error);
-                    }
+                const props = { data };
+                Object.entries(jsonProps).forEach(([key, value]) => {
+                    props[key] = evaluateDeckProps(value);
                 });
                 return props;
             }
@@ -311,13 +366,13 @@
         function initializeMap() {
             try {
         // Initialize map
-        var map = new maplibregl.Map({"container": "maplibreum_ba3f43d1f0294550b4b0001e783bb465", "style": "https://tiles.openfreemap.org/styles/bright", "center": [-87.61694, 41.86625], "zoom": 15.99, "pitch": 40, "bearing": 20});
+        var map = new maplibregl.Map({"container": "maplibreum_0", "style": "https://tiles.openfreemap.org/styles/bright", "center": [-87.61694, 41.86625], "zoom": 15.99, "pitch": 40, "bearing": 20});
 
         window.maplibreumMaps = window.maplibreumMaps || {};
-        window.maplibreumMaps["maplibreum_ba3f43d1f0294550b4b0001e783bb465"] = map;
+        window.maplibreumMaps["maplibreum_0"] = map;
         window.maplibreumMapsLoaded = window.maplibreumMapsLoaded || {};
         map.once('load', function() {
-            window.maplibreumMapsLoaded["maplibreum_ba3f43d1f0294550b4b0001e783bb465"] = true;
+            window.maplibreumMapsLoaded["maplibreum_0"] = true;
         });
 
 

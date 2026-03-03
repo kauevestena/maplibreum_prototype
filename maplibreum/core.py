@@ -3,7 +3,6 @@ import json
 import math
 import os
 import subprocess
-import uuid
 from dataclasses import dataclass, field
 from typing import Any, Dict, Iterable, List, Mapping, Optional, Set
 from urllib.parse import quote
@@ -11,6 +10,7 @@ from urllib.parse import quote
 from IPython.display import IFrame, display
 from jinja2 import Environment, FileSystemLoader
 
+from .utils import get_id
 from .babylon import BABYLON_JS_URL, BABYLON_LOADERS_JS_URL, BabylonLayer
 from .cluster import ClusteredGeoJson, MarkerCluster
 from .layers import Layer
@@ -399,7 +399,7 @@ class Map:
         self.template = self.env.get_template("map_template.html")
 
         # Unique ID for the map (important if multiple maps displayed in a notebook)
-        self.map_id = container_id or f"maplibreum_{uuid.uuid4().hex}"
+        self.map_id = container_id or get_id("maplibreum_")
 
         if projection is not None:
             self.set_projection(projection)
@@ -618,14 +618,14 @@ class Map:
                 layer_definition["source"] = source
             elif source is not None:
                 # Source is a dict or Source wrapper, so we add it to the map.
-                source_name = f"source_{uuid.uuid4().hex}"
+                source_name = get_id("source_")
                 self.add_source(source_name, source)
                 layer_definition["source"] = source_name
 
             if isinstance(layer_definition, Layer):
                 layer_definition = layer_definition.to_dict()
 
-            layer_id = layer_definition.get("id", f"layer_{uuid.uuid4().hex}")
+            layer_id = layer_definition.get("id", get_id("layer_"))
             layer_definition["id"] = layer_id
 
         self.layers.append(
@@ -716,7 +716,7 @@ class Map:
             configuration.
         """
 
-        layer_id = name or f"tilelayer_{uuid.uuid4().hex}"
+        layer_id = name or get_id("tilelayer_")
 
         if "{s}" in url and subdomains:
             tiles = [url.replace("{s}", s) for s in subdomains]
@@ -2326,7 +2326,7 @@ class Marker:
         is_feature_group = map_instance.__class__.__name__ == "FeatureGroup"
 
         if isinstance(self.icon, Icon):
-            layer_id = f"marker_{uuid.uuid4().hex}"
+            layer_id = get_id("marker_")
             source = {
                 "type": "geojson",
                 "data": {
@@ -2364,7 +2364,7 @@ class Marker:
             return self
 
         if is_feature_group:
-            layer_id = f"marker_{uuid.uuid4().hex}"
+            layer_id = get_id("marker_")
             source = {
                 "type": "geojson",
                 "data": {
@@ -2400,7 +2400,7 @@ class Marker:
                 map_instance.add_tooltip(self.tooltip, layer_id=layer_id)
             return self
 
-        self.id = f"marker_{uuid.uuid4().hex}"
+        self.id = get_id("marker_")
 
         if self.popup is not None and callable(getattr(self.popup, "render", None)):
             popup_content = self.popup.render({})
@@ -2461,7 +2461,7 @@ class GeoJson:
             A tooltip to display when hovering over a feature.
         """
         self.data = data
-        self.name = name if name else f"geojson_{uuid.uuid4().hex}"
+        self.name = name if name else get_id("geojson_")
         self.popup = popup
         self.tooltip = tooltip
 
@@ -2627,7 +2627,7 @@ class Circle:
         map_instance : maplibreum.Map
             The map instance to which the circle will be added.
         """
-        layer_id = f"circle_{uuid.uuid4().hex}"
+        layer_id = get_id("circle_")
         polygon = self._circle_polygon(self.location, self.radius)
         source = {
             "type": "geojson",
@@ -2707,7 +2707,7 @@ class CircleMarker:
         map_instance : maplibreum.Map
             The map instance to which the circle marker will be added.
         """
-        layer_id = f"circlemarker_{uuid.uuid4().hex}"
+        layer_id = get_id("circlemarker_")
         source = {
             "type": "geojson",
             "data": {
@@ -2769,7 +2769,7 @@ class PolyLine:
         map_instance : maplibreum.Map
             The map instance to which the polyline will be added.
         """
-        layer_id = f"polyline_{uuid.uuid4().hex}"
+        layer_id = get_id("polyline_")
         source = {
             "type": "geojson",
             "data": {
@@ -2847,7 +2847,7 @@ class Polygon:
         map_instance : maplibreum.Map
             The map instance to which the polygon will be added.
         """
-        layer_id = f"polygon_{uuid.uuid4().hex}"
+        layer_id = get_id("polygon_")
         coords = self.locations
         if coords[0] != coords[-1]:
             coords = coords + [coords[0]]
@@ -3028,7 +3028,7 @@ class FeatureGroup:
         name : str, optional
             The name of the feature group.
         """
-        self.name = name or f"featuregroup_{uuid.uuid4().hex}"
+        self.name = name or get_id("featuregroup_")
         self.sources = []
         self.layers = []
         self.popups = []
@@ -3069,11 +3069,11 @@ class FeatureGroup:
         if isinstance(source, str):
             layer_definition["source"] = source
         elif source is not None:
-            source_name = f"source_{uuid.uuid4().hex}"
+            source_name = get_id("source_")
             self.add_source(source_name, source)
             layer_definition["source"] = source_name
 
-        layer_id = layer_definition.get("id", f"layer_{uuid.uuid4().hex}")
+        layer_id = layer_definition.get("id", get_id("layer_"))
         layer_definition["id"] = layer_id
         self.layers.append(
             {"id": layer_id, "definition": layer_definition, "before": before}
