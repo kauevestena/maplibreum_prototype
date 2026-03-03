@@ -14,14 +14,14 @@ This document provides a comprehensive analysis of JavaScript code injection usa
 - **Proper API Usage**: 55 examples (44.7%) used only Python API methods before the roadmap work began
 - **Other**: 22 examples (17.9%) - unknown patterns or no implementation
 
-**Current Progress (as of 2025-10-17):**
-- **Examples Improved**: 36 (12 from Phase 1 + 15 from Phase 2 + 9 from Phase 3)
-- **Total Proper API Now**: 91 examples (55 baseline + 36 improved)
-- **Overall Proper API Usage**: 76.4% (94/123)
+**Current Progress (as of 2025-10-19):**
+- **Examples Improved**: 42 (18 from Phase 1 + 15 from Phase 2 + 9 from Phase 3)
+- **Total Proper API Now**: 97 examples (55 baseline + 42 improved)
+- **Overall Proper API Usage**: 78.9% (97/123)
 
 **📊 Phase 2: 100% Complete (15/15)** - All Phase 2 examples are now implemented with proper Python APIs.
 
-**Conclusion**: The roadmap claim of "all examples implemented" is technically accurate, but JavaScript injection was initially used in 37.4% of examples. Through systematic improvement efforts, proper Python API usage has increased from 44.7% to 76.4%, with 39 examples successfully converted from JavaScript injection to proper Python API implementations. **Phase 1 is now 60% complete (15/25), Phase 2 is 100% complete (15/15), and Phase 3 has progressed to 40.9% complete (9/22)!**
+**Conclusion**: The roadmap claim of "all examples implemented" is technically accurate, but JavaScript injection was initially used in 37.4% of examples. Through systematic improvement efforts, proper Python API usage has increased from 44.7% to 78.9%, with 42 examples successfully converted from JavaScript injection to proper Python API implementations. **Phase 1 is now 72.0% complete (18/25), Phase 2 is 100% complete (15/15), and Phase 3 has progressed to 40.9% complete (9/22)!**
 
 ## Detailed Findings
 
@@ -709,6 +709,25 @@ The JSON tracker serves as a living document to monitor progress as examples are
 While MapLibreum achieves 100% example coverage as claimed in the roadmap, **37.4% of examples use JavaScript injection** rather than proper Python API methods. This represents a significant opportunity for improvement that would make the library more pythonic, maintainable, and better integrated with Python workflows.
 
 The analysis confirms the original suspicion: many examples are implemented with JavaScript code injection rather than true API modules. A systematic conversion effort would greatly improve the library's quality and usability.
+### Recent Progress (2025-10-19)
+
+**API Implementation:**
+- ✅ **`Map.rotate_to()`**: Implemented to support simple camera rotations natively without raw JavaScript injection.
+- ✅ **`LanguageControl`**: Implemented to provide interactive language toggle buttons for maps, removing manual DOM and event listener creation.
+
+**Example Conversions:**
+- ✅ **`test_variable_label_placement`**: Converted to Python API by using `Map.rotate_to()`.
+- ✅ **`test_variable_label_placement_with_offset`**: Converted to Python API by using `Map.rotate_to()`.
+- ✅ **`test_change_a_maps_language`**: Converted to Python API by utilizing the new `LanguageControl`.
+
+**Current Status:**
+- **Phase 1 Progress**: 72.0% complete (18/25 examples improved)
+- **Phase 2 Progress**: 100% complete (15/15 examples improved)
+- **Phase 3 Progress**: 40.9% complete (9/22 examples improved)
+- **Overall Progress**: Increased from 76.4% to 78.9% proper API usage
+- **Backward Compatibility**: All tests pass.
+- **Infrastructure**: New `Map.rotate_to()` method and `LanguageControl` available.
+
 ### Recent Progress (2025-10-18)
 
 **API Implementation:**
