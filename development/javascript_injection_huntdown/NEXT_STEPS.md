@@ -4,8 +4,8 @@
 
 After completing the tracking audit (see [PROGRESS_REPORT_2025_10_09_TRACKING_AUDIT.md](PROGRESS_REPORT_2025_10_09_TRACKING_AUDIT.md)), the roadmap is now accurate:
 
-- **Overall Progress**: 78.9% (97/123 examples)
-- **Phase 1**: 72.0% (18/25 examples)
+- **Overall Progress**: 79.7% (98/123 examples)
+- **Phase 1**: 76.0% (19/25 examples)
 - **Phase 2**: 100% (15/15 examples)
 - **Phase 3**: 40.9% (9/22 examples)
 
@@ -75,9 +75,9 @@ After completing the tracking audit (see [PROGRESS_REPORT_2025_10_09_TRACKING_AU
 
 ---
 
-### Priority 3: Raise Phase 1 Completion (13 examples remaining)
+### Priority 3: Raise Phase 1 Completion (6 examples remaining)
 
-Phase 1 still has 13 JavaScript-injection-first demos that rely on `add_on_load_js()` for navigation, pointer inspection, or bespoke UI toggles.
+Phase 1 still has 6 JavaScript-injection-first demos that rely on `add_on_load_js()` for navigation, pointer inspection, or bespoke UI toggles.
 
 **Focus Areas:**
 - Harden the navigation utilities (`Map.fly_to`, `Map.ease_to`, sequencing helpers) so every tutorial-level map interaction is injection-free
@@ -193,7 +193,7 @@ Phase 1 still has 13 JavaScript-injection-first demos that rely on `add_on_load_
 
 With Phase 2 now fully complete and overall progress at 69.1%, the roadmap turns to the remaining high-impact injection hotspots. The immediate priority is to **replace the protocol and deck.gl JavaScript shims with native Python APIs**, raising Phase 3 coverage to 27.3% and unlocking PMTiles, deck.gl toggling, and custom protocol workflows for users.
 
-Once those integrations land, finish the drawing-tool wrappers and reinvest momentum into the 13 outstanding Phase 1 demos. This cadence keeps the spotlight on visible wins while steadily marching toward the 80% proper-API usage objective and, ultimately, a zero-injection example gallery.
+Once those integrations land, finish the drawing-tool wrappers and reinvest momentum into the 6 outstanding Phase 1 demos. This cadence keeps the spotlight on visible wins while steadily marching toward the 80% proper-API usage objective and, ultimately, a zero-injection example gallery.
 
 ---
 

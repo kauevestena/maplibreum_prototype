@@ -1448,6 +1448,96 @@ class SidebarControl:
         }})();
         """
 
+class StorytellingControl:
+    """Control for creating a storytelling map based on scroll position.
+
+    This control creates a scrollable sidebar with different chapters. As the user
+    scrolls through the chapters, the map automatically flies to the configured
+    location and orientation for each chapter.
+    """
+
+    def __init__(
+        self,
+        story_html: str,
+        chapters: dict,
+        css_class: str = "maplibreum-story",
+    ) -> None:
+        """Initialize the storytelling control.
+
+        Parameters
+        ----------
+        story_html : str
+            The raw HTML content for the story chapters. Each chapter should be
+            wrapped in an element with an ID that matches a key in the `chapters` dict.
+        chapters : dict
+            A dictionary mapping chapter IDs to camera options (e.g., center, zoom, bearing, pitch).
+            These options are passed to MapLibre's `flyTo` method.
+        css_class : str, optional
+            The CSS class applied to the story container container, by default "maplibreum-story".
+        """
+        self.story_html = story_html
+        self.chapters = chapters
+        self.css_class = css_class
+
+    def to_dict(self) -> dict:
+        """Return dict representation. For storytelling, no native MapLibre control is created."""
+        return {}
+
+    def to_js(self) -> str:
+        """Generate the JavaScript code to initialize the storytelling behavior.
+
+        Returns
+        -------
+        str
+            The JavaScript code for creating the story DOM elements and attaching
+            the scroll event listener to update the map camera.
+        """
+        import json
+        chapters_json = json.dumps(self.chapters)
+
+        return f"""
+        const chapters = {chapters_json};
+        const story = document.createElement('div');
+        story.id = 'features';
+        story.className = '{self.css_class}';
+        story.innerHTML = `{self.story_html}`;
+        document.body.appendChild(story);
+
+        window.addEventListener('scroll', function () {{
+            const chapterNames = Object.keys(chapters);
+            for (let i = 0; i < chapterNames.length; i++) {{
+                const chapterName = chapterNames[i];
+                if (isElementOnScreen(chapterName)) {{
+                    setActiveChapter(chapterName);
+                    break;
+                }}
+            }}
+        }});
+
+        let activeChapterName = Object.keys(chapters)[0];
+
+        function setActiveChapter(chapterName) {{
+            if (chapterName === activeChapterName) return;
+            map.flyTo(chapters[chapterName]);
+
+            const currentElement = document.getElementById(chapterName);
+            const activeElement = document.getElementById(activeChapterName);
+
+            if (currentElement) currentElement.classList.add('active');
+            if (activeElement) activeElement.classList.remove('active');
+
+            activeChapterName = chapterName;
+        }}
+
+        function isElementOnScreen(id) {{
+            const element = document.getElementById(id);
+            if (!element) return false;
+            const bounds = element.getBoundingClientRect();
+            return bounds.top < window.innerHeight && bounds.bottom > 0;
+        }}
+        """
+
+
 class PanelControl:
     """A floating panel control that can contain arbitrary HTML and forms.
 
