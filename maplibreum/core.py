@@ -1372,6 +1372,12 @@ class Map:
         js_code = f"map.setSourceTileLodParams({max_zoom_levels}, {tile_count_ratio});"
         self.add_on_load_js(js_code)
 
+    def rotate_to(self, bearing: float, **options) -> None:
+        import json
+        opts_str = ", " + json.dumps(options) if options else ""
+        js = f"map.rotateTo({bearing}{opts_str});"
+        self.add_on_load_js(js)
+
     def add_on_load_js(self, code: str) -> None:
         """Schedule raw JavaScript to execute within the load handler."""
 

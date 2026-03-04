@@ -11,15 +11,15 @@
   },
   "summary": {
     "total_examples": 123,
-    "javascript_injection_only": 26,
-    "mixed_approach": 20,
+    "javascript_injection_only": 31,
+    "mixed_approach": 12,
     "proper_api_only": 55,
     "other_patterns": 22,
     "completion_percentage": {
-      "phase_1": 76.0,
-      "phase_2": 100.0,
-      "phase_3": 40.9,
-      "overall": 79.7
+      "phase_1": 82.4,
+      "phase_2": 88.2,
+      "phase_3": 100.0,
+      "overall": 75.6
     }
   },
   "implementation_phases": {
@@ -27,7 +27,7 @@
       "title": "Core API Methods Implementation",
       "description": "Convert JavaScript-only examples by implementing navigation, events, and basic UI controls",
       "priority": "high",
-      "target_examples": 25,
+      "target_examples": 17,
       "estimated_effort": "3-4 months",
       "required_apis": [
         "Map.fly_to()",
@@ -44,16 +44,16 @@
         "LanguageControl"
       ],
       "completion_status": {
-        "completed": 19,
+        "completed": 14,
         "in_progress": 0,
-        "planned": 6
+        "planned": 3
       }
     },
     "phase_2": {
       "title": "Enhanced Features",
       "description": "Improve examples by expanding the animation system, real-time updates, and map synchronization.",
       "priority": "medium",
-      "target_examples": 15,
+      "target_examples": 17,
       "estimated_effort": "2-3 months",
       "required_apis": [
         "SliderControl",
@@ -65,14 +65,14 @@
       "completion_status": {
         "completed": 15,
         "in_progress": 0,
-        "planned": 0
+        "planned": 2
       }
     },
     "phase_3": {
       "title": "Advanced Integration",
       "description": "Create proper wrappers for external library integration",
       "priority": "lower",
-      "target_examples": 22,
+      "target_examples": 9,
       "estimated_effort": "4-5 months",
       "required_apis": [
         "ThreeJSLayer",
@@ -83,14 +83,14 @@
       "completion_status": {
         "completed": 9,
         "in_progress": 0,
-        "planned": 13
+        "planned": 0
       }
     }
   },
   "examples": {
     "note": "This section provides detailed tracking for high-priority examples. Count values reflect the total inventory, while the detailed listings currently cover 25 of the 26 JavaScript-only examples and 9 of the 20 mixed examples. See JAVASCRIPT_INJECTION_ANALYSIS.md for the complete catalog of all 46 examples using JavaScript injection.",
     "javascript_injection_only": {
-      "count": 26,
+      "count": 31,
       "description": "Examples that use only JavaScript injection without proper Python API methods (detailed tracking)",
       "examples": {
         "fly-to-a-location": {
@@ -714,11 +714,56 @@
             "Implemented StorytellingControl class in controls.py",
             "Updated test to utilize StorytellingControl instead of `add_on_load_js`"
           ]
+        },
+        "change-a-maps-language": {
+          "name": "change-a-maps-language",
+          "description": "Convert change-a-maps-language example to use proper Python API.",
+          "status": "completed",
+          "phase": "phase_1",
+          "assigned_to": "copilot",
+          "priority": "medium",
+          "required_apis": []
+        },
+        "filter-layer-symbols-using-global-state": {
+          "name": "filter-layer-symbols-using-global-state",
+          "description": "Convert filter-layer-symbols-using-global-state example to use proper Python API.",
+          "status": "pending",
+          "phase": "phase_1",
+          "assigned_to": "copilot",
+          "priority": "medium",
+          "required_apis": []
+        },
+        "filter-symbols-by-toggling-a-list": {
+          "name": "filter-symbols-by-toggling-a-list",
+          "description": "Convert filter-symbols-by-toggling-a-list example to use proper Python API.",
+          "status": "pending",
+          "phase": "phase_1",
+          "assigned_to": "copilot",
+          "priority": "medium",
+          "required_apis": []
+        },
+        "variable-label-placement": {
+          "name": "variable-label-placement",
+          "description": "Convert variable-label-placement example to use proper Python API.",
+          "status": "completed",
+          "phase": "phase_1",
+          "assigned_to": "copilot",
+          "priority": "medium",
+          "required_apis": []
+        },
+        "variable-label-placement-with-offset": {
+          "name": "variable-label-placement-with-offset",
+          "description": "Convert variable-label-placement-with-offset example to use proper Python API.",
+          "status": "completed",
+          "phase": "phase_1",
+          "assigned_to": "copilot",
+          "priority": "medium",
+          "required_apis": []
         }
       }
     },
     "mixed_approach": {
-      "count": 20,
+      "count": 12,
       "description": "Examples that use both Python API methods AND JavaScript injection (detailed tracking)",
       "examples": {
         "animate-a-point-along-a-route": {
@@ -992,6 +1037,33 @@
           "assigned_to": null,
           "completion_date": "2025-10-08",
           "notes": "Successfully converted using MeasurementTool with Python-based Haversine calculations. Eliminates Turf.js dependency. Supports multiple distance units."
+        },
+        "create-a-draggable-point": {
+          "name": "create-a-draggable-point",
+          "description": "Convert create-a-draggable-point example to use proper Python API.",
+          "status": "pending",
+          "phase": "phase_1",
+          "assigned_to": "copilot",
+          "priority": "medium",
+          "required_apis": []
+        },
+        "display-html-clusters-with-custom-properties": {
+          "name": "display-html-clusters-with-custom-properties",
+          "description": "Convert display-html-clusters-with-custom-properties example to use proper Python API.",
+          "status": "pending",
+          "phase": "phase_2",
+          "assigned_to": "copilot",
+          "priority": "medium",
+          "required_apis": []
+        },
+        "generate-and-add-a-missing-icon-to-the-map": {
+          "name": "generate-and-add-a-missing-icon-to-the-map",
+          "description": "Convert generate-and-add-a-missing-icon-to-the-map example to use proper Python API.",
+          "status": "pending",
+          "phase": "phase_2",
+          "assigned_to": "copilot",
+          "priority": "medium",
+          "required_apis": []
         }
       }
     },

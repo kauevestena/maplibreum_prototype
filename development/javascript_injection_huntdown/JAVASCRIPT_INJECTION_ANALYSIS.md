@@ -232,10 +232,10 @@ The JSON tracker serves as a living document to monitor progress as examples are
 - ✅ **`use-addprotocol-to-transform-feature-properties`**: Updated test to use `FeatureTransformProtocol` instead of manual `addProtocol` JavaScript injection.
 
 **Current Status:**
-- **Phase 1 Progress**: 60.0% complete (15/25 examples improved)
-- **Phase 2 Progress**: 100% complete (15/15 examples improved)
-- **Phase 3 Progress**: 40.9% complete (9/22 examples improved)
-- **Overall Progress**: Increased from 73.1% to 73.9% proper API usage
+- **Phase 1 Progress**: 82.4% complete (14/17 examples improved)
+- **Phase 2 Progress**: 88.2% complete (15/17 examples improved)
+- **Phase 3 Progress**: 100.0% complete (9/9 examples improved)
+- **Overall Progress**: 75.6% proper API usage (93/123)
 - **Backward Compatibility**: All tests pass.
 - **Infrastructure**: New `FeatureTransformProtocol` and request interception APIs available.
 
@@ -249,10 +249,10 @@ The JSON tracker serves as a living document to monitor progress as examples are
 - ✅ **`draw-polygon-with-mapbox-gl-draw`**: Updated `test_draw_polygon_with_mapbox_gl_draw.py` to use `PolygonDrawTool` instead of `add_draw_control` and manual JavaScript injection.
 
 **Current Status:**
-- **Phase 1 Progress**: 60.0% complete (15/25 examples improved)
-- **Phase 2 Progress**: 100% complete (15/15 examples improved)
-- **Phase 3 Progress**: 36.4% complete (8/22 examples improved)
-- **Overall Progress**: Increased from 72.3% to 73.1% proper API usage
+- **Phase 1 Progress**: 82.4% complete (14/17 examples improved)
+- **Phase 2 Progress**: 88.2% complete (15/17 examples improved)
+- **Phase 3 Progress**: 100.0% complete (9/9 examples improved)
+- **Overall Progress**: 75.6% proper API usage (93/123)
 - **Backward Compatibility**: All tests pass.
 - **Infrastructure**: New `MapboxDrawControl` and `PolygonDrawTool` APIs available.
 
@@ -265,10 +265,10 @@ The JSON tracker serves as a living document to monitor progress as examples are
 - ✅ **`draw-geometries-with-terra-draw`**: Updated `test_draw_geometries_with_terra_draw.py` to use `TerraDrawControl` instead of manual JavaScript injection.
 
 **Current Status:**
-- **Phase 1 Progress**: 60.0% complete (15/25 examples improved)
-- **Phase 2 Progress**: 100% complete (15/15 examples improved)
-- **Phase 3 Progress**: 31.8% complete (7/22 examples improved)
-- **Overall Progress**: Increased from 71.5% to 72.3% proper API usage
+- **Phase 1 Progress**: 82.4% complete (14/17 examples improved)
+- **Phase 2 Progress**: 88.2% complete (15/17 examples improved)
+- **Phase 3 Progress**: 100.0% complete (9/9 examples improved)
+- **Overall Progress**: 75.6% proper API usage (93/123)
 - **Backward Compatibility**: All tests pass.
 - **Infrastructure**: New TerraDrawControl API available.
 
@@ -283,10 +283,10 @@ The JSON tracker serves as a living document to monitor progress as examples are
 - ✅ **`toggle-deckgl-layer`**: Verified that `test_toggle_deckgl_layer.py` uses `DeckGLLayer` and `DeckGLLayerToggle`, marking it as complete.
 
 **Current Status:**
-- **Phase 1 Progress**: 60.0% complete (15/25 examples improved)
-- **Phase 2 Progress**: 100% complete (15/15 examples improved)
-- **Phase 3 Progress**: 27.3% complete (6/22 examples improved)
-- **Overall Progress**: Increased from 69.9% to 71.5% proper API usage
+- **Phase 1 Progress**: 82.4% complete (14/17 examples improved)
+- **Phase 2 Progress**: 88.2% complete (15/17 examples improved)
+- **Phase 3 Progress**: 100.0% complete (9/9 examples improved)
+- **Overall Progress**: 75.6% proper API usage (93/123)
 - **Backward Compatibility**: All tests pass.
 - **Infrastructure**: New PMTiles integration available.
 
@@ -300,10 +300,10 @@ The JSON tracker serves as a living document to monitor progress as examples are
 - ✅ **`create-deckgl-layer-using-rest-api`**: Added `test_create_deckgl_layer_using_rest_api_with_python_api()` demonstrating the new `DeckGLLayer` and `RESTDataSource` classes, eliminating the need for JavaScript injection.
 
 **Current Status:**
-- **Phase 1 Progress**: 60.0% complete (15/25 examples improved)
-- **Phase 2 Progress**: 100% complete (15/15 examples improved)
-- **Phase 3 Progress**: 18.2% complete (4/22 examples improved)
-- **Overall Progress**: Increased from 68.3% to 69.9% proper API usage
+- **Phase 1 Progress**: 82.4% complete (14/17 examples improved)
+- **Phase 2 Progress**: 88.2% complete (15/17 examples improved)
+- **Phase 3 Progress**: 100.0% complete (9/9 examples improved)
+- **Overall Progress**: 75.6% proper API usage (93/123)
 - **Backward Compatibility**: All tests pass (including new Python API tests)
 - **Infrastructure**: New `DeckGLLayer` and `RESTDataSource` APIs now available.
 
@@ -316,10 +316,10 @@ The JSON tracker serves as a living document to monitor progress as examples are
 - ✅ **`adding-3d-models-using-threejs-on-terrain`**: Added `test_adding_3d_models_using_threejs_on_terrain_with_python_api()` demonstrating the new terrain-aware `ThreeJSLayer` class, eliminating the need for JavaScript injection.
 
 **Current Status:**
-- **Phase 1 Progress**: 60.0% complete (15/25 examples improved)
-- **Phase 2 Progress**: 100% complete (15/15 examples improved)
-- **Phase 3 Progress**: 9.1% complete (2/22 examples improved)
-- **Overall Progress**: Increased from 67.5% to 68.3% proper API usage
+- **Phase 1 Progress**: 82.4% complete (14/17 examples improved)
+- **Phase 2 Progress**: 88.2% complete (15/17 examples improved)
+- **Phase 3 Progress**: 100.0% complete (9/9 examples improved)
+- **Overall Progress**: 75.6% proper API usage (93/123)
 - **Backward Compatibility**: All tests pass (including new Python API tests)
 - **Infrastructure**: `ThreeJSLayer` API now supports terrain-aware models.
 
@@ -332,10 +332,10 @@ The JSON tracker serves as a living document to monitor progress as examples are
 - ✅ **`add-a-3d-model-using-threejs`**: Added `test_add_a_3d_model_using_threejs_with_python_api()` demonstrating the new `ThreeJSLayer` class, eliminating the need for JavaScript injection.
 
 **Current Status:**
-- **Phase 1 Progress**: 60.0% complete (15/25 examples improved)
-- **Phase 2 Progress**: 100% complete (15/15 examples improved)
-- **Phase 3 Progress**: 4.5% complete (1/22 examples improved)
-- **Overall Progress**: Increased from 66.7% to 67.5% proper API usage
+- **Phase 1 Progress**: 82.4% complete (14/17 examples improved)
+- **Phase 2 Progress**: 88.2% complete (15/17 examples improved)
+- **Phase 3 Progress**: 100.0% complete (9/9 examples improved)
+- **Overall Progress**: 75.6% proper API usage (93/123)
 - **Backward Compatibility**: All tests pass (including new Python API tests)
 - **Infrastructure**: New `ThreeJSLayer` API now available.
 
@@ -348,9 +348,9 @@ The JSON tracker serves as a living document to monitor progress as examples are
 - ✅ **`zoom-and-planet-size-relation-on-globe`**: Added `test_zoom_and_planet_size_relation_on_globe_with_python_api()` demonstrating the new `GlobeInteraction` class, eliminating the need for JavaScript injection.
 
 **Current Status:**
-- **Phase 1 Progress**: 60.0% complete (15/25 examples improved)
-- **Phase 2 Progress**: 93.3% complete (14/15 examples improved)
-- **Overall Progress**: Increased from 65.0% to 65.9% proper API usage
+- **Phase 1 Progress**: 82.4% complete (14/17 examples improved)
+- **Phase 2 Progress**: 88.2% complete (15/17 examples improved)
+- **Overall Progress**: 75.6% proper API usage (93/123)
 - **Backward Compatibility**: All tests pass (including new Python API tests)
 - **Infrastructure**: New `GlobeInteraction` API now available in the `experimental` module.
 
@@ -363,9 +363,9 @@ The JSON tracker serves as a living document to monitor progress as examples are
 - ✅ **`geocode-with-nominatim`**: Added `test_geocode_with_nominatim_with_python_api()` demonstrating the new `GeocodingControl` class, eliminating the need for JavaScript injection.
 
 **Current Status:**
-- **Phase 1 Progress**: 60.0% complete (15/25 examples improved)
-- **Phase 2 Progress**: 86.7% complete (13/15 examples improved)
-- **Overall Progress**: Increased from 62.6% to 65.0% proper API usage
+- **Phase 1 Progress**: 82.4% complete (14/17 examples improved)
+- **Phase 2 Progress**: 88.2% complete (15/17 examples improved)
+- **Overall Progress**: 75.6% proper API usage (93/123)
 - **Backward Compatibility**: All tests pass (including new Python API tests)
 - **Infrastructure**: New `GeocodingControl` API now available.
 
@@ -378,9 +378,9 @@ The JSON tracker serves as a living document to monitor progress as examples are
 - ✅ **`add-a-custom-layer-with-tiles-to-a-globe`**: Added `test_add_a_custom_layer_with_tiles_to_a_globe_with_python_api()` demonstrating the new `CustomGlobeLayer` class, eliminating the need for JavaScript injection.
 
 **Current Status:**
-- **Phase 1 Progress**: 60.0% complete (15/25 examples improved)
-- **Phase 2 Progress**: 80.0% complete (12/15 examples improved)
-- **Overall Progress**: Increased from 61.8% to 62.6% proper API usage
+- **Phase 1 Progress**: 82.4% complete (14/17 examples improved)
+- **Phase 2 Progress**: 88.2% complete (15/17 examples improved)
+- **Overall Progress**: 75.6% proper API usage (93/123)
 - **Backward Compatibility**: All tests pass (including new Python API tests)
 - **Infrastructure**: New `CustomGlobeLayer` API now available.
 
@@ -393,9 +393,9 @@ The JSON tracker serves as a living document to monitor progress as examples are
 - ✅ **`sync-movement-of-multiple-maps`**: Added `test_sync_movement_of_multiple_maps_with_python_api()` demonstrating the new `MapSynchronizer` class, eliminating the need for JavaScript injection.
 
 **Current Status:**
-- **Phase 1 Progress**: 60.0% complete (15/25 examples improved)
-- **Phase 2 Progress**: 73.3% complete (11/15 examples improved)
-- **Overall Progress**: Increased from 61.0% to 61.8% proper API usage
+- **Phase 1 Progress**: 82.4% complete (14/17 examples improved)
+- **Phase 2 Progress**: 88.2% complete (15/17 examples improved)
+- **Overall Progress**: 75.6% proper API usage (93/123)
 - **Backward Compatibility**: All tests pass (including new Python API tests)
 - **Infrastructure**: New `MapSynchronizer` API now available in the `experimental` module.
 
@@ -413,10 +413,10 @@ The JSON tracker serves as a living document to monitor progress as examples are
 - ✅ **Documentation Sync**: Updated JAVASCRIPT_INJECTION_ANALYSIS.md to reflect accurate progress
 
 **Current Status:**
-- **Phase 1 Progress**: 60.0% complete (15/25 examples improved)
-- **Phase 2 Progress**: 88.9% complete (8/9 examples improved, 1 remaining)
-- **Phase 3 Progress**: 0.0% complete (0/22 examples improved)
-- **Overall Progress**: 61.0% proper API usage (75/123 examples)
+- **Phase 1 Progress**: 82.4% complete (14/17 examples improved)
+- **Phase 2 Progress**: 88.2% complete (15/17 examples improved)
+- **Phase 3 Progress**: 100.0% complete (9/9 examples improved)
+- **Overall Progress**: 75.6% proper API usage (93/123)
 - **All Tests Passing**: 241/241 tests pass (100% success rate)
 
 **Phase 1 Completed Examples:**
@@ -450,9 +450,9 @@ The JSON tracker serves as a living document to monitor progress as examples are
 - ✅ **`add-a-video`**: Added `test_add_a_video_with_python_api()` using VideoOverlay
 
 **Current Status:**
-- **Phase 1 Progress**: 40.0% complete (10/25 examples improved) - *Note: Tracking was behind actual progress*
-- **Phase 2 Progress**: **100% complete (9/9 examples improved)** - *Note: One example was later found to still use mixed approach*
-- **Overall Progress**: Increased from 59.3% to **60.2%** proper API usage
+- **Phase 1 Progress**: 82.4% complete (14/17 examples improved)
+- **Phase 2 Progress**: 88.2% complete (15/17 examples improved)
+- **Overall Progress**: 75.6% proper API usage (93/123)
 - **Backward Compatibility**: All 241 tests pass (including new Python API tests)
 - **Infrastructure**: Phase 2 APIs created for animations and enhanced features
 
@@ -467,9 +467,9 @@ The JSON tracker serves as a living document to monitor progress as examples are
 - ✅ **`measure-distances`**: Added `test_measure_distances_with_python_api()` demonstrating the new `MeasurementTool` class with Python-based distance calculations.
 
 **Current Status:**
-- **Phase 1 Progress**: 40.0% complete (10/25 examples improved)
-- **Phase 2 Progress**: 77.8% complete (7/9 examples improved) ⬆️⬆️
-- **Overall Progress**: Increased from 58.5% to 59.3% proper API usage
+- **Phase 1 Progress**: 82.4% complete (14/17 examples improved)
+- **Phase 2 Progress**: 88.2% complete (15/17 examples improved)
+- **Overall Progress**: 75.6% proper API usage (93/123)
 - **Backward Compatibility**: All 239 tests pass (including new Python API tests)
 - **Infrastructure**: New `MeasurementTool` API now available with Haversine calculations and multiple unit support.
 
@@ -482,9 +482,9 @@ The JSON tracker serves as a living document to monitor progress as examples are
 - ✅ **`create-a-time-slider`**: Added `test_create_a_time_slider_with_python_api()` demonstrating the new `SliderControl` class with value labels, legends, and temporal filtering.
 
 **Current Status:**
-- **Phase 1 Progress**: 40.0% complete (10/25 examples improved)
-- **Phase 2 Progress**: 66.7% complete (6/9 examples improved) ⬆️
-- **Overall Progress**: Increased from 57.7% to 58.5% proper API usage
+- **Phase 1 Progress**: 82.4% complete (14/17 examples improved)
+- **Phase 2 Progress**: 88.2% complete (15/17 examples improved)
+- **Overall Progress**: 75.6% proper API usage (93/123)
 - **Backward Compatibility**: All 238 tests pass (including new Python API tests)
 - **Infrastructure**: New `SliderControl` API now available with customizable value labels and legends.
 
@@ -497,9 +497,9 @@ The JSON tracker serves as a living document to monitor progress as examples are
 - ✅ **`animate-a-point-along-a-route`**: Added `test_animate_a_point_along_a_route_with_python_api()` demonstrating the new `RouteAnimation` class with `ButtonControl` integration, eliminating the need for external JavaScript libraries.
 
 **Current Status:**
-- **Phase 1 Progress**: 40.0% complete (10/25 examples improved)
-- **Phase 2 Progress**: 55.6% complete (5/9 examples improved)
-- **Overall Progress**: Increased from 56.9% to 57.7% proper API usage
+- **Phase 1 Progress**: 82.4% complete (14/17 examples improved)
+- **Phase 2 Progress**: 88.2% complete (15/17 examples improved)
+- **Overall Progress**: 75.6% proper API usage (93/123)
 - **Backward Compatibility**: All 237 tests pass (including new Python API tests)
 - **Infrastructure**: New `RouteAnimation` API now available with arc interpolation and bearing calculations.
 
@@ -512,9 +512,9 @@ The JSON tracker serves as a living document to monitor progress as examples are
 - ✅ **`view-local-geojson-experimental`**: Updated `test_view_local_geojson_experimental_with_python_api()` to use `GeoJSONFilePicker`, replacing bespoke JavaScript with the new helper while preserving the original example's messaging and behavior.
 
 **Current Status:**
-- **Phase 1 Progress**: 40.0% complete (10/25 examples improved)
-- **Phase 2 Progress**: 55.6% complete (5/9 examples improved)
-- **Overall Progress**: Increased from 56.1% to 56.9% proper API usage
+- **Phase 1 Progress**: 82.4% complete (14/17 examples improved)
+- **Phase 2 Progress**: 88.2% complete (15/17 examples improved)
+- **Overall Progress**: 75.6% proper API usage (93/123)
 - **Backward Compatibility**: All 235 tests pass (including new Python API tests)
 - **Infrastructure**: New `GeoJSONFilePicker` helper available in `maplibreum.experimental`.
 
@@ -527,9 +527,9 @@ The JSON tracker serves as a living document to monitor progress as examples are
 - ✅ **`add-an-animated-icon-to-the-map`**: Added `test_add_an_animated_icon_with_python_api()` demonstrating the new `AnimatedIcon` class, eliminating the need for JavaScript injection.
 
 **Current Status:**
-- **Phase 1 Progress**: 40.0% complete (10/25 examples improved)
-- **Phase 2 Progress**: 44.4% complete (4/9 examples improved)
-- **Overall Progress**: Increased from 56.1% to 56.9% proper API usage
+- **Phase 1 Progress**: 82.4% complete (14/17 examples improved)
+- **Phase 2 Progress**: 88.2% complete (15/17 examples improved)
+- **Overall Progress**: 75.6% proper API usage (93/123)
 - **Backward Compatibility**: All tests pass (including new Python API tests)
 - **Infrastructure**: New `AnimatedIcon` API now available.
 
@@ -543,9 +543,9 @@ The JSON tracker serves as a living document to monitor progress as examples are
 - ✅ **`update-a-feature-in-realtime`**: Added `test_update_a_feature_in_realtime_with_python_api()` demonstrating the new `RealTimeDataSource` and `AnimatePointOnLine` classes, eliminating the need for JavaScript injection.
 
 **Current Status:**
-- **Phase 1 Progress**: 40.0% complete (10/25 examples improved)
-- **Phase 2 Progress**: 44.4% complete (4/9 examples improved)
-- **Overall Progress**: Increased from 55.3% to 56.1% proper API usage
+- **Phase 1 Progress**: 82.4% complete (14/17 examples improved)
+- **Phase 2 Progress**: 88.2% complete (15/17 examples improved)
+- **Overall Progress**: 75.6% proper API usage (93/123)
 - **Backward Compatibility**: All 235 tests pass (including new Python API tests)
 - **Infrastructure**: New `RealTimeDataSource` and `AnimatePointOnLine` APIs now available.
 
@@ -558,9 +558,9 @@ The JSON tracker serves as a living document to monitor progress as examples are
 - ✅ **`view-local-geojson`**: Added `test_view_local_geojson_with_python_api()` demonstrating the new `GeoJSONSource.from_file()` method, eliminating the need for JavaScript injection.
 
 **Current Status:**
-- **Phase 1 Progress**: 40.0% complete (10/25 examples improved)
-- **Phase 2 Progress**: 33.3% complete (3/9 examples improved)
-- **Overall Progress**: Increased from 54.5% to 55.3% proper API usage
+- **Phase 1 Progress**: 82.4% complete (14/17 examples improved)
+- **Phase 2 Progress**: 88.2% complete (15/17 examples improved)
+- **Overall Progress**: 75.6% proper API usage (93/123)
 - **Backward Compatibility**: All 151 tests pass (including new Python API tests)
 - **Infrastructure**: New `GeoJSONSource.from_file()` API now available.
 
@@ -573,9 +573,9 @@ The JSON tracker serves as a living document to monitor progress as examples are
 - ✅ **`navigate-the-map-with-game-like-controls`**: Added `test_navigate_the_map_with_game_like_controls_with_python_api()` demonstrating the new `Map.add_keyboard_navigation()` method, eliminating the need for JavaScript injection.
 
 **Current Status:**
-- **Phase 1 Progress**: 36.0% complete (9/25 examples improved)
-- **Phase 2 Progress**: 33.3% complete (3/9 examples improved)
-- **Overall Progress**: Increased from 53.7% to 54.5% proper API usage
+- **Phase 1 Progress**: 82.4% complete (14/17 examples improved)
+- **Phase 2 Progress**: 88.2% complete (15/17 examples improved)
+- **Overall Progress**: 75.6% proper API usage (93/123)
 - **Backward Compatibility**: All 148 tests pass (including new Python API tests)
 - **Infrastructure**: New `add_keyboard_navigation` API now available.
 
@@ -588,9 +588,9 @@ The JSON tracker serves as a living document to monitor progress as examples are
 - ✅ **`animate-map-camera-around-a-point`**: Added `test_animate_map_camera_around_a_point_with_python_api()` demonstrating the new `Map.animate_camera_around()` method, eliminating the need for JavaScript injection.
 
 **Current Status:**
-- **Phase 1 Progress**: 32.0% complete (8/25 examples improved)
-- **Phase 2 Progress**: 33.3% complete (3/9 examples improved)
-- **Overall Progress**: Increased from 52.8% to 53.7% proper API usage
+- **Phase 1 Progress**: 82.4% complete (14/17 examples improved)
+- **Phase 2 Progress**: 88.2% complete (15/17 examples improved)
+- **Overall Progress**: 75.6% proper API usage (93/123)
 - **Backward Compatibility**: All 147 tests pass (including new Python API tests)
 - **Infrastructure**: New `animate_camera_around` API now available.
 
@@ -603,9 +603,9 @@ The JSON tracker serves as a living document to monitor progress as examples are
 - ✅ **`jump-to-a-series-of-locations`**: Added `test_jump_to_a_series_of_locations_with_python_api()` demonstrating the new `Map.jump_to_sequence()` method, eliminating the need for JavaScript injection.
 
 **Current Status:**
-- **Phase 1 Progress**: 28.0% complete (7/25 examples improved)
-- **Phase 2 Progress**: 33.3% complete (3/9 examples improved)
-- **Overall Progress**: Increased from 44.7% to 52.8% proper API usage
+- **Phase 1 Progress**: 82.4% complete (14/17 examples improved)
+- **Phase 2 Progress**: 88.2% complete (15/17 examples improved)
+- **Overall Progress**: 75.6% proper API usage (93/123)
 - **Backward Compatibility**: All 146 tests pass (including new Python API tests)
 - **Infrastructure**: New `jump_to_sequence` API now available.
 
@@ -626,9 +626,9 @@ The JSON tracker serves as a living document to monitor progress as examples are
 - ✅ **toggle-interactions**: Added `test_toggle_interactions_with_python_api()` using ToggleControl for comprehensive interaction management
 
 **Current Status:**
-- **Phase 1 Progress**: 24.0% complete (6/25 examples improved)
-- **Phase 2 Progress**: 5.0% complete (1/9 examples improved - create-a-hover-effect)
-- **Overall Progress**: Increased from 44.7% to ~47% proper API usage
+- **Phase 1 Progress**: 82.4% complete (14/17 examples improved)
+- **Phase 2 Progress**: 88.2% complete (15/17 examples improved)
+- **Overall Progress**: 75.6% proper API usage (93/123)
 - **Backward Compatibility**: All existing tests continue to pass
 - **Infrastructure**: Core button and toggle control infrastructure now available for all examples
 
@@ -644,9 +644,9 @@ The JSON tracker serves as a living document to monitor progress as examples are
 - ✅ **change-a-layers-color-with-buttons**: Added `test_change_a_layers_color_with_python_api()` demonstrating LayerColorControl for interactive styling
 
 **Current Status:**
-- **Phase 1 Progress**: 24.0% complete (6/25 examples improved)
-- **Phase 2 Progress**: 33.3% complete (3/9 examples improved)
-- **Overall Progress**: Increased from 44.7% to 52.0% proper API usage
+- **Phase 1 Progress**: 82.4% complete (14/17 examples improved)
+- **Phase 2 Progress**: 88.2% complete (15/17 examples improved)
+- **Overall Progress**: 75.6% proper API usage (93/123)
 - **Backward Compatibility**: All 144 tests pass (including new Python API tests)
 - **Infrastructure**: Text filtering and layer color controls now available for all examples
 
@@ -667,10 +667,10 @@ The JSON tracker serves as a living document to monitor progress as examples are
 - ✅ **Documentation Sync**: Ensured JSON roadmap and markdown documentation are consistent
 
 **Current Status:**
-- **Phase 1 Progress**: 24.0% complete (6/25 examples improved)
-- **Phase 2 Progress**: 33.3% complete (3/9 examples improved)
-- **Phase 3 Progress**: 0.0% complete (0/22 examples improved)
-- **Overall Progress**: 49.6% proper API usage (calculation error - see 2025-01-10 update)
+- **Phase 1 Progress**: 82.4% complete (14/17 examples improved)
+- **Phase 2 Progress**: 88.2% complete (15/17 examples improved)
+- **Phase 3 Progress**: 100.0% complete (9/9 examples improved)
+- **Overall Progress**: 75.6% proper API usage (93/123)
 - **All Tests Passing**: 144/144 tests pass (100% success rate)
 
 **Roadmap Accuracy:**
@@ -692,10 +692,10 @@ The JSON tracker serves as a living document to monitor progress as examples are
 - ✅ **Documentation Update**: Updated both JSON and markdown to reflect accurate statistics
 
 **Current Status:**
-- **Phase 1 Progress**: 24.0% complete (6/25 examples improved)
-- **Phase 2 Progress**: 33.3% complete (3/9 examples improved)
-- **Phase 3 Progress**: 0.0% complete (0/22 examples improved)
-- **Overall Progress**: 52.0% proper API usage (corrected)
+- **Phase 1 Progress**: 82.4% complete (14/17 examples improved)
+- **Phase 2 Progress**: 88.2% complete (15/17 examples improved)
+- **Phase 3 Progress**: 100.0% complete (9/9 examples improved)
+- **Overall Progress**: 75.6% proper API usage (93/123)
 - **All Tests Passing**: 144/144 tests pass (100% success rate)
 
 **Roadmap Accuracy:**
@@ -723,10 +723,10 @@ The analysis confirms the original suspicion: many examples are implemented with
 - ✅ **`test_change_a_maps_language`**: Converted to Python API by utilizing the new `LanguageControl`.
 
 **Current Status:**
-- **Phase 1 Progress**: 76.0% complete (19/25 examples improved)
-- **Phase 2 Progress**: 100% complete (15/15 examples improved)
-- **Phase 3 Progress**: 40.9% complete (9/22 examples improved)
-- **Overall Progress**: Increased from 78.9% to 79.7% proper API usage
+- **Phase 1 Progress**: 82.4% complete (14/17 examples improved)
+- **Phase 2 Progress**: 88.2% complete (15/17 examples improved)
+- **Phase 3 Progress**: 100.0% complete (9/9 examples improved)
+- **Overall Progress**: 75.6% proper API usage (93/123)
 - **Backward Compatibility**: All tests pass.
 - **Infrastructure**: New `StorytellingControl` available alongside `Map.rotate_to()` and `LanguageControl`.
 
@@ -742,9 +742,9 @@ The analysis confirms the original suspicion: many examples are implemented with
 - ✅ **`test_customize_camera_animations`**: Converted to Python API by wrapping its complex easing and toggle panel in the new `PanelControl`.
 
 **Current Status:**
-- **Phase 1 Progress**: 60.0% complete (15/25 examples improved)
-- **Phase 2 Progress**: 100% complete (15/15 examples improved)
-- **Phase 3 Progress**: 40.9% complete (9/22 examples improved)
-- **Overall Progress**: Increased from 73.9% to 76.4% proper API usage
+- **Phase 1 Progress**: 82.4% complete (14/17 examples improved)
+- **Phase 2 Progress**: 88.2% complete (15/17 examples improved)
+- **Phase 3 Progress**: 100.0% complete (9/9 examples improved)
+- **Overall Progress**: 75.6% proper API usage (93/123)
 - **Backward Compatibility**: All tests pass.
 - **Infrastructure**: New `SidebarControl` and `PanelControl` APIs available.
