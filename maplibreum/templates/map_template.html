@@ -506,6 +506,92 @@ map.addControl(new maplibregl.FullscreenControl(), "{{ ctrl.position }}");
 map.addControl(new maplibregl.GeolocateControl({{ ctrl.options | tojson }}), "{{ ctrl.position }}");
 {% elif ctrl.type == "attribution" %}
 map.addControl(new maplibregl.AttributionControl({{ ctrl.options | tojson }}), "{{ ctrl.position }}");
+
+{% elif ctrl.type == "language" %}
+(function() {
+    var container = document.createElement('ul');
+    container.id = 'maplibreum-language-buttons';
+    container.className = 'maplibreum-language-buttons';
+
+    // Default styling injected inline for convenience but can be overridden
+    container.style.position = 'absolute';
+    container.style.top = '20px';
+    container.style.left = '50%';
+    container.style.transform = 'translateX(-50%)';
+    container.style.display = 'flex';
+    container.style.gap = '8px';
+    container.style.padding = '6px 10px';
+    container.style.listStyle = 'none';
+    container.style.background = 'rgba(0, 0, 0, 0.65)';
+    container.style.borderRadius = '999px';
+    container.style.color = '#fff';
+    container.style.font = "12px/18px 'Helvetica Neue', Arial, sans-serif";
+    container.style.zIndex = '1'; // Above map
+
+    var languages = {{ ctrl.options.languages | tojson }};
+    var layers = {{ ctrl.options.layers | tojson }};
+
+    languages.forEach(function(code, index) {
+        var item = document.createElement('li');
+        var button = document.createElement('button');
+        button.type = 'button';
+        button.dataset.language = code;
+        button.textContent = code.toUpperCase();
+
+        button.style.border = 'none';
+        button.style.background = 'transparent';
+        button.style.color = 'inherit';
+        button.style.cursor = 'pointer';
+        button.style.fontWeight = '600';
+        button.style.padding = '6px 12px';
+        button.style.borderRadius = '14px';
+
+        if (index === 0) {
+            button.style.background = '#ee8a65';
+            button.classList.add('is-active');
+        }
+
+        button.onmouseover = function() {
+            if (!this.classList.contains('is-active')) {
+                this.style.background = '#ee8a65';
+            }
+        };
+        button.onmouseout = function() {
+            if (!this.classList.contains('is-active')) {
+                this.style.background = 'transparent';
+            }
+        };
+
+        item.appendChild(button);
+        container.appendChild(item);
+    });
+
+    container.addEventListener('click', function(event) {
+        var target = event.target;
+        if (!target || !target.dataset || !target.dataset.language) {
+            return;
+        }
+        var language = target.dataset.language;
+        container.querySelectorAll('button').forEach(function(btn) {
+            if (btn === target) {
+                btn.style.background = '#ee8a65';
+                btn.classList.add('is-active');
+            } else {
+                btn.style.background = 'transparent';
+                btn.classList.remove('is-active');
+            }
+        });
+
+        layers.forEach(function(layerId) {
+            if (map.getLayer(layerId)) {
+                map.setLayoutProperty(layerId, 'text-field', ['get', 'name:' + language]);
+            }
+        });
+    });
+
+    map.getContainer().appendChild(container);
+})();
+
 {% elif ctrl.type == "minimap" %}
 map.addControl(new MinimapControl({{ ctrl.options | tojson }}), "{{ ctrl.position }}");
 {% elif ctrl.type == "search" %}

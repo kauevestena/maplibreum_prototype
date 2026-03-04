@@ -387,7 +387,7 @@ class MeasurementTool:
     distanceContainer.id = '{self.id}-display';
     distanceContainer.className = 'maplibreum-distance-container';
     map.getContainer().appendChild(distanceContainer);
-    
+
     // Initialize measurement state
     window._measurement_{self.id} = {{
         container: distanceContainer,
@@ -400,7 +400,7 @@ class MeasurementTool:
         unitLabel: '{unit_label}',
         unitConversion: {unit_conversion}
     }};
-    
+
     // Haversine distance calculation
     function haversineDistance(lon1, lat1, lon2, lat2) {{
         var R = 6371; // Earth's radius in km
@@ -412,7 +412,7 @@ class MeasurementTool:
         var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
         return R * c;
     }}
-    
+
     function calculateLineDistance(coordinates) {{
         var total = 0;
         for (var i = 0; i < coordinates.length - 1; i++) {{
@@ -424,30 +424,30 @@ class MeasurementTool:
         }}
         return total * window._measurement_{self.id}.unitConversion;
     }}
-    
+
     // Set initial data
     var measureSource = map.getSource('{self.source_id}');
     if (measureSource) {{
         measureSource.setData(window._measurement_{self.id}.geojson);
     }}
-    
+
     // Handle click events
     map.on('click', function(event) {{
         var measure = window._measurement_{self.id};
         if (!measure) {{ return; }}
-        
+
         var geojson = measure.geojson;
-        var clickedFeatures = map.queryRenderedFeatures(event.point, {{ 
-            layers: ['{self.points_layer_id}'] 
+        var clickedFeatures = map.queryRenderedFeatures(event.point, {{
+            layers: ['{self.points_layer_id}']
         }});
-        
+
         // Remove temporary line if exists
         if (geojson.features.length > 1) {{
             geojson.features.pop();
         }}
-        
+
         measure.container.innerHTML = '';
-        
+
         // Remove clicked point or add new point
         if (clickedFeatures.length) {{
             var targetId = clickedFeatures[0].properties && clickedFeatures[0].properties.id;
@@ -457,21 +457,21 @@ class MeasurementTool:
         }} else if (event.lngLat) {{
             geojson.features.push({{
                 type: 'Feature',
-                geometry: {{ 
-                    type: 'Point', 
-                    coordinates: [event.lngLat.lng, event.lngLat.lat] 
+                geometry: {{
+                    type: 'Point',
+                    coordinates: [event.lngLat.lng, event.lngLat.lat]
                 }},
                 properties: {{ id: String(Date.now()) }}
             }});
         }}
-        
+
         // Calculate and display distance if multiple points
         if (geojson.features.length > 1) {{
             measure.line.geometry.coordinates = geojson.features.map(function(point) {{
                 return point.geometry.coordinates;
             }});
             geojson.features.push(measure.line);
-            
+
             var distance = calculateLineDistance(measure.line.geometry.coordinates);
             var value = document.createElement('pre');
             value.textContent = 'Total distance: ' + distance.toLocaleString(undefined, {{
@@ -480,17 +480,17 @@ class MeasurementTool:
             }}) + measure.unitLabel;
             measure.container.appendChild(value);
         }}
-        
+
         var source = map.getSource('{self.source_id}');
         if (source) {{
             source.setData(geojson);
         }}
     }});
-    
+
     // Handle cursor changes on hover
     map.on('mousemove', function(event) {{
-        var features = map.queryRenderedFeatures(event.point, {{ 
-            layers: ['{self.points_layer_id}'] 
+        var features = map.queryRenderedFeatures(event.point, {{
+            layers: ['{self.points_layer_id}']
         }});
         map.getCanvas().style.cursor = features.length ? 'pointer' : 'crosshair';
     }});
@@ -939,7 +939,7 @@ class SliderControl:
   const step = {self.step};
   const initialValue = {self.initial_value};
   const valueLabels = {value_labels_js};
-  
+
   // Create slider overlay if it doesn't exist
   let container = document.getElementById(sliderId);
   if (!container) {{
@@ -955,20 +955,20 @@ class SliderControl:
       font: 12px/20px 'Helvetica Neue', Arial, Helvetica, sans-serif;
       z-index: 1000;
     `;
-    
+
     container.innerHTML = `
     <div class="panel" style="background: #fff; border-radius: 3px; box-shadow: 0 1px 2px rgba(0,0,0,0.2); margin-bottom: 10px; padding: 10px;">
       {title_html}
       <label id="${{sliderLabelId}}" for="${{sliderInputId}}"></label>
       <input id="${{sliderInputId}}" type="range" min="${{minValue}}" max="${{maxValue}}" step="${{step}}" value="${{initialValue}}" style="width: 100%; cursor: ew-resize;" />
     </div>{legend_html}`;
-    
+
     document.body.appendChild(container);
   }}
-  
+
   const slider = document.getElementById(sliderInputId);
   const label = document.getElementById(sliderLabelId);
-  
+
   function applyFilter(value) {{
     const filter = ['==', ['get', propertyName], value];
     layerIds.forEach(layerId => {{
@@ -976,7 +976,7 @@ class SliderControl:
         map.setFilter(layerId, filter);
       }}
     }});
-    
+
     // Update label
     if (label) {{
       let labelText = value;
@@ -986,13 +986,13 @@ class SliderControl:
       label.textContent = '{label_text}';
     }}
   }}
-  
+
   if (slider) {{
     slider.addEventListener('input', function(evt) {{
       const value = parseFloat(evt.target.value);
       applyFilter(value);
     }});
-    
+
     // Apply initial filter
     applyFilter(initialValue);
   }}
@@ -1625,3 +1625,19 @@ class PanelControl:
             }}, 100);
         }})();
         """
+
+
+class LanguageControl:
+    """
+    UI Control for toggling map language.
+    Generates interactive language toggle buttons for the map.
+    """
+    def __init__(self, languages: list[str], layers: list[str]):
+        self.control_type = "language"
+        self.options = {
+            "languages": languages,
+            "layers": layers
+        }
+
+    def to_dict(self):
+        return self.options
