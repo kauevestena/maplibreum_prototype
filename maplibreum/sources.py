@@ -41,9 +41,6 @@ class Source:
 
     def to_dict(self) -> Dict[str, Any]:
         """Return a serialisable representation of the source."""
-        # Ensure data is populated if it's a lazily-loaded GeoJSONSource
-        if hasattr(self, "data") and self.type == "geojson" and "data" not in self.options:
-            _ = self.data
 
         return {"type": self.type, **self.options}
 
@@ -289,6 +286,13 @@ class GeoJSONSource(Source):
 
         super().__init__("geojson", **resolved)
 
+    def to_dict(self) -> Dict[str, Any]:
+        """Return a serialisable representation of the source."""
+        # Ensure lazy data is populated before serialization
+        if "data" not in self.options and self._file_path:
+            _ = self.data
+        return super().to_dict()
+
     @property
     def data(self) -> Any:
         """The GeoJSON data for the source."""
@@ -297,16 +301,13 @@ class GeoJSONSource(Source):
             import ijson
             try:
                 with open(self._file_path, "rb") as f:
-                    # Incrementally construct the GeoJSON structure to avoid massive ASTs in json.load
-                    # Assuming it's a FeatureCollection mostly
-                    parsed_data = {"type": "FeatureCollection", "features": []}
-                    for feature in ijson.items(f, 'features.item', use_float=True):
-                        parsed_data["features"].append(feature)
-
-                    # Store it back if we need it
-                    self.options["data"] = parsed_data
+                    # Parse the root object incrementally. ijson.items with an empty prefix
+                    # yields the fully rebuilt top-level JSON structure correctly, preserving all metadata
+                    for obj in ijson.items(f, '', use_float=True):
+                        self.options["data"] = obj
+                        break
             except Exception:
-                # Fallback to standard json parsing if it fails to parse as a FeatureCollection with items
+                # Fallback to standard json parsing if it fails
                 with open(self._file_path) as f:
                     self.options["data"] = json.load(f)
 
