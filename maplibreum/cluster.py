@@ -261,6 +261,7 @@ def cluster_features(features, radius=40, max_zoom=16):
             self.radius = radius
             self.max_zoom = max_zoom
             self.points = []
+            self.index = None
 
         def load(self, features):
             """Load features into the clusterer.
@@ -271,6 +272,18 @@ def cluster_features(features, radius=40, max_zoom=16):
                 A list of GeoJSON features to cluster.
             """
             self.points = [f["geometry"]["coordinates"] for f in features]
+            try:
+                import rtree
+                # Bulk load the R-tree index for better performance
+                if not self.points:
+                    self.index = rtree.index.Index()
+                else:
+                    def generator():
+                        for i, (lng, lat) in enumerate(self.points):
+                            yield (i, (lng, lat, lng, lat), None)
+                    self.index = rtree.index.Index(generator())
+            except ImportError:
+                self.index = None
 
         def get_clusters(self, bbox, zoom):
             """Get clusters for a given bounding box and zoom level.
@@ -290,7 +303,21 @@ def cluster_features(features, radius=40, max_zoom=16):
             cell_x = (bbox[2] - bbox[0]) / max(self.radius, 1)
             cell_y = (bbox[3] - bbox[1]) / max(self.radius, 1)
             clusters = {}
-            for lng, lat in self.points:
+
+            if self.index:
+                # Query the R-tree for point IDs in the bounding box
+                point_ids = self.index.intersection(bbox)
+                points_to_cluster = (self.points[i] for i in point_ids)
+            else:
+                # Fallback to checking all points
+                points_to_cluster = self.points
+
+            for lng, lat in points_to_cluster:
+                if self.index is None:
+                    # If we didn't use an index, we need to filter points here
+                    if not (bbox[0] <= lng <= bbox[2] and bbox[1] <= lat <= bbox[3]):
+                        continue
+
                 gx = int((lng - bbox[0]) / cell_x)
                 gy = int((lat - bbox[1]) / cell_y)
                 key = (gx, gy)
@@ -298,6 +325,7 @@ def cluster_features(features, radius=40, max_zoom=16):
                 data["count"] += 1
                 data["lng"] += lng
                 data["lat"] += lat
+
             features = []
             for data in clusters.values():
                 count = data["count"]

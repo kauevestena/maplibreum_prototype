@@ -82,5 +82,70 @@ def test_pmtiles_protocol_register():
 
     # Check if JavaScript code was added to on_load_js
     js_code = "\n".join(m._on_load_callbacks)
+    assert "if (typeof pmtiles === 'undefined')" in js_code
     assert "pmtiles.Protocol()" in js_code
     assert "maplibregl.addProtocol('pmtiles'" in js_code
+
+
+def test_pmtiles_protocol_register_custom_url():
+    """Test PMTilesProtocol registration with a custom URL on a Map instance."""
+    custom_url = "https://example.com/pmtiles.js"
+    protocol = PMTilesProtocol(script_url=custom_url)
+    m = Map(center=[0, 0], zoom=2)
+
+    protocol.register(m)
+
+    scripts_urls = [s.get("src") for s in m.external_scripts]
+    assert custom_url in scripts_urls
+    assert "unpkg.com/pmtiles" not in scripts_urls
+
+
+def test_pmtiles_protocol_register_multiple_times():
+    """Test calling PMTilesProtocol registration multiple times on the same map."""
+    protocol = PMTilesProtocol()
+    m = Map(center=[0, 0], zoom=2)
+
+    protocol.register(m)
+    protocol.register(m)
+
+    scripts_urls = [s.get("src") for s in m.external_scripts]
+    # Should only be appended once to avoid duplicate injection
+    assert scripts_urls.count(protocol.script_url) == 1
+
+    js_code = "\n".join(m._on_load_callbacks)
+    # The registration script should appear only once to prevent maplibregl exceptions
+    assert js_code.count("maplibregl.addProtocol('pmtiles'") == 1
+
+
+def test_pmtiles_protocol_playwright(page):
+    """Integration test using Playwright to verify protocol registration logic."""
+    import tempfile
+    import os
+
+    protocol = PMTilesProtocol()
+    m = Map(center=[0, 0], zoom=2)
+    protocol.register(m)
+
+    html = m.render()
+
+    with tempfile.NamedTemporaryFile("w", delete=False, suffix=".html") as f:
+        f.write(html)
+        temp_file = f.name
+
+    try:
+        # Load the HTML page into the browser
+        page.goto(f"file://{os.path.abspath(temp_file)}")
+
+        # Wait for the map to be fully loaded (maplibregl creates a canvas)
+        page.wait_for_selector(".maplibregl-canvas")
+
+        # Verify pmtiles is loaded and available
+        is_pmtiles_defined = page.evaluate("typeof pmtiles !== 'undefined'")
+        assert is_pmtiles_defined is True
+
+        # Verify the map was initialized
+        is_maplibregl_defined = page.evaluate("typeof maplibregl !== 'undefined'")
+        assert is_maplibregl_defined is True
+
+    finally:
+        os.unlink(temp_file)
