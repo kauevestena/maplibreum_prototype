@@ -41,6 +41,9 @@ class Source:
 
     def to_dict(self) -> Dict[str, Any]:
         """Return a serialisable representation of the source."""
+        # Ensure data is populated if it's a lazily-loaded GeoJSONSource
+        if hasattr(self, "data") and self.type == "geojson" and "data" not in self.options:
+            _ = self.data
 
         return {"type": self.type, **self.options}
 
@@ -237,7 +240,7 @@ class GeoJSONSource(Source):
 
     def __init__(
         self,
-        data: Any,
+        data: Any = None,
         *,
         attribution: Optional[str] = None,
         max_zoom: Optional[int] = None,
@@ -253,9 +256,14 @@ class GeoJSONSource(Source):
         promote_id: Optional[Union[str, Mapping[str, str]]] = None,
         filter: Optional[Any] = None,
         pre_fetch_zoom_delta: Optional[int] = None,
+        file_path: Optional[Union[str, Path]] = None,
         **kwargs: Any,
     ) -> None:
-        resolved: Dict[str, Any] = {"data": data}
+        resolved: Dict[str, Any] = {}
+        if data is not None:
+            resolved["data"] = data
+        self._file_path = file_path
+
         resolved.update(
             _normalise_options(
                 {
@@ -284,7 +292,25 @@ class GeoJSONSource(Source):
     @property
     def data(self) -> Any:
         """The GeoJSON data for the source."""
-        return self.options["data"]
+        if "data" not in self.options and self._file_path:
+            # Lazily load data from file using ijson to reduce memory overhead during parsing
+            import ijson
+            try:
+                with open(self._file_path, "rb") as f:
+                    # Incrementally construct the GeoJSON structure to avoid massive ASTs in json.load
+                    # Assuming it's a FeatureCollection mostly
+                    parsed_data = {"type": "FeatureCollection", "features": []}
+                    for feature in ijson.items(f, 'features.item', use_float=True):
+                        parsed_data["features"].append(feature)
+
+                    # Store it back if we need it
+                    self.options["data"] = parsed_data
+            except Exception:
+                # Fallback to standard json parsing if it fails to parse as a FeatureCollection with items
+                with open(self._file_path) as f:
+                    self.options["data"] = json.load(f)
+
+        return self.options.get("data")
 
     @classmethod
     def from_file(
@@ -303,10 +329,8 @@ class GeoJSONSource(Source):
         -------
         A new GeoJSONSource instance.
         """
-        with open(file_path) as f:
-            data = json.load(f)
-
-        return cls(data=data, **kwargs)
+        # We don't load the file here. Instead, we defer loading until `data` is accessed.
+        return cls(file_path=file_path, **kwargs)
 
 
 class ImageSource(Source):
