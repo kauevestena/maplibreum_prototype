@@ -237,7 +237,7 @@ class GeoJSONSource(Source):
 
     def __init__(
         self,
-        data: Any,
+        data: Any = None,
         *,
         attribution: Optional[str] = None,
         max_zoom: Optional[int] = None,
@@ -253,9 +253,14 @@ class GeoJSONSource(Source):
         promote_id: Optional[Union[str, Mapping[str, str]]] = None,
         filter: Optional[Any] = None,
         pre_fetch_zoom_delta: Optional[int] = None,
+        file_path: Optional[Union[str, Path]] = None,
         **kwargs: Any,
     ) -> None:
-        resolved: Dict[str, Any] = {"data": data}
+        resolved: Dict[str, Any] = {}
+        if data is not None:
+            resolved["data"] = data
+        self._file_path = file_path
+
         resolved.update(
             _normalise_options(
                 {
@@ -281,10 +286,32 @@ class GeoJSONSource(Source):
 
         super().__init__("geojson", **resolved)
 
+    def to_dict(self) -> Dict[str, Any]:
+        """Return a serialisable representation of the source."""
+        # Ensure lazy data is populated before serialization
+        if "data" not in self.options and self._file_path:
+            _ = self.data
+        return super().to_dict()
+
     @property
     def data(self) -> Any:
         """The GeoJSON data for the source."""
-        return self.options["data"]
+        if "data" not in self.options and self._file_path:
+            # Lazily load data from file using ijson to reduce memory overhead during parsing
+            import ijson
+            try:
+                with open(self._file_path, "rb") as f:
+                    # Parse the root object incrementally. ijson.items with an empty prefix
+                    # yields the fully rebuilt top-level JSON structure correctly, preserving all metadata
+                    for obj in ijson.items(f, '', use_float=True):
+                        self.options["data"] = obj
+                        break
+            except Exception:
+                # Fallback to standard json parsing if it fails
+                with open(self._file_path) as f:
+                    self.options["data"] = json.load(f)
+
+        return self.options.get("data")
 
     @classmethod
     def from_file(
@@ -303,10 +330,8 @@ class GeoJSONSource(Source):
         -------
         A new GeoJSONSource instance.
         """
-        with open(file_path) as f:
-            data = json.load(f)
-
-        return cls(data=data, **kwargs)
+        # We don't load the file here. Instead, we defer loading until `data` is accessed.
+        return cls(file_path=file_path, **kwargs)
 
 
 class ImageSource(Source):
