@@ -1,4 +1,4 @@
-from .utils import get_id
+from .utils import get_id, get_geojson_dict
 
 from .expressions import get as expr_get
 
@@ -147,7 +147,7 @@ class ClusteredGeoJson:
         cluster_max_zoom : int, optional
             The maximum zoom level at which to cluster points.
         """
-        self.data = data
+        self.data = get_geojson_dict(data)
         self.name = name or get_id("clustered_geojson_")
         self.cluster_radius = cluster_radius
         self.cluster_max_zoom = cluster_max_zoom

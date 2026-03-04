@@ -6,6 +6,7 @@ import json
 from pathlib import Path
 from typing import Any, Dict, Mapping, Optional, Sequence, Union
 
+from .utils import get_geojson_dict
 
 def _normalise_options(
     options: Mapping[str, Any], key_map: Mapping[str, str] | None = None
@@ -258,7 +259,7 @@ class GeoJSONSource(Source):
     ) -> None:
         resolved: Dict[str, Any] = {}
         if data is not None:
-            resolved["data"] = data
+            resolved["data"] = get_geojson_dict(data)
         self._file_path = file_path
 
         resolved.update(

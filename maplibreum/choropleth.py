@@ -2,6 +2,7 @@ import math
 from .utils import get_id  # for generating unique layer/source identifiers
 
 from .expressions import get as expr_get
+from .utils import get_geojson_dict
 
 
 class Choropleth:
@@ -33,7 +34,7 @@ class Choropleth:
         legend_title="",
     ):
         """Initialize a Choropleth layer."""
-        self.geojson = geojson
+        self.geojson = get_geojson_dict(geojson)
         self.data = data
         self.key_on = key_on
         self.colors = colors or [

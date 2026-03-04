@@ -10,7 +10,7 @@ from urllib.parse import quote
 from IPython.display import IFrame, display
 from jinja2 import Environment, FileSystemLoader
 
-from .utils import get_id
+from .utils import get_id, get_geojson_dict
 from .babylon import BABYLON_JS_URL, BABYLON_LOADERS_JS_URL, BabylonLayer
 from .cluster import ClusteredGeoJson, MarkerCluster
 from .layers import Layer
@@ -2467,7 +2467,7 @@ class GeoJson:
         tooltip : str or GeoJsonTooltip, optional
             A tooltip to display when hovering over a feature.
         """
-        self.data = data
+        self.data = get_geojson_dict(data)
         self.name = name if name else get_id("geojson_")
         self.popup = popup
         self.tooltip = tooltip
