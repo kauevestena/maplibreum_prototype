@@ -41,6 +41,13 @@ test = [
   "requests-mock>=1.9",
   "playwright>=1.0",
   "pytest-playwright>=0.5",
+  "geopandas>=0.10.0",
+]
+geo = [
+  "geopandas>=0.10.0",
+]
+all = [
+  "geopandas>=0.10.0",
 ]
 
 [project.urls]

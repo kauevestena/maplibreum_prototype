@@ -2,10 +2,11 @@
 
 ## Backlog
 
-- [ ] Integrate GeoDataFrames -> geopandas will become a major requirement, and the library will mimic this functionality of folium, that makes for better integration with mainstream python geospatial tools;
 - [ ] fix and expand the examples
 
 ## Completed
+
+- [x] Integrate GeoDataFrames -> geopandas became an optional requirement, and the library mimics this functionality of folium, that makes for better integration with mainstream python geospatial tools;
 
 - [x] Benchmark marker clustering performance on large (>50k point) datasets and record guidance. (Completed with benchmarking script, performance documentation, and example notebook)
 
