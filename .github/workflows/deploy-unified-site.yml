@@ -77,6 +77,14 @@ jobs:
       - name: Copy documentation to site
         run: |
           cp -r docs/_build/html/* site/docs/ || mkdir -p site/docs && cp -r docs/_build/html/* site/docs/
+
+      # Copy MapLibre example pages to site
+      - name: Copy MapLibre example pages to site
+        run: |
+          mkdir -p site/development/maplibre_examples/pages
+          mkdir -p site/development/maplibre_examples/reproduced_pages
+          cp -r development/maplibre_examples/pages/. site/development/maplibre_examples/pages/
+          cp -r development/maplibre_examples/reproduced_pages/. site/development/maplibre_examples/reproduced_pages/
           
       # Create examples index page
       - name: Create examples index page
