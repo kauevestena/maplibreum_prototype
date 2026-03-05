@@ -1,6 +1,6 @@
 # March 2026 Roadmap: Achieving True Python API Parity
 
-This roadmap outlines the steps required to achieve 100% Python API parity in MapLibreum and align our testing suite with the upstream MapLibre examples.
+This roadmap, that is based upon development/maplibre_examples/README.md outlines the steps required to achieve 100% Python API parity in MapLibreum and align our testing suite with the upstream MapLibre examples.
 
 ## Phase 1: Reconcile Examples
 
