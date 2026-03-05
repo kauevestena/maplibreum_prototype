@@ -1641,3 +1641,55 @@ class LanguageControl:
 
     def to_dict(self):
         return self.options
+
+
+class LayerFilterControl:
+    """A control that provides checkboxes to filter visibility of map layers.
+
+    This control provides an alternative to JavaScript injection for
+    toggling the visibility of specific map layers.
+    """
+
+    def __init__(
+        self,
+        layers,
+        position="top-right",
+        css_class="maplibreum-filter-group",
+    ):
+        """Initialize a LayerFilterControl.
+
+        Parameters
+        ----------
+        layers : list of str or list of dict
+            List of layer IDs to include in the filter group.
+            Can also be a list of dictionaries with 'id' and optionally 'label'.
+            Example: ['poi-theatre', 'poi-bar'] or
+                     [{'id': 'poi-theatre', 'label': 'Theatre'}]
+        position : str, optional
+            Position on the map (e.g. 'top-right', 'top-left').
+        css_class : str, optional
+            CSS class for styling the control.
+        """
+        self.layers = []
+        for layer in layers:
+            if isinstance(layer, str):
+                self.layers.append({"id": layer, "label": layer.replace("poi-", "").replace("-", " ")})
+            elif isinstance(layer, dict):
+                self.layers.append({
+                    "id": layer["id"],
+                    "label": layer.get("label", layer["id"].replace("poi-", "").replace("-", " "))
+                })
+
+        self.position = position
+        self.css_class = css_class
+        self.id = get_id("layer_filter_")
+        self.control_type = "layerfilter"
+
+    def to_dict(self):
+        """Serialize configuration for template usage."""
+        return {
+            "id": self.id,
+            "layers": self.layers,
+            "position": self.position,
+            "css_class": self.css_class,
+        }

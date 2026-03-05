@@ -365,6 +365,7 @@ class Map:
         self.additional_map_options = dict(map_options) if map_options else {}
         self.layer_control = False
         self.cluster_layers = []
+        self.html_cluster_layers = []
         self.bounds = None
         self.bounds_padding = None
         self.draw_control = False
@@ -627,6 +628,10 @@ class Map:
 
             layer_id = layer_definition.get("id", get_id("layer_"))
             layer_definition["id"] = layer_id
+
+            if layer_definition.get("type") == "html_cluster":
+                self.html_cluster_layers.append(layer_definition)
+                return layer_id
 
         self.layers.append(
             {"id": layer_id, "definition": layer_definition, "before": before}
@@ -949,6 +954,43 @@ class Map:
             The ID of the added icon.
         """
         return icon.add_to_map(self)
+
+    def add_dynamic_color_icons(self, prefix: str = "square-rgb-") -> None:
+        """Add a styleimagemissing listener that dynamically generates solid color icons.
+
+        When a style layer requests an image that doesn't exist, and the image ID starts
+        with `prefix`, this will parse the remainder of the ID as an RGB color (e.g. `255,0,0`)
+        and generate a 64x64 solid color square image dynamically.
+
+        Parameters
+        ----------
+        prefix : str, optional
+            The prefix to match against the missing image ID.
+        """
+        js_code = f"""
+        map.on('styleimagemissing', (e) => {{
+            const id = e.id;
+            const prefix = '{prefix}';
+            if (!id.startsWith(prefix)) {{
+                return;
+            }}
+            const rgb = id.replace(prefix, '').split(',').map(Number);
+            const width = 64;
+            const bytesPerPixel = 4;
+            const data = new Uint8Array(width * width * bytesPerPixel);
+            for (let x = 0; x < width; x++) {{
+                for (let y = 0; y < width; y++) {{
+                    const offset = (y * width + x) * bytesPerPixel;
+                    data[offset + 0] = rgb[0];
+                    data[offset + 1] = rgb[1];
+                    data[offset + 2] = rgb[2];
+                    data[offset + 3] = 255;
+                }}
+            }}
+            map.addImage(id, {{ width, height: width, data }});
+        }});
+        """
+        self.add_on_load_js(js_code)
 
     def add_wms_layer(
         self,
@@ -1728,6 +1770,133 @@ class Map:
         ]
         self.add_on_load_js("\n".join(js_code))
 
+    def make_draggable(self, source_id: str, layer_id: str, geojson_data: dict, display_coords: bool = True):
+        """Make a point layer draggable.
+
+        Parameters
+        ----------
+        source_id : str
+            The ID of the GeoJSON source.
+        layer_id : str
+            The ID of the point layer to make draggable.
+        geojson_data : dict
+            The GeoJSON data for the source. This is needed to re-render the data when moved.
+        display_coords : bool, optional
+            Whether to display the coordinates of the point as it's dragged.
+        """
+        import textwrap
+        import json
+
+        state_var = f"window._maplibreumDragDetails_{layer_id}_{source_id}"
+
+        setup_js = f"""
+        var coordinatesElement = document.createElement('pre');
+        coordinatesElement.id = 'coordinates_{layer_id}_{source_id}';
+        coordinatesElement.className = 'maplibreum-draggable-coordinates';
+        coordinatesElement.style.display = 'none';
+        { 'map.getContainer().appendChild(coordinatesElement);' if display_coords else '' }
+
+        {state_var} = {{
+            element: coordinatesElement,
+            active: false,
+            lastCoords: null,
+            data: {json.dumps(geojson_data)}
+        }};
+
+        var dragSource = map.getSource('{source_id}');
+        if (dragSource) {{
+            dragSource.setData({state_var}.data);
+        }}
+        """
+        self.add_on_load_js(textwrap.dedent(setup_js).strip())
+
+        self.add_event_listener(
+            "mouseenter",
+            layer_id=layer_id,
+            js=textwrap.dedent(
+                f"""
+                map.setPaintProperty('{layer_id}', 'circle-color', '#3bb2d0');
+                map.getCanvas().style.cursor = 'move';
+                """
+            ).strip(),
+        )
+
+        self.add_event_listener(
+            "mouseleave",
+            layer_id=layer_id,
+            js=textwrap.dedent(
+                f"""
+                map.setPaintProperty('{layer_id}', 'circle-color', '#3887be');
+                map.getCanvas().style.cursor = '';
+                """
+            ).strip(),
+        )
+
+        self.add_event_listener(
+            "mousedown",
+            layer_id=layer_id,
+            js=textwrap.dedent(
+                f"""
+                event.preventDefault();
+                var details = {state_var};
+                if (!details) {{ return; }}
+                details.active = true;
+                details.lastCoords = event.lngLat || null;
+                map.getCanvas().style.cursor = 'grab';
+                """
+            ).strip(),
+        )
+
+        self.add_event_listener(
+            "touchstart",
+            layer_id=layer_id,
+            js=textwrap.dedent(
+                f"""
+                if (event.points && event.points.length !== 1) {{ return; }}
+                event.preventDefault();
+                var details = {state_var};
+                if (!details) {{ return; }}
+                details.active = true;
+                details.lastCoords = event.lngLat || null;
+                map.getCanvas().style.cursor = 'grab';
+                """
+            ).strip(),
+        )
+
+        drag_update_js = textwrap.dedent(
+            f"""
+            var details = {state_var};
+            if (!details || !details.active) {{ return; }}
+            if (!event.lngLat) {{ return; }}
+            details.lastCoords = event.lngLat;
+            var dragSource = map.getSource('{source_id}');
+            if (!dragSource) {{ return; }}
+            details.data.features[0].geometry.coordinates = [event.lngLat.lng, event.lngLat.lat];
+            dragSource.setData(details.data);
+            map.getCanvas().style.cursor = 'grabbing';
+            """
+        ).strip()
+
+        self.add_event_listener("mousemove", js=drag_update_js)
+        self.add_event_listener("touchmove", js=drag_update_js)
+
+        release_js = textwrap.dedent(
+            f"""
+            var details = {state_var};
+            if (!details || !details.active) {{ return; }}
+            var coords = event.lngLat || details.lastCoords;
+            if (coords) {{
+                details.element.style.display = 'block';
+                details.element.innerHTML = 'Longitude: ' + coords.lng + '<br />Latitude: ' + coords.lat;
+            }}
+            details.active = false;
+            map.getCanvas().style.cursor = '';
+            """
+        ).strip()
+
+        self.add_event_listener("mouseup", js=release_js)
+        self.add_event_listener("touchend", js=release_js)
+
     def add_marker(
         self,
         coordinates=None,
@@ -2114,6 +2283,7 @@ class Map:
             markers=self.markers,
             legends=[legend.render() for legend in self.legends],
             cluster_layers=self.cluster_layers,
+            html_cluster_layers=self.html_cluster_layers,
             extra_js=combined_extra_js,
             custom_css=final_custom_css,
             draw_control=self.draw_control,
