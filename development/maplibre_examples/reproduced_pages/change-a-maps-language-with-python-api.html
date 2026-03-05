@@ -5,10 +5,10 @@
     <title>MapLibreum Map</title>
     <meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no" />
     <link href="https://unpkg.com/maplibre-gl@3.4.0/dist/maplibre-gl.css" rel="stylesheet" onerror="this.onerror=null;this.href='https://cdn.jsdelivr.net/npm/maplibre-gl@3.4.0/dist/maplibre-gl.css';" />
-
-
-
-
+    
+    
+    
+    
     <style>
         body {
             margin: 0;
@@ -45,14 +45,14 @@
 
         }
 
-
+        
 
         #maplibreum_0 { width: 100%; height: 500px; }
 
 
 
     </style>
-
+    
 </head>
 <body>
 <div class="maplibreum-example-banner">
@@ -61,8 +61,8 @@
 </div>
 
     <div id="maplibreum_0">
-
-
+        
+        
     </div>
     <!-- MapLibre GL JS with CDN fallbacks -->
     <script>
@@ -354,9 +354,9 @@
             if (typeof maplibregl === 'undefined') {
                 throw new Error('MapLibre GL JS loaded but not available');
             }
-
-
-
+            
+            
+            
             initializeMap();
         }).catch(error => {
             console.error('Failed to load MapLibre GL JS:', error);
@@ -367,7 +367,7 @@
             try {
         // Initialize map
         var map = new maplibregl.Map({"container": "maplibreum_0", "style": "https://tiles.openfreemap.org/styles/bright", "center": [16.05, 48.0], "zoom": 3.0});
-
+        
         window.maplibreumMaps = window.maplibreumMaps || {};
         window.maplibreumMaps["maplibreum_0"] = map;
         window.maplibreumMapsLoaded = window.maplibreumMapsLoaded || {};
@@ -469,77 +469,77 @@
 
 
 map.on('load', function() {
-
+    
     // Add sources
-
+    
     map.addSource("countries", {"type": "geojson", "data": {"type": "FeatureCollection", "features": [{"type": "Feature", "properties": {"name:en": "Austria", "name:fr": "Autriche", "name:ru": "\u0410\u0432\u0441\u0442\u0440\u0438\u044f", "name:de": "\u00d6sterreich", "name:es": "Austria"}, "geometry": {"type": "Point", "coordinates": [16.05, 48.2]}}, {"type": "Feature", "properties": {"name:en": "Hungary", "name:fr": "Hongrie", "name:ru": "\u0412\u0435\u043d\u0433\u0440\u0438\u044f", "name:de": "Ungarn", "name:es": "Hungr\u00eda"}, "geometry": {"type": "Point", "coordinates": [19.05, 47.5]}}, {"type": "Feature", "properties": {"name:en": "Germany", "name:fr": "Allemagne", "name:ru": "\u0413\u0435\u0440\u043c\u0430\u043d\u0438\u044f", "name:de": "Deutschland", "name:es": "Alemania"}, "geometry": {"type": "Point", "coordinates": [13.4, 52.52]}}]}});
-
+    
 
     // Register images used by style layers
+    
 
-
-
-
+    
+    
 
     // Add layers
-
-
+    
+    
     map.addLayer({"id": "label_country_1", "type": "symbol", "layout": {"text-field": ["get", "name:en"], "text-font": ["Noto Sans Regular"], "text-size": 13}, "paint": {"text-color": "#333", "text-halo-color": "#fff", "text-halo-width": 1}, "source": "countries"});
-
-
-
+    
+    
+    
     map.addLayer({"id": "label_country_2", "type": "symbol", "layout": {"text-field": ["get", "name:en"], "text-font": ["Noto Sans Regular"], "text-size": 13}, "paint": {"text-color": "#333", "text-halo-color": "#fff", "text-halo-width": 1}, "source": "countries"});
-
-
-
+    
+    
+    
     map.addLayer({"id": "label_country_3", "type": "symbol", "layout": {"text-field": ["get", "name:en"], "text-font": ["Noto Sans Regular"], "text-size": 13}, "paint": {"text-color": "#333", "text-halo-color": "#fff", "text-halo-width": 1}, "source": "countries"});
+    
+    
 
-
-
-
+    
 
     // Popups
-
+    
 
     // Tooltips
-
+    
 
     // Tile Layers
     var tileLayers = [
-
+    
     ];
 
     // Overlay Layers
     var overlayLayers = [
-
+    
     ];
 
+    
 
-
-
+    
 
     // Markers
+    
 
+    
 
+    
 
+    
 
+    
 
-
-
-
-
-
-
+    
 
     // Queued camera actions
-
+    
 });
 
+    
 
+    
 
-
-
-
+    
 
             } catch (error) {
                 console.error('Error initializing map:', error);
@@ -547,12 +547,12 @@ map.on('load', function() {
             }
         }
     </script>
-
+    
     <!-- Load additional libraries with fallbacks -->
-
-
-
-
+    
+    
+    
+    
 </body>
 
 </html>

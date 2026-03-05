@@ -5,8 +5,8 @@
     <meta property="og:description" content="Add a third-party raster source to the map." />
     <meta charset='utf-8'>
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel='stylesheet' href='https://unpkg.com/maplibre-gl@5.7.3/dist/maplibre-gl.css' />
-    <script src='https://unpkg.com/maplibre-gl@5.7.3/dist/maplibre-gl.js'></script>
+    <link rel='stylesheet' href='https://unpkg.com/maplibre-gl@5.19.0/dist/maplibre-gl.css' />
+    <script src='https://unpkg.com/maplibre-gl@5.19.0/dist/maplibre-gl.js'></script>
     <style>
         body { margin: 0; padding: 0; }
         html, body, #map { height: 100%; }
@@ -15,7 +15,7 @@
 <body>
 <div class="maplibreum-example-banner">
   <h1>Add A Raster Tile Source</h1>
-  <p>Original MapLibre example: <a href="https://maplibre.org/maplibre-gl-js/docs/examples/add-a-raster-tile-source/" target="_blank" rel="noopener">https://maplibre.org/maplibre-gl-js/docs/examples/add-a-raster-tile-source/</a></p>
+  <p>Original MapLibre example: <a href="https://maplibre.org/maplibre-gl-js/docs/examples/./add-a-raster-tile-source/" target="_blank" rel="noopener">https://maplibre.org/maplibre-gl-js/docs/examples/./add-a-raster-tile-source/</a></p>
   <p>Generated from test_add_a_raster_tile_source.py by the automated test suite.</p>
 </div>
 
@@ -31,7 +31,8 @@
                     'tiles': ['https://tile.openstreetmap.org/{z}/{x}/{y}.png'],
                     'tileSize': 256,
                     'minzoom': 0,
-                    'maxzoom': 19
+                    'maxzoom': 19,
+                    'attribution': "© OpenStreetMap contributors",
                 }
             },
             'layers': [
@@ -39,7 +40,6 @@
                     'id': 'simple-tiles',
                     'type': 'raster',
                     'source': 'raster-tiles',
-                    'attribution': "© OpenStreetMap contributors",
                 }
             ],
             'id': 'blank'

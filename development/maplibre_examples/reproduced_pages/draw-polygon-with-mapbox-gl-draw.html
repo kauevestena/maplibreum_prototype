@@ -5,8 +5,8 @@
     <meta property="og:description" content="Use mapbox-gl-draw to draw a polygon and Turf.js to calculate its area in square meters." />
     <meta charset='utf-8'>
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel='stylesheet' href='https://unpkg.com/maplibre-gl@5.7.3/dist/maplibre-gl.css' />
-    <script src='https://unpkg.com/maplibre-gl@5.7.3/dist/maplibre-gl.js'></script>
+    <link rel='stylesheet' href='https://unpkg.com/maplibre-gl@5.19.0/dist/maplibre-gl.css' />
+    <script src='https://unpkg.com/maplibre-gl@5.19.0/dist/maplibre-gl.js'></script>
     <style>
         body { margin: 0; padding: 0; }
         html, body, #map { height: 100%; }
@@ -15,7 +15,7 @@
 <body>
 <div class="maplibreum-example-banner">
   <h1>Draw Polygon With Mapbox Gl Draw</h1>
-  <p>Original MapLibre example: <a href="https://maplibre.org/maplibre-gl-js/docs/examples/draw-polygon-with-mapbox-gl-draw/" target="_blank" rel="noopener">https://maplibre.org/maplibre-gl-js/docs/examples/draw-polygon-with-mapbox-gl-draw/</a></p>
+  <p>Original MapLibre example: <a href="https://maplibre.org/maplibre-gl-js/docs/examples/./draw-polygon-with-mapbox-gl-draw/" target="_blank" rel="noopener">https://maplibre.org/maplibre-gl-js/docs/examples/./draw-polygon-with-mapbox-gl-draw/</a></p>
   <p>Generated from test_draw_polygon_with_mapbox_gl_draw.py by the automated test suite.</p>
 </div>
 
@@ -48,9 +48,39 @@
         <div id="calculated-area"></div>
     </div>
 
+    <!-- Fix Mapbox Draw cursors: CSS classes to point to MapLibre GL classes -->
+    <style>
+        .maplibregl-map.mouse-pointer .maplibregl-canvas-container.maplibregl-interactive {
+            cursor: pointer;
+        }
+        .maplibregl-map.mouse-move .maplibregl-canvas-container.maplibregl-interactive {
+            cursor: move;
+        }
+        .maplibregl-map.mouse-add .maplibregl-canvas-container.maplibregl-interactive {
+            cursor: crosshair;
+        }
+        .maplibregl-map.mouse-move.mode-direct_select .maplibregl-canvas-container.maplibregl-interactive {
+            cursor: grab;
+            cursor: -moz-grab;
+            cursor: -webkit-grab;
+        }
+        .maplibregl-map.mode-direct_select.feature-vertex.mouse-move .maplibregl-canvas-container.maplibregl-interactive {
+            cursor: move;
+        }
+        .maplibregl-map.mode-direct_select.feature-midpoint.mouse-pointer .maplibregl-canvas-container.maplibregl-interactive {
+            cursor: cell;
+        }
+        .maplibregl-map.mode-direct_select.feature-feature.mouse-move .maplibregl-canvas-container.maplibregl-interactive {
+            cursor: move;
+        }
+        .maplibregl-map.mode-static.mouse-pointer  .maplibregl-canvas-container.maplibregl-interactive {
+            cursor: grab;
+            cursor: -moz-grab;
+            cursor: -webkit-grab;
+        }
+    </style>
+
     <script type="module">
-
-
     import * as turf from 'https://esm.sh/@turf/turf@7.1.0';
 
     MapboxDraw.constants.classes.CANVAS  = 'maplibregl-canvas';
@@ -101,6 +131,6 @@
                 alert('Use the draw tools to draw a polygon!');
         }
     }
-</script>
+    </script>
 </body>
 </html>
