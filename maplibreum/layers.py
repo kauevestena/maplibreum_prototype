@@ -136,3 +136,40 @@ __all__ = [
     "FillExtrusionLayer",
     "CustomLayer",
 ]
+
+
+class HTMLClusterLayer(Layer):
+    """A layer that renders HTML elements (e.g., donut charts) for clustered points.
+
+    This provides a Python API for rendering rich HTML visualizations for
+    clusters, as opposed to static icons or symbols.
+    """
+
+    def __init__(
+        self,
+        id: str,
+        source: str,
+        colors: list,
+        properties: list,
+        **kwargs: Any,
+    ) -> None:
+        """Initialize an HTMLClusterLayer.
+
+        Parameters
+        ----------
+        id : str
+            The layer identifier.
+        source : str
+            The identifier of the clustered source.
+        colors : list of str
+            A list of colors to use for the cluster visualization.
+        properties : list of str
+            A list of property names from the source data to visualize.
+        **kwargs : Any
+            Additional options.
+        """
+        super().__init__(id, "html_cluster", source, **kwargs)
+        self.colors = colors
+        self.properties = properties
+        self._options["colors"] = colors
+        self._options["properties"] = properties

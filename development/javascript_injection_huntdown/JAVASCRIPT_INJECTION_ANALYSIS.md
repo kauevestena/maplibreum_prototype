@@ -748,3 +748,22 @@ The analysis confirms the original suspicion: many examples are implemented with
 - **Overall Progress**: 75.6% proper API usage (93/123)
 - **Backward Compatibility**: All tests pass.
 - **Infrastructure**: New `SidebarControl` and `PanelControl` APIs available.
+
+### Recent Progress (2025-10-20)
+
+**API Implementation:**
+- ✅ **`GlobalStateSelectControl`**: Implemented to provide a dropdown for filtering layers using `setGlobalStateProperty`.
+- ✅ **`LayerFilterControl`**: Implemented to provide checkboxes for toggling layer visibility natively.
+- ✅ **`Map.make_draggable()`**: Implemented to handle drag events and coordinate updates directly from Python.
+- ✅ **`HTMLClusterLayer`**: Implemented to render rich HTML visualizations (e.g., donut charts) for clustered features.
+- ✅ **`Map.add_dynamic_color_icons()`**: Implemented to handle missing images and dynamically generate solid colored icons based on string keys.
+
+**Example Conversions:**
+- ✅ **`test_filter_layer_symbols_using_global_state`**: Converted to use `GlobalStateSelectControl`.
+- ✅ **`test_filter_symbols_by_toggling_a_list`**: Converted to use `LayerFilterControl`.
+- ✅ **`test_create_a_draggable_point`**: Converted to use `Map.make_draggable()`.
+- ✅ **`test_display_html_clusters_with_custom_properties`**: Converted to use `HTMLClusterLayer`.
+- ✅ **`test_generate_and_add_a_missing_icon_to_the_map`**: Converted to use `Map.add_dynamic_color_icons()`.
+
+**Current Status:**
+- All 5 examples successfully converted from raw Javascript injections to high level Python API methods. Tests pass.

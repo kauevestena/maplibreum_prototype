@@ -592,6 +592,110 @@ map.addControl(new maplibregl.AttributionControl({{ ctrl.options | tojson }}), "
     map.getContainer().appendChild(container);
 })();
 
+{% elif ctrl.type == "layerfilter" %}
+// Create layer filter control
+{
+    const nav = document.createElement('nav');
+    nav.id = '{{ ctrl.options.id }}';
+    nav.className = '{{ ctrl.options.css_class or "maplibreum-filter-group" }}';
+    {% if ctrl.options.css_class == "maplibreum-filter-group" %}
+    nav.style.position = 'absolute';
+    nav.style.font = "12px/20px 'Helvetica Neue', Arial, Helvetica, sans-serif";
+    nav.style.fontWeight = '600';
+    nav.style.borderRadius = '3px';
+    nav.style.width = '140px';
+    nav.style.color = '#fff';
+    {% endif %}
+
+    const layersData = {{ ctrl.options.layers | tojson }};
+    layersData.forEach(function(layer) {
+        const checkbox = document.createElement('input');
+        checkbox.type = 'checkbox';
+        checkbox.id = layer.id;
+        checkbox.checked = true;
+        {% if ctrl.options.css_class == "maplibreum-filter-group" %}
+        checkbox.style.display = 'none';
+        {% endif %}
+        nav.appendChild(checkbox);
+
+        const label = document.createElement('label');
+        label.setAttribute('for', layer.id);
+        label.textContent = layer.label;
+        {% if ctrl.options.css_class == "maplibreum-filter-group" %}
+        label.style.backgroundColor = '#3386c0';
+        label.style.display = 'block';
+        label.style.cursor = 'pointer';
+        label.style.padding = '10px';
+        label.style.borderBottom = '1px solid rgba(0, 0, 0, 0.25)';
+        label.style.textTransform = 'capitalize';
+
+        checkbox.addEventListener('change', function(event) {
+            if (event.target.checked) {
+                label.style.backgroundColor = '#4ea0da';
+            } else {
+                label.style.backgroundColor = '#3386c0';
+            }
+        });
+
+        label.addEventListener('mouseover', function() {
+            label.style.backgroundColor = '#4ea0da';
+        });
+
+        label.addEventListener('mouseout', function() {
+            if (!checkbox.checked) {
+                label.style.backgroundColor = '#3386c0';
+            }
+        });
+        {% endif %}
+        nav.appendChild(label);
+
+        checkbox.addEventListener('change', function(event) {
+            map.setLayoutProperty(
+                layer.id,
+                'visibility',
+                event.target.checked ? 'visible' : 'none'
+            );
+        });
+    });
+
+    {% if ctrl.options.css_class == "maplibreum-filter-group" %}
+    // Styles for first/last elements
+    if (nav.children.length > 1) {
+        const firstLabel = nav.querySelector('label:first-of-type');
+        if (firstLabel) {
+            firstLabel.style.borderRadius = '3px 3px 0 0';
+        }
+        const lastLabel = nav.querySelector('label:last-of-type');
+        if (lastLabel) {
+            lastLabel.style.borderRadius = '0 0 3px 3px';
+            lastLabel.style.border = 'none';
+        }
+    }
+    {% endif %}
+
+    const filterControl = {
+        onAdd: function(map) {
+            this._map = map;
+            this._container = document.createElement('div');
+            this._container.className = 'maplibregl-ctrl maplibregl-ctrl-group';
+            // We append nav directly to map container to avoid control-group styling affecting it
+            map.getContainer().appendChild(nav);
+            // The container needs to be returned, but we hide it since we manually appended nav
+            this._container.style.display = 'none';
+            return this._container;
+        },
+        onRemove: function() {
+            if (nav.parentNode) {
+                nav.parentNode.removeChild(nav);
+            }
+            this._container.parentNode.removeChild(this._container);
+            this._map = undefined;
+        }
+    };
+
+    map.addControl(filterControl, "{{ ctrl.position }}");
+}
+
 {% elif ctrl.type == "minimap" %}
 map.addControl(new MinimapControl({{ ctrl.options | tojson }}), "{{ ctrl.position }}");
 {% elif ctrl.type == "search" %}
@@ -1071,6 +1175,88 @@ map.on('load', function() {
         {{ callback | safe }}
     })(map);
     {% endfor %}
+
+    {% if html_cluster_layers %}
+    {% for layer in html_cluster_layers %}
+    (function() {
+        var sourceId = '{{ layer.source }}';
+        var donutColors = {{ layer.colors | tojson }};
+        var propNames = {{ layer.properties | tojson }};
+        var markers = {};
+        var markersOnScreen = {};
+
+        function updateMarkers() {
+            var newMarkers = {};
+            var features = map.querySourceFeatures(sourceId);
+            for (var i = 0; i < features.length; i++) {
+                var feature = features[i];
+                if (!feature.properties.cluster) { continue; }
+                var id = feature.properties.cluster_id;
+                var marker = markers[id];
+                if (!marker) {
+                    var element = createDonutChart(feature.properties);
+                    marker = markers[id] = new maplibregl.Marker({ element: element }).setLngLat(feature.geometry.coordinates);
+                }
+                newMarkers[id] = marker;
+                if (!markersOnScreen[id]) {
+                    marker.addTo(map);
+                }
+            }
+            for (var existingId in markersOnScreen) {
+                if (!newMarkers[existingId]) {
+                    markersOnScreen[existingId].remove();
+                }
+            }
+            markersOnScreen = newMarkers;
+        }
+
+        map.on('data', function(event) {
+            if (event.sourceId !== sourceId || !event.isSourceLoaded) {
+                return;
+            }
+            map.on('move', updateMarkers);
+            map.on('moveend', updateMarkers);
+            updateMarkers();
+        });
+
+        function createDonutChart(properties) {
+            var counts = propNames.map(p => properties[p]);
+            var offsets = [];
+            var total = 0;
+            for (var i = 0; i < counts.length; i++) {
+                offsets.push(total);
+                total += counts[i];
+            }
+            var fontSize = total >= 1000 ? 22 : total >= 100 ? 20 : total >= 10 ? 18 : 16;
+            var radius = total >= 1000 ? 50 : total >= 100 ? 32 : total >= 10 ? 24 : 18;
+            var inner = Math.round(radius * 0.6);
+            var width = radius * 2;
+            var svg = '<div><svg width="' + width + '" height="' + width + '" viewBox="0 0 ' + width + ' ' + width + '" text-anchor="middle" style="font: ' + fontSize + 'px sans-serif; display: block">';
+            for (var j = 0; j < counts.length; j++) {
+                svg += donutSegment(offsets[j] / total, (offsets[j] + counts[j]) / total, radius, inner, donutColors[j]);
+            }
+            svg += '<circle cx="' + radius + '" cy="' + radius + '" r="' + inner + '" fill="white" />';
+            svg += '<text dominant-baseline="central" transform="translate(' + radius + ', ' + radius + ')">' + total + '</text>';
+            svg += '</svg></div>';
+            var container = document.createElement('div');
+            container.innerHTML = svg;
+            return container.firstChild;
+        }
+
+        function donutSegment(start, end, radius, innerRadius, color) {
+            if (end - start === 0) {
+                return '';
+            }
+            var a0 = 2 * Math.PI * (start - 0.25);
+            var a1 = 2 * Math.PI * (end - 0.25);
+            var x0 = Math.cos(a0), y0 = Math.sin(a0);
+            var x1 = Math.cos(a1), y1 = Math.sin(a1);
+            var largeArc = end - start > 0.5 ? 1 : 0;
+            return '<path d="M ' + radius * x0 + ' ' + radius * y0 + ' A ' + radius + ' ' + radius + ' 0 ' + largeArc + ' 1 ' + radius * x1 + ' ' + radius * y1 + ' L ' + innerRadius * x1 + ' ' + innerRadius * y1 + ' A ' + innerRadius + ' ' + innerRadius + ' 0 ' + largeArc + ' 0 ' + innerRadius * x0 + ' ' + innerRadius * y0 + ' Z" fill="' + color + '" />';
+        }
+    })();
+    {% endfor %}
+    {% endif %}
 
     {% for animation in animations %}
     (function(map) {

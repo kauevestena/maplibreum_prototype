@@ -16,10 +16,10 @@
     "proper_api_only": 55,
     "other_patterns": 22,
     "completion_percentage": {
-      "phase_1": 82.4,
+      "phase_1": 100.0,
       "phase_2": 88.2,
       "phase_3": 100.0,
-      "overall": 75.6
+      "overall": 79.7
     }
   },
   "implementation_phases": {
@@ -727,7 +727,7 @@
         "filter-layer-symbols-using-global-state": {
           "name": "filter-layer-symbols-using-global-state",
           "description": "Convert filter-layer-symbols-using-global-state example to use proper Python API.",
-          "status": "pending",
+          "status": "completed",
           "phase": "phase_1",
           "assigned_to": "copilot",
           "priority": "medium",
@@ -736,7 +736,7 @@
         "filter-symbols-by-toggling-a-list": {
           "name": "filter-symbols-by-toggling-a-list",
           "description": "Convert filter-symbols-by-toggling-a-list example to use proper Python API.",
-          "status": "pending",
+          "status": "completed",
           "phase": "phase_1",
           "assigned_to": "copilot",
           "priority": "medium",
@@ -1041,7 +1041,7 @@
         "create-a-draggable-point": {
           "name": "create-a-draggable-point",
           "description": "Convert create-a-draggable-point example to use proper Python API.",
-          "status": "pending",
+          "status": "completed",
           "phase": "phase_1",
           "assigned_to": "copilot",
           "priority": "medium",
@@ -1050,7 +1050,7 @@
         "display-html-clusters-with-custom-properties": {
           "name": "display-html-clusters-with-custom-properties",
           "description": "Convert display-html-clusters-with-custom-properties example to use proper Python API.",
-          "status": "pending",
+          "status": "completed",
           "phase": "phase_2",
           "assigned_to": "copilot",
           "priority": "medium",
@@ -1059,7 +1059,7 @@
         "generate-and-add-a-missing-icon-to-the-map": {
           "name": "generate-and-add-a-missing-icon-to-the-map",
           "description": "Convert generate-and-add-a-missing-icon-to-the-map example to use proper Python API.",
-          "status": "pending",
+          "status": "completed",
           "phase": "phase_2",
           "assigned_to": "copilot",
           "priority": "medium",
