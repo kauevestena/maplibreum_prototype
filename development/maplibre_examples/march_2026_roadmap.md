@@ -20,11 +20,11 @@ The goal of this phase is to fix the reporting and tracking metrics.
 
 The goal of this phase is to eliminate the use of raw JavaScript injection (`add_on_load_js`, `add_external_script`) in all example test scripts, replacing them with proper native Python wrappers and engine improvements (e.g., proper WebGL layer hooks, custom UI control implementations).
 
-- [ ] `tests/test_examples/test_create_a_time_slider.py`
-- [ ] `tests/test_examples/test_change_a_layers_color_with_buttons.py`
-- [ ] `tests/test_examples/test_add_live_realtime_data.py`
-- [ ] `tests/test_examples/test_update_a_feature_in_realtime.py`
-- [ ] `tests/test_examples/test_add_an_animated_icon_to_the_map.py`
+- [x] `tests/test_examples/test_create_a_time_slider.py`
+- [x] `tests/test_examples/test_change_a_layers_color_with_buttons.py`
+- [x] `tests/test_examples/test_add_live_realtime_data.py`
+- [x] `tests/test_examples/test_update_a_feature_in_realtime.py`
+- [x] `tests/test_examples/test_add_an_animated_icon_to_the_map.py`
 - [ ] `tests/test_examples/test_filter_symbols_by_text_input.py`
 - [ ] `tests/test_examples/test_view_local_geojson.py`
 - [ ] `tests/test_examples/test_disable_map_rotation.py`

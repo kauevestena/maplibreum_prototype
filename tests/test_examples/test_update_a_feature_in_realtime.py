@@ -54,7 +54,7 @@ def test_update_a_feature_in_realtime():
             data=source.data,
             interval=10,
         )
-        map_.add_on_load_js(animation.to_js())
+        map_.add_animation(animation)
 
         # Render the map
         html = map_.render()
