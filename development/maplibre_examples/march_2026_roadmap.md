@@ -6,9 +6,9 @@ This roadmap, that is based upon development/maplibre_examples/README.md outline
 
 The goal of this phase is to align our generated examples with the upstream MapLibre examples.
 
-- [ ] Map existing test outputs exactly to upstream file names.
-- [ ] Implement the remaining missing MapLibre examples (e.g., `3d-terrain.html`, `add-a-custom-style-layer.html`).
-- [ ] Clean up custom test outputs that don't belong in `reproduced_pages/` (e.g., `change-a-maps-language-with-python-api.html`, `create-a-basic-circle-layer.html`).
+- [x] Map existing test outputs exactly to upstream file names.
+- [x] Implement the remaining missing MapLibre examples (e.g., `3d-terrain.html`, `add-a-custom-style-layer.html`).
+- [x] Clean up custom test outputs that don't belong in `reproduced_pages/` (e.g., `change-a-maps-language-with-python-api.html`, `create-a-basic-circle-layer.html`).
 
 ## Phase 2: Fix Tracking
 
