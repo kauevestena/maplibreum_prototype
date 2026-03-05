@@ -298,7 +298,7 @@
     "source_status": true,
     "file_path": "development/maplibre_examples/pages/change-a-maps-language.html",
     "task_status": false,
-    "script": null
+    "script": "tests/test_examples/test_change_a_maps_language.py"
   },
   "change-building-color-based-on-zoom-level": {
     "url": "https://maplibre.org/maplibre-gl-js/docs/examples/./change-building-color-based-on-zoom-level/",
@@ -858,14 +858,14 @@
     "source_status": true,
     "file_path": "development/maplibre_examples/pages/variable-label-placement.html",
     "task_status": false,
-    "script": null
+    "script": "tests/test_examples/test_variable_label_placement.py"
   },
   "variable-label-placement-with-offset": {
     "url": "https://maplibre.org/maplibre-gl-js/docs/examples/./variable-label-placement-with-offset/",
     "source_status": true,
     "file_path": "development/maplibre_examples/pages/variable-label-placement-with-offset.html",
     "task_status": false,
-    "script": null
+    "script": "tests/test_examples/test_variable_label_placement_with_offset.py"
   },
   "view-a-fullscreen-map": {
     "url": "https://maplibre.org/maplibre-gl-js/docs/examples/./view-a-fullscreen-map/",

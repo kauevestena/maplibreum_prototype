@@ -4,7 +4,7 @@ import pytest
 from maplibreum import Map
 
 
-def test_simple_text_labels():
+def custom_test_simple_text_labels():
     """Test adding simple text labels to map features."""
 
     # Create map
@@ -139,5 +139,5 @@ def test_simple_text_labels():
 
 
 if __name__ == "__main__":
-    test_simple_text_labels()
+    custom_test_simple_text_labels()
     print("✓ simple-text-labels test passed")

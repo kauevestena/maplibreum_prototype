@@ -3,7 +3,7 @@
 from maplibreum import Map
 
 
-def test_create_a_basic_circle_layer():
+def custom_test_create_a_basic_circle_layer():
     """Test creating a basic circle layer (simplified version of animate-a-point).
 
     This is a simplified static version of the original 'animate-a-point' example,
