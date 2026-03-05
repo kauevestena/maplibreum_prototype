@@ -66,12 +66,17 @@ for page_id, href in pages.items():
     existing_entry = status_data.get(page_id, {})
     inner = existing_entry.get(page_id, {})
 
+    script_path = normalise_script(page_id, inner.get("script"))
+    task_status = False
+    if script_path and os.path.exists(script_path):
+        task_status = True
+
     entry = {
         "url": href,
         "source_status": inner.get("source_status", False),
         "file_path": file_path,
-        "task_status": inner.get("task_status", False),
-        "script": normalise_script(page_id, inner.get("script")),
+        "task_status": task_status,
+        "script": script_path,
     }
 
     print(f"Fetching {page_id} from {href}...")
