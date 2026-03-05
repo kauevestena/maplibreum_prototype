@@ -14,7 +14,7 @@ The goal of this phase is to align our generated examples with the upstream MapL
 
 The goal of this phase is to fix the reporting and tracking metrics.
 
-- [ ] Repair the `status.json` tracking system to accurately reflect `task_status: true` for implemented examples, ensuring the command-line metrics are correct.
+- [x] Repair the `status.json` tracking system to accurately reflect `task_status: true` for implemented examples, ensuring the command-line metrics are correct.
 
 ## Phase 3: True Python API Parity
 
