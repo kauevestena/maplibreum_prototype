@@ -1,59 +1,76 @@
+import requests_mock
+
 from maplibreum import Map
+from maplibreum.layers import LineLayer
+from maplibreum.realtime import AnimatePointOnLine, RealTimeDataSource
 
-
-D3_SCRIPT = "https://d3js.org/d3.v3.min.js"
-
-
-REALTIME_JS = """
-map.on('load', () => {
-    d3.json('https://maplibre.org/maplibre-gl-js/docs/assets/hike.geojson', (err, data) => {
-        if (err) {
-            throw err;
-        }
-        const coordinates = data.features[0].geometry.coordinates;
-        data.features[0].geometry.coordinates = [coordinates[0]];
-        map.addSource('trace', { type: 'geojson', data });
-        map.addLayer({
-            id: 'trace',
-            type: 'line',
-            source: 'trace',
-            paint: {
-                'line-color': 'yellow',
-                'line-opacity': 0.75,
-                'line-width': 5,
-            },
-        });
-        map.jumpTo({ center: coordinates[0], zoom: 14 });
-        map.setPitch(30);
-        let i = 0;
-        const timer = window.setInterval(() => {
-            if (i < coordinates.length) {
-                data.features[0].geometry.coordinates.push(coordinates[i]);
-                map.getSource('trace').setData(data);
-                map.panTo(coordinates[i]);
-                i++;
-            } else {
-                window.clearInterval(timer);
-            }
-        }, 10);
-    });
-});
-"""
+HIKE_GEOJSON_URL = "https://maplibre.org/maplibre-gl-js/docs/assets/hike.geojson"
 
 
 def test_update_a_feature_in_realtime():
-    m = Map(
-        map_style="https://tiles.openfreemap.org/styles/bright",
-        zoom=0,
-    )
+    # Prepare the mock data
+    geojson_data = {
+        "type": "FeatureCollection",
+        "features": [
+            {
+                "type": "Feature",
+                "geometry": {
+                    "type": "LineString",
+                    "coordinates": [[-122.483696, 37.833818], [-122.483482, 37.833174]],
+                },
+            }
+        ],
+    }
 
-    m.add_external_script(D3_SCRIPT)
-    m.add_on_load_js(REALTIME_JS)
+    # Setup requests mock
+    with requests_mock.Mocker() as m:
+        m.get(HIKE_GEOJSON_URL, json=geojson_data)
 
-    html = m.render()
+        # Create the map
+        map_ = Map(
+            map_style="https://tiles.openfreemap.org/styles/bright",
+            zoom=14,
+            pitch=30,
+        )
 
-    assert D3_SCRIPT in html
-    assert "d3.json" in html
-    assert "map.addSource('trace'" in html
-    assert "window.setInterval" in html
-    assert "map.getSource('trace').setData(data);" in html
+        # Create the real-time data source
+        source_id = "trace"
+        source = RealTimeDataSource.from_url(
+            url=HIKE_GEOJSON_URL,
+        )
+        map_.add_source(source_id, source)
+
+        # Add the layer to display the line
+        layer = LineLayer(
+            id="trace",
+            source=source_id,
+            paint={"line-color": "yellow", "line-opacity": 0.75, "line-width": 5},
+        )
+        map_.add_layer(layer)
+
+        # Create and add the animation
+        animation = AnimatePointOnLine(
+            source_id=source_id,
+            data=source.data,
+            interval=10,
+        )
+        map_.add_on_load_js(animation.to_js())
+
+        # Render the map
+        html = map_.render()
+
+        # Verify the output
+        assert f"map.getSource('{source_id}')" in html
+        assert "window.clearInterval(timer)" in html
+        assert "setInterval" in html
+        assert "map.panTo(coordinates[i])" in html
+        assert "setData" in html
+        assert "const coordinates =" in html
+        assert "let data =" in html
+        assert "let i = 1;" in html
+        assert "var timer = setInterval" in html
+        assert "function(){" in html
+        assert "if (i < coordinates.length) {" in html
+        assert "map.getSource('trace').setData(data)" in html
+        assert "d3.json" not in html  # Should not use d3
+        assert "window.setInterval(() => {" not in html  # Should use the generated function

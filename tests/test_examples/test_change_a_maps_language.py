@@ -66,7 +66,7 @@ def _base_label_layer(layer_id: str) -> dict:
     }
 
 
-def test_change_a_maps_language_with_python_api() -> None:
+def test_change_a_maps_language() -> None:
     """Dynamically toggle label languages using a button strip."""
 
     map_instance = Map(

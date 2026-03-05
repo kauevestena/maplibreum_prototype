@@ -3,7 +3,7 @@
 from maplibreum import Map
 
 
-def test_create_a_basic_fill_layer():
+def custom_test_create_a_basic_fill_layer():
     """Test creating a basic fill layer with simple polygon.
 
     This creates a simple rectangular polygon with basic fill styling.

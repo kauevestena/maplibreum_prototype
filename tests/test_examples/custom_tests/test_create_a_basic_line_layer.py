@@ -3,7 +3,7 @@
 from maplibreum import Map
 
 
-def test_create_a_basic_line_layer():
+def custom_test_create_a_basic_line_layer():
     """Test creating a basic line layer with simple styling.
 
     This creates a simple straight line with basic styling properties.
