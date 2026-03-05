@@ -25,8 +25,8 @@ The goal of this phase is to eliminate the use of raw JavaScript injection (`add
 - [x] `tests/test_examples/test_add_live_realtime_data.py`
 - [x] `tests/test_examples/test_update_a_feature_in_realtime.py`
 - [x] `tests/test_examples/test_add_an_animated_icon_to_the_map.py`
-- [ ] `tests/test_examples/test_filter_symbols_by_text_input.py`
-- [ ] `tests/test_examples/test_view_local_geojson.py`
+- [x] `tests/test_examples/test_filter_symbols_by_text_input.py`
+- [x] `tests/test_examples/test_view_local_geojson.py`
 - [ ] `tests/test_examples/test_disable_map_rotation.py`
 - [ ] `tests/test_examples/test_animate_map_camera_around_a_point.py`
 - [ ] `tests/test_examples/test_add_a_custom_layer_with_tiles_to_a_globe.py`
