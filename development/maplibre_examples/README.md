@@ -156,6 +156,33 @@ When converting JavaScript examples to Python:
 
 ## Roadmap
 
+### Current State & Findings (as of March 2026)
+
+A comprehensive review of the current examples suite has revealed several discrepancies that need addressing to reach true parity:
+
+- **File mismatches:** There are 129 downloaded examples in `pages/` but only 128 reproduced examples in `reproduced_pages/`. Ten upstream examples are entirely missing from our outputs (e.g., `3d-terrain.html`, `add-a-custom-style-layer.html`), while several extra custom `.html` files have been generated that do not map to upstream names (e.g., `change-a-maps-language-with-python-api.html`, `create-a-basic-circle-layer.html`).
+- **Status tracking is out of sync:** The `status.json` file incorrectly reports `task_status: false` across the board (0 implemented out of 129), even though 168 tests exist and pass.
+- **JS Injection is still widespread:** While the `javascript_injection_huntdown` directory claims 100% completion, a quick audit (`grep -rl -E "add_on_load_js|add_external_script" tests/test_examples/ | wc -l`) reveals that **66 test scripts** are still relying on raw JavaScript injection to achieve functionality.
+- **Map part equality:** Are the map parts in both `pages/` and `reproduced_pages/` really equal? Functionally, they aim to be equivalent. However, structurally, they differ significantly. MapLibre's examples use raw HTML/JS, whereas our reproduced pages are generated using Jinja2 templates via the Python API, injecting configured properties.
+- **Functionality remaining to be implemented:** Yes. As long as we are relying on `add_on_load_js` or `add_external_script` (66 occurrences), we lack true Python API implementations for those specific features.
+
+### New Action Plan
+
+To truly achieve 100% Python API parity and align our testing suite with upstream, we are setting a new path:
+
+1. **Phase 1: Reconcile Examples**
+   - Map existing test outputs exactly to upstream file names.
+   - Implement the remaining missing MapLibre examples (e.g., `3d-terrain`).
+   - Clean up custom test outputs that don't belong in `reproduced_pages/`.
+
+2. **Phase 2: Fix Tracking**
+   - Repair the `status.json` tracking system to accurately reflect `task_status: true` for implemented examples, ensuring the command-line metrics are correct.
+
+3. **Phase 3: True Python API Parity**
+   - Systematically replace the remaining 66 instances of `add_on_load_js` and `add_external_script` in `tests/test_examples/` with native Python wrappers and engine improvements (e.g., proper WebGL layer hooks, custom UI control implementations).
+
+---
+
 ### Coverage Summary
 
 **Current Coverage:** 123/123 examples completed
