@@ -1,8 +1,8 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <title>Create a gradient line using an expression</title>
-    <meta property="og:description" content="Use the line-gradient paint property and an expression to visualize distance from the starting point of a line." />
+    <title>Create a gradient line with dasharray using an expression</title>
+    <meta property="og:description" content="Use the line-gradient and line-dasharray paint properties together to create a dashed line with gradient colors." />
     <meta charset='utf-8'>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel='stylesheet' href='https://unpkg.com/maplibre-gl@5.19.0/dist/maplibre-gl.css' />
@@ -90,7 +90,9 @@
                     'yellow',
                     1,
                     'red'
-                ]
+                ],
+                // 'line-dasharray' can be combined with 'line-gradient'
+                'line-dasharray': [10, 2.4]
             },
             layout: {
                 'line-cap': 'round',

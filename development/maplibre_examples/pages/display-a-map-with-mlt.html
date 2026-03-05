@@ -1,8 +1,8 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <title>Disable map rotation</title>
-    <meta property="og:description" content="Prevent users from rotating a map." />
+    <title>Display a map with MLT</title>
+    <meta property="og:description" content="Initialize a map in an HTML element with MapLibre GL JS. This example is using a style that uses MLT (MapLibre Tiles). The example is very similar to the regular one except the tiles are in a different encoding." />
     <meta charset='utf-8'>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel='stylesheet' href='https://unpkg.com/maplibre-gl@5.19.0/dist/maplibre-gl.css' />
@@ -17,19 +17,11 @@
 <script>
     const map = new maplibregl.Map({
         container: 'map', // container id
-        style: 'https://demotiles.maplibre.org/style.json', // style URL
-        center: [-122.65, 45.52], // starting position
-        zoom: 3 // starting zoom
+        style: 'https://demotiles.maplibre.org/tiles-mlt/plain.json', // style URL
+        center: [0, 0], // starting position [lng, lat]
+        zoom: 1, // starting zoom
+        maplibreLogo: true
     });
-
-    // disable map rotation using right click + drag
-    map.dragRotate.disable();
-
-    // disable map rotation using keyboard
-    map.keyboard.disable();
-
-    // disable map rotation using touch rotation gesture
-    map.touchZoomRotate.disableRotation();
 </script>
 </body>
 </html>
