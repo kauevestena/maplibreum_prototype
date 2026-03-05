@@ -5,8 +5,8 @@ This document outlines the step-by-step roadmap for fixing and updating the Jupy
 These notebooks currently contain outdated code, broken links, or use deprecated patterns (like raw JavaScript injection) that need to be updated to rely strictly on the native Python API and modern, functional endpoints.
 
 ## 1. `examples/01_basic_usage.ipynb`
-- [ ] **1.1 Review and Validate:** This notebook generally looks solid as it mainly focuses on basic Map, Marker, Popup, and Vector shapes. Verify that the shapes correctly render on the map.
-- [ ] **1.2 Clean up unused imports:** Ensure all imports in the notebook cells are actually used.
+- [x] **1.1 Review and Validate:** This notebook generally looks solid as it mainly focuses on basic Map, Marker, Popup, and Vector shapes. Verify that the shapes correctly render on the map.
+- [x] **1.2 Clean up unused imports:** Ensure all imports in the notebook cells are actually used.
 
 ## 2. `examples/02_layers_and_controls.ipynb`
 - [ ] **2.1 Replace Stamen Terrain Source:** Stamen tiles (`https://stamen-tiles.a.ssl.fastly.net/...`) are no longer functional/free to use in the same manner. Replace this `RasterSource` implementation with a working alternative, such as Stadia Maps (which took over Stamen tiles but requires an API key, so maybe an open alternative like OpenStreetMap or another public raster map tile source is better). Update the source and attribution accordingly.
