@@ -18,8 +18,8 @@ These notebooks currently contain outdated code, broken links, or use deprecated
     This needs to be replaced. Update `GeocodingControl` in MapLibreum's core to handle its own dependencies natively, or use the native Python API wrapper if it already exists, avoiding `add_external_script` and manual `custom_css` injection.
 
 ## 3. `examples/03_geojson_and_choropleth.ipynb`
-- [ ] **3.1 Update Folium Data URL:** The notebook relies on `https://raw.githubusercontent.com/python-visualization/folium/main/examples/data/US_Unemployment_Oct2012.csv`. Verify this link is still active and stable, or consider hosting a small dummy dataset natively in the repo to prevent external dependency breakage.
-- [ ] **3.2 Validate Choropleth Rendering:** Ensure the `Choropleth` class correctly parses the dictionary and matches it against the GeoJSON properties without throwing JS errors.
+- [x] **3.1 Update Folium Data URL:** The notebook relies on `https://raw.githubusercontent.com/python-visualization/folium/main/examples/data/US_Unemployment_Oct2012.csv`. Verify this link is still active and stable, or consider hosting a small dummy dataset natively in the repo to prevent external dependency breakage.
+- [x] **3.2 Validate Choropleth Rendering:** Ensure the `Choropleth` class correctly parses the dictionary and matches it against the GeoJSON properties without throwing JS errors.
 
 ## 4. `examples/04_advanced_layers.ipynb`
 - [ ] **4.1 Fix S3 Terrain URL:** The notebook uses `s3://elevation-tiles-prod/terrarium/`. S3 protocols are not natively supported by browsers without a protocol wrapper. Update the URL to use a standard `https` endpoint (e.g., `https://s3.amazonaws.com/elevation-tiles-prod/terrarium/{z}/{x}/{y}.png`).
