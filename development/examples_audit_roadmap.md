@@ -22,9 +22,9 @@ These notebooks currently contain outdated code, broken links, or use deprecated
 - [x] **3.2 Validate Choropleth Rendering:** Ensure the `Choropleth` class correctly parses the dictionary and matches it against the GeoJSON properties without throwing JS errors.
 
 ## 4. `examples/04_advanced_layers.ipynb`
-- [ ] **4.1 Fix S3 Terrain URL:** The notebook uses `s3://elevation-tiles-prod/terrarium/`. S3 protocols are not natively supported by browsers without a protocol wrapper. Update the URL to use a standard `https` endpoint (e.g., `https://s3.amazonaws.com/elevation-tiles-prod/terrarium/{z}/{x}/{y}.png`).
-- [ ] **4.2 Verify 3D Model URL:** The `ThreeJSLayer` example uses `https://raw.githubusercontent.com/KhronosGroup/glTF-Sample-Models/master/2.0/Box/glTF-Binary/Box.glb`. Verify this model still exists at this URL, as Khronos frequently reorganizes its sample repos.
-- [ ] **4.3 Validate Protomaps PMTiles URL:** Ensure the Protomaps sample URL (`https://r2-public.protomaps.com/protomaps-sample-datasets/cb_2018_us_zcta510_500k.pmtiles`) is still active and functional.
+- [x] **4.1 Fix S3 Terrain URL:** The notebook uses `s3://elevation-tiles-prod/terrarium/`. S3 protocols are not natively supported by browsers without a protocol wrapper. Update the URL to use a standard `https` endpoint (e.g., `https://s3.amazonaws.com/elevation-tiles-prod/terrarium/{z}/{x}/{y}.png`).
+- [x] **4.2 Verify 3D Model URL:** The `ThreeJSLayer` example uses `https://raw.githubusercontent.com/KhronosGroup/glTF-Sample-Models/master/2.0/Box/glTF-Binary/Box.glb`. Verify this model still exists at this URL, as Khronos frequently reorganizes its sample repos.
+- [x] **4.3 Validate Protomaps PMTiles URL:** Ensure the Protomaps sample URL (`https://r2-public.protomaps.com/protomaps-sample-datasets/cb_2018_us_zcta510_500k.pmtiles`) is still active and functional.
 
 ## 5. `examples/05_realtime_and_events.ipynb`
 - [ ] **5.1 Replace Wanderdrone API:** The `RealTimeDataSource` uses `https://wanderdrone.appspot.com/`, which is notoriously unstable and often returns 502 Bad Gateway. Create a local mock API using a simple Python server, or use a more stable public endpoint (like an ISS tracker API) for real-time coordinates.
