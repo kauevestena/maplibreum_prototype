@@ -9,8 +9,8 @@ These notebooks currently contain outdated code, broken links, or use deprecated
 - [x] **1.2 Clean up unused imports:** Ensure all imports in the notebook cells are actually used.
 
 ## 2. `examples/02_layers_and_controls.ipynb`
-- [ ] **2.1 Replace Stamen Terrain Source:** Stamen tiles (`https://stamen-tiles.a.ssl.fastly.net/...`) are no longer functional/free to use in the same manner. Replace this `RasterSource` implementation with a working alternative, such as Stadia Maps (which took over Stamen tiles but requires an API key, so maybe an open alternative like OpenStreetMap or another public raster map tile source is better). Update the source and attribution accordingly.
-- [ ] **2.2 Refactor `GeocodingControl`:** The `GeocodingControl` section injects raw JavaScript and CSS:
+- [x] **2.1 Replace Stamen Terrain Source:** Stamen tiles (`https://stamen-tiles.a.ssl.fastly.net/...`) are no longer functional/free to use in the same manner. Replace this `RasterSource` implementation with a working alternative, such as Stadia Maps (which took over Stamen tiles but requires an API key, so maybe an open alternative like OpenStreetMap or another public raster map tile source is better). Update the source and attribution accordingly.
+- [x] **2.2 Refactor `GeocodingControl`:** The `GeocodingControl` section injects raw JavaScript and CSS:
     ```python
     m5.add_external_script('https://unpkg.com/@maplibre/maplibre-gl-geocoder@1.5.0/dist/maplibre-gl-geocoder.min.js')
     m5.custom_css += "@import url('https://unpkg.com/@maplibre/maplibre-gl-geocoder@1.5.0/dist/maplibre-gl-geocoder.css');"
