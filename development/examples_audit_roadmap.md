@@ -27,13 +27,13 @@ These notebooks currently contain outdated code, broken links, or use deprecated
 - [x] **4.3 Validate Protomaps PMTiles URL:** Ensure the Protomaps sample URL (`https://r2-public.protomaps.com/protomaps-sample-datasets/cb_2018_us_zcta510_500k.pmtiles`) is still active and functional.
 
 ## 5. `examples/05_realtime_and_events.ipynb`
-- [ ] **5.1 Replace Wanderdrone API:** The `RealTimeDataSource` uses `https://wanderdrone.appspot.com/`, which is notoriously unstable and often returns 502 Bad Gateway. Create a local mock API using a simple Python server, or use a more stable public endpoint (like an ISS tracker API) for real-time coordinates.
-- [ ] **5.2 Validate USGS Earthquakes API:** Ensure the USGS GeoJSON feed (`https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/all_day.geojson`) is correctly rendering with the dynamic `style_quake` styling function.
+- [x] **5.1 Replace Wanderdrone API:** The `RealTimeDataSource` uses `https://wanderdrone.appspot.com/`, which is notoriously unstable and often returns 502 Bad Gateway. Create a local mock API using a simple Python server, or use a more stable public endpoint (like an ISS tracker API) for real-time coordinates.
+- [x] **5.2 Validate USGS Earthquakes API:** Ensure the USGS GeoJSON feed (`https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/all_day.geojson`) is correctly rendering with the dynamic `style_quake` styling function.
 
 ## 6. `examples/06_clustering_and_performance.ipynb`
-- [ ] **6.1 Verify Vega Datasets URL:** Ensure `https://raw.githubusercontent.com/vega/vega-datasets/master/data/us-state-capitals.json` correctly loads and clusters.
-- [ ] **6.2 General Review:** The clustering implementation appears standard, but ensure the `clusterMaxZoom` and `clusterRadius` properties are still functioning correctly in the latest MapLibre GL JS version used by MapLibreum.
+- [x] **6.1 Verify Vega Datasets URL:** Ensure `https://raw.githubusercontent.com/vega/vega-datasets/master/data/us-state-capitals.json` correctly loads and clusters.
+- [x] **6.2 General Review:** The clustering implementation appears standard, but ensure the `clusterMaxZoom` and `clusterRadius` properties are still functioning correctly in the latest MapLibre GL JS version used by MapLibreum.
 
 ## General Tasks
-- [ ] **7.1 Run all Notebooks:** After making the above changes, re-run all notebooks using `jupyter nbconvert --to notebook --execute` (or manually) to ensure no Python exceptions are thrown and the outputs are generated correctly.
-- [ ] **7.2 Visual Inspection:** Manually inspect the HTML outputs of the Jupyter Notebooks to confirm the visual representation exactly matches the intended behavior (e.g., 3D terrain actually shows as 3D, choropleth colors correctly, etc.).
+- [x] **7.1 Run all Notebooks:** After making the above changes, re-run all notebooks using `jupyter nbconvert --to notebook --execute` (or manually) to ensure no Python exceptions are thrown and the outputs are generated correctly.
+- [x] **7.2 Visual Inspection:** Manually inspect the HTML outputs of the Jupyter Notebooks to confirm the visual representation exactly matches the intended behavior (e.g., 3D terrain actually shows as 3D, choropleth colors correctly, etc.).
