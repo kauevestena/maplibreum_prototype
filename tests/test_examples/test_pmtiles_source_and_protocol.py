@@ -10,7 +10,7 @@ STYLE = {
     "sources": {
         "example_source": {
             "type": "vector",
-            "url": "pmtiles://" + PMTILES_ARCHIVE, # TODO: check whether is this the best way to define an url
+            "url": PMTilesSource(archive_url=PMTILES_ARCHIVE).style_url,
             "attribution": '© <a href="https://openstreetmap.org/copyright">OpenStreetMap</a>',
         }
     },
@@ -40,10 +40,10 @@ STYLE = {
 }
 
 
-LEGACY_PROTOCOL_JS = """
+LEGACY_PROTOCOL_JS = f"""
 const protocol = new pmtiles.Protocol();
 maplibregl.addProtocol('pmtiles', protocol.tile);
-const archive = new pmtiles.PMTiles('https://pmtiles.io/protomaps(vector)ODbL_firenze.pmtiles');
+const archive = new pmtiles.PMTiles('{PMTILES_ARCHIVE}');
 protocol.add(archive);
 """
 
