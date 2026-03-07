@@ -24,6 +24,7 @@ class MarkerCluster:
         self.features = []
         self.map = None
         self.source_name = None
+        self._source = None
         self.cluster_layer_id = None
         self.count_layer_id = None
         self.unclustered_layer_id = None
@@ -43,10 +44,14 @@ class MarkerCluster:
         }
         self.features.append(feature)
         if self.map and self.source_name:
-            for src in self.map.sources:
-                if src["name"] == self.source_name:
-                    src["definition"]["data"]["features"] = self.features
-                    break
+            if self._source is None:
+                for src in self.map.sources:
+                    if src["name"] == self.source_name:
+                        self._source = src
+                        break
+
+            if self._source:
+                self._source["definition"]["data"]["features"] = self.features
 
     def add_to(self, map_instance):
         """Add the marker cluster to a map instance.
@@ -73,6 +78,11 @@ class MarkerCluster:
             "clusterMaxZoom": self.cluster_max_zoom,
         }
         map_instance.add_source(self.source_name, source)
+        # Find the source by name to avoid relying on its position in the list
+        for src in map_instance.sources:
+            if src["name"] == self.source_name:
+                self._source = src
+                break
 
         self.cluster_layer_id = f"{self.name}_clusters"
         cluster_layer = {
