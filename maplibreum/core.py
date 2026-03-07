@@ -396,7 +396,6 @@ class Map:
 
         template_dir = os.path.join(os.path.dirname(__file__), "templates")
         self.env = Environment(loader=FileSystemLoader(template_dir))
-        self.env.filters["tojson"] = lambda value: json.dumps(value)
         self.template = self.env.get_template("map_template.html")
 
         # Unique ID for the map (important if multiple maps displayed in a notebook)
