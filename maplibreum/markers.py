@@ -4,8 +4,6 @@ from __future__ import annotations
 
 from typing import Optional
 
-from markupsafe import Markup
-
 
 class Icon:
     """Representation of an image-based icon used for symbol markers.
@@ -81,7 +79,7 @@ class BeautifyIcon(DivIcon):
     ) -> None:
         """Initialize a BeautifyIcon."""
         class_name = f"beautify-marker beautify-marker-{icon_shape}"
-        html = Markup(f"<i class='{icon}'></i>")
+        html = f"<i class='{icon}'></i>"
         super().__init__(html=html, class_name=class_name)
         base_css = (
             ".beautify-marker {display:flex;align-items:center;justify-content:center;"
