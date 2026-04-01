@@ -6,6 +6,13 @@
     "task_status": true,
     "script": "tests/test_examples/test_3d_terrain.py"
   },
+  "add-3d-tiles-using-threejs": {
+    "url": "https://maplibre.org/maplibre-gl-js/docs/examples/./add-3d-tiles-using-threejs/",
+    "source_status": true,
+    "file_path": "development/maplibre_examples/pages/add-3d-tiles-using-threejs.html",
+    "task_status": false,
+    "script": null
+  },
   "add-a-3d-model-to-globe-using-threejs": {
     "url": "https://maplibre.org/maplibre-gl-js/docs/examples/./add-a-3d-model-to-globe-using-threejs/",
     "source_status": true,
@@ -748,6 +755,13 @@
     "task_status": true,
     "script": "tests/test_examples/test_restrict_map_panning_to_an_area.py"
   },
+  "select-features-with-a-boxzoomend-callback": {
+    "url": "https://maplibre.org/maplibre-gl-js/docs/examples/./select-features-with-box-zoom-end-callback/",
+    "source_status": true,
+    "file_path": "development/maplibre_examples/pages/select-features-with-a-boxzoomend-callback.html",
+    "task_status": false,
+    "script": null
+  },
   "set-center-point-above-ground": {
     "url": "https://maplibre.org/maplibre-gl-js/docs/examples/./set-center-point-above-ground/",
     "source_status": true,
@@ -831,6 +845,13 @@
     "file_path": "development/maplibre_examples/pages/update-a-feature-in-realtime.html",
     "task_status": true,
     "script": "tests/test_examples/test_update_a_feature_in_realtime.py"
+  },
+  "update-geojson-polygons": {
+    "url": "https://maplibre.org/maplibre-gl-js/docs/examples/./update-geojson-polygons/",
+    "source_status": true,
+    "file_path": "development/maplibre_examples/pages/update-geojson-polygons.html",
+    "task_status": false,
+    "script": null
   },
   "use-a-fallback-image": {
     "url": "https://maplibre.org/maplibre-gl-js/docs/examples/./use-a-fallback-image/",
