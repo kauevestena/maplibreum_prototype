@@ -559,6 +559,13 @@
     "task_status": true,
     "script": "tests/test_examples/test_display_map_navigation_controls.py"
   },
+  "display-map-performance-metrics": {
+    "url": "https://maplibre.org/maplibre-gl-js/docs/examples/./display-performance-metrics/",
+    "source_status": true,
+    "file_path": "development/maplibre_examples/pages/display-map-performance-metrics.html",
+    "task_status": false,
+    "script": null
+  },
   "draw-a-circle": {
     "url": "https://maplibre.org/maplibre-gl-js/docs/examples/./draw-a-circle/",
     "source_status": true,

@@ -1,0 +1,28 @@
+const createdAt = performance.now();
+
+const map = new maplibregl.Map({
+    container: "map",
+    style: "https://demotiles.maplibre.org/style.json",
+    center: [0, 0],
+    zoom: 1,
+});
+
+map.on("load", () => {
+    document.getElementById("load").textContent = (performance.now() - createdAt).toFixed(0) + " ms";
+});
+
+map.once("idle", () => {
+    document.getElementById("idle").textContent = (performance.now() - createdAt).toFixed(0) + " ms";
+});
+
+let frameCount = 0;
+let fpsStart = performance.now();
+map.on("render", () => {
+    frameCount++;
+    const elapsed = performance.now() - fpsStart;
+    if (elapsed >= 1000) {
+        document.getElementById("fps").textContent = Math.round(frameCount * 1000 / elapsed);
+        frameCount = 0;
+        fpsStart = performance.now();
+    }
+});
