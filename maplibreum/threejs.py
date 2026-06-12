@@ -85,13 +85,13 @@ class ThreeJSLayer:
         """
 
         if self.terrain:
-            models_js = "[\n"
-            for model in self.models:
-                models_js += f"""                {{
+            models_js = "[\n" + "".join(
+                f"""                {{
                     uri: '{model["uri"]}',
                     location: new maplibregl.LngLat({model["location"][0]}, {model["location"][1]})
                 }},\n"""
-            models_js += "            ]"
+                for model in self.models
+            ) + "            ]"
 
             js_code = dedent(f"""
                 async function main() {{
