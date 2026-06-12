@@ -102,6 +102,7 @@
     {% for script in external_scripts %}
     <script src="{{ script.src }}"{% for attr, value in script.attributes.items() %}{% if value is sameas(true) %} {{ attr }}{% else %} {{ attr }}="{{ value }}"{% endif %}{% endfor %}></script>
     {% endfor %}
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/dompurify/3.0.6/purify.min.js"></script>
 </head>
 <body>
     <div id="{{ map_id }}">
@@ -1005,7 +1006,7 @@ map.on('load', function() {
     {% for popup in popups %}
     var popup_{{ loop.index }} = new maplibregl.Popup({{ popup.options | tojson }});
     {% if popup.html %}
-    popup_{{ loop.index }}.setHTML({{ popup.html | tojson }});
+    popup_{{ loop.index }}.setHTML(DOMPurify.sanitize({{ popup.html | tojson }}));
     {% endif %}
     {% if popup.coordinates %}
     popup_{{ loop.index }}.setLngLat({{ popup.coordinates | tojson }}).addTo(map);
@@ -1014,7 +1015,7 @@ map.on('load', function() {
     map.on('{{ popup.events|first }}', '{{ popup.layer_id }}', function(e) {
         popup_{{ loop.index }}
             .setLngLat(e.lngLat)
-            {% if popup.prop %}.setHTML(e.features[0].properties['{{ popup.prop }}']){% else %}.setHTML({{ popup.html | tojson }}){% endif %}
+            {% if popup.prop %}.setHTML(DOMPurify.sanitize(e.features[0].properties['{{ popup.prop }}'])){% else %}.setHTML(DOMPurify.sanitize({{ popup.html | tojson }})){% endif %}
             .addTo(map);
     });
     {% endif %}
@@ -1026,7 +1027,7 @@ map.on('load', function() {
     map.on('mouseenter', '{{ tooltip.layer_id }}', function(e) {
         tooltip_{{ loop.index }}
             .setLngLat(e.lngLat)
-            {% if tooltip.prop %}.setHTML(e.features[0].properties['{{ tooltip.prop }}']){% else %}.setHTML({{ tooltip.text | tojson }}){% endif %}
+            {% if tooltip.prop %}.setHTML(DOMPurify.sanitize(e.features[0].properties['{{ tooltip.prop }}'])){% else %}.setHTML(DOMPurify.sanitize({{ tooltip.text | tojson }})){% endif %}
             .addTo(map);
     });
     map.on('mouseleave', '{{ tooltip.layer_id }}', function() {
@@ -1098,7 +1099,7 @@ map.on('load', function() {
     {% if marker.html is defined or marker.class_name is defined %}
     var el_{{ marker.id }} = document.createElement('div');
     el_{{ marker.id }}.className = "{{ marker.class_name }}";
-    el_{{ marker.id }}.innerHTML = {{ marker.html | tojson }};
+    el_{{ marker.id }}.innerHTML = DOMPurify.sanitize({{ marker.html | tojson }});
     var marker_{{ marker.id }} = new maplibregl.Marker({ element: el_{{ marker.id }}{% if marker.draggable %}, draggable: true{% endif %} })
         .setLngLat({{ marker.coordinates | tojson }})
         .addTo(map);
@@ -1108,14 +1109,14 @@ map.on('load', function() {
         .addTo(map);
     {% endif %}
     {% if marker.popup %}
-    marker_{{ marker.id }}.setPopup(new maplibregl.Popup().setHTML({{ marker.popup | tojson }}));
+    marker_{{ marker.id }}.setPopup(new maplibregl.Popup().setHTML(DOMPurify.sanitize({{ marker.popup | tojson }})));
     {% endif %}
     {% if marker.tooltip %}
     var tooltip_{{ marker.id }} = new maplibregl.Popup({closeButton: false});
     marker_{{ marker.id }}.getElement().addEventListener('mouseenter', function() {
         tooltip_{{ marker.id }}
             .setLngLat(marker_{{ marker.id }}.getLngLat())
-            .setHTML({{ marker.tooltip | tojson }})
+            .setHTML(DOMPurify.sanitize({{ marker.tooltip | tojson }}))
             .addTo(map);
     });
     marker_{{ marker.id }}.getElement().addEventListener('mouseleave', function() {
