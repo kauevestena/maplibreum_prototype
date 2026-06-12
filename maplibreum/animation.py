@@ -27,20 +27,19 @@ def calculate_bearing(start: Tuple[float, float], end: Tuple[float, float]) -> f
 
 
 def haversine_distance(
-    coord1: Tuple[float, float], coord2: Tuple[float, float]
+    start: Tuple[float, float], end: Tuple[float, float]
 ) -> float:
-    """Calculate great circle distance between two points in kilometers.
+    """Calculate haversine distance between two points in meters.
 
     Args:
-        coord1: (longitude, latitude) of first point
-        coord2: (longitude, latitude) of second point
-
+        start: (lon, lat) tuple
+        end: (lon, lat) tuple
     Returns:
-        Distance in kilometers
+        Distance in meters
     """
-    R = 6371  # Earth radius in kilometers
-    lon1, lat1 = math.radians(coord1[0]), math.radians(coord1[1])
-    lon2, lat2 = math.radians(coord2[0]), math.radians(coord2[1])
+    R = 6371000  # Earth radius in meters
+    lon1, lat1 = math.radians(start[0]), math.radians(start[1])
+    lon2, lat2 = math.radians(end[0]), math.radians(end[1])
 
     dLat = lat2 - lat1
     dLon = lon2 - lon1
