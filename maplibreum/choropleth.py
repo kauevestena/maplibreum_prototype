@@ -1,4 +1,5 @@
 import math
+import bisect
 from .utils import get_id  # for generating unique layer/source identifiers
 
 from .expressions import get as expr_get
@@ -80,10 +81,13 @@ class Choropleth:
         return bins
 
     def _color_for_value(self, value, bins):
-        for i in range(len(self.colors)):
-            if value <= bins[i + 1] or i == len(self.colors) - 1:
-                return self.colors[i]
-        return self.colors[-1]
+        idx = bisect.bisect_left(bins, value)
+        if idx == 0:
+            return self.colors[0]
+        elif idx >= len(bins):
+            return self.colors[-1]
+        else:
+            return self.colors[idx - 1]
 
     def add_to(self, map_instance):
         """Add the choropleth layer to a map instance.
