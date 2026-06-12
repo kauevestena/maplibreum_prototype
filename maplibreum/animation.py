@@ -26,9 +26,7 @@ def calculate_bearing(start: Tuple[float, float], end: Tuple[float, float]) -> f
     return (bearing + 360) % 360
 
 
-def haversine_distance(
-    start: Tuple[float, float], end: Tuple[float, float]
-) -> float:
+def haversine_distance(start: Tuple[float, float], end: Tuple[float, float]) -> float:
     """Calculate haversine distance between two points in meters.
 
     Args:
@@ -345,8 +343,9 @@ class AnimationLoop:
         """Render the animation loop to a JavaScript string."""
         lines = []
         if self.variables:
-            for key, value in self.variables.items():
-                lines.append(f"let {key} = {value};")
+            lines.extend(
+                [f"let {key} = {value};" for key, value in self.variables.items()]
+            )
 
         if self.setup:
             lines.extend(self.setup)
