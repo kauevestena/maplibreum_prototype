@@ -11,7 +11,7 @@ def test_add_a_custom_layer_with_tiles_to_a_globe_with_python_api():
         zoom=2,
         map_options={"hash": False},
     )
-    map_.add_on_load_js("map.setProjection({type: 'globe'});")
+    map_.set_projection({'type': 'globe'})
 
     # Use the new CustomGlobeLayer
     highlight_layer = CustomGlobeLayer(id=HIGHLIGHT_LAYER_ID)
