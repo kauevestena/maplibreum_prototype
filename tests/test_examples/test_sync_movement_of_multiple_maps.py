@@ -39,8 +39,6 @@ def test_sync_movement_of_multiple_maps() -> None:
         """
     ).strip()
 
-    map_instance.add_external_script("https://unpkg.com/@mapbox/mapbox-gl-sync-move@0.3.1")
-
     sync_js = textwrap.dedent(
         f"""
         var primaryContainer = document.getElementById('{map_instance.map_id}');
@@ -76,9 +74,30 @@ def test_sync_movement_of_multiple_maps() -> None:
             maplibreLogo: true
         }});
 
-        if (typeof syncMaps === 'function') {{
-            syncMaps(map, map2, map3);
+        function syncMaps() {{
+            var maps = Array.prototype.slice.call(arguments);
+            var syncing = false;
+            maps.forEach(function(sourceMap) {{
+                sourceMap.on('move', function() {{
+                    if (syncing) {{ return; }}
+                    syncing = true;
+                    var center = sourceMap.getCenter();
+                    maps.forEach(function(targetMap) {{
+                        if (targetMap !== sourceMap) {{
+                            targetMap.jumpTo({{
+                                center: center,
+                                zoom: sourceMap.getZoom(),
+                                bearing: sourceMap.getBearing(),
+                                pitch: sourceMap.getPitch()
+                            }});
+                        }}
+                    }});
+                    syncing = false;
+                }});
+            }});
         }}
+
+        syncMaps(map, map2, map3);
 
         window._maplibreumSyncedMaps = [map, map2, map3];
         window._maplibreumSyncedCenter = map.getCenter();
@@ -101,7 +120,7 @@ def test_sync_movement_of_multiple_maps() -> None:
 
     html = map_instance.render()
     assert "syncMaps(map, map2, map3)" in html
-    assert "mapbox-gl-sync-move" in html
+    assert "function syncMaps()" in html
     assert "window._maplibreumSyncedMaps" in html
 
 
