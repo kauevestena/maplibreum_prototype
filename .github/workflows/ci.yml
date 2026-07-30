@@ -130,7 +130,7 @@ jobs:
           with TemporaryDirectory() as directory:
               output = Path(directory) / "smoke.html"
               map_ = Map(center=[0, 0], zoom=2)
-              map_.add_marker([0, 0], popup="Maplibreum 0.2.0")
+              map_.add_marker(coordinates=[0, 0], popup="Maplibreum 0.2.0")
               map_.save(output)
               html = output.read_text(encoding="utf-8")
               assert "maplibre-gl@6.0.0" in html
