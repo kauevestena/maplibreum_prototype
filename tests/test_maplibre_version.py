@@ -8,7 +8,8 @@ def test_maplibre_6_is_the_default():
     html = m.render()
     assert MAPLIBRE_VERSION == "6.0.0"
     assert "maplibre-gl@6.0.0" in html
-    assert "dist/maplibre-gl.js" in html
+    assert "dist/maplibre-gl.mjs" in html
+    assert "module.getVersion?.()" in html
 
 
 def test_maplibre_version_override_accepts_newer_versions():
