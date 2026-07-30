@@ -63,7 +63,7 @@ def test_toggle_deckgl_layer():
     )
 
     m = Map(
-        map_style="https://maps.clockworkmicro.com/streets/v1/style?x-api-key=Dr4eW3s233rRkk8I_public",
+        map_style="https://demotiles.maplibre.org/style.json",
         center=[2.345885, 48.860412],
         zoom=12,
     )
@@ -84,6 +84,6 @@ def test_toggle_deckgl_layer():
     assert 'overlayManager.addOverlay("paris-parks")' in html
     assert 'overlayManager.removeOverlay("paris-parks")' in html
     assert "Deck.GL Parks" in html
-    assert '"style": "https://maps.clockworkmicro.com/streets/v1/style?x-api-key=Dr4eW3s233rRkk8I_public"' in html.replace("\n", "")
+    assert '"style": "https://demotiles.maplibre.org/style.json"' in html.replace("\n", "")
     assert '"center": [2.345885, 48.860412]' in html
     assert '"zoom": 12' in html
