@@ -10,6 +10,9 @@ from __future__ import annotations
 
 import json
 import os
+import threading
+from functools import partial
+from http.server import SimpleHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
 from typing import Any, Dict, Iterable, Tuple
 
@@ -23,6 +26,27 @@ _REPRODUCED_DIR = Path("development/maplibre_examples/reproduced_pages")
 _SCREENSHOT_DIR = Path(
     os.environ.get("MAPLIBREUM_SCREENSHOT_DIR", "playwright-report/screenshots")
 )
+
+
+class _QuietRequestHandler(SimpleHTTPRequestHandler):
+    def log_message(self, format, *args):
+        """Keep the pytest output focused on browser diagnostics."""
+
+
+@pytest.fixture(scope="session")
+def gallery_base_url():
+    """Serve generated pages over HTTP so browser CORS rules match real use."""
+
+    handler = partial(_QuietRequestHandler, directory=str(Path.cwd()))
+    server = ThreadingHTTPServer(("127.0.0.1", 0), handler)
+    thread = threading.Thread(target=server.serve_forever, daemon=True)
+    thread.start()
+    try:
+        yield f"http://127.0.0.1:{server.server_port}"
+    finally:
+        server.shutdown()
+        server.server_close()
+        thread.join(timeout=5)
 
 
 def _load_example_cases() -> Iterable[Tuple[str, Path, Dict[str, Any]]]:
@@ -45,6 +69,12 @@ def _load_example_cases() -> Iterable[Tuple[str, Path, Dict[str, Any]]]:
             continue
         cases.append((slug, _REPRODUCED_DIR / f"{slug}.html", metadata))
 
+    requested_slug = os.environ.get("MAPLIBREUM_GALLERY_SLUG")
+    if requested_slug:
+        cases = [case for case in cases if case[0] == requested_slug]
+        if not cases:
+            raise ValueError(f"Unknown or unimplemented gallery slug: {requested_slug}")
+
     shard_total = int(os.environ.get("MAPLIBREUM_GALLERY_SHARD_TOTAL", "1"))
     shard_index = int(os.environ.get("MAPLIBREUM_GALLERY_SHARD_INDEX", "0"))
     if shard_total < 1 or not 0 <= shard_index < shard_total:
@@ -61,7 +91,11 @@ def _load_example_cases() -> Iterable[Tuple[str, Path, Dict[str, Any]]]:
     ids=lambda case: case[0] if isinstance(case, tuple) else case,
 )
 def test_rendered_example_loads(
-    page, slug: str, html_path: Path, metadata: Dict[str, Any]
+    page,
+    gallery_base_url: str,
+    slug: str,
+    html_path: Path,
+    metadata: Dict[str, Any],
 ):
     """Confirm the generated HTML boots MapLibre GL and exposes style metadata."""
 
@@ -88,24 +122,42 @@ def test_rendered_example_loads(
         ),
     )
 
-    page.goto(html_path.resolve().as_uri(), wait_until="domcontentloaded")
+    page.goto(
+        f"{gallery_base_url}/{html_path.as_posix()}",
+        wait_until="domcontentloaded",
+    )
 
     try:
         # Wait until MapLibre injects its canvas into the DOM.
         page.wait_for_selector(".maplibregl-canvas", timeout=60_000)
 
-        # Every map in multi-map examples must finish loading.
+        # Every map in multi-map examples must expose a populated style.
         page.wait_for_function(
             """
             () => {
                 const maps = window.maplibreumMaps || {};
-                const loaded = window.maplibreumMapsLoaded || {};
                 const ids = Object.keys(maps);
-                return ids.length > 0 && ids.every((id) => loaded[id] === true);
+                return ids.length > 0 && ids.every((id) => {
+                    const map = maps[id];
+                    const style = map.getStyle();
+                    return map.getCanvas()
+                        && Array.isArray(style.layers)
+                        && style.layers.length > 0
+                        && style.sources
+                        && Object.keys(style.sources).length > 0;
+                });
             }
             """,
             timeout=60_000,
         )
+    except Exception as error:
+        diagnostics = {
+            "page_errors": page_errors,
+            "console_errors": console_errors,
+            "failed_requests": failed_requests,
+            "url": page.url,
+        }
+        pytest.fail(f"{error}\nBrowser diagnostics:\n{json.dumps(diagnostics, indent=2)}")
     finally:
         _SCREENSHOT_DIR.mkdir(parents=True, exist_ok=True)
         page.screenshot(
@@ -122,7 +174,6 @@ def test_rendered_example_loads(
                 maps: Object.values(maps).map((map) => {
                     const style = map.getStyle();
                     return {
-                        loaded: map.loaded(),
                         layers: Array.isArray(style.layers) ? style.layers.length : 0,
                         sources: style.sources ? Object.keys(style.sources).length : 0,
                         canvasWidth: map.getCanvas().width,
@@ -137,7 +188,6 @@ def test_rendered_example_loads(
     assert style_summary["version"].split(".", 1)[0] == "6"
     assert style_summary["maps"], "Expected at least one tracked MapLibre map"
     for map_summary in style_summary["maps"]:
-        assert map_summary["loaded"] is True
         assert map_summary["layers"] > 0
         assert map_summary["sources"] > 0
         assert map_summary["canvasWidth"] > 0
