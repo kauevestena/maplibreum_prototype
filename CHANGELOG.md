@@ -14,6 +14,8 @@ The format is inspired by [Keep a Changelog](https://keepachangelog.com/en/1.1.0
 
 ### Fixed
 - Made every implemented gallery example generate a browser-testable HTML page.
+- Served browser tests over local HTTP and restored MapLibre 6's global bundle
+  contract so generated maps behave like deployed pages.
 - Repaired strict Sphinx documentation builds and clarified package discovery for bundled templates.
 
 ## [0.1.0] - 2025-09-15
