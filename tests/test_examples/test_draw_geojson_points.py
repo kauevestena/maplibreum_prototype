@@ -82,12 +82,13 @@ def test_draw_geojson_points():
             break
 
     assert conferences_source_def is not None
-    # When passing GeoJSON data directly, it becomes the source definition
-    assert conferences_source_def["type"] == "FeatureCollection"
-    assert len(conferences_source_def["features"]) == 5
+    # Raw GeoJSON is normalised into a valid MapLibre GeoJSON source.
+    assert conferences_source_def["type"] == "geojson"
+    assert conferences_source_def["data"]["type"] == "FeatureCollection"
+    assert len(conferences_source_def["data"]["features"]) == 5
 
     # Check first feature
-    first_feature = conferences_source_def["features"][0]
+    first_feature = conferences_source_def["data"]["features"][0]
     assert first_feature["geometry"]["type"] == "Point"
     assert first_feature["geometry"]["coordinates"] == [100.4933, 13.7551]
     assert first_feature["properties"]["year"] == "2004"
