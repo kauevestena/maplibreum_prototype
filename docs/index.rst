@@ -11,6 +11,8 @@ Welcome to maplibreum's documentation!
    :caption: Contents:
 
    README
+   CDN_FALLBACKS
+   GITHUB_PAGES
    api
    maplibre_examples
    advanced/protocols
