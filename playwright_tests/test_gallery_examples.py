@@ -241,6 +241,12 @@ def test_rendered_example_loads(
             )
         ]
     assert not console_errors, f"Browser console errors: {console_errors}"
+    if os.environ.get("MAPLIBREUM_BLOCK_PRIMARY_CDN"):
+        failed_requests = [
+            failure
+            for failure in failed_requests
+            if "https://unpkg.com/maplibre-gl@" not in failure
+        ]
     assert not failed_requests, f"Failed browser requests: {failed_requests}"
 
     expected_cdn_host = os.environ.get("MAPLIBREUM_EXPECT_CDN_HOST")
