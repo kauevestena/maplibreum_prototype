@@ -39,11 +39,14 @@ jobs:
         run: pip install -e .[test]
       - name: Install Chromium
         run: python -m playwright install --with-deps chromium
+      - name: Install MapLibre 6 browser assets
+        run: npm install --no-save --prefix .browser-assets maplibre-gl@6.0.0
       - name: Generate example pages
         run: pytest -m "not browser" tests/test_examples
       - name: Run browser integration tests
         env:
           MAPLIBREUM_GALLERY_SLUG: display-a-map
+          MAPLIBREUM_MAPLIBRE_DIST: .browser-assets/node_modules/maplibre-gl/dist
           MAPLIBREUM_SCREENSHOT_DIR: playwright-report/screenshots
         run: pytest -m browser playwright_tests/test_gallery_examples.py
       - name: Upload visual evidence
