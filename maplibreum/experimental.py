@@ -23,9 +23,6 @@ class MapSynchronizer:
         if map_obj is not self._primary_map:
             raise ValueError("MapSynchronizer can only be added to the primary map.")
 
-        map_obj.add_external_script(
-            "https://unpkg.com/@mapbox/mapbox-gl-sync-move@0.3.1"
-        )
         map_obj.add_on_load_js(self._render_js(map_obj))
         map_obj.custom_css = self._render_css()
 
