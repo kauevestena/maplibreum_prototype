@@ -115,24 +115,35 @@
     </div>
     <!-- MapLibre GL JS with CDN fallbacks -->
     <script>
-        // Load the MapLibre 6 ES module, with an independent CDN fallback.
-        async function loadMapLibreGL() {
-            const moduleUrls = [
-                'https://unpkg.com/maplibre-gl@{{ maplibre_version }}/dist/maplibre-gl.mjs',
-                'https://cdn.jsdelivr.net/npm/maplibre-gl@{{ maplibre_version }}/dist/maplibre-gl.mjs'
+        // Load MapLibre 6's browser-global build, with an independent CDN fallback.
+        function loadMapLibreGL() {
+            const scriptUrls = [
+                'https://unpkg.com/maplibre-gl@{{ maplibre_version }}/dist/maplibre-gl.js',
+                'https://cdn.jsdelivr.net/npm/maplibre-gl@{{ maplibre_version }}/dist/maplibre-gl.js'
             ];
-            let lastError;
-            for (const url of moduleUrls) {
-                try {
-                    window.maplibregl = await import(url);
-                    return window.maplibregl;
-                } catch (error) {
-                    lastError = error;
-                    console.warn(`Failed to load MapLibre GL JS from ${url}`, error);
-                }
-            }
-            throw new Error('Failed to load MapLibre GL JS from all CDNs', {
-                cause: lastError
+            return new Promise((resolve, reject) => {
+                const loadNext = (index) => {
+                    if (index >= scriptUrls.length) {
+                        reject(new Error('Failed to load MapLibre GL JS from all CDNs'));
+                        return;
+                    }
+                    const script = document.createElement('script');
+                    script.src = scriptUrls[index];
+                    script.onload = () => {
+                        if (window.maplibregl && window.maplibregl.Map) {
+                            resolve(window.maplibregl);
+                        } else {
+                            console.warn(`MapLibre bundle at ${script.src} did not expose the browser API`);
+                            loadNext(index + 1);
+                        }
+                    };
+                    script.onerror = () => {
+                        console.warn(`Failed to load MapLibre GL JS from ${script.src}`);
+                        loadNext(index + 1);
+                    };
+                    document.head.appendChild(script);
+                };
+                loadNext(0);
             });
         }
 
