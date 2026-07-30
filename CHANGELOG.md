@@ -10,7 +10,7 @@ The format is inspired by [Keep a Changelog](https://keepachangelog.com/en/1.1.0
 - Standardized generated maps on MapLibre GL JS 6.0.0 and its ES module build.
 - Added an independent jsDelivr fallback for the MapLibre runtime and stylesheet.
 - Normalized raw GeoJSON and `__geo_interface__` objects into valid GeoJSON sources.
-- Expanded CI across Python 3.8–3.13 with separate browser, documentation, and package-release gates.
+- Expanded CI across Python 3.9–3.13 with separate browser, documentation, and package-release gates.
 
 ### Fixed
 - Made every implemented gallery example generate a browser-testable HTML page.
