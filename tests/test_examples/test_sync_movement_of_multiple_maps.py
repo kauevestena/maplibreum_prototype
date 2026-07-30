@@ -150,7 +150,7 @@ def test_sync_movement_of_multiple_maps_with_python_api() -> None:
     synchronizer.add_to(map_1)
 
     html = map_1.render()
-    assert "mapbox-gl-sync-move" in html
+    assert "function syncMaps()" in html
     assert f"var primaryContainer = document.getElementById('{map_1.map_id}');" in html
     assert "syncMaps.apply(null, allMaps);" in html
     assert f"container: '{map_1.map_id}-secondary-0'" in html
