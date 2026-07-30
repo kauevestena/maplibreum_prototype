@@ -609,10 +609,10 @@ class Map:
         elif isinstance(layer_definition, ThreeLayer):
             layer_id = layer_definition.id
             self.add_external_script(
-                "https://cdn.jsdelivr.net/npm/three@0.169.0/build/three.js"
+                "https://cdn.jsdelivr.net/npm/three@0.128.0/build/three.js"
             )
             self.add_external_script(
-                "https://cdn.jsdelivr.net/npm/three@0.169.0/examples/js/loaders/GLTFLoader.js"
+                "https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/GLTFLoader.js"
             )
             self.add_on_load_js(layer_definition.js_code)
             layer_definition = layer_definition.to_dict()
