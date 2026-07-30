@@ -84,7 +84,6 @@ The examples are organized by functionality:
 
 ### Custom Layers
 - [Add a Custom Layer with Tiles to a Globe](https://maplibre.org/maplibre-gl-js/docs/examples/add-a-custom-layer-with-tiles-to-a-globe/) - [Test](../tests/test_examples/test_add_a_custom_layer_with_tiles_to_a_globe.py)
-- [Add a Custom Style Layer](https://maplibre.org/maplibre-gl-js/docs/examples/add-a-custom-style-layer/) - [Test](../tests/test_examples/test_add_a_custom_style_layer.py)
 
 ## Viewing Examples Locally
 
@@ -136,4 +135,4 @@ To add new MapLibre examples:
 
 - [MapLibre GL JS Documentation](https://maplibre.org/maplibre-gl-js/docs/)
 - [maplibreum GitHub Repository](https://github.com/kauevestena/maplibreum_prototype)
-- [MapLibre Examples Testing Suite README](../development/maplibre_examples/README.md)
+- [MapLibre Examples Testing Suite README](https://github.com/kauevestena/maplibreum_prototype/blob/main/development/maplibre_examples/README.md)

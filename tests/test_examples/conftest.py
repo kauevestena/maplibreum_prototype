@@ -5,7 +5,7 @@ from __future__ import annotations
 import json
 from functools import lru_cache
 from pathlib import Path
-from typing import Any, Dict, Optional
+from typing import Any, Dict
 
 import sys
 
@@ -73,22 +73,6 @@ def _inject_banner(html: str, banner: str) -> str:
     return html[:insertion_point] + "\n" + banner + html[insertion_point:]
 
 
-def _load_original_html(path_value: Optional[str]) -> Optional[str]:
-    """Return the contents of the scraped HTML page if it exists."""
-
-    if not path_value:
-        return None
-
-    candidate = Path(path_value)
-    if not candidate.is_absolute():
-        candidate = _REPO_ROOT / candidate
-
-    try:
-        return candidate.read_text(encoding="utf-8") if candidate.exists() else None
-    except OSError:
-        return None
-
-
 @pytest.fixture(autouse=True)
 def capture_reproduction_page(
     monkeypatch: pytest.MonkeyPatch, request: pytest.FixtureRequest
@@ -124,14 +108,14 @@ def capture_reproduction_page(
         banner = "\n".join(header_lines) + "\n"
 
         html_output = _inject_banner(html, banner)
+        html_output = "\n".join(line.rstrip() for line in html_output.splitlines())
+        if html.endswith("\n"):
+            html_output += "\n"
 
-        original_html = _load_original_html(metadata.get("file_path"))
-        if original_html is not None:
-            write_payload = _inject_banner(original_html, banner)
-        else:
-            write_payload = html_output
-
-        output_file.write_text(write_payload, encoding="utf-8")
+        # The reproduced page must be Maplibreum's generated, standalone HTML.
+        # Scraped source snippets are references only and cannot be browser-tested
+        # independently.
+        output_file.write_text(html_output, encoding="utf-8")
         return html_output
 
     monkeypatch.setattr(Map, "render", _wrapped_render, raising=False)

@@ -49,3 +49,7 @@ def test_3d_terrain():
         )
     )
     m.add_control(controls.TerrainControl(source="terrainSource", exaggeration=1))
+
+    html = m.render()
+    assert "terrainSource" in html
+    assert "maplibre-gl@6.0.0" in html

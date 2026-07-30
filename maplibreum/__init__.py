@@ -3,7 +3,7 @@ from .babylon import BabylonLayer
 from .three import ThreeLayer
 from .choropleth import Choropleth
 from .cluster import ClusteredGeoJson, MarkerCluster, cluster_features
-from .core import (GeoJson, GeoJsonPopup, GeoJsonTooltip,
+from .core import (GeoJson, GeoJsonPopup, GeoJsonTooltip, MAPLIBRE_VERSION,
                    LatLngPopup, Legend, Map, Marker, Popup, StateToggle,
                    Tooltip)
 from .overlays import ImageOverlay, VideoOverlay
@@ -20,6 +20,7 @@ from .protocols import PMTilesProtocol, PMTilesSource
 
 __all__ = [
     "Map",
+    "MAPLIBRE_VERSION",
     "PMTilesProtocol",
     "PMTilesSource",
     "Marker",

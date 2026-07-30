@@ -26,8 +26,8 @@ from maplibreum import Map
 # Create a map centered at a specific location
 m = Map(center=[-23.5505, -46.6333], zoom=10)
 
-# Pin a specific MapLibre GL JS version (defaults to 3.4.0)
-m_custom = Map(maplibre_version="2.4.0")
+# Pin a compatible MapLibre GL JS version (defaults to 6.0.0)
+m_custom = Map(maplibre_version="6.0.0")
 
 # Add a marker at the map center
 m.add_marker(popup="Hello, MapLibre!")
@@ -139,7 +139,8 @@ The examples gallery is automatically generated from Jupyter notebooks in the `e
 - New features demonstrations  
 - Event handling and interactions
 
-To deploy examples to GitHub Pages, see [GitHub Pages Documentation](docs/GITHUB_PAGES.md).
+To deploy examples to GitHub Pages, see the
+[GitHub Pages documentation](https://github.com/kauevestena/maplibreum_prototype/blob/main/docs/GITHUB_PAGES.md).
 
 ## Changelog
 
@@ -214,7 +215,8 @@ for name, info in data.items():
 "
 ```
 
-For detailed information about the testing suite, see [development/maplibre_examples/README.md](development/maplibre_examples/README.md).
+For detailed information about the testing suite, see the
+[MapLibre examples testing guide](https://github.com/kauevestena/maplibreum_prototype/blob/main/development/maplibre_examples/README.md).
 
 ## Contributing
 
@@ -222,4 +224,6 @@ Contributions are welcome! Please see the [issues page](https://github.com/kauev
 
 ## License
 
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+This project is licensed under the MIT License; see the
+[LICENSE](https://github.com/kauevestena/maplibreum_prototype/blob/main/LICENSE)
+for details.
