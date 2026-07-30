@@ -9,6 +9,7 @@ be executed on demand when browser-level validation is required.
 from __future__ import annotations
 
 import json
+import os
 from pathlib import Path
 from typing import Any, Dict, Iterable, Tuple
 
@@ -19,6 +20,9 @@ pytest.importorskip("playwright")
 
 _STATUS_PATH = Path("development/maplibre_examples/status.json")
 _REPRODUCED_DIR = Path("development/maplibre_examples/reproduced_pages")
+_SCREENSHOT_DIR = Path(
+    os.environ.get("MAPLIBREUM_SCREENSHOT_DIR", "playwright-report/screenshots")
+)
 
 
 def _load_example_cases() -> Iterable[Tuple[str, Path, Dict[str, Any]]]:
@@ -27,6 +31,7 @@ def _load_example_cases() -> Iterable[Tuple[str, Path, Dict[str, Any]]]:
     with _STATUS_PATH.open("r", encoding="utf-8") as handle:
         status = json.load(handle)
 
+    cases = []
     for slug, wrapper in status.items():
         if isinstance(wrapper, dict) and slug not in wrapper:
             # New clean structure - wrapper is directly the metadata
@@ -38,7 +43,14 @@ def _load_example_cases() -> Iterable[Tuple[str, Path, Dict[str, Any]]]:
             metadata = inner_value if inner_key == slug else wrapper[inner_key]
         if not metadata.get("script"):
             continue
-        yield slug, _REPRODUCED_DIR / f"{slug}.html", metadata
+        cases.append((slug, _REPRODUCED_DIR / f"{slug}.html", metadata))
+
+    shard_total = int(os.environ.get("MAPLIBREUM_GALLERY_SHARD_TOTAL", "1"))
+    shard_index = int(os.environ.get("MAPLIBREUM_GALLERY_SHARD_INDEX", "0"))
+    if shard_total < 1 or not 0 <= shard_index < shard_total:
+        raise ValueError("Invalid MapLibreum gallery shard configuration")
+
+    yield from cases[shard_index::shard_total]
 
 
 @pytest.mark.browser
@@ -54,44 +66,86 @@ def test_rendered_example_loads(
     """Confirm the generated HTML boots MapLibre GL and exposes style metadata."""
 
     if not html_path.exists():
-        pytest.skip(
-            f"Reproduced page for {slug!r} not found. Re-run pytest tests/test_examples to regenerate."
+        pytest.fail(
+            f"Reproduced page for {slug!r} not found. "
+            "Re-run pytest tests/test_examples to regenerate."
         )
 
-    page.goto(html_path.resolve().as_uri())
-
-    # Wait until MapLibre injects its canvas into the DOM.
-    page.wait_for_selector(".maplibregl-canvas", timeout=60_000)
-
-    # Wait for at least one tracked map instance to finish loading.
-    page.wait_for_function(
-        "() => window.maplibreumMapsLoaded && Object.values(window.maplibreumMapsLoaded).some(Boolean)",
-        timeout=60_000,
+    page_errors = []
+    console_errors = []
+    failed_requests = []
+    page.on("pageerror", lambda error: page_errors.append(str(error)))
+    page.on(
+        "console",
+        lambda message: (
+            console_errors.append(message.text) if message.type == "error" else None
+        ),
     )
+    page.on(
+        "requestfailed",
+        lambda request: failed_requests.append(
+            f"{request.url}: {request.failure or 'request failed'}"
+        ),
+    )
+
+    page.goto(html_path.resolve().as_uri(), wait_until="domcontentloaded")
+
+    try:
+        # Wait until MapLibre injects its canvas into the DOM.
+        page.wait_for_selector(".maplibregl-canvas", timeout=60_000)
+
+        # Every map in multi-map examples must finish loading.
+        page.wait_for_function(
+            """
+            () => {
+                const maps = window.maplibreumMaps || {};
+                const loaded = window.maplibreumMapsLoaded || {};
+                const ids = Object.keys(maps);
+                return ids.length > 0 && ids.every((id) => loaded[id] === true);
+            }
+            """,
+            timeout=60_000,
+        )
+    finally:
+        _SCREENSHOT_DIR.mkdir(parents=True, exist_ok=True)
+        page.screenshot(
+            path=str(_SCREENSHOT_DIR / f"{slug}.png"),
+            full_page=True,
+        )
 
     style_summary = page.evaluate(
         """
         () => {
             const maps = window.maplibreumMaps || {};
-            const first = Object.values(maps)[0];
-            if (!first) {
-                return {layers: 0, sources: 0};
-            }
-            const style = first.getStyle();
             return {
-                layers: Array.isArray(style.layers) ? style.layers.length : 0,
-                sources: style.sources ? Object.keys(style.sources).length : 0,
+                version: maplibregl.version,
+                maps: Object.values(maps).map((map) => {
+                    const style = map.getStyle();
+                    return {
+                        loaded: map.loaded(),
+                        layers: Array.isArray(style.layers) ? style.layers.length : 0,
+                        sources: style.sources ? Object.keys(style.sources).length : 0,
+                        canvasWidth: map.getCanvas().width,
+                        canvasHeight: map.getCanvas().height,
+                    };
+                }),
             };
         }
         """
     )
 
-    assert (
-        style_summary["layers"] > 0
-    ), "Expected the MapLibre style to expose at least one layer"
-    assert (
-        style_summary["sources"] > 0
-    ), "Expected the MapLibre style to expose at least one source"
+    assert style_summary["version"].split(".", 1)[0] == "6"
+    assert style_summary["maps"], "Expected at least one tracked MapLibre map"
+    for map_summary in style_summary["maps"]:
+        assert map_summary["loaded"] is True
+        assert map_summary["layers"] > 0
+        assert map_summary["sources"] > 0
+        assert map_summary["canvasWidth"] > 0
+        assert map_summary["canvasHeight"] > 0
+
+    assert not page_errors, f"Unhandled page errors: {page_errors}"
+    assert not console_errors, f"Browser console errors: {console_errors}"
+    assert not failed_requests, f"Failed browser requests: {failed_requests}"
 
     banner_link = page.locator(".maplibreum-example-banner a")
     if metadata.get("url"):
