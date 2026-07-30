@@ -103,6 +103,19 @@
     <script src="{{ script.src }}"{% for attr, value in script.attributes.items() %}{% if value is sameas(true) %} {{ attr }}{% else %} {{ attr }}="{{ value }}"{% endif %}{% endfor %}></script>
     {% endfor %}
     <script src="https://cdnjs.cloudflare.com/ajax/libs/dompurify/3.0.6/purify.min.js"></script>
+    <!-- Optional control libraries must load before map initialization. -->
+    {% if include_minimap %}
+    <script src="https://unpkg.com/maplibregl-minimap/dist/minimap-control.js" onerror="console.warn('Failed to load minimap control')"></script>
+    {% endif %}
+    {% if measure_control %}
+    <script src="https://unpkg.com/maplibre-gl-measures@latest/dist/maplibre-gl-measures.js" onerror="console.warn('Failed to load measure control')"></script>
+    {% endif %}
+    {% if time_dimension %}
+    <script src="https://cdn.jsdelivr.net/npm/leaflet-timedimension@1.1.0/dist/leaflet.timedimension.min.js" onerror="console.warn('Failed to load time dimension')"></script>
+    {% endif %}
+    {% if include_search %}
+    <script src="https://unpkg.com/@maplibre/maplibre-gl-geocoder@latest/dist/maplibre-gl-geocoder.min.js" onerror="console.warn('Failed to load geocoder')"></script>
+    {% endif %}
 </head>
 <body>
     <div id="{{ map_id }}">
@@ -1355,19 +1368,6 @@ map.on('load', function() {
         }
     </script>
     
-    <!-- Load additional libraries with fallbacks -->
-    {% if include_minimap %}
-    <script src="https://unpkg.com/maplibregl-minimap/dist/minimap-control.js" onerror="console.warn('Failed to load minimap control')"></script>
-    {% endif %}
-    {% if measure_control %}
-    <script src="https://unpkg.com/maplibre-gl-measures@latest/dist/maplibre-gl-measures.js" onerror="console.warn('Failed to load measure control')"></script>
-    {% endif %}
-    {% if time_dimension %}
-    <script src="https://cdn.jsdelivr.net/npm/leaflet-timedimension@1.1.0/dist/leaflet.timedimension.min.js" onerror="console.warn('Failed to load time dimension')"></script>
-    {% endif %}
-    {% if include_search %}
-    <script src="https://unpkg.com/@maplibre/maplibre-gl-geocoder@latest/dist/maplibre-gl-geocoder.min.js" onerror="console.warn('Failed to load geocoder')"></script>
-    {% endif %}
 </body>
 
 </html>
