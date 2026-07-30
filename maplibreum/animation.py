@@ -266,8 +266,9 @@ class AnimatedIcon:
         Returns:
             The ID of the generated icon.
         """
+        js_variable = self.icon_id.replace("-", "_")
         js_code = f"""
-            const {self.icon_id} = {{
+            const {js_variable} = {{
                 width: {self.size},
                 height: {self.size},
                 data: new Uint8Array({self.size} * {self.size} * 4),
@@ -306,7 +307,7 @@ class AnimatedIcon:
                     return true;
                 }}
             }};
-            map.addImage('{self.icon_id}', {self.icon_id}, {{ pixelRatio: 2 }});
+            map.addImage('{self.icon_id}', {js_variable}, {{ pixelRatio: 2 }});
         """
         map_instance.add_on_load_js(js_code)
         return self.icon_id
