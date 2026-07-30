@@ -70,8 +70,8 @@ class ThreeJSLayer:
     def scripts(self) -> list[str]:
         """Returns the list of Three.js scripts required for the layer."""
         return [
-            "https://cdn.jsdelivr.net/npm/three@0.169.0/build/three.min.js",
-            "https://cdn.jsdelivr.net/npm/three@0.169.0/examples/js/loaders/GLTFLoader.js",
+            "https://cdn.jsdelivr.net/npm/three@0.128.0/build/three.min.js",
+            "https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/GLTFLoader.js",
         ]
 
     def add_to(self, before_layer_id: str = None) -> str:
