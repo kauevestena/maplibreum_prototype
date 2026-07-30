@@ -18,13 +18,13 @@ def test_add_a_3d_model_using_threejs_configuration():
     )
 
     map_instance.add_external_script(
-        "https://cdn.jsdelivr.net/npm/three@0.169.0/build/three.min.js",
+        "https://cdn.jsdelivr.net/npm/three@0.128.0/build/three.min.js",
         defer=True,
     )
     map_instance.add_external_script(
         (
             "https://cdn.jsdelivr.net/"
-            "npm/three@0.169.0/examples/js/loaders/GLTFLoader.js"
+            "npm/three@0.128.0/examples/js/loaders/GLTFLoader.js"
         ),
         defer=True,
     )
