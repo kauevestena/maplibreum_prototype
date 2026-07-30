@@ -122,6 +122,24 @@ def test_rendered_example_loads(
         ),
     )
 
+    maplibre_dist = os.environ.get("MAPLIBREUM_MAPLIBRE_DIST")
+    if maplibre_dist:
+        dist_path = Path(maplibre_dist).resolve()
+        page.route(
+            "**/maplibre-gl@*/dist/maplibre-gl.js",
+            lambda route: route.fulfill(
+                path=dist_path / "maplibre-gl.js",
+                content_type="application/javascript",
+            ),
+        )
+        page.route(
+            "**/maplibre-gl@*/dist/maplibre-gl.css",
+            lambda route: route.fulfill(
+                path=dist_path / "maplibre-gl.css",
+                content_type="text/css",
+            ),
+        )
+
     page.goto(
         f"{gallery_base_url}/{html_path.as_posix()}",
         wait_until="domcontentloaded",
