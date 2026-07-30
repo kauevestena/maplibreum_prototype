@@ -117,6 +117,7 @@ def test_pmtiles_protocol_register_multiple_times():
     assert js_code.count("maplibregl.addProtocol('pmtiles'") == 1
 
 
+@pytest.mark.browser
 def test_pmtiles_protocol_playwright(page):
     """Integration test using Playwright to verify protocol registration logic."""
     import tempfile
