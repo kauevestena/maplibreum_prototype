@@ -15,6 +15,7 @@ from functools import partial
 from http.server import SimpleHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
 from typing import Any, Dict, Iterable, Tuple
+from urllib.parse import urlparse
 
 import pytest
 
@@ -125,12 +126,17 @@ def test_rendered_example_loads(
     maplibre_dist = os.environ.get("MAPLIBREUM_MAPLIBRE_DIST")
     if maplibre_dist:
         dist_path = Path(maplibre_dist).resolve()
-        page.route(
-            "**/maplibre-gl@*/dist/maplibre-gl.js",
-            lambda route: route.fulfill(
-                path=dist_path / "maplibre-gl.js",
+
+        def serve_maplibre_module(route):
+            module_name = Path(urlparse(route.request.url).path).name
+            route.fulfill(
+                path=dist_path / module_name,
                 content_type="application/javascript",
-            ),
+            )
+
+        page.route(
+            "**/maplibre-gl@*/dist/*.mjs",
+            serve_maplibre_module,
         )
         page.route(
             "**/maplibre-gl@*/dist/maplibre-gl.css",
