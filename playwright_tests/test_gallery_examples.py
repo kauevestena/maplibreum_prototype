@@ -232,6 +232,14 @@ def test_rendered_example_loads(
         assert map_summary["canvasHeight"] > 0
 
     assert not page_errors, f"Unhandled page errors: {page_errors}"
+    if os.environ.get("MAPLIBREUM_BLOCK_PRIMARY_CDN"):
+        console_errors = [
+            message
+            for message in console_errors
+            if not message.startswith(
+                "Failed to load resource: the server responded with a status of 503"
+            )
+        ]
     assert not console_errors, f"Browser console errors: {console_errors}"
     assert not failed_requests, f"Failed browser requests: {failed_requests}"
 
