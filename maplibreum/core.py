@@ -2,6 +2,7 @@ import html
 import json
 import math
 import os
+import re
 import subprocess
 from dataclasses import dataclass, field
 from typing import Any, Dict, Iterable, List, Mapping, Optional, Set
@@ -293,6 +294,39 @@ _RTL_CALLBACK_UNSET = object()
 DEFAULT_RTL_PLUGIN_URL = (
     "https://unpkg.com/maplibre-gl-rtl-text@latest/dist/maplibre-gl-rtl-text.js"
 )
+MAPLIBRE_VERSION = "6.0.0"
+_GEOJSON_TYPES = {
+    "Feature",
+    "FeatureCollection",
+    "GeometryCollection",
+    "Point",
+    "MultiPoint",
+    "LineString",
+    "MultiLineString",
+    "Polygon",
+    "MultiPolygon",
+}
+
+
+def _normalise_source_definition(definition):
+    """Return a MapLibre source definition, accepting raw GeoJSON objects."""
+
+    if isinstance(definition, SourceDefinition):
+        return definition.to_dict()
+    if hasattr(definition, "__geo_interface__"):
+        definition = definition.__geo_interface__
+    if isinstance(definition, Mapping) and definition.get("type") in _GEOJSON_TYPES:
+        return {"type": "geojson", "data": dict(definition)}
+    return definition
+
+
+def _validate_maplibre_version(version):
+    """Require MapLibre GL JS 6 or newer for the generated runtime."""
+
+    match = re.match(r"^\s*(\d+)(?:\.|$)", str(version))
+    if not match or int(match.group(1)) < 6:
+        raise ValueError("maplibre_version must be MapLibre GL JS 6 or newer")
+    return str(version)
 
 
 class Map:
@@ -321,7 +355,7 @@ class Map:
         tooltips=None,
         extra_js="",
         custom_css="",
-        maplibre_version="3.4.0",
+        maplibre_version=MAPLIBRE_VERSION,
         projection=None,
         map_options=None,
         container_id=None,
@@ -331,7 +365,8 @@ class Map:
         Parameters
         ----------
         maplibre_version : str, optional
-            Version of MapLibre GL JS to load. Defaults to "3.4.0".
+            Version of MapLibre GL JS to load. Defaults to ``6.0.0``.
+            Versions older than 6 are not supported.
         """
         self.title = title
         if isinstance(map_style, str) and map_style in MAP_STYLES:
@@ -361,7 +396,7 @@ class Map:
         self.extra_js = extra_js
         self._extra_js_snippets: List[str] = []
         self.custom_css = custom_css
-        self.maplibre_version = maplibre_version
+        self.maplibre_version = _validate_maplibre_version(maplibre_version)
         self.additional_map_options = dict(map_options) if map_options else {}
         self.layer_control = False
         self.cluster_layers = []
@@ -422,6 +457,7 @@ class Map:
 
     def add_control(self, control, position="top-right", options=None):
         """Add a UI control to the map.
+
         Parameters
         ----------
         control : object or str
@@ -541,11 +577,7 @@ class Map:
             supported.
         """
 
-        if isinstance(definition, SourceDefinition):
-            payload = definition.to_dict()
-        else:
-            payload = definition
-
+        payload = _normalise_source_definition(definition)
         self.sources.append({"name": name, "definition": payload})
         return name
 
@@ -3228,7 +3260,9 @@ class FeatureGroup:
         definition : dict
             The source definition.
         """
-        self.sources.append({"name": name, "definition": definition})
+        self.sources.append(
+            {"name": name, "definition": _normalise_source_definition(definition)}
+        )
 
     def add_layer(self, layer_definition, source=None, before=None):
         """Add a layer to the feature group.
