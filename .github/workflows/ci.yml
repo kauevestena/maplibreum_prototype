@@ -22,13 +22,17 @@ jobs:
             **/pyproject.toml
             **/setup.cfg
       - name: Install dependencies
-        run: |
-          pip install -e .[test]
+        run: pip install -e .[test]
       - name: Run unit and generated-example tests
         run: pytest -m "not browser"
 
   browser:
+    name: browser (shard ${{ matrix.shard }})
     runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        shard: [0, 1, 2, 3, 4, 5, 6, 7]
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
@@ -43,9 +47,10 @@ jobs:
         run: npm install --no-save --prefix .browser-assets maplibre-gl@6.0.0
       - name: Generate example pages
         run: pytest -m "not browser" tests/test_examples
-      - name: Run browser integration tests
+      - name: Validate generated examples in Chromium
         env:
-          MAPLIBREUM_GALLERY_SLUG: display-a-map
+          MAPLIBREUM_GALLERY_SHARD_TOTAL: '8'
+          MAPLIBREUM_GALLERY_SHARD_INDEX: ${{ matrix.shard }}
           MAPLIBREUM_MAPLIBRE_DIST: .browser-assets/node_modules/maplibre-gl/dist
           MAPLIBREUM_SCREENSHOT_DIR: playwright-report/screenshots
         run: pytest -m browser playwright_tests/test_gallery_examples.py
@@ -53,7 +58,46 @@ jobs:
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: maplibre-6-browser-smoke-screenshot
+          name: maplibre-6-browser-shard-${{ matrix.shard }}
+          path: playwright-report/
+
+  cdn-browser:
+    name: CDN smoke (${{ matrix.name }})
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - name: unpkg
+            expected-host: unpkg.com
+            block-primary: ''
+          - name: jsdelivr-fallback
+            expected-host: cdn.jsdelivr.net
+            block-primary: '1'
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+          cache: pip
+      - name: Install dependencies
+        run: pip install -e .[test]
+      - name: Install Chromium
+        run: python -m playwright install --with-deps chromium
+      - name: Generate minimal example
+        run: pytest -m "not browser" tests/test_examples/test_display_a_map.py
+      - name: Exercise live CDN path
+        env:
+          MAPLIBREUM_GALLERY_SLUG: display-a-map
+          MAPLIBREUM_EXPECT_CDN_HOST: ${{ matrix.expected-host }}
+          MAPLIBREUM_BLOCK_PRIMARY_CDN: ${{ matrix.block-primary }}
+          MAPLIBREUM_SCREENSHOT_DIR: playwright-report/screenshots
+        run: pytest -m browser playwright_tests/test_gallery_examples.py
+      - name: Upload CDN visual evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: maplibre-6-cdn-${{ matrix.name }}
           path: playwright-report/
 
   package:
@@ -70,6 +114,29 @@ jobs:
         run: python -m build
       - name: Validate PyPI metadata
         run: twine check --strict dist/*
+      - name: Install wheel in a clean environment and render HTML
+        run: |
+          python -m venv "${RUNNER_TEMP}/maplibreum-wheel-smoke"
+          "${RUNNER_TEMP}/maplibreum-wheel-smoke/bin/python" -m pip install dist/*.whl
+          "${RUNNER_TEMP}/maplibreum-wheel-smoke/bin/python" - <<'PY'
+          from importlib.metadata import version
+          from pathlib import Path
+          from tempfile import TemporaryDirectory
+
+          from maplibreum import MAPLIBRE_VERSION, Map
+
+          assert version("maplibreum") == "0.2.0"
+          assert MAPLIBRE_VERSION == "6.0.0"
+          with TemporaryDirectory() as directory:
+              output = Path(directory) / "smoke.html"
+              map_ = Map(center=[0, 0], zoom=2)
+              map_.add_marker([0, 0], popup="Maplibreum 0.2.0")
+              map_.save(output)
+              html = output.read_text(encoding="utf-8")
+              assert "maplibre-gl@6.0.0" in html
+              assert "window.maplibreumMaps" in html
+              assert output.stat().st_size > 1_000
+          PY
 
   docs:
     runs-on: ubuntu-latest
