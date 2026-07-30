@@ -95,7 +95,7 @@ def test_draw_a_circle() -> None:
     assert m.additional_map_options == {"maxZoom": 18, "maxPitch": 85}
 
     assert m.sources[0]["name"] == "location-radius"
-    polygon = m.sources[0]["definition"]["features"][0]["geometry"]
+    polygon = m.sources[0]["definition"]["data"]["features"][0]["geometry"]
     assert polygon["type"] == "Polygon"
     assert len(polygon["coordinates"][0]) == 65
 
