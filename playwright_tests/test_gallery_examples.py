@@ -165,6 +165,7 @@ def test_rendered_example_loads(
                     const map = maps[id];
                     const style = map.getStyle();
                     return map.getCanvas()
+                        && style
                         && Array.isArray(style.layers)
                         && style.layers.length > 0
                         && style.sources
