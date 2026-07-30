@@ -19,8 +19,8 @@ class TestCDNFallbacks:
         # Check for multiple CDN URLs
         assert "unpkg.com" in html
         assert "cdn.jsdelivr.net" in html
-        assert "dist/maplibre-gl.js" in html
-        assert "window.maplibregl && window.maplibregl.Map" in html
+        assert "dist/maplibre-gl.mjs" in html
+        assert "version: module.version || module.getVersion?.()" in html
 
     def test_map_includes_error_handling(self):
         """Test that generated HTML includes error handling."""
