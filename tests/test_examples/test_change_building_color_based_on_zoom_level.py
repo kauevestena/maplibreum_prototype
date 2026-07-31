@@ -12,10 +12,28 @@ def test_change_building_color_based_on_zoom_level():
         zoom=15,
     )
 
+    buildings = {
+        "type": "FeatureCollection",
+        "features": [{
+            "type": "Feature",
+            "properties": {"render_height": 80, "render_min_height": 0},
+            "geometry": {
+                "type": "Polygon",
+                "coordinates": [[
+                    [-73.9861, 40.7482],
+                    [-73.9852, 40.7482],
+                    [-73.9852, 40.7488],
+                    [-73.9861, 40.7488],
+                    [-73.9861, 40.7482],
+                ]],
+            },
+        }],
+    }
+    m.add_source("buildings", buildings)
+
     building_layer = layers.FillExtrusionLayer(
         id="3d-buildings",
-        source="composite",
-        source_layer="building",
+        source="buildings",
         minzoom=15,
         paint={
             "fill-extrusion-color": [
@@ -50,7 +68,7 @@ def test_change_building_color_based_on_zoom_level():
             "fill-extrusion-opacity": 0.8,
         },
     )
-    m.add_layer(building_layer.to_dict(), before="waterway-label")
+    m.add_layer(building_layer.to_dict(), before="geolines-label")
 
     html = m.render()
     assert "fill-extrusion-color" in html
