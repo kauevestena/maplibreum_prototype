@@ -1002,11 +1002,7 @@ map.on('load', function() {
     map.setTerrain({{ terrain | tojson | safe }});
     {% endif %}
     {% if fog is not none %}
-    if (typeof map.setFog === 'function') {
-        map.setFog({{ fog | tojson | safe }});
-    } else if (typeof map.setSky === 'function') {
-        map.setSky({{ fog | tojson | safe }});
-    }
+    map.setSky({{ fog | tojson | safe }});
     {% endif %}
 
     // Add layers
