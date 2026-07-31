@@ -72,9 +72,9 @@ class FeatureTransformProtocol:
         return f"""
         const url = params.url.replace('{self.name}://', '');
         const [{{ default: Protobuf }}, {{ VectorTile }}, {{ default: tileToProtobuf }}] = await Promise.all([
-            import('https://unpkg.com/pbf@4.0.1/dist/pbf.min.js'),
+            import('https://esm.sh/pbf@4.0.1'),
             import('https://esm.run/@mapbox/vector-tile@2.0.3/index.js'),
-            import('https://esm.run/vt-pbf@3.1.3/index.js'),
+            import('https://esm.sh/vt-pbf@3.1.3'),
         ]);
         const response = await fetch(url);
         const data = await response.arrayBuffer();
