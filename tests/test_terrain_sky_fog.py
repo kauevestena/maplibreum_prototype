@@ -18,14 +18,24 @@ def test_terrain(map_instance):
 
 
 def test_sky_layer(map_instance):
-    map_instance.add_sky_layer()
+    map_instance.add_sky_layer(
+        paint={
+            "sky-atmosphere-color": "#88c0ff",
+            "sky-atmosphere-halo-color": "#ffffff",
+        }
+    )
     html = map_instance.render()
-    assert any(l["definition"]["type"] == "sky" for l in map_instance.layers)
-    assert '"type": "sky"' in html
+    assert not any(l["definition"]["type"] == "sky" for l in map_instance.layers)
+    assert "map.setSky" in html
+    assert '"sky-color": "#88c0ff"' in html
+    assert '"horizon-color": "#ffffff"' in html
 
 
 def test_fog(map_instance):
-    map_instance.set_fog()
+    map_instance.set_fog({"color": "#88c0ff", "horizon-blend": 0.2})
     html = map_instance.render()
-    assert "setFog" in html
+    assert "map.setSky" in html
+    assert "setFog" not in html
+    assert '"fog-color": "#88c0ff"' in html
+    assert '"horizon-fog-blend": 0.2' in html
 
