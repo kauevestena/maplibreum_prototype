@@ -1,71 +1,468 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <title>MapLibreum Map</title>
+    <meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no" />
+    <link href="https://unpkg.com/maplibre-gl@6.0.0/dist/maplibre-gl.css" rel="stylesheet" onerror="this.onerror=null;this.href='https://cdn.jsdelivr.net/npm/maplibre-gl@6.0.0/dist/maplibre-gl.css';" />
+
+
+
+
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+        }
+
+        #maplibreum_0 {
+            width: 100%;
+            height: 500px;
+            position: relative;
+        }
+
+        .maplibreum-legend {
+            position: absolute;
+            bottom: 10px;
+            left: 10px;
+            background: rgba(255, 255, 255, 0.8);
+            padding: 6px;
+            font-size: 12px;
+            border-radius: 4px;
+        }
+
+        .maplibreum-legend div {
+            display: flex;
+            align-items: center;
+            margin-bottom: 4px;
+        }
+
+        .maplibreum-legend span {
+            display: inline-block;
+            width: 12px;
+            height: 12px;
+            margin-right: 4px;
+
+        }
+
+
+
+        #maplibreum_0 { width: 100%; height: 500px; }
+
+
+
+    </style>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/dompurify/3.0.6/purify.min.js"></script>
+</head>
+<body>
 <div class="maplibreum-example-banner">
   <h1>Draw A Circle</h1>
   <p>Original MapLibre example: <a href="https://maplibre.org/maplibre-gl-js/docs/examples/./draw-a-circle/" target="_blank" rel="noopener">https://maplibre.org/maplibre-gl-js/docs/examples/./draw-a-circle/</a></p>
   <p>Generated from test_draw_a_circle.py by the automated test suite.</p>
 </div>
-const radiusCenter = [2.3454, 48.8452];
-const map = new maplibregl.Map({
-    container: 'map',
-    zoom: 13,
-    center: radiusCenter,
-    style: {
-        version: 8,
-        sources: {
-            osm: {
-                type: 'raster',
-                tiles: ['https://tile.openstreetmap.org/{z}/{x}/{y}.png'],
-                tileSize: 256,
-                attribution: '&copy; OpenStreetMap Contributors',
-                maxzoom: 19
+
+    <div id="maplibreum_0">
+
+
+    </div>
+    <!-- MapLibre GL JS with CDN fallbacks -->
+    <script>
+        // Load MapLibre 6's ES module build, with an independent CDN fallback.
+        async function loadMapLibreGL() {
+            const moduleUrls = [
+                'https://unpkg.com/maplibre-gl@6.0.0/dist/maplibre-gl.mjs',
+                'https://cdn.jsdelivr.net/npm/maplibre-gl@6.0.0/dist/maplibre-gl.mjs'
+            ];
+            let lastError;
+            for (const url of moduleUrls) {
+                try {
+                    const module = await import(url);
+                    window.maplibregl = {
+                        ...module,
+                        version: module.version || module.getVersion?.(),
+                    };
+                    return window.maplibregl;
+                } catch (error) {
+                    lastError = error;
+                    console.warn(`Failed to load MapLibre GL JS from ${url}`, error);
+                }
             }
-        },
-        layers: [
-            {
-                id: 'osm',
-                type: 'raster',
-                source: 'osm'
+            throw new Error('Failed to load MapLibre GL JS from all CDNs', {
+                cause: lastError
+            });
+        }
+
+        // Function to show error message when MapLibre fails to load
+        function showMapError(message) {
+            const mapDiv = document.getElementById('maplibreum_0');
+            if (mapDiv) {
+                mapDiv.innerHTML = `
+                    <div style="
+                        display: flex;
+                        align-items: center;
+                        justify-content: center;
+                        height: 100%;
+                        background-color: #f8f9fa;
+                        border: 2px dashed #dee2e6;
+                        border-radius: 8px;
+                        text-align: center;
+                        padding: 20px;
+                        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+                    ">
+                        <div>
+                            <div style="font-size: 48px; color: #6c757d; margin-bottom: 16px;">🗺️</div>
+                            <div style="font-size: 18px; color: #495057; margin-bottom: 8px;">Map Loading Error</div>
+                            <div style="font-size: 14px; color: #6c757d; margin-bottom: 16px;">${message}</div>
+                            <div style="font-size: 12px; color: #6c757d;">
+                                This may be due to network restrictions or CDN availability issues.
+                                <br>Try refreshing the page or check your internet connection.
+                            </div>
+                        </div>
+                    </div>
+                `;
             }
-        ]
-    },
-    maxZoom: 18,
-    maxPitch: 85
+        }
+
+        function evaluateDeckExpression(expr, data) {
+            if (!Array.isArray(expr) || expr.length === 0) {
+                return expr;
+            }
+            const op = expr[0];
+            if (op === 'get') {
+                const propName = expr[1];
+                if (data && data.properties && propName in data.properties) {
+                    return data.properties[propName];
+                }
+                if (data && propName in data) {
+                    return data[propName];
+                }
+                return undefined;
+            }
+            if (op === 'has') {
+                const propName = expr[1];
+                if (data && data.properties && propName in data.properties) {
+                    return true;
+                }
+                if (data && propName in data) {
+                    return true;
+                }
+                return false;
+            }
+            if (op === 'literal') {
+                return expr[1];
+            }
+            if (['+', '-', '*', '/'].includes(op)) {
+                const a = evaluateDeckExpression(expr[1], data);
+                const b = evaluateDeckExpression(expr[2], data);
+                if (op === '+') return a + b;
+                if (op === '-') return a - b;
+                if (op === '*') return a * b;
+                if (op === '/') return a / b;
+            }
+            if (['==', '!=', '>', '<', '>=', '<='].includes(op)) {
+                const a = evaluateDeckExpression(expr[1], data);
+                const b = evaluateDeckExpression(expr[2], data);
+                if (op === '==') return a === b;
+                if (op === '!=') return a !== b;
+                if (op === '>') return a > b;
+                if (op === '<') return a < b;
+                if (op === '>=') return a >= b;
+                if (op === '<=') return a <= b;
+            }
+            return expr;
+        }
+
+        function evaluateDeckProps(value) {
+            if (Array.isArray(value)) {
+                if (value.length > 0 && typeof value[0] === 'string' && ['get', 'has', 'literal', '+', '-', '*', '/', '==', '!=', '>', '<', '>=', '<='].includes(value[0])) {
+                    return function(d) {
+                        return evaluateDeckExpression(value, d);
+                    };
+                }
+                return value;
+            }
+            return value;
+        }
+
+        class MaplibreumDeckGLOverlayManager {
+            constructor(map, overlays) {
+                this.map = map;
+                this.configs = {};
+                this.activeLayers = {};
+                this.dataCache = {};
+                this.pendingData = {};
+                (overlays || []).forEach((overlay) => {
+                    const normalised = Object.assign({}, overlay);
+                    const props = normalised.props || {};
+                    normalised.props = {
+                        json: Object.assign({}, props.json || {}),
+                    };
+                    this.configs[normalised.id] = normalised;
+                });
+            }
+
+            _getConfig(id) {
+                const config = this.configs[id];
+                if (!config) {
+                    console.warn(`Deck.GL overlay '${id}' is not registered.`);
+                }
+                return config;
+            }
+
+            _resolveData(config) {
+                const cacheKey = config.id;
+                if (Object.prototype.hasOwnProperty.call(this.dataCache, cacheKey)) {
+                    return Promise.resolve(this.dataCache[cacheKey]);
+                }
+                if (!config.data) {
+                    return Promise.resolve(undefined);
+                }
+                if (config.data.mode === 'inline') {
+                    this.dataCache[cacheKey] = config.data.value;
+                    return Promise.resolve(config.data.value);
+                }
+                if (config.data.mode === 'promise') {
+                    if (this.pendingData[cacheKey]) {
+                        return this.pendingData[cacheKey];
+                    }
+                    let factory;
+                    try {
+                        factory = new Function(`return (${config.data.value});`);
+                    } catch (error) {
+                        return Promise.reject(error);
+                    }
+                    let promise;
+                    try {
+                        promise = Promise.resolve(factory());
+                    } catch (error) {
+                        return Promise.reject(error);
+                    }
+                    this.pendingData[cacheKey] = promise
+                        .then((result) => {
+                            delete this.pendingData[cacheKey];
+                            this.dataCache[cacheKey] = result;
+                            return result;
+                        })
+                        .catch((error) => {
+                            delete this.pendingData[cacheKey];
+                            throw error;
+                        });
+                    return this.pendingData[cacheKey];
+                }
+                return Promise.resolve(undefined);
+            }
+
+            _buildProps(config, data) {
+                const jsonProps = (config.props && config.props.json) || {};
+                const props = { data };
+                Object.entries(jsonProps).forEach(([key, value]) => {
+                    props[key] = evaluateDeckProps(value);
+                });
+                return props;
+            }
+
+            addOverlay(id) {
+                if (this.activeLayers[id]) {
+                    return this.activeLayers[id];
+                }
+                const config = this._getConfig(id);
+                if (!config) {
+                    return null;
+                }
+                if (typeof deck === 'undefined') {
+                    console.error('Deck.GL library is not loaded');
+                    return null;
+                }
+                const customLayer = {
+                    id: config.id,
+                    type: 'custom',
+                    renderingMode: '3d',
+                    onAdd: (map, gl) => {
+                        customLayer.__cancelled = false;
+                        this._resolveData(config)
+                            .then((data) => {
+                                if (customLayer.__cancelled) {
+                                    return;
+                                }
+                                try {
+                                    const layerProps = this._buildProps(config, data);
+                                    customLayer.__deck = new deck.Deck({
+                                        gl,
+                                        map,
+                                        initialViewState: map.getFreeCameraOptions(),
+                                        layers: [new deck[config.layerType](layerProps)],
+                                    });
+                                } catch (error) {
+                                    console.error(
+                                        `Failed to initialise Deck.GL overlay ${config.id}`,
+                                        error
+                                    );
+                                }
+                            })
+                            .catch((error) => {
+                                console.error(
+                                    `Failed to load data for Deck.GL overlay ${config.id}`,
+                                    error
+                                );
+                            });
+                    },
+                    render: () => {
+                        if (customLayer.__deck && this.map.getFreeCameraOptions) {
+                            const viewState = this.map.getFreeCameraOptions();
+                            customLayer.__deck.setProps({ viewState });
+                        }
+                    },
+                    onRemove: () => {
+                        customLayer.__cancelled = true;
+                        if (customLayer.__deck) {
+                            customLayer.__deck.finalize();
+                            customLayer.__deck = null;
+                        }
+                    },
+                };
+                try {
+                    this.map.addLayer(customLayer, config.before || undefined);
+                    this.activeLayers[id] = customLayer;
+                } catch (error) {
+                    console.error(`Failed to add Deck.GL overlay ${config.id}`, error);
+                }
+                return customLayer;
+            }
+
+            removeOverlay(id) {
+                const layer = this.activeLayers[id];
+                if (!layer) {
+                    return;
+                }
+                layer.__cancelled = true;
+                try {
+                    this.map.removeLayer(id);
+                } catch (error) {
+                    console.warn(`Failed to remove Deck.GL overlay ${id}`, error);
+                }
+                if (layer.__deck) {
+                    layer.__deck.finalize();
+                    layer.__deck = null;
+                }
+                delete this.activeLayers[id];
+            }
+        }
+
+        // Load MapLibre and initialize map
+        loadMapLibreGL().then(() => {
+            // MapLibre loaded successfully, check if it's available
+            if (typeof maplibregl === 'undefined') {
+                throw new Error('MapLibre GL JS loaded but not available');
+            }
+
+
+
+            initializeMap();
+        }).catch(error => {
+            console.error('Failed to load MapLibre GL JS:', error);
+            showMapError('Failed to load MapLibre GL JavaScript library');
+        });
+
+        function initializeMap() {
+            try {
+        // Initialize map
+        var map = new maplibregl.Map({"container": "maplibreum_0", "style": {"version": 8, "sources": {"osm": {"type": "raster", "tiles": ["https://tile.openstreetmap.org/{z}/{x}/{y}.png"], "tileSize": 256, "attribution": "&copy; OpenStreetMap Contributors", "maxzoom": 19}}, "layers": [{"id": "osm", "type": "raster", "source": "osm"}]}, "center": [2.3454, 48.8452], "zoom": 13, "maxZoom": 18, "maxPitch": 85});
+
+        window.maplibreumMaps = window.maplibreumMaps || {};
+        window.maplibreumMaps["maplibreum_0"] = map;
+        window.maplibreumMapsLoaded = window.maplibreumMapsLoaded || {};
+        map.once('load', function() {
+            window.maplibreumMapsLoaded["maplibreum_0"] = true;
+        });
+
+
+// Add controls
+
+
+
+
+map.on('load', function() {
+
+    // Add sources
+
+    map.addSource("location-radius", {"type": "geojson", "data": {"type": "FeatureCollection", "features": [{"type": "Feature", "geometry": {"type": "Polygon", "coordinates": [[[2.3454, 48.85419321605918], [2.346739694081469, 48.85414990350603], [2.3480664792787485, 48.85402038319369], [2.349367571292527, 48.853805903135715], [2.350630433783215, 48.85350852996747], [2.3518428993377785, 48.85313112900208], [2.3529932868545367, 48.852677336580136], [2.3540705142075233, 48.852151524982], [2.355064205098891, 48.85155876024306], [2.355964789065494, 48.850904753281014], [2.356763593673577, 48.850195804809495], [2.3574529280126804, 48.84943874457142], [2.3580261566857232, 48.84864086548107], [2.3584777635856695, 48.847809853312], [2.3588034048494464, 48.84695371261119], [2.3589999504856425, 48.846080689555365], [2.3590655142830332, 48.84519919249454], [2.3589994717209306, 48.8443177109497], [2.3588024657186795, 48.84344473384558], [2.3584764001791125, 48.842588667766286], [2.3580244213983192, 48.84175775602087], [2.3574508875305455, 48.8409599992971], [2.356761326411289, 48.840203078666065], [2.3559623821526676, 48.839494281677], [2.355061751031833, 48.83884043225145], [2.354068107294655, 48.83824782504901], [2.352991019592172, 48.837722164933346], [2.3518408588555424, 48.83726851211844], [2.350628698495702, 48.83689123351964], [2.3493662078858693, 48.83659396077507], [2.3480655401479047, 48.8363795553386], [2.3467392153167155, 48.83625008097797], [2.3454, 48.83620678394082], [2.344060784683285, 48.83625008097797], [2.3427344598520956, 48.8363795553386], [2.341433792114131, 48.83659396077507], [2.340171301504298, 48.83689123351964], [2.338959141144458, 48.83726851211844], [2.337808980407828, 48.837722164933346], [2.336731892705345, 48.83824782504901], [2.3357382489681675, 48.83884043225145], [2.3348376178473327, 48.839494281677], [2.334038673588711, 48.840203078666065], [2.3333491124694548, 48.8409599992971], [2.3327755786016806, 48.84175775602087], [2.3323235998208878, 48.842588667766286], [2.3319975342813204, 48.84344473384558], [2.3318005282790697, 48.8443177109497], [2.331734485716967, 48.84519919249454], [2.331800049514358, 48.846080689555365], [2.331996595150554, 48.84695371261119], [2.332322236414331, 48.847809853312], [2.332773843314277, 48.84864086548107], [2.3333470719873195, 48.84943874457142], [2.3340364063264234, 48.850195804809495], [2.334835210934506, 48.850904753281014], [2.3357357949011095, 48.85155876024306], [2.3367294857924765, 48.852151524982], [2.337806713145463, 48.852677336580136], [2.338957100662222, 48.85313112900208], [2.340169566216785, 48.85350852996747], [2.3414324287074733, 48.853805903135715], [2.342733520721252, 48.85402038319369], [2.344060305918531, 48.85414990350603], [2.3454, 48.85419321605918]]]}, "properties": {}}]}});
+
+
+    // Register images used by style layers
+
+
+
+
+
+    // Add layers
+
+
+    map.addLayer({"id": "location-radius", "type": "fill", "source": "location-radius", "paint": {"fill-color": "#8CCFFF", "fill-opacity": 0.5}});
+
+
+
+    map.addLayer({"id": "location-radius-outline", "type": "line", "source": "location-radius", "paint": {"line-color": "#0094ff", "line-width": 3}});
+
+
+
+
+
+    // Popups
+
+
+    // Tooltips
+
+
+    // Tile Layers
+    var tileLayers = [
+
+    ];
+
+    // Overlay Layers
+    var overlayLayers = [
+
+    ];
+
+
+
+
+
+    // Markers
+
+
+
+
+
+
+
+
+
+
+
+
+    // Queued camera actions
+
 });
 
-map.on('load', () => {
-    // Generate a polygon using turf.circle
-    // See https://turfjs.org/docs/#circle
-    const radius = 1; // kilometer
-    const options = {
-        steps: 64,
-        units: 'kilometers'
-    };
-    const circle = turf.circle(radiusCenter, radius, options);
 
-    // Add the circle as a GeoJSON source
-    map.addSource('location-radius', {
-        type: 'geojson',
-        data: circle
-    });
 
-    // Add a fill layer with some transparency
-    map.addLayer({
-        id: 'location-radius',
-        type: 'fill',
-        source: 'location-radius',
-        paint: {
-            'fill-color': '#8CCFFF',
-            'fill-opacity': 0.5
+
+
+
+
+            } catch (error) {
+                console.error('Error initializing map:', error);
+                showMapError('Error initializing the map: ' + error.message);
+            }
         }
-    });
+    </script>
 
-    // Add a line layer to draw the circle outline
-    map.addLayer({
-        id: 'location-radius-outline',
-        type: 'line',
-        source: 'location-radius',
-        paint: {
-            'line-color': '#0094ff',
-            'line-width': 3
-        }
-    });
-});
+    <!-- Load additional libraries with fallbacks -->
+
+
+
+
+</body>
+
+</html>

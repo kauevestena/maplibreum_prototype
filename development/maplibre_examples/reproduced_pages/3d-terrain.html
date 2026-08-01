@@ -57,9 +57,9 @@
 </head>
 <body>
 <div class="maplibreum-example-banner">
-  <h1>Display A Non Interactive Map</h1>
-  <p>Original MapLibre example: <a href="https://maplibre.org/maplibre-gl-js/docs/examples/./display-a-non-interactive-map/" target="_blank" rel="noopener">https://maplibre.org/maplibre-gl-js/docs/examples/./display-a-non-interactive-map/</a></p>
-  <p>Generated from test_display_a_non_interactive_map.py by the automated test suite.</p>
+  <h1>3D Terrain</h1>
+  <p>Original MapLibre example: <a href="https://maplibre.org/maplibre-gl-js/docs/examples/./3d-terrain/" target="_blank" rel="noopener">https://maplibre.org/maplibre-gl-js/docs/examples/./3d-terrain/</a></p>
+  <p>Generated from test_3d_terrain.py by the automated test suite.</p>
 </div>
 
     <div id="maplibreum_0">
@@ -367,7 +367,7 @@
         function initializeMap() {
             try {
         // Initialize map
-        var map = new maplibregl.Map({"container": "maplibreum_0", "style": "https://demotiles.maplibre.org/style.json", "center": [74.5, 40.0], "zoom": 3, "interactive": false});
+        var map = new maplibregl.Map({"container": "maplibreum_0", "style": {"version": 8, "sources": {"osm": {"type": "raster", "tiles": ["https://a.tile.openstreetmap.org/{z}/{x}/{y}.png"], "tileSize": 256, "attribution": "&copy; OpenStreetMap Contributors", "maxzoom": 19}, "terrainSource": {"type": "raster-dem", "url": "https://demotiles.maplibre.org/terrain-tiles/tiles.json", "tileSize": 256}, "hillshadeSource": {"type": "raster-dem", "url": "https://demotiles.maplibre.org/terrain-tiles/tiles.json", "tileSize": 256}}, "layers": [{"id": "osm", "type": "raster", "source": "osm"}, {"id": "hills", "type": "hillshade", "source": "hillshadeSource", "paint": {"hillshade-shadow-color": "#473B24"}, "layout": {"visibility": "visible"}}], "terrain": {"source": "terrainSource", "exaggeration": 1}, "sky": {}}, "center": [11.39085, 47.27574], "zoom": 12, "pitch": 70, "hash": true, "maxZoom": 18, "maxPitch": 85});
 
         window.maplibreumMaps = window.maplibreumMaps || {};
         window.maplibreumMaps["maplibreum_0"] = map;
@@ -378,6 +378,14 @@
 
 
 // Add controls
+
+
+map.addControl(new maplibregl.NavigationControl({"visualizePitch": true, "showZoom": true, "showCompass": true}), "top-right");
+
+
+
+map.addControl(new maplibregl.TerrainControl({"source": "terrainSource", "exaggeration": 1}), "top-right");
+
 
 
 

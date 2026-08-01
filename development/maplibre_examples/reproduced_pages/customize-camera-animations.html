@@ -1,149 +1,630 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <title>MapLibreum Map</title>
+    <meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no" />
+    <link href="https://unpkg.com/maplibre-gl@6.0.0/dist/maplibre-gl.css" rel="stylesheet" onerror="this.onerror=null;this.href='https://cdn.jsdelivr.net/npm/maplibre-gl@6.0.0/dist/maplibre-gl.css';" />
+
+
+
+
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+        }
+
+        #maplibreum_0 {
+            width: 100%;
+            height: 500px;
+            position: relative;
+        }
+
+        .maplibreum-legend {
+            position: absolute;
+            bottom: 10px;
+            left: 10px;
+            background: rgba(255, 255, 255, 0.8);
+            padding: 6px;
+            font-size: 12px;
+            border-radius: 4px;
+        }
+
+        .maplibreum-legend div {
+            display: flex;
+            align-items: center;
+            margin-bottom: 4px;
+        }
+
+        .maplibreum-legend span {
+            display: inline-block;
+            width: 12px;
+            height: 12px;
+            margin-right: 4px;
+
+        }
+
+
+
+        #maplibreum_0 { width: 100%; height: 500px; }
+
+.map-overlay {
+        font: 12px/20px 'Helvetica Neue', Arial, Helvetica, sans-serif;
+        position: absolute;
+        width: 200px;
+        top: 0;
+        left: 0;
+        padding: 10px;
+    }
+
+    .map-overlay .map-overlay-inner {
+        background-color: #fff;
+        box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+        border-radius: 3px;
+        padding: 10px;
+        margin-bottom: 10px;
+    }
+
+    .map-overlay-inner fieldset {
+        border: none;
+        padding: 0;
+        margin: 0 0 10px;
+    }
+
+    .map-overlay-inner fieldset:last-child {
+        margin: 0;
+    }
+
+    .map-overlay-inner select {
+        width: 100%;
+    }
+
+    .map-overlay-inner button {
+        background-color: cornflowerblue;
+        color: white;
+        border-radius: 5px;
+        display: inline-block;
+        height: 20px;
+        border: none;
+        cursor: pointer;
+    }
+
+    .map-overlay-inner button:hover {
+        background-color: blue;
+        box-shadow: inset 0 0 0 3px rgba(0, 0, 0, 0.1);
+        transition: background-color 500ms linear;
+    }
+
+    .offset > label,
+    .offset > input {
+        display: inline;
+    }
+
+    #animateLabel {
+        display: inline-block;
+        min-width: 20px;
+    }
+
+    </style>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/dompurify/3.0.6/purify.min.js"></script>
+</head>
+<body>
 <div class="maplibreum-example-banner">
   <h1>Customize Camera Animations</h1>
   <p>Original MapLibre example: <a href="https://maplibre.org/maplibre-gl-js/docs/examples/./customize-camera-animations/" target="_blank" rel="noopener">https://maplibre.org/maplibre-gl-js/docs/examples/./customize-camera-animations/</a></p>
   <p>Generated from test_customize_camera_animations.py by the automated test suite.</p>
 </div>
-// declare various easing functions.
-// easing functions mathematically describe
-// how fast a value changes during an animation.
-// each function takes a parameter t that represents
-// the progress of the animation.
-// t is in a range of 0 to 1 where 0 is the initial
-// state and 1 is the completed state.
-const easingFunctions = {
-// start slow and gradually increase speed
-    easeInCubic (t) {
-        return t * t * t;
-    },
-    // start fast with a long, slow wind-down
-    easeOutQuint (t) {
-        return 1 - Math.pow(1 - t, 5);
-    },
-    // slow start and finish with fast middle
-    easeInOutCirc (t) {
-        return t < 0.5 ?
-            (1 - Math.sqrt(1 - Math.pow(2 * t, 2))) / 2 :
-            (Math.sqrt(1 - Math.pow(-2 * t + 2, 2)) + 1) / 2;
-    },
-    // fast start with a "bounce" at the end
-    easeOutBounce (t) {
-        const n1 = 7.5625;
-        const d1 = 2.75;
 
-        if (t < 1 / d1) {
-            return n1 * t * t;
-        } else if (t < 2 / d1) {
-            return n1 * (t -= 1.5 / d1) * t + 0.75;
-        } else if (t < 2.5 / d1) {
-            return n1 * (t -= 2.25 / d1) * t + 0.9375;
-        } else {
-            return n1 * (t -= 2.625 / d1) * t + 0.984375;
+    <div id="maplibreum_0">
+
+
+    </div>
+    <!-- MapLibre GL JS with CDN fallbacks -->
+    <script>
+        // Load MapLibre 6's ES module build, with an independent CDN fallback.
+        async function loadMapLibreGL() {
+            const moduleUrls = [
+                'https://unpkg.com/maplibre-gl@6.0.0/dist/maplibre-gl.mjs',
+                'https://cdn.jsdelivr.net/npm/maplibre-gl@6.0.0/dist/maplibre-gl.mjs'
+            ];
+            let lastError;
+            for (const url of moduleUrls) {
+                try {
+                    const module = await import(url);
+                    window.maplibregl = {
+                        ...module,
+                        version: module.version || module.getVersion?.(),
+                    };
+                    return window.maplibregl;
+                } catch (error) {
+                    lastError = error;
+                    console.warn(`Failed to load MapLibre GL JS from ${url}`, error);
+                }
+            }
+            throw new Error('Failed to load MapLibre GL JS from all CDNs', {
+                cause: lastError
+            });
         }
-    }
-};
 
-// set up some helpful UX on the form
-const durationValueSpan = document.getElementById('durationValue');
-const durationInput = document.getElementById('duration');
-durationValueSpan.innerHTML = `${durationInput.value / 1000} seconds`;
-durationInput.addEventListener('change', (e) => {
-    durationValueSpan.innerHTML = `${e.target.value / 1000} seconds`;
-});
-
-const animateLabel = document.getElementById('animateLabel');
-const animateValue = document.getElementById('animate');
-animateValue.addEventListener('change', (e) => {
-    animateLabel.innerHTML = e.target.checked ? 'Yes' : 'No';
-});
-
-const map = new maplibregl.Map({
-    container: 'map',
-    style: 'https://demotiles.maplibre.org/style.json',
-    center: [-95, 40],
-    zoom: 3
-});
-
-map.on('load', () => {
-    // add a layer to display the map's center point
-    map.addSource('center', {
-        'type': 'geojson',
-        'data': {
-            'type': 'Point',
-            'coordinates': [-94, 40]
+        // Function to show error message when MapLibre fails to load
+        function showMapError(message) {
+            const mapDiv = document.getElementById('maplibreum_0');
+            if (mapDiv) {
+                mapDiv.innerHTML = `
+                    <div style="
+                        display: flex;
+                        align-items: center;
+                        justify-content: center;
+                        height: 100%;
+                        background-color: #f8f9fa;
+                        border: 2px dashed #dee2e6;
+                        border-radius: 8px;
+                        text-align: center;
+                        padding: 20px;
+                        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+                    ">
+                        <div>
+                            <div style="font-size: 48px; color: #6c757d; margin-bottom: 16px;">🗺️</div>
+                            <div style="font-size: 18px; color: #495057; margin-bottom: 8px;">Map Loading Error</div>
+                            <div style="font-size: 14px; color: #6c757d; margin-bottom: 16px;">${message}</div>
+                            <div style="font-size: 12px; color: #6c757d;">
+                                This may be due to network restrictions or CDN availability issues.
+                                <br>Try refreshing the page or check your internet connection.
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }
         }
-    });
-    map.addLayer({
-        'id': 'center',
-        'type': 'symbol',
-        'source': 'center',
-        'layout': {
-            'text-field': 'Center: [-94, 40]',
-            'text-font': ['Noto Sans Regular'],
-            'text-offset': [0, 0.6],
-            'text-anchor': 'top'
+
+        function evaluateDeckExpression(expr, data) {
+            if (!Array.isArray(expr) || expr.length === 0) {
+                return expr;
+            }
+            const op = expr[0];
+            if (op === 'get') {
+                const propName = expr[1];
+                if (data && data.properties && propName in data.properties) {
+                    return data.properties[propName];
+                }
+                if (data && propName in data) {
+                    return data[propName];
+                }
+                return undefined;
+            }
+            if (op === 'has') {
+                const propName = expr[1];
+                if (data && data.properties && propName in data.properties) {
+                    return true;
+                }
+                if (data && propName in data) {
+                    return true;
+                }
+                return false;
+            }
+            if (op === 'literal') {
+                return expr[1];
+            }
+            if (['+', '-', '*', '/'].includes(op)) {
+                const a = evaluateDeckExpression(expr[1], data);
+                const b = evaluateDeckExpression(expr[2], data);
+                if (op === '+') return a + b;
+                if (op === '-') return a - b;
+                if (op === '*') return a * b;
+                if (op === '/') return a / b;
+            }
+            if (['==', '!=', '>', '<', '>=', '<='].includes(op)) {
+                const a = evaluateDeckExpression(expr[1], data);
+                const b = evaluateDeckExpression(expr[2], data);
+                if (op === '==') return a === b;
+                if (op === '!=') return a !== b;
+                if (op === '>') return a > b;
+                if (op === '<') return a < b;
+                if (op === '>=') return a >= b;
+                if (op === '<=') return a <= b;
+            }
+            return expr;
         }
-    });
-    map.addLayer({
-        'id': 'center-circle',
-        'type': 'circle',
-        'source': 'center',
-        'paint': {
-            'circle-radius': 6,
-            'circle-color': '#007cbf'
+
+        function evaluateDeckProps(value) {
+            if (Array.isArray(value)) {
+                if (value.length > 0 && typeof value[0] === 'string' && ['get', 'has', 'literal', '+', '-', '*', '/', '==', '!=', '>', '<', '>=', '<='].includes(value[0])) {
+                    return function(d) {
+                        return evaluateDeckExpression(value, d);
+                    };
+                }
+                return value;
+            }
+            return value;
         }
-    });
 
-    const animateButton = document.getElementById('animateButton');
-    animateButton.addEventListener('click', () => {
-        const easingInput = document.getElementById('easing');
-        const easingFn =
-        easingFunctions[
-            easingInput.options[easingInput.selectedIndex].value
-        ];
-        const duration = parseInt(durationInput.value, 10);
-        const animate = animateValue.checked;
-        const offsetX = parseInt(
-            document.getElementById('offset-x').value,
-            10
-        );
-        const offsetY = parseInt(
-            document.getElementById('offset-y').value,
-            10
-        );
+        class MaplibreumDeckGLOverlayManager {
+            constructor(map, overlays) {
+                this.map = map;
+                this.configs = {};
+                this.activeLayers = {};
+                this.dataCache = {};
+                this.pendingData = {};
+                (overlays || []).forEach((overlay) => {
+                    const normalised = Object.assign({}, overlay);
+                    const props = normalised.props || {};
+                    normalised.props = {
+                        json: Object.assign({}, props.json || {}),
+                    };
+                    this.configs[normalised.id] = normalised;
+                });
+            }
 
-        const animationOptions = {
-            duration,
-            easing: easingFn,
-            offset: [offsetX, offsetY],
-            animate,
-            essential: true // animation will happen even if user has `prefers-reduced-motion` setting on
-        };
+            _getConfig(id) {
+                const config = this.configs[id];
+                if (!config) {
+                    console.warn(`Deck.GL overlay '${id}' is not registered.`);
+                }
+                return config;
+            }
 
-        // Create a random location to fly to by offsetting the map's
-        // initial center point by up to 10 degrees.
-        const center = [
-            -95 + (Math.random() - 0.5) * 20,
-            40 + (Math.random() - 0.5) * 20
-        ];
+            _resolveData(config) {
+                const cacheKey = config.id;
+                if (Object.prototype.hasOwnProperty.call(this.dataCache, cacheKey)) {
+                    return Promise.resolve(this.dataCache[cacheKey]);
+                }
+                if (!config.data) {
+                    return Promise.resolve(undefined);
+                }
+                if (config.data.mode === 'inline') {
+                    this.dataCache[cacheKey] = config.data.value;
+                    return Promise.resolve(config.data.value);
+                }
+                if (config.data.mode === 'promise') {
+                    if (this.pendingData[cacheKey]) {
+                        return this.pendingData[cacheKey];
+                    }
+                    let factory;
+                    try {
+                        factory = new Function(`return (${config.data.value});`);
+                    } catch (error) {
+                        return Promise.reject(error);
+                    }
+                    let promise;
+                    try {
+                        promise = Promise.resolve(factory());
+                    } catch (error) {
+                        return Promise.reject(error);
+                    }
+                    this.pendingData[cacheKey] = promise
+                        .then((result) => {
+                            delete this.pendingData[cacheKey];
+                            this.dataCache[cacheKey] = result;
+                            return result;
+                        })
+                        .catch((error) => {
+                            delete this.pendingData[cacheKey];
+                            throw error;
+                        });
+                    return this.pendingData[cacheKey];
+                }
+                return Promise.resolve(undefined);
+            }
 
-        // merge animationOptions with other flyTo options
-        animationOptions.center = center;
+            _buildProps(config, data) {
+                const jsonProps = (config.props && config.props.json) || {};
+                const props = { data };
+                Object.entries(jsonProps).forEach(([key, value]) => {
+                    props[key] = evaluateDeckProps(value);
+                });
+                return props;
+            }
 
-        map.flyTo(animationOptions);
-        // update 'center' source and layer to show our new map center
-        // compare this center point to where the camera ends up when an offset is applied
-        map.getSource('center').setData({
-            'type': 'Point',
-            'coordinates': center
+            addOverlay(id) {
+                if (this.activeLayers[id]) {
+                    return this.activeLayers[id];
+                }
+                const config = this._getConfig(id);
+                if (!config) {
+                    return null;
+                }
+                if (typeof deck === 'undefined') {
+                    console.error('Deck.GL library is not loaded');
+                    return null;
+                }
+                const customLayer = {
+                    id: config.id,
+                    type: 'custom',
+                    renderingMode: '3d',
+                    onAdd: (map, gl) => {
+                        customLayer.__cancelled = false;
+                        this._resolveData(config)
+                            .then((data) => {
+                                if (customLayer.__cancelled) {
+                                    return;
+                                }
+                                try {
+                                    const layerProps = this._buildProps(config, data);
+                                    customLayer.__deck = new deck.Deck({
+                                        gl,
+                                        map,
+                                        initialViewState: map.getFreeCameraOptions(),
+                                        layers: [new deck[config.layerType](layerProps)],
+                                    });
+                                } catch (error) {
+                                    console.error(
+                                        `Failed to initialise Deck.GL overlay ${config.id}`,
+                                        error
+                                    );
+                                }
+                            })
+                            .catch((error) => {
+                                console.error(
+                                    `Failed to load data for Deck.GL overlay ${config.id}`,
+                                    error
+                                );
+                            });
+                    },
+                    render: () => {
+                        if (customLayer.__deck && this.map.getFreeCameraOptions) {
+                            const viewState = this.map.getFreeCameraOptions();
+                            customLayer.__deck.setProps({ viewState });
+                        }
+                    },
+                    onRemove: () => {
+                        customLayer.__cancelled = true;
+                        if (customLayer.__deck) {
+                            customLayer.__deck.finalize();
+                            customLayer.__deck = null;
+                        }
+                    },
+                };
+                try {
+                    this.map.addLayer(customLayer, config.before || undefined);
+                    this.activeLayers[id] = customLayer;
+                } catch (error) {
+                    console.error(`Failed to add Deck.GL overlay ${config.id}`, error);
+                }
+                return customLayer;
+            }
+
+            removeOverlay(id) {
+                const layer = this.activeLayers[id];
+                if (!layer) {
+                    return;
+                }
+                layer.__cancelled = true;
+                try {
+                    this.map.removeLayer(id);
+                } catch (error) {
+                    console.warn(`Failed to remove Deck.GL overlay ${id}`, error);
+                }
+                if (layer.__deck) {
+                    layer.__deck.finalize();
+                    layer.__deck = null;
+                }
+                delete this.activeLayers[id];
+            }
+        }
+
+        // Load MapLibre and initialize map
+        loadMapLibreGL().then(() => {
+            // MapLibre loaded successfully, check if it's available
+            if (typeof maplibregl === 'undefined') {
+                throw new Error('MapLibre GL JS loaded but not available');
+            }
+
+
+
+            initializeMap();
+        }).catch(error => {
+            console.error('Failed to load MapLibre GL JS:', error);
+            showMapError('Failed to load MapLibre GL JavaScript library');
         });
-        map.setLayoutProperty(
-            'center',
-            'text-field',
-            `Center: [${
-                center[0].toFixed(1)
-            }, ${
-                center[1].toFixed(1)
-            }]`
-        );
-    });
+
+        function initializeMap() {
+            try {
+        // Initialize map
+        var map = new maplibregl.Map({"container": "maplibreum_0", "style": "https://demotiles.maplibre.org/style.json", "center": [-95, 40], "zoom": 3});
+
+        window.maplibreumMaps = window.maplibreumMaps || {};
+        window.maplibreumMaps["maplibreum_0"] = map;
+        window.maplibreumMapsLoaded = window.maplibreumMapsLoaded || {};
+        map.once('load', function() {
+            window.maplibreumMapsLoaded["maplibreum_0"] = true;
+        });
+
+
+// Add controls
+
+
+
+
+
+
+map.on('load', function() {
+
+    // Add sources
+
+    map.addSource("center", {"type": "geojson", "data": {"type": "Point", "coordinates": [-94, 40]}});
+
+
+    // Register images used by style layers
+
+
+
+
+
+    // Add layers
+
+
+    map.addLayer({"id": "center", "type": "symbol", "source": "center", "layout": {"text-field": "Center: [-94, 40]", "text-font": ["Noto Sans Regular"], "text-offset": [0, 0.6], "text-anchor": "top"}});
+
+
+
+    map.addLayer({"id": "center-circle", "type": "circle", "source": "center", "paint": {"circle-radius": 6, "circle-color": "#007cbf"}});
+
+
+
+
+
+    // Popups
+
+
+    // Tooltips
+
+
+    // Tile Layers
+    var tileLayers = [
+
+    ];
+
+    // Overlay Layers
+    var overlayLayers = [
+
+    ];
+
+
+
+
+
+    // Markers
+
+
+
+
+
+
+
+
+
+
+
+
+    // Queued camera actions
+
 });
+
+
+
+
+
+
+        (function() {
+            const overlay = document.createElement('div');
+            overlay.className = 'map-overlay top top left';
+            overlay.innerHTML = `
+        <div class="map-overlay-inner">
+            <fieldset>
+                <label for="easing">Select easing function</label>
+                <select id="easing" name="easing">
+                    <option value="easeInCubic">Ease In Cubic</option>
+                    <option value="easeOutQuint">Ease Out Quint</option>
+                    <option value="easeInOutCirc">Ease In/Out Circ</option>
+                    <option value="easeOutBounce">Ease Out Bounce</option>
+                </select>
+            </fieldset>
+            <fieldset>
+                <label for="duration">Set animation duration</label>
+                <p id="durationValue"></p>
+                <input type="range" id="duration" name="duration" min="0" max="10000" step="500" value="1000" />
+            </fieldset>
+            <fieldset>
+                <label>Animate camera motion</label>
+                <label for="animate" id="animateLabel">Yes</label>
+                <input type="checkbox" id="animate" name="animate" checked />
+            </fieldset>
+            <fieldset class="offset">
+                <label for="offset-x">Offset-X</label>
+                <input type="number" id="offset-x" name="offset-x" min="-200" max="200" step="50" value="0" />
+            </fieldset>
+            <fieldset class="offset">
+                <label for="offset-y">Offset-Y</label>
+                <input type="number" id="offset-y" name="offset-y" min="-200" max="200" step="50" value="0" />
+                <p>Offsets can be negative</p>
+            </fieldset>
+            <button type="button" id="animateButton" name="test-animation">Test Animation</button>
+        </div>
+    `;
+
+            // Wait for map container to be available
+            setTimeout(() => {
+                if (map && map.getContainer()) {
+                    map.getContainer().appendChild(overlay);
+
+        const easingFunctions = {
+            easeInCubic(t) { return t * t * t; },
+            easeOutQuint(t) { return 1 - Math.pow(1 - t, 5); },
+            easeInOutCirc(t) {
+                return t < 0.5 ?
+                    (1 - Math.sqrt(1 - Math.pow(2 * t, 2))) / 2 :
+                    (Math.sqrt(1 - Math.pow(-2 * t + 2, 2)) + 1) / 2;
+            },
+            easeOutBounce(t) {
+                const n1 = 7.5625; const d1 = 2.75;
+                if (t < 1 / d1) { return n1 * t * t; }
+                else if (t < 2 / d1) { return n1 * (t -= 1.5 / d1) * t + 0.75; }
+                else if (t < 2.5 / d1) { return n1 * (t -= 2.25 / d1) * t + 0.9375; }
+                return n1 * (t -= 2.625 / d1) * t + 0.984375;
+            }
+        };
+        const durationValueSpan = document.getElementById('durationValue');
+        const durationInput = document.getElementById('duration');
+        durationValueSpan.innerHTML = `${durationInput.value / 1000} seconds`;
+        durationInput.addEventListener('change', (e) => {
+            durationValueSpan.innerHTML = `${e.target.value / 1000} seconds`;
+        });
+        const animateLabel = document.getElementById('animateLabel');
+        const animateValue = document.getElementById('animate');
+        animateValue.addEventListener('change', (e) => {
+            animateLabel.innerHTML = e.target.checked ? 'Yes' : 'No';
+        });
+        const animateButton = document.getElementById('animateButton');
+        animateButton.addEventListener('click', () => {
+            const easingInput = document.getElementById('easing');
+            const easingFn = easingFunctions[easingInput.options[easingInput.selectedIndex].value];
+            const duration = parseInt(durationInput.value, 10);
+            const animate = animateValue.checked;
+            const offsetX = parseInt(document.getElementById('offset-x').value, 10);
+            const offsetY = parseInt(document.getElementById('offset-y').value, 10);
+            const animationOptions = {
+                duration,
+                easing: easingFn,
+                offset: [offsetX, offsetY],
+                animate,
+                essential: true
+            };
+            const center = [
+                -95 + (Math.random() - 0.5) * 20,
+                40 + (Math.random() - 0.5) * 20
+            ];
+            animationOptions.center = center;
+            map.flyTo(animationOptions);
+            map.getSource('center').setData({
+                'type': 'Point',
+                'coordinates': center
+            });
+            map.setLayoutProperty(
+                'center',
+                'text-field',
+                `Center: [${center[0].toFixed(1)}, ${center[1].toFixed(1)}]`
+            );
+        });
+
+                }
+            }, 100);
+        })();
+
+
+            } catch (error) {
+                console.error('Error initializing map:', error);
+                showMapError('Error initializing the map: ' + error.message);
+            }
+        }
+    </script>
+
+    <!-- Load additional libraries with fallbacks -->
+
+
+
+
+</body>
+
+</html>

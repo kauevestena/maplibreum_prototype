@@ -1,153 +1,511 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <title>MapLibreum Map</title>
+    <meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no" />
+    <link href="https://unpkg.com/maplibre-gl@6.0.0/dist/maplibre-gl.css" rel="stylesheet" onerror="this.onerror=null;this.href='https://cdn.jsdelivr.net/npm/maplibre-gl@6.0.0/dist/maplibre-gl.css';" />
+
+
+
+
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+        }
+
+        #maplibreum_0 {
+            width: 100%;
+            height: 500px;
+            position: relative;
+        }
+
+        .maplibreum-legend {
+            position: absolute;
+            bottom: 10px;
+            left: 10px;
+            background: rgba(255, 255, 255, 0.8);
+            padding: 6px;
+            font-size: 12px;
+            border-radius: 4px;
+        }
+
+        .maplibreum-legend div {
+            display: flex;
+            align-items: center;
+            margin-bottom: 4px;
+        }
+
+        .maplibreum-legend span {
+            display: inline-block;
+            width: 12px;
+            height: 12px;
+            margin-right: 4px;
+
+        }
+
+
+
+        #maplibreum_0 { width: 100%; height: 500px; }
+
+
+
+    </style>
+
+    <script src="https://cdn.jsdelivr.net/npm/three@0.169.0/build/three.min.js" defer></script>
+
+    <script src="https://cdn.jsdelivr.net/npm/three@0.169.0/examples/js/loaders/GLTFLoader.js" defer></script>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/dompurify/3.0.6/purify.min.js"></script>
+</head>
+<body>
 <div class="maplibreum-example-banner">
   <h1>Adding 3D Models Using Threejs On Terrain</h1>
   <p>Original MapLibre example: <a href="https://maplibre.org/maplibre-gl-js/docs/examples/./adding-3d-models-using-threejs-on-terrain/" target="_blank" rel="noopener">https://maplibre.org/maplibre-gl-js/docs/examples/./adding-3d-models-using-threejs-on-terrain/</a></p>
   <p>Generated from test_adding_3d_models_using_threejs_on_terrain.py by the automated test suite.</p>
 </div>
-import * as THREE from 'three';
-import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 
-    /**
-     * Objective:
-     * Given two known world-locations `model1Location` and `model2Location`,
-     * place two three.js objects on those locations at the appropriate height of
-     * the terrain.
-     */
+    <div id="maplibreum_0">
 
-    async function main() {
 
-        const map = new maplibregl.Map({
-            container: 'map',
-            center: [11.5257, 47.668],
-            zoom: 16.27,
-            pitch: 60,
-            bearing: -28.5,
-            canvasContextAttributes: {antialias: true},
-            style: {
-                version: 8,
-                layers: [
-                    {
-                        id: 'baseColor', // Hides edges of terrain tiles, which have 'walls' going down to 0.
-                        type: 'background',
-                        paint: {
-                            'background-color': '#fff',
-                            'background-opacity': 1.0,
-                        },
-                    }, {
-                        id: 'hills',
-                        type: 'hillshade',
-                        source: 'hillshadeSource',
-                        layout: {visibility: 'visible'},
-                        paint: {'hillshade-shadow-color': '#473B24'}
-                    }
-                ],
-                terrain: {
-                    source: 'terrainSource',
-                    exaggeration: 1,
-                },
-                sources: {
-                    terrainSource: {
-                        type: 'raster-dem',
-                        url: 'https://tiles.mapterhorn.com/tilejson.json'
-                    },
-                    hillshadeSource: {
-                        type: 'raster-dem',
-                        url: 'https://tiles.mapterhorn.com/tilejson.json'
-                    }
-                },
+    </div>
+    <!-- MapLibre GL JS with CDN fallbacks -->
+    <script>
+        // Load MapLibre 6's ES module build, with an independent CDN fallback.
+        async function loadMapLibreGL() {
+            const moduleUrls = [
+                'https://unpkg.com/maplibre-gl@6.0.0/dist/maplibre-gl.mjs',
+                'https://cdn.jsdelivr.net/npm/maplibre-gl@6.0.0/dist/maplibre-gl.mjs'
+            ];
+            let lastError;
+            for (const url of moduleUrls) {
+                try {
+                    const module = await import(url);
+                    window.maplibregl = {
+                        ...module,
+                        version: module.version || module.getVersion?.(),
+                    };
+                    return window.maplibregl;
+                } catch (error) {
+                    lastError = error;
+                    console.warn(`Failed to load MapLibre GL JS from ${url}`, error);
+                }
             }
+            throw new Error('Failed to load MapLibre GL JS from all CDNs', {
+                cause: lastError
+            });
+        }
+
+        // Function to show error message when MapLibre fails to load
+        function showMapError(message) {
+            const mapDiv = document.getElementById('maplibreum_0');
+            if (mapDiv) {
+                mapDiv.innerHTML = `
+                    <div style="
+                        display: flex;
+                        align-items: center;
+                        justify-content: center;
+                        height: 100%;
+                        background-color: #f8f9fa;
+                        border: 2px dashed #dee2e6;
+                        border-radius: 8px;
+                        text-align: center;
+                        padding: 20px;
+                        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+                    ">
+                        <div>
+                            <div style="font-size: 48px; color: #6c757d; margin-bottom: 16px;">🗺️</div>
+                            <div style="font-size: 18px; color: #495057; margin-bottom: 8px;">Map Loading Error</div>
+                            <div style="font-size: 14px; color: #6c757d; margin-bottom: 16px;">${message}</div>
+                            <div style="font-size: 12px; color: #6c757d;">
+                                This may be due to network restrictions or CDN availability issues.
+                                <br>Try refreshing the page or check your internet connection.
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }
+        }
+
+        function evaluateDeckExpression(expr, data) {
+            if (!Array.isArray(expr) || expr.length === 0) {
+                return expr;
+            }
+            const op = expr[0];
+            if (op === 'get') {
+                const propName = expr[1];
+                if (data && data.properties && propName in data.properties) {
+                    return data.properties[propName];
+                }
+                if (data && propName in data) {
+                    return data[propName];
+                }
+                return undefined;
+            }
+            if (op === 'has') {
+                const propName = expr[1];
+                if (data && data.properties && propName in data.properties) {
+                    return true;
+                }
+                if (data && propName in data) {
+                    return true;
+                }
+                return false;
+            }
+            if (op === 'literal') {
+                return expr[1];
+            }
+            if (['+', '-', '*', '/'].includes(op)) {
+                const a = evaluateDeckExpression(expr[1], data);
+                const b = evaluateDeckExpression(expr[2], data);
+                if (op === '+') return a + b;
+                if (op === '-') return a - b;
+                if (op === '*') return a * b;
+                if (op === '/') return a / b;
+            }
+            if (['==', '!=', '>', '<', '>=', '<='].includes(op)) {
+                const a = evaluateDeckExpression(expr[1], data);
+                const b = evaluateDeckExpression(expr[2], data);
+                if (op === '==') return a === b;
+                if (op === '!=') return a !== b;
+                if (op === '>') return a > b;
+                if (op === '<') return a < b;
+                if (op === '>=') return a >= b;
+                if (op === '<=') return a <= b;
+            }
+            return expr;
+        }
+
+        function evaluateDeckProps(value) {
+            if (Array.isArray(value)) {
+                if (value.length > 0 && typeof value[0] === 'string' && ['get', 'has', 'literal', '+', '-', '*', '/', '==', '!=', '>', '<', '>=', '<='].includes(value[0])) {
+                    return function(d) {
+                        return evaluateDeckExpression(value, d);
+                    };
+                }
+                return value;
+            }
+            return value;
+        }
+
+        class MaplibreumDeckGLOverlayManager {
+            constructor(map, overlays) {
+                this.map = map;
+                this.configs = {};
+                this.activeLayers = {};
+                this.dataCache = {};
+                this.pendingData = {};
+                (overlays || []).forEach((overlay) => {
+                    const normalised = Object.assign({}, overlay);
+                    const props = normalised.props || {};
+                    normalised.props = {
+                        json: Object.assign({}, props.json || {}),
+                    };
+                    this.configs[normalised.id] = normalised;
+                });
+            }
+
+            _getConfig(id) {
+                const config = this.configs[id];
+                if (!config) {
+                    console.warn(`Deck.GL overlay '${id}' is not registered.`);
+                }
+                return config;
+            }
+
+            _resolveData(config) {
+                const cacheKey = config.id;
+                if (Object.prototype.hasOwnProperty.call(this.dataCache, cacheKey)) {
+                    return Promise.resolve(this.dataCache[cacheKey]);
+                }
+                if (!config.data) {
+                    return Promise.resolve(undefined);
+                }
+                if (config.data.mode === 'inline') {
+                    this.dataCache[cacheKey] = config.data.value;
+                    return Promise.resolve(config.data.value);
+                }
+                if (config.data.mode === 'promise') {
+                    if (this.pendingData[cacheKey]) {
+                        return this.pendingData[cacheKey];
+                    }
+                    let factory;
+                    try {
+                        factory = new Function(`return (${config.data.value});`);
+                    } catch (error) {
+                        return Promise.reject(error);
+                    }
+                    let promise;
+                    try {
+                        promise = Promise.resolve(factory());
+                    } catch (error) {
+                        return Promise.reject(error);
+                    }
+                    this.pendingData[cacheKey] = promise
+                        .then((result) => {
+                            delete this.pendingData[cacheKey];
+                            this.dataCache[cacheKey] = result;
+                            return result;
+                        })
+                        .catch((error) => {
+                            delete this.pendingData[cacheKey];
+                            throw error;
+                        });
+                    return this.pendingData[cacheKey];
+                }
+                return Promise.resolve(undefined);
+            }
+
+            _buildProps(config, data) {
+                const jsonProps = (config.props && config.props.json) || {};
+                const props = { data };
+                Object.entries(jsonProps).forEach(([key, value]) => {
+                    props[key] = evaluateDeckProps(value);
+                });
+                return props;
+            }
+
+            addOverlay(id) {
+                if (this.activeLayers[id]) {
+                    return this.activeLayers[id];
+                }
+                const config = this._getConfig(id);
+                if (!config) {
+                    return null;
+                }
+                if (typeof deck === 'undefined') {
+                    console.error('Deck.GL library is not loaded');
+                    return null;
+                }
+                const customLayer = {
+                    id: config.id,
+                    type: 'custom',
+                    renderingMode: '3d',
+                    onAdd: (map, gl) => {
+                        customLayer.__cancelled = false;
+                        this._resolveData(config)
+                            .then((data) => {
+                                if (customLayer.__cancelled) {
+                                    return;
+                                }
+                                try {
+                                    const layerProps = this._buildProps(config, data);
+                                    customLayer.__deck = new deck.Deck({
+                                        gl,
+                                        map,
+                                        initialViewState: map.getFreeCameraOptions(),
+                                        layers: [new deck[config.layerType](layerProps)],
+                                    });
+                                } catch (error) {
+                                    console.error(
+                                        `Failed to initialise Deck.GL overlay ${config.id}`,
+                                        error
+                                    );
+                                }
+                            })
+                            .catch((error) => {
+                                console.error(
+                                    `Failed to load data for Deck.GL overlay ${config.id}`,
+                                    error
+                                );
+                            });
+                    },
+                    render: () => {
+                        if (customLayer.__deck && this.map.getFreeCameraOptions) {
+                            const viewState = this.map.getFreeCameraOptions();
+                            customLayer.__deck.setProps({ viewState });
+                        }
+                    },
+                    onRemove: () => {
+                        customLayer.__cancelled = true;
+                        if (customLayer.__deck) {
+                            customLayer.__deck.finalize();
+                            customLayer.__deck = null;
+                        }
+                    },
+                };
+                try {
+                    this.map.addLayer(customLayer, config.before || undefined);
+                    this.activeLayers[id] = customLayer;
+                } catch (error) {
+                    console.error(`Failed to add Deck.GL overlay ${config.id}`, error);
+                }
+                return customLayer;
+            }
+
+            removeOverlay(id) {
+                const layer = this.activeLayers[id];
+                if (!layer) {
+                    return;
+                }
+                layer.__cancelled = true;
+                try {
+                    this.map.removeLayer(id);
+                } catch (error) {
+                    console.warn(`Failed to remove Deck.GL overlay ${id}`, error);
+                }
+                if (layer.__deck) {
+                    layer.__deck.finalize();
+                    layer.__deck = null;
+                }
+                delete this.activeLayers[id];
+            }
+        }
+
+        // Load MapLibre and initialize map
+        loadMapLibreGL().then(() => {
+            // MapLibre loaded successfully, check if it's available
+            if (typeof maplibregl === 'undefined') {
+                throw new Error('MapLibre GL JS loaded but not available');
+            }
+
+
+
+            initializeMap();
+        }).catch(error => {
+            console.error('Failed to load MapLibre GL JS:', error);
+            showMapError('Failed to load MapLibre GL JavaScript library');
         });
 
-        /*
-        * Helper function used to get threejs-scene-coordinates from mercator coordinates.
-        * This is just a quick and dirty solution - it won't work if points are far away from each other
-        * because a meter near the north-pole covers more mercator-units
-        * than a meter near the equator.
-        */
+        function initializeMap() {
+            try {
+        // Initialize map
+        var map = new maplibregl.Map({"container": "maplibreum_0", "style": {"version": 8, "layers": [{"id": "baseColor", "type": "background", "paint": {"background-color": "#fff", "background-opacity": 1.0}}, {"id": "hills", "type": "hillshade", "source": "hillshadeSource", "paint": {"hillshade-shadow-color": "#473B24"}, "layout": {"visibility": "visible"}}], "terrain": {"source": "terrainSource", "exaggeration": 1}, "sources": {"terrainSource": {"type": "raster-dem", "url": "https://demotiles.maplibre.org/terrain-tiles/tiles.json", "tileSize": 256}, "hillshadeSource": {"type": "raster-dem", "url": "https://demotiles.maplibre.org/terrain-tiles/tiles.json", "tileSize": 256}}}, "center": [11.5257, 47.668], "zoom": 16.27, "pitch": 60, "bearing": -28.5, "antialias": true});
+
+        window.maplibreumMaps = window.maplibreumMaps || {};
+        window.maplibreumMaps["maplibreum_0"] = map;
+        window.maplibreumMapsLoaded = window.maplibreumMapsLoaded || {};
+        map.once('load', function() {
+            window.maplibreumMapsLoaded["maplibreum_0"] = true;
+        });
+
+
+// Add controls
+
+
+
+
+map.on('load', function() {
+
+    // Add sources
+
+
+    // Register images used by style layers
+
+
+
+
+
+    // Add layers
+
+
+
+
+    // Popups
+
+
+    // Tooltips
+
+
+    // Tile Layers
+    var tileLayers = [
+
+    ];
+
+    // Overlay Layers
+    var overlayLayers = [
+
+    ];
+
+
+
+
+
+    // Markers
+
+
+
+
+
+
+
+    (function(map) {
+
+    async function main() {
+        const THREE = window.THREE;
+        const GLTFLoader = window.GLTFLoader;
+        const map = maplibregl.getMap();
+
+        const sceneOrigin = new maplibregl.LngLat(11.5255, 47.6677);
+        const models = [
+    {
+        uri: 'https://maplibre.org/maplibre-gl-js/docs/assets/34M_17/34M_17.gltf',
+        location: new maplibregl.LngLat(11.527, 47.6678)
+    },
+    {
+        uri: 'https://maplibre.org/maplibre-gl-js/docs/assets/34M_17/34M_17.gltf',
+        location: new maplibregl.LngLat(11.5249, 47.6676)
+    },
+];
+
         function calculateDistanceMercatorToMeters(from, to) {
             const mercatorPerMeter = from.meterInMercatorCoordinateUnits();
-            // mercator x: 0=west, 1=east
             const dEast = to.x - from.x;
             const dEastMeter = dEast / mercatorPerMeter;
-            // mercator y: 0=north, 1=south
             const dNorth = from.y - to.y;
             const dNorthMeter = dNorth / mercatorPerMeter;
             return {dEastMeter, dNorthMeter};
         }
 
-        async function loadModel() {
+        async function loadModels() {
             const loader = new GLTFLoader();
-            const gltf = await loader.loadAsync('https://maplibre.org/maplibre-gl-js/docs/assets/34M_17/34M_17.gltf');
-            return gltf.scene;
+            const loadedModels = [];
+            for (const modelInfo of models) {
+                const gltf = await loader.loadAsync(modelInfo.uri);
+                loadedModels.push({ model: gltf.scene, location: modelInfo.location });
+            }
+            return loadedModels;
         }
 
-        // Known locations. We'll infer the elevation of those locations once terrain is loaded.
-        const sceneOrigin = new maplibregl.LngLat(11.5255, 47.6677);
-        const model1Location = new maplibregl.LngLat(11.527, 47.6678);
-        const model2Location = new maplibregl.LngLat(11.5249, 47.6676);
-
-        // Configuration of the custom layer for a 3D model, implementing `CustomLayerInterface`.
         const customLayer = {
             id: '3d-model',
             type: 'custom',
             renderingMode: '3d',
-
-            onAdd(map, gl) {
-                /**
-                 * Setting up three.js scene.
-                 * We're placing model1 and model2 in such a way that the whole scene fits over the terrain.
-                 */
-
+            onAdd: function(map, gl) {
                 this.camera = new THREE.Camera();
                 this.scene = new THREE.Scene();
-                // In threejs, y points up - we're rotating the scene such that it's y points along maplibre's up.
                 this.scene.rotateX(Math.PI / 2);
-                // In threejs, z points toward the viewer - mirroring it such that z points along maplibre's north.
                 this.scene.scale.multiply(new THREE.Vector3(1, 1, -1));
-                // We now have a scene with (x=east, y=up, z=north)
 
                 const light = new THREE.DirectionalLight(0xffffff);
-                // Making it just before noon - light coming from south-east.
                 light.position.set(50, 70, -30).normalize();
                 this.scene.add(light);
 
-                // Axes helper to show how threejs scene is oriented.
-                const axesHelper = new THREE.AxesHelper(60);
-                this.scene.add(axesHelper);
-
-                // Getting model elevations in meters above sea level
                 const sceneElevation = map.queryTerrainElevation(sceneOrigin) || 0;
-                const model1Elevation = map.queryTerrainElevation(model1Location) || 0;
-                const model2Elevation = map.queryTerrainElevation(model2Location) || 0;
-                const model1up = model1Elevation - sceneElevation;
-                const model2up = model2Elevation - sceneElevation;
 
-                // Getting model x and y (in meters) relative to scene origin.
-                const sceneOriginMercator = maplibregl.MercatorCoordinate.fromLngLat(sceneOrigin);
-                const model1Mercator = maplibregl.MercatorCoordinate.fromLngLat(model1Location);
-                const model2Mercator = maplibregl.MercatorCoordinate.fromLngLat(model2Location);
-                const {dEastMeter: model1east, dNorthMeter: model1north} = calculateDistanceMercatorToMeters(sceneOriginMercator, model1Mercator);
-                const {dEastMeter: model2east, dNorthMeter: model2north} = calculateDistanceMercatorToMeters(sceneOriginMercator, model2Mercator);
+                for (const loadedModel of this.loadedModels) {
+                    const modelElevation = map.queryTerrainElevation(loadedModel.location) || 0;
+                    const modelUp = modelElevation - sceneElevation;
 
-                model1.position.set(model1east, model1up, model1north);
-                model2.position.set(model2east, model2up, model2north);
+                    const sceneOriginMercator = maplibregl.MercatorCoordinate.fromLngLat(sceneOrigin);
+                    const modelMercator = maplibregl.MercatorCoordinate.fromLngLat(loadedModel.location);
+                    const {dEastMeter: modelEast, dNorthMeter: modelNorth} = calculateDistanceMercatorToMeters(sceneOriginMercator, modelMercator);
 
-                this.scene.add(model1);
-                this.scene.add(model2);
+                    loadedModel.model.position.set(modelEast, modelUp, modelNorth);
+                    this.scene.add(loadedModel.model);
+                }
 
-                // Use the MapLibre GL JS map canvas for three.js.
                 this.renderer = new THREE.WebGLRenderer({
                     canvas: map.getCanvas(),
                     context: gl,
                     antialias: true
                 });
-
                 this.renderer.autoClear = false;
             },
-
-            render(gl, args) {
+            render: function(gl, args) {
                 const offsetFromCenterElevation = map.queryTerrainElevation(sceneOrigin) || 0;
                 const sceneOriginMercator = maplibregl.MercatorCoordinate.fromLngLat(sceneOrigin, offsetFromCenterElevation);
-
                 const sceneTransform = {
                     translateX: sceneOriginMercator.x,
                     translateY: sceneOriginMercator.y,
@@ -159,7 +517,6 @@ import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
                 const l = new THREE.Matrix4()
                     .makeTranslation(sceneTransform.translateX, sceneTransform.translateY, sceneTransform.translateZ)
                     .scale(new THREE.Vector3(sceneTransform.scale, -sceneTransform.scale, sceneTransform.scale));
-
                 this.camera.projectionMatrix = m.multiply(l);
                 this.renderer.resetState();
                 this.renderer.render(this.scene, this.camera);
@@ -167,11 +524,41 @@ import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
             }
         };
 
-        const results = await Promise.all([map.once('load'), loadModel()]);
-        const model1 = results[1];
-        const model2 = model1.clone();
-
-        map.addLayer(customLayer);
+        const results = await Promise.all([map.once('load'), loadModels()]);
+        customLayer.loadedModels = results[1];
+        map.addLayer(customLayer, '');
     }
-
     main();
+
+    })(map);
+
+
+
+
+
+
+    // Queued camera actions
+
+});
+
+
+
+
+
+
+
+            } catch (error) {
+                console.error('Error initializing map:', error);
+                showMapError('Error initializing the map: ' + error.message);
+            }
+        }
+    </script>
+
+    <!-- Load additional libraries with fallbacks -->
+
+
+
+
+</body>
+
+</html>

@@ -1,157 +1,596 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <title>MapLibreum Map</title>
+    <meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no" />
+    <link href="https://unpkg.com/maplibre-gl@6.0.0/dist/maplibre-gl.css" rel="stylesheet" onerror="this.onerror=null;this.href='https://cdn.jsdelivr.net/npm/maplibre-gl@6.0.0/dist/maplibre-gl.css';" />
+
+
+
+
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+        }
+
+        #maplibreum_0 {
+            width: 100%;
+            height: 500px;
+            position: relative;
+        }
+
+        .maplibreum-legend {
+            position: absolute;
+            bottom: 10px;
+            left: 10px;
+            background: rgba(255, 255, 255, 0.8);
+            padding: 6px;
+            font-size: 12px;
+            border-radius: 4px;
+        }
+
+        .maplibreum-legend div {
+            display: flex;
+            align-items: center;
+            margin-bottom: 4px;
+        }
+
+        .maplibreum-legend span {
+            display: inline-block;
+            width: 12px;
+            height: 12px;
+            margin-right: 4px;
+
+        }
+
+
+
+        #maplibreum_0 { width: 100%; height: 500px; }
+
+
+
+    </style>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/dompurify/3.0.6/purify.min.js"></script>
+</head>
+<body>
 <div class="maplibreum-example-banner">
   <h1>Animate A Point Along A Route</h1>
   <p>Original MapLibre example: <a href="https://maplibre.org/maplibre-gl-js/docs/examples/./animate-a-point-along-a-route/" target="_blank" rel="noopener">https://maplibre.org/maplibre-gl-js/docs/examples/./animate-a-point-along-a-route/</a></p>
   <p>Generated from test_animate_a_point_along_a_route.py by the automated test suite.</p>
 </div>
-const map = new maplibregl.Map({
-    container: 'map',
-    style: 'https://tiles.openfreemap.org/styles/bright',
-    center: [-96, 37.8],
-    zoom: 3
-});
 
-// San Francisco
-const origin = [-122.414, 37.776];
+    <div id="maplibreum_0">
 
-// Washington DC
-const destination = [-77.032, 38.913];
 
-// A simple line from origin to destination.
-const route = {
-    'type': 'FeatureCollection',
-    'features': [
-        {
-            'type': 'Feature',
-            'geometry': {
-                'type': 'LineString',
-                'coordinates': [origin, destination]
+    </div>
+    <!-- MapLibre GL JS with CDN fallbacks -->
+    <script>
+        // Load MapLibre 6's ES module build, with an independent CDN fallback.
+        async function loadMapLibreGL() {
+            const moduleUrls = [
+                'https://unpkg.com/maplibre-gl@6.0.0/dist/maplibre-gl.mjs',
+                'https://cdn.jsdelivr.net/npm/maplibre-gl@6.0.0/dist/maplibre-gl.mjs'
+            ];
+            let lastError;
+            for (const url of moduleUrls) {
+                try {
+                    const module = await import(url);
+                    window.maplibregl = {
+                        ...module,
+                        version: module.version || module.getVersion?.(),
+                    };
+                    return window.maplibregl;
+                } catch (error) {
+                    lastError = error;
+                    console.warn(`Failed to load MapLibre GL JS from ${url}`, error);
+                }
+            }
+            throw new Error('Failed to load MapLibre GL JS from all CDNs', {
+                cause: lastError
+            });
+        }
+
+        // Function to show error message when MapLibre fails to load
+        function showMapError(message) {
+            const mapDiv = document.getElementById('maplibreum_0');
+            if (mapDiv) {
+                mapDiv.innerHTML = `
+                    <div style="
+                        display: flex;
+                        align-items: center;
+                        justify-content: center;
+                        height: 100%;
+                        background-color: #f8f9fa;
+                        border: 2px dashed #dee2e6;
+                        border-radius: 8px;
+                        text-align: center;
+                        padding: 20px;
+                        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+                    ">
+                        <div>
+                            <div style="font-size: 48px; color: #6c757d; margin-bottom: 16px;">🗺️</div>
+                            <div style="font-size: 18px; color: #495057; margin-bottom: 8px;">Map Loading Error</div>
+                            <div style="font-size: 14px; color: #6c757d; margin-bottom: 16px;">${message}</div>
+                            <div style="font-size: 12px; color: #6c757d;">
+                                This may be due to network restrictions or CDN availability issues.
+                                <br>Try refreshing the page or check your internet connection.
+                            </div>
+                        </div>
+                    </div>
+                `;
             }
         }
-    ]
-};
 
-// A single point that animates along the route.
-// Coordinates are initially set to origin.
-const point = {
-    'type': 'FeatureCollection',
-    'features': [
-        {
-            'type': 'Feature',
-            'properties': {},
-            'geometry': {
-                'type': 'Point',
-                'coordinates': origin
+        function evaluateDeckExpression(expr, data) {
+            if (!Array.isArray(expr) || expr.length === 0) {
+                return expr;
+            }
+            const op = expr[0];
+            if (op === 'get') {
+                const propName = expr[1];
+                if (data && data.properties && propName in data.properties) {
+                    return data.properties[propName];
+                }
+                if (data && propName in data) {
+                    return data[propName];
+                }
+                return undefined;
+            }
+            if (op === 'has') {
+                const propName = expr[1];
+                if (data && data.properties && propName in data.properties) {
+                    return true;
+                }
+                if (data && propName in data) {
+                    return true;
+                }
+                return false;
+            }
+            if (op === 'literal') {
+                return expr[1];
+            }
+            if (['+', '-', '*', '/'].includes(op)) {
+                const a = evaluateDeckExpression(expr[1], data);
+                const b = evaluateDeckExpression(expr[2], data);
+                if (op === '+') return a + b;
+                if (op === '-') return a - b;
+                if (op === '*') return a * b;
+                if (op === '/') return a / b;
+            }
+            if (['==', '!=', '>', '<', '>=', '<='].includes(op)) {
+                const a = evaluateDeckExpression(expr[1], data);
+                const b = evaluateDeckExpression(expr[2], data);
+                if (op === '==') return a === b;
+                if (op === '!=') return a !== b;
+                if (op === '>') return a > b;
+                if (op === '<') return a < b;
+                if (op === '>=') return a >= b;
+                if (op === '<=') return a <= b;
+            }
+            return expr;
+        }
+
+        function evaluateDeckProps(value) {
+            if (Array.isArray(value)) {
+                if (value.length > 0 && typeof value[0] === 'string' && ['get', 'has', 'literal', '+', '-', '*', '/', '==', '!=', '>', '<', '>=', '<='].includes(value[0])) {
+                    return function(d) {
+                        return evaluateDeckExpression(value, d);
+                    };
+                }
+                return value;
+            }
+            return value;
+        }
+
+        class MaplibreumDeckGLOverlayManager {
+            constructor(map, overlays) {
+                this.map = map;
+                this.configs = {};
+                this.activeLayers = {};
+                this.dataCache = {};
+                this.pendingData = {};
+                (overlays || []).forEach((overlay) => {
+                    const normalised = Object.assign({}, overlay);
+                    const props = normalised.props || {};
+                    normalised.props = {
+                        json: Object.assign({}, props.json || {}),
+                    };
+                    this.configs[normalised.id] = normalised;
+                });
+            }
+
+            _getConfig(id) {
+                const config = this.configs[id];
+                if (!config) {
+                    console.warn(`Deck.GL overlay '${id}' is not registered.`);
+                }
+                return config;
+            }
+
+            _resolveData(config) {
+                const cacheKey = config.id;
+                if (Object.prototype.hasOwnProperty.call(this.dataCache, cacheKey)) {
+                    return Promise.resolve(this.dataCache[cacheKey]);
+                }
+                if (!config.data) {
+                    return Promise.resolve(undefined);
+                }
+                if (config.data.mode === 'inline') {
+                    this.dataCache[cacheKey] = config.data.value;
+                    return Promise.resolve(config.data.value);
+                }
+                if (config.data.mode === 'promise') {
+                    if (this.pendingData[cacheKey]) {
+                        return this.pendingData[cacheKey];
+                    }
+                    let factory;
+                    try {
+                        factory = new Function(`return (${config.data.value});`);
+                    } catch (error) {
+                        return Promise.reject(error);
+                    }
+                    let promise;
+                    try {
+                        promise = Promise.resolve(factory());
+                    } catch (error) {
+                        return Promise.reject(error);
+                    }
+                    this.pendingData[cacheKey] = promise
+                        .then((result) => {
+                            delete this.pendingData[cacheKey];
+                            this.dataCache[cacheKey] = result;
+                            return result;
+                        })
+                        .catch((error) => {
+                            delete this.pendingData[cacheKey];
+                            throw error;
+                        });
+                    return this.pendingData[cacheKey];
+                }
+                return Promise.resolve(undefined);
+            }
+
+            _buildProps(config, data) {
+                const jsonProps = (config.props && config.props.json) || {};
+                const props = { data };
+                Object.entries(jsonProps).forEach(([key, value]) => {
+                    props[key] = evaluateDeckProps(value);
+                });
+                return props;
+            }
+
+            addOverlay(id) {
+                if (this.activeLayers[id]) {
+                    return this.activeLayers[id];
+                }
+                const config = this._getConfig(id);
+                if (!config) {
+                    return null;
+                }
+                if (typeof deck === 'undefined') {
+                    console.error('Deck.GL library is not loaded');
+                    return null;
+                }
+                const customLayer = {
+                    id: config.id,
+                    type: 'custom',
+                    renderingMode: '3d',
+                    onAdd: (map, gl) => {
+                        customLayer.__cancelled = false;
+                        this._resolveData(config)
+                            .then((data) => {
+                                if (customLayer.__cancelled) {
+                                    return;
+                                }
+                                try {
+                                    const layerProps = this._buildProps(config, data);
+                                    customLayer.__deck = new deck.Deck({
+                                        gl,
+                                        map,
+                                        initialViewState: map.getFreeCameraOptions(),
+                                        layers: [new deck[config.layerType](layerProps)],
+                                    });
+                                } catch (error) {
+                                    console.error(
+                                        `Failed to initialise Deck.GL overlay ${config.id}`,
+                                        error
+                                    );
+                                }
+                            })
+                            .catch((error) => {
+                                console.error(
+                                    `Failed to load data for Deck.GL overlay ${config.id}`,
+                                    error
+                                );
+                            });
+                    },
+                    render: () => {
+                        if (customLayer.__deck && this.map.getFreeCameraOptions) {
+                            const viewState = this.map.getFreeCameraOptions();
+                            customLayer.__deck.setProps({ viewState });
+                        }
+                    },
+                    onRemove: () => {
+                        customLayer.__cancelled = true;
+                        if (customLayer.__deck) {
+                            customLayer.__deck.finalize();
+                            customLayer.__deck = null;
+                        }
+                    },
+                };
+                try {
+                    this.map.addLayer(customLayer, config.before || undefined);
+                    this.activeLayers[id] = customLayer;
+                } catch (error) {
+                    console.error(`Failed to add Deck.GL overlay ${config.id}`, error);
+                }
+                return customLayer;
+            }
+
+            removeOverlay(id) {
+                const layer = this.activeLayers[id];
+                if (!layer) {
+                    return;
+                }
+                layer.__cancelled = true;
+                try {
+                    this.map.removeLayer(id);
+                } catch (error) {
+                    console.warn(`Failed to remove Deck.GL overlay ${id}`, error);
+                }
+                if (layer.__deck) {
+                    layer.__deck.finalize();
+                    layer.__deck = null;
+                }
+                delete this.activeLayers[id];
             }
         }
-    ]
-};
 
-// Calculate the distance in kilometers between route start/end point.
-const lineDistance = turf.lineDistance(route.features[0], 'kilometers');
+        // Load MapLibre and initialize map
+        loadMapLibreGL().then(() => {
+            // MapLibre loaded successfully, check if it's available
+            if (typeof maplibregl === 'undefined') {
+                throw new Error('MapLibre GL JS loaded but not available');
+            }
 
-const arc = [];
 
-// Number of steps to use in the arc and animation, more steps means
-// a smoother arc and animation, but too many steps will result in a
-// low frame rate
-const steps = 500;
 
-// Draw an arc between the `origin` & `destination` of the two points
-for (let i = 0; i < lineDistance; i += lineDistance / steps) {
-    const segment = turf.along(route.features[0], i, 'kilometers');
-    arc.push(segment.geometry.coordinates);
-}
-
-// Update the route with calculated arc coordinates
-route.features[0].geometry.coordinates = arc;
-
-// Used to increment the value of the point measurement against the route.
-let counter = 0;
-
-map.on('load', () => {
-    // Add a source and layer displaying a point which will be animated in a circle.
-    map.addSource('route', {
-        'type': 'geojson',
-        'data': route
-    });
-
-    map.addSource('point', {
-        'type': 'geojson',
-        'data': point
-    });
-
-    map.addLayer({
-        'id': 'route',
-        'source': 'route',
-        'type': 'line',
-        'paint': {
-            'line-width': 2,
-            'line-color': '#007cbf'
-        }
-    });
-
-    map.addLayer({
-        'id': 'point',
-        'source': 'point',
-        'type': 'symbol',
-        'layout': {
-            'icon-image': 'airport',
-            'icon-rotate': ['get', 'bearing'],
-            'icon-rotation-alignment': 'map',
-            'icon-overlap': 'always',
-            'icon-ignore-placement': true
-        }
-    });
-
-    function animate() {
-        // Update point geometry to a new position based on counter denoting
-        // the index to access the arc.
-        point.features[0].geometry.coordinates =
-            route.features[0].geometry.coordinates[counter];
-
-        // Calculate the bearing to ensure the icon is rotated to match the route arc
-        // The bearing is calculate between the current point and the next point, except
-        // at the end of the arc use the previous point and the current point
-        point.features[0].properties.bearing = turf.bearing(
-            turf.point(
-                route.features[0].geometry.coordinates[
-                    counter >= steps ? counter - 1 : counter
-                ]
-            ),
-            turf.point(
-                route.features[0].geometry.coordinates[
-                    counter >= steps ? counter : counter + 1
-                ]
-            )
-        );
-
-        // Update the source with this new data.
-        map.getSource('point').setData(point);
-
-        // Request the next frame of animation so long the end has not been reached.
-        if (counter < steps) {
-            requestAnimationFrame(animate);
-        }
-
-        counter = counter + 1;
-    }
-
-    document
-        .getElementById('replay')
-        .addEventListener('click', () => {
-            // Set the coordinates of the original point back to origin
-            point.features[0].geometry.coordinates = origin;
-
-            // Update the source layer
-            map.getSource('point').setData(point);
-
-            // Reset the counter
-            counter = 0;
-
-            // Restart the animation.
-            animate(counter);
+            initializeMap();
+        }).catch(error => {
+            console.error('Failed to load MapLibre GL JS:', error);
+            showMapError('Failed to load MapLibre GL JavaScript library');
         });
 
-    // Start the animation.
-    animate(counter);
+        function initializeMap() {
+            try {
+        // Initialize map
+        var map = new maplibregl.Map({"container": "maplibreum_0", "style": "https://tiles.openfreemap.org/styles/bright", "center": [-96, 37.8], "zoom": 3});
+
+        window.maplibreumMaps = window.maplibreumMaps || {};
+        window.maplibreumMaps["maplibreum_0"] = map;
+        window.maplibreumMapsLoaded = window.maplibreumMapsLoaded || {};
+        map.once('load', function() {
+            window.maplibreumMapsLoaded["maplibreum_0"] = true;
+        });
+
+
+// Add controls
+
+
+// Create button control
+{
+    const buttonEl = document.createElement('button');
+    buttonEl.id = 'button_0';
+    buttonEl.className = 'maplibreum-button';
+    buttonEl.textContent = 'Replay';
+
+
+    const buttonControl = {
+        onAdd: function(map) {
+            this._map = map;
+            this._container = document.createElement('div');
+            this._container.className = 'maplibregl-ctrl maplibregl-ctrl-group';
+            this._container.appendChild(buttonEl);
+
+            buttonEl.addEventListener('click', function() {
+
+                document.getElementById('replay-btn').click();
+
+            });
+
+            return this._container;
+        },
+        onRemove: function() {
+            this._container.parentNode.removeChild(this._container);
+            this._map = undefined;
+        }
+    };
+
+    map.addControl(buttonControl, "top-right");
+}
+
+
+
+
+
+map.on('load', function() {
+
+    // Add sources
+
+    map.addSource("route", {"type": "geojson", "data": {"type": "FeatureCollection", "features": [{"type": "Feature", "geometry": {"type": "LineString", "coordinates": [[-122.414, 37.776], [-77.032, 38.913]]}}]}});
+
+    map.addSource("point", {"type": "geojson", "data": {"type": "FeatureCollection", "features": [{"type": "Feature", "properties": {"bearing": 0}, "geometry": {"type": "Point", "coordinates": [-122.414, 37.776]}}]}});
+
+
+    // Register images used by style layers
+
+
+
+
+
+    // Add layers
+
+
+    map.addLayer({"id": "route", "type": "line", "source": "route", "paint": {"line-width": 2, "line-color": "#007cbf"}});
+
+
+
+    map.addLayer({"id": "point", "type": "symbol", "source": "point", "layout": {"icon-image": "airport", "icon-rotate": ["get", "bearing"], "icon-rotation-alignment": "map", "icon-overlap": "always", "icon-ignore-placement": true}});
+
+
+
+
+
+    // Popups
+
+
+    // Tooltips
+
+
+    // Tile Layers
+    var tileLayers = [
+
+    ];
+
+    // Overlay Layers
+    var overlayLayers = [
+
+    ];
+
+
+
+
+
+    // Markers
+
+
+
+
+
+
+
+    (function(map) {
+
+    const replayBtnWrapper = document.createElement('button');
+    replayBtnWrapper.id = 'replay-btn';
+    replayBtnWrapper.style.display = 'none';
+    document.body.appendChild(replayBtnWrapper);
+
+    })(map);
+
+    (function(map) {
+
+// Route animation setup
+const routeArc = [[-122.414, 37.776], [-122.32323600000001, 37.778274], [-122.232472, 37.780548], [-122.14170800000001, 37.782822], [-122.050944, 37.785096], [-121.96018000000001, 37.78737], [-121.869416, 37.789644], [-121.77865200000001, 37.791918], [-121.687888, 37.794192], [-121.59712400000001, 37.796466], [-121.50636, 37.79874], [-121.41559600000001, 37.801014], [-121.324832, 37.803288], [-121.23406800000001, 37.805562], [-121.143304, 37.807836], [-121.05254000000001, 37.81011], [-120.961776, 37.812384], [-120.87101200000001, 37.814658], [-120.780248, 37.816932], [-120.68948400000001, 37.819206], [-120.59872, 37.82148], [-120.50795600000001, 37.823754], [-120.417192, 37.826028], [-120.326428, 37.828302], [-120.235664, 37.830576], [-120.1449, 37.83285], [-120.054136, 37.835124], [-119.963372, 37.837398], [-119.872608, 37.839672], [-119.781844, 37.841946], [-119.69108, 37.84422], [-119.600316, 37.846494], [-119.509552, 37.848768], [-119.418788, 37.851042], [-119.328024, 37.853316], [-119.23726, 37.85559], [-119.146496, 37.857864000000006], [-119.055732, 37.860138000000006], [-118.964968, 37.862412000000006], [-118.874204, 37.864686000000006], [-118.78344, 37.866960000000006], [-118.692676, 37.869234000000006], [-118.601912, 37.871508000000006], [-118.511148, 37.873782000000006], [-118.420384, 37.876056000000005], [-118.32962, 37.878330000000005], [-118.238856, 37.880604000000005], [-118.148092, 37.882878000000005], [-118.057328, 37.885152000000005], [-117.966564, 37.887426000000005], [-117.8758, 37.889700000000005], [-117.785036, 37.891974000000005], [-117.694272, 37.894248000000005], [-117.603508, 37.896522000000004], [-117.512744, 37.898796000000004], [-117.42198, 37.901070000000004], [-117.331216, 37.903344000000004], [-117.240452, 37.905618000000004], [-117.149688, 37.907892000000004], [-117.058924, 37.910166000000004], [-116.96816, 37.912440000000004], [-116.877396, 37.914714000000004], [-116.786632, 37.916988], [-116.695868, 37.919262], [-116.605104, 37.921536], [-116.51434, 37.92381], [-116.423576, 37.926084], [-116.332812, 37.928358], [-116.242048, 37.930632], [-116.151284, 37.932906], [-116.06052, 37.93518], [-115.969756, 37.937454], [-115.878992, 37.939728], [-115.788228, 37.942002], [-115.697464, 37.944276], [-115.6067, 37.94655], [-115.515936, 37.948824], [-115.425172, 37.951098], [-115.334408, 37.953372], [-115.243644, 37.955646], [-115.15288, 37.95792], [-115.062116, 37.960194], [-114.971352, 37.962468], [-114.880588, 37.964742], [-114.789824, 37.967016], [-114.69906, 37.96929], [-114.608296, 37.971564], [-114.517532, 37.973838], [-114.426768, 37.976112], [-114.336004, 37.978386], [-114.24524, 37.98066], [-114.154476, 37.982934], [-114.063712, 37.985208], [-113.972948, 37.987482], [-113.882184, 37.989756], [-113.79142, 37.99203], [-113.70065600000001, 37.994304], [-113.609892, 37.996578], [-113.519128, 37.998852], [-113.428364, 38.001126], [-113.33760000000001, 38.0034], [-113.246836, 38.005674], [-113.156072, 38.007948], [-113.065308, 38.010222], [-112.97454400000001, 38.012496], [-112.88378, 38.01477], [-112.793016, 38.017044], [-112.702252, 38.019318], [-112.611488, 38.021592000000005], [-112.520724, 38.023866000000005], [-112.42996, 38.026140000000005], [-112.339196, 38.028414000000005], [-112.248432, 38.030688000000005], [-112.157668, 38.032962000000005], [-112.066904, 38.035236000000005], [-111.97614, 38.037510000000005], [-111.885376, 38.039784000000004], [-111.794612, 38.042058000000004], [-111.703848, 38.044332000000004], [-111.613084, 38.046606000000004], [-111.52232, 38.048880000000004], [-111.431556, 38.051154000000004], [-111.340792, 38.053428000000004], [-111.250028, 38.055702000000004], [-111.15926400000001, 38.057976000000004], [-111.0685, 38.06025], [-110.977736, 38.062524], [-110.886972, 38.064798], [-110.79620800000001, 38.067072], [-110.705444, 38.069346], [-110.61467999999999, 38.07162], [-110.523916, 38.073894], [-110.433152, 38.076168], [-110.342388, 38.078442], [-110.25162399999999, 38.080716], [-110.16086, 38.08299], [-110.070096, 38.085264], [-109.979332, 38.087538], [-109.888568, 38.089812], [-109.797804, 38.092086], [-109.70704, 38.09436], [-109.616276, 38.096634], [-109.52551199999999, 38.098908], [-109.434748, 38.101182], [-109.343984, 38.103456], [-109.25322, 38.10573], [-109.162456, 38.108004], [-109.071692, 38.110278], [-108.980928, 38.112552], [-108.890164, 38.114826], [-108.7994, 38.1171], [-108.708636, 38.119374], [-108.617872, 38.121648], [-108.527108, 38.123922], [-108.436344, 38.126196], [-108.34558, 38.12847], [-108.254816, 38.130744], [-108.164052, 38.133018], [-108.073288, 38.135292], [-107.982524, 38.137566], [-107.89176, 38.13984], [-107.800996, 38.142114], [-107.710232, 38.144388], [-107.619468, 38.146662], [-107.528704, 38.148936], [-107.43794, 38.15121], [-107.347176, 38.153484], [-107.256412, 38.155758], [-107.165648, 38.158032], [-107.074884, 38.160306], [-106.98412, 38.16258], [-106.893356, 38.164854], [-106.802592, 38.167128], [-106.711828, 38.169402], [-106.621064, 38.171676], [-106.5303, 38.17395], [-106.439536, 38.176224], [-106.348772, 38.178498], [-106.25800799999999, 38.180772000000005], [-106.167244, 38.183046000000004], [-106.07648, 38.185320000000004], [-105.985716, 38.187594000000004], [-105.894952, 38.189868000000004], [-105.804188, 38.192142000000004], [-105.713424, 38.194416000000004], [-105.62266, 38.196690000000004], [-105.531896, 38.198964000000004], [-105.441132, 38.201238000000004], [-105.350368, 38.203512], [-105.259604, 38.205786], [-105.16884, 38.20806], [-105.078076, 38.210334], [-104.987312, 38.212608], [-104.896548, 38.214882], [-104.805784, 38.217156], [-104.71502, 38.21943], [-104.624256, 38.221704], [-104.533492, 38.223978], [-104.442728, 38.226252], [-104.351964, 38.228526], [-104.2612, 38.2308], [-104.170436, 38.233074], [-104.079672, 38.235348], [-103.98890800000001, 38.237622], [-103.898144, 38.239896], [-103.80738, 38.24217], [-103.716616, 38.244444], [-103.625852, 38.246718], [-103.535088, 38.248992], [-103.444324, 38.251266], [-103.35356, 38.25354], [-103.26279600000001, 38.255814], [-103.172032, 38.258088], [-103.081268, 38.260362], [-102.990504, 38.262636], [-102.89974000000001, 38.26491], [-102.808976, 38.267184], [-102.718212, 38.269458], [-102.627448, 38.271732], [-102.536684, 38.274006], [-102.44592, 38.27628], [-102.355156, 38.278554], [-102.264392, 38.280828], [-102.173628, 38.283102], [-102.082864, 38.285376], [-101.9921, 38.28765], [-101.901336, 38.289924], [-101.81057200000001, 38.292198], [-101.719808, 38.294472], [-101.629044, 38.296746], [-101.53828, 38.29902], [-101.447516, 38.301294], [-101.356752, 38.303568], [-101.265988, 38.305842], [-101.175224, 38.308116], [-101.08445999999999, 38.31039], [-100.993696, 38.312664], [-100.90293199999999, 38.314938], [-100.812168, 38.317212], [-100.721404, 38.319486], [-100.63064, 38.32176], [-100.53987599999999, 38.324034], [-100.449112, 38.326308], [-100.35834799999999, 38.328582], [-100.267584, 38.330856], [-100.17681999999999, 38.33313], [-100.086056, 38.335404], [-99.995292, 38.337678], [-99.904528, 38.339952], [-99.81376399999999, 38.342226], [-99.723, 38.3445], [-99.632236, 38.346774], [-99.541472, 38.349048], [-99.45070799999999, 38.351322], [-99.359944, 38.353596], [-99.26918, 38.35587], [-99.178416, 38.358144], [-99.08765199999999, 38.360418], [-98.996888, 38.362692], [-98.906124, 38.364966], [-98.81536, 38.36724], [-98.72459599999999, 38.369514], [-98.633832, 38.371788], [-98.543068, 38.374062], [-98.452304, 38.376336], [-98.36153999999999, 38.37861], [-98.270776, 38.380884], [-98.180012, 38.383158], [-98.089248, 38.385432], [-97.99848399999999, 38.387706], [-97.90772, 38.38998], [-97.816956, 38.392254], [-97.726192, 38.394528], [-97.635428, 38.396802], [-97.544664, 38.399076], [-97.4539, 38.40135], [-97.363136, 38.403624], [-97.27237199999999, 38.405898], [-97.181608, 38.408172], [-97.090844, 38.410446], [-97.00008, 38.41272], [-96.90931599999999, 38.414994], [-96.818552, 38.417268], [-96.727788, 38.419542], [-96.637024, 38.421816], [-96.54626, 38.42409], [-96.455496, 38.426364], [-96.364732, 38.428638], [-96.273968, 38.430912], [-96.183204, 38.433186], [-96.09244, 38.43546], [-96.001676, 38.437734], [-95.910912, 38.440008], [-95.82014799999999, 38.442282], [-95.729384, 38.444556], [-95.63862, 38.44683], [-95.547856, 38.449104], [-95.457092, 38.451378], [-95.366328, 38.453652], [-95.275564, 38.455926], [-95.1848, 38.4582], [-95.094036, 38.460474], [-95.003272, 38.462748], [-94.912508, 38.465022], [-94.821744, 38.467296], [-94.73098, 38.46957], [-94.640216, 38.471844], [-94.549452, 38.474118], [-94.458688, 38.476392], [-94.367924, 38.478666], [-94.27716, 38.48094], [-94.186396, 38.483214], [-94.095632, 38.485488], [-94.004868, 38.487762], [-93.914104, 38.490035999999996], [-93.82334, 38.492309999999996], [-93.732576, 38.494583999999996], [-93.641812, 38.496857999999996], [-93.55104800000001, 38.499131999999996], [-93.460284, 38.501405999999996], [-93.36952, 38.503679999999996], [-93.278756, 38.505953999999996], [-93.187992, 38.508228], [-93.097228, 38.510502], [-93.006464, 38.512776], [-92.9157, 38.51505], [-92.824936, 38.517324], [-92.734172, 38.519598], [-92.643408, 38.521872], [-92.552644, 38.524146], [-92.46188000000001, 38.52642], [-92.371116, 38.528694], [-92.280352, 38.530968], [-92.189588, 38.533242], [-92.098824, 38.535516], [-92.00806, 38.53779], [-91.917296, 38.540064], [-91.826532, 38.542338], [-91.735768, 38.544612], [-91.645004, 38.546886], [-91.55424, 38.54916], [-91.463476, 38.551434], [-91.372712, 38.553708], [-91.281948, 38.555982], [-91.19118399999999, 38.558256], [-91.10042, 38.56053], [-91.009656, 38.562804], [-90.918892, 38.565078], [-90.82812799999999, 38.567352], [-90.737364, 38.569626], [-90.64659999999999, 38.5719], [-90.555836, 38.574174], [-90.46507199999999, 38.576448], [-90.37430799999998, 38.578722], [-90.283544, 38.580996], [-90.19278, 38.58327], [-90.10201599999999, 38.585544], [-90.011252, 38.587818], [-89.920488, 38.590092], [-89.829724, 38.592366], [-89.73895999999999, 38.59464], [-89.648196, 38.596914], [-89.557432, 38.599188], [-89.466668, 38.601462], [-89.37590399999999, 38.603736], [-89.28514, 38.60601], [-89.194376, 38.608284], [-89.103612, 38.610558], [-89.01284799999999, 38.612832], [-88.922084, 38.615106], [-88.83132, 38.61738], [-88.740556, 38.619654], [-88.64979199999999, 38.621928], [-88.559028, 38.624202], [-88.468264, 38.626476], [-88.3775, 38.62875], [-88.28673599999999, 38.631024], [-88.195972, 38.633297999999996], [-88.105208, 38.635571999999996], [-88.014444, 38.637845999999996], [-87.92367999999999, 38.640119999999996], [-87.83291600000001, 38.642393999999996], [-87.742152, 38.644667999999996], [-87.651388, 38.646941999999996], [-87.560624, 38.649215999999996], [-87.46986, 38.651489999999995], [-87.379096, 38.653763999999995], [-87.288332, 38.656037999999995], [-87.19756799999999, 38.658311999999995], [-87.106804, 38.660585999999995], [-87.01604, 38.662859999999995], [-86.925276, 38.665133999999995], [-86.83451199999999, 38.667407999999995], [-86.743748, 38.669681999999995], [-86.652984, 38.671955999999994], [-86.56222, 38.67423], [-86.47145599999999, 38.676504], [-86.38069200000001, 38.678778], [-86.289928, 38.681052], [-86.199164, 38.683326], [-86.1084, 38.6856], [-86.017636, 38.687874], [-85.926872, 38.690148], [-85.836108, 38.692422], [-85.74534399999999, 38.694696], [-85.65458, 38.69697], [-85.563816, 38.699244], [-85.473052, 38.701518], [-85.38228799999999, 38.703792], [-85.29152400000001, 38.706066], [-85.20076, 38.70834], [-85.109996, 38.710614], [-85.019232, 38.712888], [-84.928468, 38.715162], [-84.837704, 38.717436], [-84.74694, 38.71971], [-84.656176, 38.721984], [-84.565412, 38.724258], [-84.474648, 38.726532], [-84.383884, 38.728806], [-84.29311999999999, 38.73108], [-84.20235600000001, 38.733354], [-84.111592, 38.735628], [-84.020828, 38.737902], [-83.930064, 38.740176], [-83.83930000000001, 38.74245], [-83.748536, 38.744724], [-83.657772, 38.746998], [-83.567008, 38.749272], [-83.476244, 38.751546], [-83.38548, 38.75382], [-83.294716, 38.756094], [-83.20395199999999, 38.758368], [-83.11318800000001, 38.760642], [-83.022424, 38.762916], [-82.93166, 38.76519], [-82.840896, 38.767464], [-82.75013200000001, 38.769738], [-82.659368, 38.772012], [-82.568604, 38.774286], [-82.47783999999999, 38.776559999999996], [-82.387076, 38.778833999999996], [-82.296312, 38.781107999999996], [-82.205548, 38.783381999999996], [-82.11478399999999, 38.785655999999996], [-82.02402, 38.787929999999996], [-81.933256, 38.790203999999996], [-81.842492, 38.792477999999996], [-81.75172799999999, 38.794751999999995], [-81.66096399999999, 38.797025999999995], [-81.5702, 38.799299999999995], [-81.47943599999999, 38.801573999999995], [-81.38867199999999, 38.803847999999995], [-81.29790799999999, 38.806121999999995], [-81.207144, 38.808395999999995], [-81.11637999999999, 38.810669999999995], [-81.02561599999999, 38.812943999999995], [-80.934852, 38.815217999999994], [-80.844088, 38.817491999999994], [-80.75332399999999, 38.819765999999994], [-80.66256, 38.822039999999994], [-80.57179599999999, 38.824313999999994], [-80.481032, 38.826587999999994], [-80.39026799999999, 38.828861999999994], [-80.29950399999998, 38.831136], [-80.20873999999999, 38.83341], [-80.117976, 38.835684], [-80.02721199999999, 38.837958], [-79.93644799999998, 38.840232], [-79.845684, 38.842506], [-79.75492, 38.84478], [-79.66415599999999, 38.847054], [-79.573392, 38.849328], [-79.482628, 38.851602], [-79.391864, 38.853876], [-79.30109999999999, 38.85615], [-79.210336, 38.858424], [-79.11957199999999, 38.860698], [-79.028808, 38.862972], [-78.93804399999999, 38.865246], [-78.84727999999998, 38.86752], [-78.756516, 38.869794], [-78.665752, 38.872068], [-78.57498799999999, 38.874342], [-78.484224, 38.876616], [-78.39346, 38.87889], [-78.302696, 38.881164], [-78.21193199999999, 38.883438], [-78.121168, 38.885712], [-78.03040399999999, 38.887986], [-77.93964, 38.89026], [-77.84887599999999, 38.892534], [-77.758112, 38.894808], [-77.667348, 38.897082], [-77.576584, 38.899356], [-77.48581999999999, 38.90163], [-77.395056, 38.903904], [-77.304292, 38.906178], [-77.213528, 38.908452], [-77.12276399999999, 38.910726], [-77.032, 38.913]];
+const routeSteps = 500;
+let routeCounter = 0;
+
+// Update route source with interpolated arc
+const routeSource = map.getSource('route');
+if (routeSource) {
+    const routeData = routeSource._data;
+    if (routeData && routeData.features && routeData.features[0]) {
+        routeData.features[0].geometry.coordinates = routeArc;
+        routeSource.setData(routeData);
+    }
+}
+
+// Calculate bearing between two points
+function calculateBearing(start, end) {
+    const toRad = (deg) => deg * Math.PI / 180;
+    const toDeg = (rad) => rad * 180 / Math.PI;
+
+    const lon1 = toRad(start[0]);
+    const lat1 = toRad(start[1]);
+    const lon2 = toRad(end[0]);
+    const lat2 = toRad(end[1]);
+
+    const dLon = lon2 - lon1;
+    const y = Math.sin(dLon) * Math.cos(lat2);
+    const x = Math.cos(lat1) * Math.sin(lat2) -
+              Math.sin(lat1) * Math.cos(lat2) * Math.cos(dLon);
+
+    const bearing = toDeg(Math.atan2(y, x));
+    return (bearing + 360) % 360;
+}
+
+// Animation function
+function animateRoute(timestamp) {
+    const pointSource = map.getSource('point');
+    if (!pointSource) return;
+
+    const pointData = pointSource._data;
+    if (!pointData || !pointData.features || !pointData.features[0]) return;
+
+    // Update point position
+    pointData.features[0].geometry.coordinates = routeArc[routeCounter];
+
+    // Calculate and update bearing
+    const currentIdx = routeCounter >= routeSteps ? routeCounter - 1 : routeCounter;
+    const nextIdx = routeCounter >= routeSteps ? routeCounter : routeCounter + 1;
+    const bearing = calculateBearing(routeArc[currentIdx], routeArc[nextIdx]);
+    pointData.features[0].properties.bearing = bearing;
+
+    pointSource.setData(pointData);
+
+    if (routeCounter < routeSteps) {
+        requestAnimationFrame(animateRoute);
+    }
+    routeCounter = routeCounter + 1;
+}
+
+// Replay button handler
+const replayButton = document.getElementById('replay-btn');
+if (replayButton) {
+    replayButton.addEventListener('click', () => {
+        const pointSource = map.getSource('point');
+        if (pointSource) {
+            const pointData = pointSource._data;
+            if (pointData && pointData.features && pointData.features[0]) {
+                pointData.features[0].geometry.coordinates = routeArc[0];
+                pointSource.setData(pointData);
+                routeCounter = 0;
+                animateRoute(0);
+            }
+        }
+    });
+}
+
+// Start animation
+animateRoute(0);
+
+    })(map);
+
+
+
+
+
+
+    // Queued camera actions
+
 });
+
+
+
+
+
+
+
+            } catch (error) {
+                console.error('Error initializing map:', error);
+                showMapError('Error initializing the map: ' + error.message);
+            }
+        }
+    </script>
+
+    <!-- Load additional libraries with fallbacks -->
+
+
+
+
+</body>
+
+</html>

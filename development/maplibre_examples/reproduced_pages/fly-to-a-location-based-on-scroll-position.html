@@ -1,95 +1,547 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <title>MapLibreum Map</title>
+    <meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no" />
+    <link href="https://unpkg.com/maplibre-gl@6.0.0/dist/maplibre-gl.css" rel="stylesheet" onerror="this.onerror=null;this.href='https://cdn.jsdelivr.net/npm/maplibre-gl@6.0.0/dist/maplibre-gl.css';" />
+
+
+
+
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+        }
+
+        #maplibreum_0 {
+            width: 100%;
+            height: 500px;
+            position: relative;
+        }
+
+        .maplibreum-legend {
+            position: absolute;
+            bottom: 10px;
+            left: 10px;
+            background: rgba(255, 255, 255, 0.8);
+            padding: 6px;
+            font-size: 12px;
+            border-radius: 4px;
+        }
+
+        .maplibreum-legend div {
+            display: flex;
+            align-items: center;
+            margin-bottom: 4px;
+        }
+
+        .maplibreum-legend span {
+            display: inline-block;
+            width: 12px;
+            height: 12px;
+            margin-right: 4px;
+
+        }
+
+
+
+        #maplibreum_0 { width: 100%; height: 500px; }
+
+#maplibreum_0 { position: fixed; width: 50%; }
+.maplibreum-story {
+    width: 50%;
+    margin-left: 50%;
+    font-family: sans-serif;
+    overflow-y: scroll;
+    background-color: #fafafa;
+}
+.maplibreum-story section {
+    padding: 25px 50px;
+    line-height: 25px;
+    border-bottom: 1px solid #ddd;
+    opacity: 0.25;
+    font-size: 13px;
+}
+.maplibreum-story section.active { opacity: 1; }
+.maplibreum-story section:last-child { border-bottom: none; margin-bottom: 200px; }
+
+    </style>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/dompurify/3.0.6/purify.min.js"></script>
+</head>
+<body>
 <div class="maplibreum-example-banner">
   <h1>Fly To A Location Based On Scroll Position</h1>
   <p>Original MapLibre example: <a href="https://maplibre.org/maplibre-gl-js/docs/examples/./fly-to-a-location-based-on-scroll-position/" target="_blank" rel="noopener">https://maplibre.org/maplibre-gl-js/docs/examples/./fly-to-a-location-based-on-scroll-position/</a></p>
   <p>Generated from test_fly_to_a_location_based_on_scroll_position.py by the automated test suite.</p>
 </div>
-const map = new maplibregl.Map({
-    container: 'map',
-    style: 'https://tiles.openfreemap.org/styles/bright',
-    center: [-0.15591514, 51.51830379],
-    zoom: 15.5,
-    bearing: 27,
-    pitch: 45
+
+    <div id="maplibreum_0">
+
+
+    </div>
+    <!-- MapLibre GL JS with CDN fallbacks -->
+    <script>
+        // Load MapLibre 6's ES module build, with an independent CDN fallback.
+        async function loadMapLibreGL() {
+            const moduleUrls = [
+                'https://unpkg.com/maplibre-gl@6.0.0/dist/maplibre-gl.mjs',
+                'https://cdn.jsdelivr.net/npm/maplibre-gl@6.0.0/dist/maplibre-gl.mjs'
+            ];
+            let lastError;
+            for (const url of moduleUrls) {
+                try {
+                    const module = await import(url);
+                    window.maplibregl = {
+                        ...module,
+                        version: module.version || module.getVersion?.(),
+                    };
+                    return window.maplibregl;
+                } catch (error) {
+                    lastError = error;
+                    console.warn(`Failed to load MapLibre GL JS from ${url}`, error);
+                }
+            }
+            throw new Error('Failed to load MapLibre GL JS from all CDNs', {
+                cause: lastError
+            });
+        }
+
+        // Function to show error message when MapLibre fails to load
+        function showMapError(message) {
+            const mapDiv = document.getElementById('maplibreum_0');
+            if (mapDiv) {
+                mapDiv.innerHTML = `
+                    <div style="
+                        display: flex;
+                        align-items: center;
+                        justify-content: center;
+                        height: 100%;
+                        background-color: #f8f9fa;
+                        border: 2px dashed #dee2e6;
+                        border-radius: 8px;
+                        text-align: center;
+                        padding: 20px;
+                        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+                    ">
+                        <div>
+                            <div style="font-size: 48px; color: #6c757d; margin-bottom: 16px;">🗺️</div>
+                            <div style="font-size: 18px; color: #495057; margin-bottom: 8px;">Map Loading Error</div>
+                            <div style="font-size: 14px; color: #6c757d; margin-bottom: 16px;">${message}</div>
+                            <div style="font-size: 12px; color: #6c757d;">
+                                This may be due to network restrictions or CDN availability issues.
+                                <br>Try refreshing the page or check your internet connection.
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }
+        }
+
+        function evaluateDeckExpression(expr, data) {
+            if (!Array.isArray(expr) || expr.length === 0) {
+                return expr;
+            }
+            const op = expr[0];
+            if (op === 'get') {
+                const propName = expr[1];
+                if (data && data.properties && propName in data.properties) {
+                    return data.properties[propName];
+                }
+                if (data && propName in data) {
+                    return data[propName];
+                }
+                return undefined;
+            }
+            if (op === 'has') {
+                const propName = expr[1];
+                if (data && data.properties && propName in data.properties) {
+                    return true;
+                }
+                if (data && propName in data) {
+                    return true;
+                }
+                return false;
+            }
+            if (op === 'literal') {
+                return expr[1];
+            }
+            if (['+', '-', '*', '/'].includes(op)) {
+                const a = evaluateDeckExpression(expr[1], data);
+                const b = evaluateDeckExpression(expr[2], data);
+                if (op === '+') return a + b;
+                if (op === '-') return a - b;
+                if (op === '*') return a * b;
+                if (op === '/') return a / b;
+            }
+            if (['==', '!=', '>', '<', '>=', '<='].includes(op)) {
+                const a = evaluateDeckExpression(expr[1], data);
+                const b = evaluateDeckExpression(expr[2], data);
+                if (op === '==') return a === b;
+                if (op === '!=') return a !== b;
+                if (op === '>') return a > b;
+                if (op === '<') return a < b;
+                if (op === '>=') return a >= b;
+                if (op === '<=') return a <= b;
+            }
+            return expr;
+        }
+
+        function evaluateDeckProps(value) {
+            if (Array.isArray(value)) {
+                if (value.length > 0 && typeof value[0] === 'string' && ['get', 'has', 'literal', '+', '-', '*', '/', '==', '!=', '>', '<', '>=', '<='].includes(value[0])) {
+                    return function(d) {
+                        return evaluateDeckExpression(value, d);
+                    };
+                }
+                return value;
+            }
+            return value;
+        }
+
+        class MaplibreumDeckGLOverlayManager {
+            constructor(map, overlays) {
+                this.map = map;
+                this.configs = {};
+                this.activeLayers = {};
+                this.dataCache = {};
+                this.pendingData = {};
+                (overlays || []).forEach((overlay) => {
+                    const normalised = Object.assign({}, overlay);
+                    const props = normalised.props || {};
+                    normalised.props = {
+                        json: Object.assign({}, props.json || {}),
+                    };
+                    this.configs[normalised.id] = normalised;
+                });
+            }
+
+            _getConfig(id) {
+                const config = this.configs[id];
+                if (!config) {
+                    console.warn(`Deck.GL overlay '${id}' is not registered.`);
+                }
+                return config;
+            }
+
+            _resolveData(config) {
+                const cacheKey = config.id;
+                if (Object.prototype.hasOwnProperty.call(this.dataCache, cacheKey)) {
+                    return Promise.resolve(this.dataCache[cacheKey]);
+                }
+                if (!config.data) {
+                    return Promise.resolve(undefined);
+                }
+                if (config.data.mode === 'inline') {
+                    this.dataCache[cacheKey] = config.data.value;
+                    return Promise.resolve(config.data.value);
+                }
+                if (config.data.mode === 'promise') {
+                    if (this.pendingData[cacheKey]) {
+                        return this.pendingData[cacheKey];
+                    }
+                    let factory;
+                    try {
+                        factory = new Function(`return (${config.data.value});`);
+                    } catch (error) {
+                        return Promise.reject(error);
+                    }
+                    let promise;
+                    try {
+                        promise = Promise.resolve(factory());
+                    } catch (error) {
+                        return Promise.reject(error);
+                    }
+                    this.pendingData[cacheKey] = promise
+                        .then((result) => {
+                            delete this.pendingData[cacheKey];
+                            this.dataCache[cacheKey] = result;
+                            return result;
+                        })
+                        .catch((error) => {
+                            delete this.pendingData[cacheKey];
+                            throw error;
+                        });
+                    return this.pendingData[cacheKey];
+                }
+                return Promise.resolve(undefined);
+            }
+
+            _buildProps(config, data) {
+                const jsonProps = (config.props && config.props.json) || {};
+                const props = { data };
+                Object.entries(jsonProps).forEach(([key, value]) => {
+                    props[key] = evaluateDeckProps(value);
+                });
+                return props;
+            }
+
+            addOverlay(id) {
+                if (this.activeLayers[id]) {
+                    return this.activeLayers[id];
+                }
+                const config = this._getConfig(id);
+                if (!config) {
+                    return null;
+                }
+                if (typeof deck === 'undefined') {
+                    console.error('Deck.GL library is not loaded');
+                    return null;
+                }
+                const customLayer = {
+                    id: config.id,
+                    type: 'custom',
+                    renderingMode: '3d',
+                    onAdd: (map, gl) => {
+                        customLayer.__cancelled = false;
+                        this._resolveData(config)
+                            .then((data) => {
+                                if (customLayer.__cancelled) {
+                                    return;
+                                }
+                                try {
+                                    const layerProps = this._buildProps(config, data);
+                                    customLayer.__deck = new deck.Deck({
+                                        gl,
+                                        map,
+                                        initialViewState: map.getFreeCameraOptions(),
+                                        layers: [new deck[config.layerType](layerProps)],
+                                    });
+                                } catch (error) {
+                                    console.error(
+                                        `Failed to initialise Deck.GL overlay ${config.id}`,
+                                        error
+                                    );
+                                }
+                            })
+                            .catch((error) => {
+                                console.error(
+                                    `Failed to load data for Deck.GL overlay ${config.id}`,
+                                    error
+                                );
+                            });
+                    },
+                    render: () => {
+                        if (customLayer.__deck && this.map.getFreeCameraOptions) {
+                            const viewState = this.map.getFreeCameraOptions();
+                            customLayer.__deck.setProps({ viewState });
+                        }
+                    },
+                    onRemove: () => {
+                        customLayer.__cancelled = true;
+                        if (customLayer.__deck) {
+                            customLayer.__deck.finalize();
+                            customLayer.__deck = null;
+                        }
+                    },
+                };
+                try {
+                    this.map.addLayer(customLayer, config.before || undefined);
+                    this.activeLayers[id] = customLayer;
+                } catch (error) {
+                    console.error(`Failed to add Deck.GL overlay ${config.id}`, error);
+                }
+                return customLayer;
+            }
+
+            removeOverlay(id) {
+                const layer = this.activeLayers[id];
+                if (!layer) {
+                    return;
+                }
+                layer.__cancelled = true;
+                try {
+                    this.map.removeLayer(id);
+                } catch (error) {
+                    console.warn(`Failed to remove Deck.GL overlay ${id}`, error);
+                }
+                if (layer.__deck) {
+                    layer.__deck.finalize();
+                    layer.__deck = null;
+                }
+                delete this.activeLayers[id];
+            }
+        }
+
+        // Load MapLibre and initialize map
+        loadMapLibreGL().then(() => {
+            // MapLibre loaded successfully, check if it's available
+            if (typeof maplibregl === 'undefined') {
+                throw new Error('MapLibre GL JS loaded but not available');
+            }
+
+
+
+            initializeMap();
+        }).catch(error => {
+            console.error('Failed to load MapLibre GL JS:', error);
+            showMapError('Failed to load MapLibre GL JavaScript library');
+        });
+
+        function initializeMap() {
+            try {
+        // Initialize map
+        var map = new maplibregl.Map({"container": "maplibreum_0", "style": "https://tiles.openfreemap.org/styles/bright", "center": [-0.15591514, 51.51830379], "zoom": 15.5, "pitch": 45, "bearing": 27});
+
+        window.maplibreumMaps = window.maplibreumMaps || {};
+        window.maplibreumMaps["maplibreum_0"] = map;
+        window.maplibreumMapsLoaded = window.maplibreumMapsLoaded || {};
+        map.once('load', function() {
+            window.maplibreumMapsLoaded["maplibreum_0"] = true;
+        });
+
+
+// Add controls
+
+
+
+
+
+
+map.on('load', function() {
+
+    // Add sources
+
+
+    // Register images used by style layers
+
+
+
+
+
+    // Add layers
+
+
+
+
+    // Popups
+
+
+    // Tooltips
+
+
+    // Tile Layers
+    var tileLayers = [
+
+    ];
+
+    // Overlay Layers
+    var overlayLayers = [
+
+    ];
+
+
+
+
+
+    // Markers
+
+
+
+
+
+
+
+
+
+
+
+
+    // Queued camera actions
+
 });
 
-const chapters = {
-    'baker': {
-        bearing: 27,
-        center: [-0.15591514, 51.51830379],
-        zoom: 15.5,
-        pitch: 20
-    },
-    'aldgate': {
-        duration: 6000,
-        center: [-0.07571203, 51.51424049],
-        bearing: 150,
-        zoom: 15,
-        pitch: 0
-    },
-    'london-bridge': {
-        bearing: 90,
-        center: [-0.08533793, 51.50438536],
-        zoom: 13,
-        speed: 0.6,
-        pitch: 40
-    },
-    'woolwich': {
-        bearing: 90,
-        center: [0.05991101, 51.48752939],
-        zoom: 12.3
-    },
-    'gloucester': {
-        bearing: 45,
-        center: [-0.18335806, 51.49439521],
-        zoom: 15.3,
-        pitch: 20,
-        speed: 0.5
-    },
-    'caulfield-gardens': {
-        bearing: 180,
-        center: [-0.19684993, 51.5033856],
-        zoom: 12.3
-    },
-    'telegraph': {
-        bearing: 90,
-        center: [-0.10669358, 51.51433123],
-        zoom: 17.3,
-        pitch: 40
-    },
-    'charing-cross': {
-        bearing: 90,
-        center: [-0.12416858, 51.50779757],
-        zoom: 14.3,
-        pitch: 20
-    }
-};
 
-// On every scroll event, check which element is on screen
-window.onscroll = function () {
-    const chapterNames = Object.keys(chapters);
-    for (let i = 0; i < chapterNames.length; i++) {
-        const chapterName = chapterNames[i];
-        if (isElementOnScreen(chapterName)) {
-            setActiveChapter(chapterName);
-            break;
+
+
+
+
+        const chapters = {"baker": {"bearing": 27, "center": [-0.15591514, 51.51830379], "zoom": 15.5, "pitch": 20}, "aldgate": {"duration": 6000, "center": [-0.07571203, 51.51424049], "bearing": 150, "zoom": 15, "pitch": 0}, "london-bridge": {"bearing": 90, "center": [-0.08533793, 51.50438536], "zoom": 13, "speed": 0.6, "pitch": 40}, "woolwich": {"bearing": 90, "center": [0.05991101, 51.48752939], "zoom": 12.3}, "gloucester": {"bearing": 45, "center": [-0.18335806, 51.49439521], "zoom": 15.3, "pitch": 20, "speed": 0.5}, "caulfield-gardens": {"bearing": 180, "center": [-0.19684993, 51.5033856], "zoom": 12.3}, "telegraph": {"bearing": 90, "center": [-0.10669358, 51.51433123], "zoom": 17.3, "pitch": 40}, "charing-cross": {"bearing": 90, "center": [-0.12416858, 51.50779757], "zoom": 14.3, "pitch": 20}};
+        const story = document.createElement('div');
+        story.id = 'features';
+        story.className = 'maplibreum-story';
+        story.innerHTML = `<section id="baker" class="active">
+        <h3>221b Baker St.</h3>
+        <p>November 1895. London is shrouded in fog and Sherlock Holmes and Watson await a new case.</p>
+    </section>
+    <section id="aldgate">
+        <h3>Aldgate Station</h3>
+        <p>Arthur Cadogan West is found dead on the tracks at Aldgate Station with submarine plans missing.</p>
+    </section>
+    <section id="london-bridge">
+        <h3>London Bridge</h3>
+        <p>Holmes dispatches a telegram to Mycroft at London Bridge to gather intelligence on foreign spies.</p>
+    </section>
+    <section id="woolwich">
+        <h3>Woolwich Arsenal</h3>
+        <p>Investigations reveal West lacked the keys required to steal the plans, raising new suspicions.</p>
+    </section>
+    <section id="gloucester">
+        <h3>Gloucester Road</h3>
+        <p>Holmes inspects Caulfield Gardens, noting trains pause beneath the suspect's apartment windows.</p>
+    </section>
+    <section id="caulfield-gardens">
+        <h3>13 Caulfield Gardens</h3>
+        <p>Evidence suggests the murderer loaded West onto a train at Caulfield Gardens before the fatal fall.</p>
+    </section>
+    <section id="telegraph">
+        <h3>The Daily Telegraph</h3>
+        <p>Holmes places a classified ad to lure the conspirators into revealing themselves.</p>
+    </section>
+    <section id="charing-cross">
+        <h3>Charing Cross Hotel</h3>
+        <p>The sting at Charing Cross Hotel succeeds, apprehending the culprits behind the stolen plans.</p>
+    </section>`;
+        document.body.appendChild(story);
+
+        window.addEventListener('scroll', function () {
+            const chapterNames = Object.keys(chapters);
+            for (let i = 0; i < chapterNames.length; i++) {
+                const chapterName = chapterNames[i];
+                if (isElementOnScreen(chapterName)) {
+                    setActiveChapter(chapterName);
+                    break;
+                }
+            }
+        });
+
+        let activeChapterName = Object.keys(chapters)[0];
+
+        function setActiveChapter(chapterName) {
+            if (chapterName === activeChapterName) return;
+            map.flyTo(chapters[chapterName]);
+
+            const currentElement = document.getElementById(chapterName);
+            const activeElement = document.getElementById(activeChapterName);
+
+            if (currentElement) currentElement.classList.add('active');
+            if (activeElement) activeElement.classList.remove('active');
+
+            activeChapterName = chapterName;
         }
-    }
-};
 
-let activeChapterName = 'baker';
-function setActiveChapter(chapterName) {
-    if (chapterName === activeChapterName) return;
+        function isElementOnScreen(id) {
+            const element = document.getElementById(id);
+            if (!element) return false;
+            const bounds = element.getBoundingClientRect();
+            return bounds.top < window.innerHeight && bounds.bottom > 0;
+        }
 
-    map.flyTo(chapters[chapterName]);
 
-    document.getElementById(chapterName).setAttribute('class', 'active');
-    document.getElementById(activeChapterName).setAttribute('class', '');
+            } catch (error) {
+                console.error('Error initializing map:', error);
+                showMapError('Error initializing the map: ' + error.message);
+            }
+        }
+    </script>
 
-    activeChapterName = chapterName;
-}
+    <!-- Load additional libraries with fallbacks -->
 
-function isElementOnScreen(id) {
-    const element = document.getElementById(id);
-    const bounds = element.getBoundingClientRect();
-    return bounds.top < window.innerHeight && bounds.bottom > 0;
-}
+
+
+
+</body>
+
+</html>

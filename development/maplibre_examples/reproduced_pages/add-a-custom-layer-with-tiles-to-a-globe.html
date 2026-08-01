@@ -1,96 +1,481 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <title>MapLibreum Map</title>
+    <meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no" />
+    <link href="https://unpkg.com/maplibre-gl@6.0.0/dist/maplibre-gl.css" rel="stylesheet" onerror="this.onerror=null;this.href='https://cdn.jsdelivr.net/npm/maplibre-gl@6.0.0/dist/maplibre-gl.css';" />
+
+
+
+
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+        }
+
+        #maplibreum_0 {
+            width: 100%;
+            height: 500px;
+            position: relative;
+        }
+
+        .maplibreum-legend {
+            position: absolute;
+            bottom: 10px;
+            left: 10px;
+            background: rgba(255, 255, 255, 0.8);
+            padding: 6px;
+            font-size: 12px;
+            border-radius: 4px;
+        }
+
+        .maplibreum-legend div {
+            display: flex;
+            align-items: center;
+            margin-bottom: 4px;
+        }
+
+        .maplibreum-legend span {
+            display: inline-block;
+            width: 12px;
+            height: 12px;
+            margin-right: 4px;
+
+        }
+
+
+
+        #maplibreum_0 { width: 100%; height: 500px; }
+
+
+
+    </style>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/dompurify/3.0.6/purify.min.js"></script>
+</head>
+<body>
 <div class="maplibreum-example-banner">
   <h1>Add A Custom Layer With Tiles To A Globe</h1>
   <p>Original MapLibre example: <a href="https://maplibre.org/maplibre-gl-js/docs/examples/./add-a-custom-layer-with-tiles-to-a-globe/" target="_blank" rel="noopener">https://maplibre.org/maplibre-gl-js/docs/examples/./add-a-custom-layer-with-tiles-to-a-globe/</a></p>
   <p>Generated from test_add_a_custom_layer_with_tiles_to_a_globe.py by the automated test suite.</p>
 </div>
-// This example demonstrates how to draw a custom layer consisting of
-// web mercator tiles with a custom shader.
-// Each drawn tile must be subdivided in order to be properly curved.
-// This example also handles poles.
 
-// Note that sometimes you can encounter single-pixel seams between tiles
-// of different zoom levels. To fix this, first draw all tiles using meshes
-// *without* borders and mark all drawn pixels in stencil, then draw
-// all tiles again, this time *with* borders and with stencil set to
-// fail all previously drawn pixels.
-// This approach ensures that no pixel that can be drawn inside some tile
-// will be instead covered by a mesh border (which is likely to contain invalid data).
-//
-// MapLibre uses this approach to draw raster tiles on globe. Borders on raster tiles
-// contain ugly stretched textures, we don't want that to cover pixels that could be
-// filled with a valid neighboring tile.
+    <div id="maplibreum_0">
 
-const EXTENT = 8192;
 
-// Generate an arbitrary list of tiles to render
-function generateTileList(list, current) {
-    list.push(current);
-    const subdivide = current.z < 2 || (current.x === current.y && current.z < 3) || (current.x === 0 && current.y === 0 && current.z < 7);
-    if (subdivide) {
-        for (let x = 0; x < 2; x++) {
-            for (let y = 0; y < 2; y++) {
-                generateTileList(list, {
-                    x: current.x * 2 + x,
-                    y: current.y * 2 + y,
-                    z: current.z + 1,
-                    wrap: current.wrap,
+    </div>
+    <!-- MapLibre GL JS with CDN fallbacks -->
+    <script>
+        // Load MapLibre 6's ES module build, with an independent CDN fallback.
+        async function loadMapLibreGL() {
+            const moduleUrls = [
+                'https://unpkg.com/maplibre-gl@6.0.0/dist/maplibre-gl.mjs',
+                'https://cdn.jsdelivr.net/npm/maplibre-gl@6.0.0/dist/maplibre-gl.mjs'
+            ];
+            let lastError;
+            for (const url of moduleUrls) {
+                try {
+                    const module = await import(url);
+                    window.maplibregl = {
+                        ...module,
+                        version: module.version || module.getVersion?.(),
+                    };
+                    return window.maplibregl;
+                } catch (error) {
+                    lastError = error;
+                    console.warn(`Failed to load MapLibre GL JS from ${url}`, error);
+                }
+            }
+            throw new Error('Failed to load MapLibre GL JS from all CDNs', {
+                cause: lastError
+            });
+        }
+
+        // Function to show error message when MapLibre fails to load
+        function showMapError(message) {
+            const mapDiv = document.getElementById('maplibreum_0');
+            if (mapDiv) {
+                mapDiv.innerHTML = `
+                    <div style="
+                        display: flex;
+                        align-items: center;
+                        justify-content: center;
+                        height: 100%;
+                        background-color: #f8f9fa;
+                        border: 2px dashed #dee2e6;
+                        border-radius: 8px;
+                        text-align: center;
+                        padding: 20px;
+                        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+                    ">
+                        <div>
+                            <div style="font-size: 48px; color: #6c757d; margin-bottom: 16px;">🗺️</div>
+                            <div style="font-size: 18px; color: #495057; margin-bottom: 8px;">Map Loading Error</div>
+                            <div style="font-size: 14px; color: #6c757d; margin-bottom: 16px;">${message}</div>
+                            <div style="font-size: 12px; color: #6c757d;">
+                                This may be due to network restrictions or CDN availability issues.
+                                <br>Try refreshing the page or check your internet connection.
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }
+        }
+
+        function evaluateDeckExpression(expr, data) {
+            if (!Array.isArray(expr) || expr.length === 0) {
+                return expr;
+            }
+            const op = expr[0];
+            if (op === 'get') {
+                const propName = expr[1];
+                if (data && data.properties && propName in data.properties) {
+                    return data.properties[propName];
+                }
+                if (data && propName in data) {
+                    return data[propName];
+                }
+                return undefined;
+            }
+            if (op === 'has') {
+                const propName = expr[1];
+                if (data && data.properties && propName in data.properties) {
+                    return true;
+                }
+                if (data && propName in data) {
+                    return true;
+                }
+                return false;
+            }
+            if (op === 'literal') {
+                return expr[1];
+            }
+            if (['+', '-', '*', '/'].includes(op)) {
+                const a = evaluateDeckExpression(expr[1], data);
+                const b = evaluateDeckExpression(expr[2], data);
+                if (op === '+') return a + b;
+                if (op === '-') return a - b;
+                if (op === '*') return a * b;
+                if (op === '/') return a / b;
+            }
+            if (['==', '!=', '>', '<', '>=', '<='].includes(op)) {
+                const a = evaluateDeckExpression(expr[1], data);
+                const b = evaluateDeckExpression(expr[2], data);
+                if (op === '==') return a === b;
+                if (op === '!=') return a !== b;
+                if (op === '>') return a > b;
+                if (op === '<') return a < b;
+                if (op === '>=') return a >= b;
+                if (op === '<=') return a <= b;
+            }
+            return expr;
+        }
+
+        function evaluateDeckProps(value) {
+            if (Array.isArray(value)) {
+                if (value.length > 0 && typeof value[0] === 'string' && ['get', 'has', 'literal', '+', '-', '*', '/', '==', '!=', '>', '<', '>=', '<='].includes(value[0])) {
+                    return function(d) {
+                        return evaluateDeckExpression(value, d);
+                    };
+                }
+                return value;
+            }
+            return value;
+        }
+
+        class MaplibreumDeckGLOverlayManager {
+            constructor(map, overlays) {
+                this.map = map;
+                this.configs = {};
+                this.activeLayers = {};
+                this.dataCache = {};
+                this.pendingData = {};
+                (overlays || []).forEach((overlay) => {
+                    const normalised = Object.assign({}, overlay);
+                    const props = normalised.props || {};
+                    normalised.props = {
+                        json: Object.assign({}, props.json || {}),
+                    };
+                    this.configs[normalised.id] = normalised;
                 });
+            }
+
+            _getConfig(id) {
+                const config = this.configs[id];
+                if (!config) {
+                    console.warn(`Deck.GL overlay '${id}' is not registered.`);
+                }
+                return config;
+            }
+
+            _resolveData(config) {
+                const cacheKey = config.id;
+                if (Object.prototype.hasOwnProperty.call(this.dataCache, cacheKey)) {
+                    return Promise.resolve(this.dataCache[cacheKey]);
+                }
+                if (!config.data) {
+                    return Promise.resolve(undefined);
+                }
+                if (config.data.mode === 'inline') {
+                    this.dataCache[cacheKey] = config.data.value;
+                    return Promise.resolve(config.data.value);
+                }
+                if (config.data.mode === 'promise') {
+                    if (this.pendingData[cacheKey]) {
+                        return this.pendingData[cacheKey];
+                    }
+                    let factory;
+                    try {
+                        factory = new Function(`return (${config.data.value});`);
+                    } catch (error) {
+                        return Promise.reject(error);
+                    }
+                    let promise;
+                    try {
+                        promise = Promise.resolve(factory());
+                    } catch (error) {
+                        return Promise.reject(error);
+                    }
+                    this.pendingData[cacheKey] = promise
+                        .then((result) => {
+                            delete this.pendingData[cacheKey];
+                            this.dataCache[cacheKey] = result;
+                            return result;
+                        })
+                        .catch((error) => {
+                            delete this.pendingData[cacheKey];
+                            throw error;
+                        });
+                    return this.pendingData[cacheKey];
+                }
+                return Promise.resolve(undefined);
+            }
+
+            _buildProps(config, data) {
+                const jsonProps = (config.props && config.props.json) || {};
+                const props = { data };
+                Object.entries(jsonProps).forEach(([key, value]) => {
+                    props[key] = evaluateDeckProps(value);
+                });
+                return props;
+            }
+
+            addOverlay(id) {
+                if (this.activeLayers[id]) {
+                    return this.activeLayers[id];
+                }
+                const config = this._getConfig(id);
+                if (!config) {
+                    return null;
+                }
+                if (typeof deck === 'undefined') {
+                    console.error('Deck.GL library is not loaded');
+                    return null;
+                }
+                const customLayer = {
+                    id: config.id,
+                    type: 'custom',
+                    renderingMode: '3d',
+                    onAdd: (map, gl) => {
+                        customLayer.__cancelled = false;
+                        this._resolveData(config)
+                            .then((data) => {
+                                if (customLayer.__cancelled) {
+                                    return;
+                                }
+                                try {
+                                    const layerProps = this._buildProps(config, data);
+                                    customLayer.__deck = new deck.Deck({
+                                        gl,
+                                        map,
+                                        initialViewState: map.getFreeCameraOptions(),
+                                        layers: [new deck[config.layerType](layerProps)],
+                                    });
+                                } catch (error) {
+                                    console.error(
+                                        `Failed to initialise Deck.GL overlay ${config.id}`,
+                                        error
+                                    );
+                                }
+                            })
+                            .catch((error) => {
+                                console.error(
+                                    `Failed to load data for Deck.GL overlay ${config.id}`,
+                                    error
+                                );
+                            });
+                    },
+                    render: () => {
+                        if (customLayer.__deck && this.map.getFreeCameraOptions) {
+                            const viewState = this.map.getFreeCameraOptions();
+                            customLayer.__deck.setProps({ viewState });
+                        }
+                    },
+                    onRemove: () => {
+                        customLayer.__cancelled = true;
+                        if (customLayer.__deck) {
+                            customLayer.__deck.finalize();
+                            customLayer.__deck = null;
+                        }
+                    },
+                };
+                try {
+                    this.map.addLayer(customLayer, config.before || undefined);
+                    this.activeLayers[id] = customLayer;
+                } catch (error) {
+                    console.error(`Failed to add Deck.GL overlay ${config.id}`, error);
+                }
+                return customLayer;
+            }
+
+            removeOverlay(id) {
+                const layer = this.activeLayers[id];
+                if (!layer) {
+                    return;
+                }
+                layer.__cancelled = true;
+                try {
+                    this.map.removeLayer(id);
+                } catch (error) {
+                    console.warn(`Failed to remove Deck.GL overlay ${id}`, error);
+                }
+                if (layer.__deck) {
+                    layer.__deck.finalize();
+                    layer.__deck = null;
+                }
+                delete this.activeLayers[id];
+            }
+        }
+
+        // Load MapLibre and initialize map
+        loadMapLibreGL().then(() => {
+            // MapLibre loaded successfully, check if it's available
+            if (typeof maplibregl === 'undefined') {
+                throw new Error('MapLibre GL JS loaded but not available');
+            }
+
+
+
+            initializeMap();
+        }).catch(error => {
+            console.error('Failed to load MapLibre GL JS:', error);
+            showMapError('Failed to load MapLibre GL JavaScript library');
+        });
+
+        function initializeMap() {
+            try {
+        // Initialize map
+        var map = new maplibregl.Map({"container": "maplibreum_0", "style": "https://demotiles.maplibre.org/style.json", "center": [7.5, 58], "zoom": 2, "hash": false, "projection": {"type": "globe"}});
+
+        window.maplibreumMaps = window.maplibreumMaps || {};
+        window.maplibreumMaps["maplibreum_0"] = map;
+        window.maplibreumMapsLoaded = window.maplibreumMapsLoaded || {};
+        map.once('load', function() {
+            window.maplibreumMapsLoaded["maplibreum_0"] = true;
+        });
+
+
+// Add controls
+
+
+
+
+map.on('load', function() {
+
+    // Add sources
+
+
+    // Register images used by style layers
+
+
+
+
+
+    // Add layers
+
+
+
+
+    // Popups
+
+
+    // Tooltips
+
+
+    // Tile Layers
+    var tileLayers = [
+
+    ];
+
+    // Overlay Layers
+    var overlayLayers = [
+
+    ];
+
+
+
+
+
+    // Markers
+
+
+
+
+
+
+
+    (function(map) {
+
+        map.addLayer({
+            id: 'highlight',
+            type: 'custom',
+            onAdd:
+function(map, gl) {
+    this.shaderMap = new Map();
+    this.meshMap = new Map();
+}
+,
+            render:
+function(gl, args) {
+    const EXTENT = 8192;
+    const uniforms = [
+        'u_matrix',
+        'u_projection_fallback_matrix',
+        'u_projection_matrix',
+        'u_projection_clipping_plane',
+        'u_projection_transition',
+        'u_projection_tile_mercator_coords',
+    ];
+    const tilesToRender = [];
+
+    function generateTileList(list, current) {
+        list.push(current);
+        const subdivide = current.z < 2 || (current.x === current.y && current.z < 3) || (current.x === 0 && current.y === 0 && current.z < 7);
+        if (subdivide) {
+            for (let x = 0; x < 2; x++) {
+                for (let y = 0; y < 2; y++) {
+                    generateTileList(list, {
+                        x: current.x * 2 + x,
+                        y: current.y * 2 + y,
+                        z: current.z + 1,
+                        wrap: current.wrap,
+                    });
+                }
             }
         }
     }
-}
-const tilesToRender = [];
-for (let i = -1; i <= 1; i++) {
-    generateTileList(tilesToRender, {x: 0, y: 0, z: 0, wrap: i});
-}
 
-const map = new maplibregl.Map({
-    container: 'map',
-    style: 'https://demotiles.maplibre.org/style.json',
-    zoom: 2,
-    center: [7.5, 58]
-});
+    for (let i = -1; i <= 1; i++) {
+        generateTileList(tilesToRender, {x: 0, y: 0, z: 0, wrap: i});
+    }
 
-map.on('style.load', () => {
-    map.setProjection({
-        type: 'globe', // Set projection to globe
-    });
-});
-
-document.getElementById('project').addEventListener('click', () => {
-    // Toggle projection
-    const currentProjection = map.getProjection();
-    map.setProjection({
-        type: currentProjection.type === 'globe' ? 'mercator' : 'globe',
-    });
-});
-
-const uniforms = [
-    'u_matrix',
-    'u_projection_fallback_matrix',
-    'u_projection_matrix',
-    'u_projection_clipping_plane',
-    'u_projection_transition',
-    'u_projection_tile_mercator_coords',
-];
-
-// create a custom style layer to implement the WebGL content
-const highlightLayer = {
-    id: 'highlight',
-    type: 'custom',
-    shaderMap: new Map(),
-    meshMap: new Map(),
-
-    // Helper method for creating a shader based on current map projection - globe will automatically switch to mercator when some condition is fulfilled.
-    getShader(gl, shaderDescription) {
+    const getShader = (gl, shaderDescription) => {
         if (this.shaderMap.has(shaderDescription.variantName)) {
             return this.shaderMap.get(shaderDescription.variantName);
         }
 
-        // Create GLSL source for vertex shader
-        // Note: we pass in-tile position in range 0..EXTENT to projectTile.
-        // By default the uniforms for custom layers are set up so that "projectTile" accepts mercator coordinates in range 0..1,
-        // but in this example we set the uniforms ourselves to accept range 0..EXTENT just like regular MapLibre rendering.
         const vertexSource = `#version 300 es
         ${shaderDescription.vertexShaderPrelude}
         ${shaderDescription.define}
@@ -101,11 +486,9 @@ const highlightLayer = {
         void main() {
 
             gl_Position = projectTile(a_pos);
-            // We divide by EXTENT here just so we have something reasonable to display in the pixel shader.
             v_pos = a_pos / float(${EXTENT});
         }`;
 
-        // create GLSL source for fragment shader
         const fragmentSource = `#version 300 es
 
         precision mediump float;
@@ -118,17 +501,14 @@ const highlightLayer = {
             fragColor = vec4(v_pos, 0.0, 1.0) * alpha;
         }`;
 
-        // create a vertex shader
         const vertexShader = gl.createShader(gl.VERTEX_SHADER);
         gl.shaderSource(vertexShader, vertexSource);
         gl.compileShader(vertexShader);
 
-        // create a fragment shader
         const fragmentShader = gl.createShader(gl.FRAGMENT_SHADER);
-        gl.shaderSource(fragmentShader, fragmentSource);
+        gl.shaderSource(fragmentSource, fragmentSource);
         gl.compileShader(fragmentShader);
 
-        // link the two shaders into a WebGL program
         const program = gl.createProgram();
         gl.attachShader(program, vertexShader);
         gl.attachShader(program, fragmentShader);
@@ -150,14 +530,11 @@ const highlightLayer = {
         this.shaderMap.set(shaderDescription.variantName, result);
 
         return result;
-    },
+    };
 
-    getTileMesh(gl, x, y, z, border) {
-        // What granularity should we use? Query MapLibre's projection object's granularity settings.
+    const getTileMesh = (gl, x, y, z, border) => {
         const granularity = map.style.projection.subdivisionGranularity.tile.getGranularityForZoomLevel(z);
-        // Do we want north pole geometry?
         const north = y === 0;
-        // Do we want south pole geometry?
         const south = y === (1 << z) - 1;
         const key = `${granularity}_${north}_${south}_${border}`;
         if (this.meshMap.has(key)) {
@@ -195,82 +572,100 @@ const highlightLayer = {
         };
         this.meshMap.set(key, mesh);
         return mesh;
-    },
+    };
 
-    onAdd (map, gl) {
-        // Nothing to do.
-    },
+    const {program, locations} = getShader(gl, args.shaderData);
 
-    // method fired on each animation frame
-    render (gl, args) {
-        const {program, locations} = this.getShader(gl, args.shaderData);
+    gl.disable(gl.DEPTH_TEST);
+    gl.disable(gl.STENCIL_TEST);
+    gl.disable(gl.CULL_FACE);
+    gl.enable(gl.BLEND);
+    gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
 
-        const isBorderDemo = true;
+    gl.useProgram(program);
 
-        gl.disable(gl.DEPTH_TEST);
-        gl.disable(gl.STENCIL_TEST);
-        gl.disable(gl.CULL_FACE);
-        gl.enable(gl.BLEND);
-        gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
+    const isGlobeProjection = args.shaderData.variantName === 'globe';
 
-        gl.useProgram(program);
-
-        const isGlobeProjection = args.shaderData.variantName === 'globe';
-
-        for (const tile of tilesToRender) {
-            if (isGlobeProjection && tile.wrap !== 0) {
-                continue; // No need to draw wrapped tiles on a globe.
-            }
-
-            const tileID = {
-                wrap: tile.wrap,
-                canonical: {
-                    x: tile.x,
-                    y: tile.y,
-                    z: tile.z,
-                }
-            };
-
-            const projectionData = map.transform.getProjectionData({overscaledTileID: tileID, applyGlobeMatrix: true});
-
-            gl.uniform4f(
-                locations['u_projection_clipping_plane'],
-                ...projectionData.clippingPlane // vec4
-            );
-            gl.uniform1f(
-                locations['u_projection_transition'],
-                projectionData.projectionTransition // float
-            );
-
-            // Set tile mercator extents accordingly
-            const tileSize = 1.0 / (1 << tile.z);
-            gl.uniform4f(
-                locations['u_projection_tile_mercator_coords'],
-                ...projectionData.tileMercatorCoords // vec4
-            );
-
-            // Shader variant name effectively tells us what projection code path should be used.
-            gl.uniformMatrix4fv(
-                locations['u_projection_matrix'],
-                false,
-                projectionData.mainMatrix
-            );
-            gl.uniformMatrix4fv(
-                locations['u_projection_fallback_matrix'],
-                false,
-                projectionData.fallbackMatrix
-            );
-            const mesh = this.getTileMesh(gl, tile.x, tile.y, tile.z, false);
-            gl.bindBuffer(gl.ARRAY_BUFFER, mesh.vbo);
-            gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, mesh.ibo);
-            gl.enableVertexAttribArray(this.aPos);
-            gl.vertexAttribPointer(this.aPos, 2, gl.SHORT, false, 0, 0);
-            gl.drawElements(gl.TRIANGLES, mesh.indexCount, gl.UNSIGNED_SHORT, 0);
+    for (const tile of tilesToRender) {
+        if (isGlobeProjection && tile.wrap !== 0) {
+            continue;
         }
-    }
-};
 
-// add the custom style layer to the map
-map.on('load', () => {
-    map.addLayer(highlightLayer, 'countries-label');
+        const tileID = {
+            wrap: tile.wrap,
+            canonical: {
+                x: tile.x,
+                y: tile.y,
+                z: tile.z,
+            }
+        };
+
+        const projectionData = map.transform.getProjectionData({overscaledTileID: tileID, applyGlobeMatrix: true});
+
+        gl.uniform4f(
+            locations['u_projection_clipping_plane'],
+            ...projectionData.clippingPlane
+        );
+        gl.uniform1f(
+            locations['u_projection_transition'],
+            projectionData.projectionTransition
+        );
+
+        gl.uniform4f(
+            locations['u_projection_tile_mercator_coords'],
+            ...projectionData.tileMercatorCoords
+        );
+
+        gl.uniformMatrix4fv(
+            locations['u_projection_matrix'],
+            false,
+            projectionData.mainMatrix
+        );
+        gl.uniformMatrix4fv(
+            locations['u_projection_fallback_matrix'],
+            false,
+            projectionData.fallbackMatrix
+        );
+        const mesh = getTileMesh(gl, tile.x, tile.y, tile.z, false);
+        gl.bindBuffer(gl.ARRAY_BUFFER, mesh.vbo);
+        gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, mesh.ibo);
+        gl.enableVertexAttribArray(this.aPos);
+        gl.vertexAttribPointer(this.aPos, 2, gl.SHORT, false, 0, 0);
+        gl.drawElements(gl.TRIANGLES, mesh.indexCount, gl.UNSIGNED_SHORT, 0);
+    }
+}
+
+        });
+
+    })(map);
+
+
+
+
+
+
+    // Queued camera actions
+
 });
+
+
+
+
+
+
+
+            } catch (error) {
+                console.error('Error initializing map:', error);
+                showMapError('Error initializing the map: ' + error.message);
+            }
+        }
+    </script>
+
+    <!-- Load additional libraries with fallbacks -->
+
+
+
+
+</body>
+
+</html>
