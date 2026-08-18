@@ -29,9 +29,30 @@ secondaryMaps.push(secondaryMap);
 
 var allMaps = [map].concat(secondaryMaps);
 
-if (typeof syncMaps === 'function') {
-    syncMaps.apply(null, allMaps);
+function syncMaps() {
+    var maps = Array.prototype.slice.call(arguments);
+    var syncing = false;
+    maps.forEach(function(sourceMap) {
+        sourceMap.on('move', function() {
+            if (syncing) { return; }
+            syncing = true;
+            var center = sourceMap.getCenter();
+            maps.forEach(function(targetMap) {
+                if (targetMap !== sourceMap) {
+                    targetMap.jumpTo({
+                        center: center,
+                        zoom: sourceMap.getZoom(),
+                        bearing: sourceMap.getBearing(),
+                        pitch: sourceMap.getPitch()
+                    });
+                }
+            });
+            syncing = false;
+        });
+    });
 }
+
+syncMaps.apply(null, allMaps);
 
 window._maplibreumSyncedMaps = allMaps;
 window._maplibreumSyncedCenter = map.getCenter();

@@ -609,10 +609,10 @@ class Map:
         elif isinstance(layer_definition, ThreeLayer):
             layer_id = layer_definition.id
             self.add_external_script(
-                "https://cdn.jsdelivr.net/npm/three@0.169.0/build/three.js"
+                "https://cdn.jsdelivr.net/npm/three@0.128.0/build/three.js"
             )
             self.add_external_script(
-                "https://cdn.jsdelivr.net/npm/three@0.169.0/examples/js/loaders/GLTFLoader.js"
+                "https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/GLTFLoader.js"
             )
             self.add_on_load_js(layer_definition.js_code)
             layer_definition = layer_definition.to_dict()
@@ -1343,18 +1343,51 @@ class Map:
 
         self.rtl_text_plugin = plugin_config
 
+    @staticmethod
+    def _normalise_sky_options(options):
+        """Translate legacy Mapbox sky/fog options to MapLibre's root sky spec."""
+
+        aliases = {
+            "sky-atmosphere-color": "sky-color",
+            "sky-atmosphere-halo-color": "horizon-color",
+            "color": "fog-color",
+            "high-color": "horizon-color",
+            "space-color": "sky-color",
+            "horizon-blend": "horizon-fog-blend",
+        }
+        supported = {
+            "sky-color",
+            "sky-horizon-blend",
+            "horizon-color",
+            "horizon-fog-blend",
+            "fog-color",
+            "fog-ground-blend",
+            "atmosphere-blend",
+        }
+        normalised = {}
+        for key, value in (options or {}).items():
+            target = aliases.get(key, key)
+            if target in supported:
+                normalised[target] = value
+        return normalised
+
     def add_sky_layer(self, name="sky", paint=None, layout=None, before=None):
-        """Add a sky layer to the map."""
-        if paint is None:
-            paint = {"sky-type": "atmosphere"}
-        layer_definition = {"id": name, "type": "sky", "paint": paint}
-        if layout:
-            layer_definition["layout"] = layout
-        self.add_layer(layer_definition, before=before)
+        """Configure MapLibre's root sky style.
+
+        The name, layout, and before arguments are retained for API
+        compatibility. MapLibre 6 models sky and atmospheric fog as a root
+        style property rather than as a layer.
+        """
+
+        del name, layout, before
+        sky = self._normalise_sky_options(paint)
+        self.fog = {**(self.fog or {}), **sky}
 
     def set_fog(self, options=None):
-        """Set global fog options for the map."""
-        self.fog = options if options is not None else {}
+        """Configure atmospheric fog using MapLibre's root sky style."""
+
+        fog = self._normalise_sky_options(options)
+        self.fog = {**(self.fog or {}), **fog}
 
     def add_popup(
         self,

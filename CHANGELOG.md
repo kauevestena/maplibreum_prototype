@@ -6,11 +6,16 @@ The format is inspired by [Keep a Changelog](https://keepachangelog.com/en/1.1.0
 
 ## [Unreleased]
 
+## [0.2.0] - 2026-07-30
+
 ### Changed
 - Standardized generated maps on MapLibre GL JS 6.0.0 and its ES module build.
 - Added an independent jsDelivr fallback for the MapLibre runtime and stylesheet.
 - Normalized raw GeoJSON and `__geo_interface__` objects into valid GeoJSON sources.
 - Expanded CI across Python 3.9–3.13 with separate browser, documentation, and package-release gates.
+- Added eight-shard browser validation for all implemented gallery examples.
+- Added live-CDN smoke tests for unpkg and the forced jsDelivr fallback.
+- Added a clean-wheel installation and standalone-render smoke test.
 
 ### Fixed
 - Made every implemented gallery example generate a browser-testable HTML page.
@@ -28,4 +33,6 @@ The format is inspired by [Keep a Changelog](https://keepachangelog.com/en/1.1.0
 - Terrain, sky, and fog helpers alongside expression builders for data-driven styling.
 - Event wiring for click, move, and draw callbacks in Jupyter environments.
 
+[Unreleased]: https://github.com/kauevestena/maplibreum_prototype/compare/v0.2.0...HEAD
+[0.2.0]: https://github.com/kauevestena/maplibreum_prototype/compare/v0.1.0...v0.2.0
 [0.1.0]: https://github.com/kauevestena/maplibreum_prototype/releases/tag/v0.1.0

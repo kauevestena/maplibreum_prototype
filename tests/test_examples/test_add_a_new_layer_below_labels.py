@@ -41,11 +41,11 @@ def test_add_a_new_layer_below_labels():
         },
         paint={"text-color": "#202", "text-halo-color": "#fff"},
     )
-    m.add_layer(symbol_layer.to_dict(), before="waterway-label")
+    m.add_layer(symbol_layer.to_dict(), before="geolines-label")
 
-    assert m.layers[0]["before"] == "waterway-label"
+    assert m.layers[0]["before"] == "geolines-label"
 
     html = m.render()
-    assert "waterway-label" in html
+    assert "geolines-label" in html
     assert "icon-image" in html
     assert "text-field" in html

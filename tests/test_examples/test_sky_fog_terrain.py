@@ -49,8 +49,13 @@ def test_sky_fog_terrain_configuration():
     html = m.render()
     assert "map.setTerrain" in html
     assert '"source": "terrainSource"' in html
-    assert "map.setFog" in html
-    assert '"type": "sky"' in html
+    assert "map.setSky" in html
+    assert "map.setFog" not in html
+    assert '"sky-color": "#000000"' in html
+    assert '"horizon-color": "#245bde"' in html
+    assert '"fog-color": "#88c0ff"' in html
+    assert '"horizon-fog-blend": 0.2' in html
+    assert '"type": "sky"' not in html
     assert "map.addControl(new maplibregl.TerrainControl" in html
     assert "map.addControl(new maplibregl.GlobeControl" in html
     assert '"projection": {"name": "globe"}' in html

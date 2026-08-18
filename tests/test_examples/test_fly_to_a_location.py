@@ -51,7 +51,7 @@ def test_fly_to_a_location():
     
     # Add the button control to the map using the control system
     # This demonstrates how to properly integrate ButtonControl
-    m.add_control(button, position="top-center")
+    m.add_control(button, position="top-right")
 
     html = m.render()
 

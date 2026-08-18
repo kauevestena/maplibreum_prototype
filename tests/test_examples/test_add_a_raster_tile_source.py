@@ -13,7 +13,7 @@ def test_add_a_raster_tile_source():
     )
 
     raster_source = sources.RasterSource(
-        tiles="https://stamen-tiles.a.ssl.fastly.net/terrain/{z}/{x}/{y}.png",
+        tiles="https://tile.openstreetmap.org/{z}/{x}/{y}.png",
         tile_size=256,
         max_zoom=16,
     )
@@ -24,7 +24,7 @@ def test_add_a_raster_tile_source():
 
     html = m.render()
     assert '"type": "raster"' in html
-    assert "terrain" in html
+    assert "tile.openstreetmap.org" in html
     assert len(m.layers) == 1
     definition = m.sources[0]["definition"]
     assert definition["maxzoom"] == 16

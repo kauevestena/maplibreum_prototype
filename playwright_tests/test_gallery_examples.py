@@ -109,6 +109,7 @@ def test_rendered_example_loads(
     page_errors = []
     console_errors = []
     failed_requests = []
+    successful_responses = []
     page.on("pageerror", lambda error: page_errors.append(str(error)))
     page.on(
         "console",
@@ -122,6 +123,18 @@ def test_rendered_example_loads(
             f"{request.url}: {request.failure or 'request failed'}"
         ),
     )
+    page.on(
+        "response",
+        lambda response: (
+            successful_responses.append(response.url) if response.ok else None
+        ),
+    )
+
+    if os.environ.get("MAPLIBREUM_BLOCK_PRIMARY_CDN"):
+        page.route(
+            "**://unpkg.com/maplibre-gl@*/dist/*",
+            lambda route: route.fulfill(status=503, body="primary CDN blocked by test"),
+        )
 
     maplibre_dist = os.environ.get("MAPLIBREUM_MAPLIBRE_DIST")
     if maplibre_dist:
@@ -219,8 +232,28 @@ def test_rendered_example_loads(
         assert map_summary["canvasHeight"] > 0
 
     assert not page_errors, f"Unhandled page errors: {page_errors}"
+    if os.environ.get("MAPLIBREUM_BLOCK_PRIMARY_CDN"):
+        console_errors = [
+            message
+            for message in console_errors
+            if not message.startswith(
+                "Failed to load resource: the server responded with a status of 503"
+            )
+        ]
     assert not console_errors, f"Browser console errors: {console_errors}"
+    if os.environ.get("MAPLIBREUM_BLOCK_PRIMARY_CDN"):
+        failed_requests = [
+            failure
+            for failure in failed_requests
+            if "https://unpkg.com/maplibre-gl@" not in failure
+        ]
     assert not failed_requests, f"Failed browser requests: {failed_requests}"
+
+    expected_cdn_host = os.environ.get("MAPLIBREUM_EXPECT_CDN_HOST")
+    if expected_cdn_host:
+        assert any(
+            expected_cdn_host in url for url in successful_responses
+        ), f"MapLibre was not loaded successfully from {expected_cdn_host}"
 
     banner_link = page.locator(".maplibreum-example-banner a")
     if metadata.get("url"):

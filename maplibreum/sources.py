@@ -589,7 +589,7 @@ class VideoOverlay:
             toggle_code = ""
         
         js_code = setup_code + toggle_code + """
-}})();
+})();
 """
         return js_code
     

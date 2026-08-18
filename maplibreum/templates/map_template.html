@@ -12,7 +12,7 @@
     <link href="https://unpkg.com/maplibregl-minimap/dist/minimap-control.css" rel="stylesheet" onerror="console.warn('Failed to load minimap CSS')" />
     {% endif %}
     {% if include_search %}
-    <link href="https://unpkg.com/@maplibre/maplibre-gl-geocoder@latest/dist/maplibre-gl-geocoder.css" rel="stylesheet" onerror="console.warn('Failed to load geocoder CSS')" />
+    <link href="https://cdn.jsdelivr.net/npm/@maplibre/maplibre-gl-geocoder@1.9.4/dist/maplibre-gl-geocoder.css" rel="stylesheet" onerror="console.warn('Failed to load geocoder CSS')" />
     {% endif %}
     {% if time_dimension %}
     <link href="https://cdn.jsdelivr.net/npm/leaflet-timedimension@1.1.0/dist/leaflet.timedimension.control.min.css" rel="stylesheet" onerror="console.warn('Failed to load time dimension CSS')" />
@@ -103,6 +103,19 @@
     <script src="{{ script.src }}"{% for attr, value in script.attributes.items() %}{% if value is sameas(true) %} {{ attr }}{% else %} {{ attr }}="{{ value }}"{% endif %}{% endfor %}></script>
     {% endfor %}
     <script src="https://cdnjs.cloudflare.com/ajax/libs/dompurify/3.0.6/purify.min.js"></script>
+    <!-- Optional control libraries must load before map initialization. -->
+    {% if include_minimap %}
+    <script src="https://unpkg.com/maplibregl-minimap/dist/minimap-control.js" onerror="console.warn('Failed to load minimap control')"></script>
+    {% endif %}
+    {% if measure_control %}
+    <script src="https://unpkg.com/maplibre-gl-measures@latest/dist/maplibre-gl-measures.js" onerror="console.warn('Failed to load measure control')"></script>
+    {% endif %}
+    {% if time_dimension %}
+    <script src="https://cdn.jsdelivr.net/npm/leaflet-timedimension@1.1.0/dist/leaflet.timedimension.min.js" onerror="console.warn('Failed to load time dimension')"></script>
+    {% endif %}
+    {% if include_search %}
+    <script src="https://cdn.jsdelivr.net/npm/@maplibre/maplibre-gl-geocoder@1.9.4/dist/maplibre-gl-geocoder.min.js" onerror="console.warn('Failed to load geocoder')"></script>
+    {% endif %}
 </head>
 <body>
     <div id="{{ map_id }}">
@@ -300,6 +313,17 @@
                 return Promise.resolve(undefined);
             }
 
+            _getViewState() {
+                const center = this.map.getCenter();
+                return {
+                    longitude: center.lng,
+                    latitude: center.lat,
+                    zoom: this.map.getZoom(),
+                    bearing: this.map.getBearing(),
+                    pitch: this.map.getPitch(),
+                };
+            }
+
             _buildProps(config, data) {
                 const jsonProps = (config.props && config.props.json) || {};
                 const props = { data };
@@ -337,7 +361,7 @@
                                     customLayer.__deck = new deck.Deck({
                                         gl,
                                         map,
-                                        initialViewState: map.getFreeCameraOptions(),
+                                        initialViewState: this._getViewState(),
                                         layers: [new deck[config.layerType](layerProps)],
                                     });
                                 } catch (error) {
@@ -355,9 +379,11 @@
                             });
                     },
                     render: () => {
-                        if (customLayer.__deck && this.map.getFreeCameraOptions) {
-                            const viewState = this.map.getFreeCameraOptions();
-                            customLayer.__deck.setProps({ viewState });
+                        if (customLayer.__deck) {
+                            customLayer.__deck.setProps({
+                                viewState: this._getViewState(),
+                            });
+                            customLayer.__deck.redraw();
                         }
                     },
                     onRemove: () => {
@@ -976,7 +1002,7 @@ map.on('load', function() {
     map.setTerrain({{ terrain | tojson | safe }});
     {% endif %}
     {% if fog is not none %}
-    map.setFog({{ fog | tojson | safe }});
+    map.setSky({{ fog | tojson | safe }});
     {% endif %}
 
     // Add layers
@@ -1355,19 +1381,6 @@ map.on('load', function() {
         }
     </script>
     
-    <!-- Load additional libraries with fallbacks -->
-    {% if include_minimap %}
-    <script src="https://unpkg.com/maplibregl-minimap/dist/minimap-control.js" onerror="console.warn('Failed to load minimap control')"></script>
-    {% endif %}
-    {% if measure_control %}
-    <script src="https://unpkg.com/maplibre-gl-measures@latest/dist/maplibre-gl-measures.js" onerror="console.warn('Failed to load measure control')"></script>
-    {% endif %}
-    {% if time_dimension %}
-    <script src="https://cdn.jsdelivr.net/npm/leaflet-timedimension@1.1.0/dist/leaflet.timedimension.min.js" onerror="console.warn('Failed to load time dimension')"></script>
-    {% endif %}
-    {% if include_search %}
-    <script src="https://unpkg.com/@maplibre/maplibre-gl-geocoder@latest/dist/maplibre-gl-geocoder.min.js" onerror="console.warn('Failed to load geocoder')"></script>
-    {% endif %}
 </body>
 
 </html>

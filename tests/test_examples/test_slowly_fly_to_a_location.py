@@ -79,7 +79,7 @@ def test_slowly_fly_with_button_control():
     )
     
     # Add the button control to the map
-    m.add_control(button, position="top-center")
+    m.add_control(button, position="top-right")
 
     html = m.render()
 
