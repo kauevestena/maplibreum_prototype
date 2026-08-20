@@ -20,3 +20,7 @@ To explore these examples interactively, you can run them directly within Jupyte
 Simply create a `Map` instance (e.g., `m = Map(...)`) and evaluate `m` as the last line in a notebook cell. MapLibreum will automatically render the map inside an embedded `<iframe>` using the object's `_repr_html_` implementation.
 
 If you need fine-grained control over the map's dimensions, you can call `m.display_in_notebook(width="100%", height="500px")`.
+
+## Production field tests
+
+- [`opensidewalkmap/`](opensidewalkmap/) contains five standalone Python applications that reproduce the distinct MapLibre maps deployed by the OpenSidewalkMap beta node.

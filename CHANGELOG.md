@@ -6,6 +6,15 @@ The format is inspired by [Keep a Changelog](https://keepachangelog.com/en/1.1.0
 
 ## [Unreleased]
 
+### Added
+- Added a complete-style dropdown control, external ES-module and stylesheet loading, structured vector-feature popups, reusable feature-state hover handling, and page-level dashboard elements.
+- Retained initial source definitions on the generated map runtime so large mutable GeoJSON sources can be reused without serializing a second copy.
+- Added five production field-test examples reproducing the distinct MapLibre applications deployed by `opensidewalkmap_beta`: the main node map, accessible routing, hazard analysis, completeness analysis, and data-acquisition dashboard.
+
+### Fixed
+- JSON-encoded floating-panel HTML so backticks and `${...}` text cannot break out of a JavaScript template literal, and removed its unnecessary delayed insertion race.
+- Declared the existing runtime use of `requests` as an installation dependency.
+
 ## [0.2.0] - 2026-07-30
 
 ### Changed
