@@ -74,6 +74,7 @@ target/
 
 # Jupyter Notebook
 .ipynb_checkpoints
+examples/opensidewalkmap/generated/
 
 # IPython
 profile_default/
@@ -114,4 +115,3 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
-

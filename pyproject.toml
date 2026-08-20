@@ -33,6 +33,7 @@ dependencies = [
   "ipython>=8.0",
   "ijson>=3.0",
   "rtree>=1.0.0",
+  "requests>=2.0",
 ]
 
 [project.optional-dependencies]

@@ -422,12 +422,17 @@ class Map:
         self.animations: List[str] = []
         self.rtl_text_plugin: Optional[Dict[str, Any]] = None
         self.external_scripts: List[Dict[str, Any]] = []
+        self.external_stylesheets: List[Dict[str, Any]] = []
+        self.external_modules: List[Dict[str, Any]] = []
         self._pmtiles_protocols: Dict[str, Dict[str, Any]] = {}
         self._pmtiles_protocol_scripts: Dict[str, str] = {}
         self._pmtiles_sources: List[Dict[str, Any]] = []
         self._pmtiles_script_urls: Set[str] = set()
         self.custom_protocols: List[Protocol] = []
         self.transform_request: Optional[str] = None
+        self.feature_popups: List[Dict[str, Any]] = []
+        self.page_elements_before: List[str] = []
+        self.page_elements_after: List[str] = []
 
         template_dir = os.path.join(os.path.dirname(__file__), "templates")
         self.env = Environment(loader=FileSystemLoader(template_dir))
@@ -454,6 +459,20 @@ class Map:
 
         self.bounds = bounds
         self.bounds_padding = padding
+
+    def add_page_element(self, html_content: str, *, before_map: bool = False) -> int:
+        """Add trusted application HTML next to the map container.
+
+        This is intended for page-level dashboard structure such as headers,
+        tables, and status regions. Map overlays should normally use a control
+        or :class:`maplibreum.controls.PanelControl` instead.
+        """
+
+        if not isinstance(html_content, str):
+            raise TypeError("page element HTML must be a string")
+        collection = self.page_elements_before if before_map else self.page_elements_after
+        collection.append(html_content)
+        return len(collection) - 1
 
     def add_control(self, control, position="top-right", options=None):
         """Add a UI control to the map.
@@ -851,6 +870,72 @@ class Map:
 
         self.external_scripts.append({"src": src, "attributes": attr_map})
         return src
+
+    def add_external_module(
+        self,
+        src: str,
+        global_name: str,
+        *,
+        export_name: Optional[str] = None,
+    ) -> str:
+        """Load an ES module before the map is initialised.
+
+        The imported namespace (or one named export) is exposed on ``window``
+        under ``global_name`` so application-specific callbacks can use it.
+
+        Parameters
+        ----------
+        src : str
+            Absolute or relative ES-module URL.
+        global_name : str
+            JavaScript identifier used for the value on ``window``.
+        export_name : str, optional
+            Named export to expose. Use ``"default"`` for a default export;
+            omit it to expose the complete module namespace.
+        """
+
+        if not isinstance(src, str) or not src.strip():
+            raise ValueError("add_external_module requires a module URL")
+        if not isinstance(global_name, str) or not re.fullmatch(
+            r"[A-Za-z_$][A-Za-z0-9_$]*", global_name
+        ):
+            raise ValueError("global_name must be a valid JavaScript identifier")
+        if export_name is not None and (
+            not isinstance(export_name, str) or not export_name.strip()
+        ):
+            raise ValueError("export_name must be a non-empty string")
+
+        definition = {
+            "src": src,
+            "global_name": global_name,
+            "export_name": export_name,
+        }
+        self.external_modules = [
+            item for item in self.external_modules if item["global_name"] != global_name
+        ]
+        self.external_modules.append(definition)
+        return global_name
+
+    def add_external_stylesheet(self, href: str, **attributes: Any) -> str:
+        """Add a stylesheet link to the generated document head.
+
+        Re-registering the same URL updates its optional HTML attributes and
+        preserves a single link element in the rendered output.
+        """
+
+        if not isinstance(href, str) or not href.strip():
+            raise ValueError("add_external_stylesheet requires a stylesheet URL")
+        attr_map = {
+            str(key).replace("_", "-"): value
+            for key, value in attributes.items()
+            if value is not None
+        }
+        definition = {"href": href, "attributes": attr_map}
+        self.external_stylesheets = [
+            item for item in self.external_stylesheets if item["href"] != href
+        ]
+        self.external_stylesheets.append(definition)
+        return href
 
     def _ensure_pmtiles_script(self, script_url: str) -> None:
         """Include the PMTiles runtime bundle only once."""
@@ -1445,6 +1530,76 @@ class Map:
             }
         )
 
+    def add_feature_popup(
+        self,
+        layer_id,
+        fields,
+        *,
+        aliases=None,
+        title=None,
+        links=None,
+        event="click",
+        options=None,
+        missing="?",
+    ):
+        """Bind a structured property popup to a rendered feature layer.
+
+        Unlike :meth:`add_popup`, this helper can render several properties
+        from remote vector-tile features without preprocessing the source.
+        Link URL templates may reference feature properties and the special
+        ``{lng}`` and ``{lat}`` placeholders.
+        """
+
+        if not isinstance(layer_id, str) or not layer_id:
+            raise ValueError("layer_id must be a non-empty string")
+        if isinstance(fields, str):
+            field_names = [fields]
+        else:
+            field_names = list(fields)
+        if not field_names or not all(isinstance(field, str) for field in field_names):
+            raise ValueError("fields must contain at least one property name")
+
+        if aliases is None:
+            field_aliases = field_names
+        elif isinstance(aliases, str):
+            field_aliases = [aliases]
+        else:
+            field_aliases = list(aliases)
+        if len(field_aliases) != len(field_names):
+            raise ValueError("aliases must have the same length as fields")
+
+        normalised_links = []
+        for link in links or []:
+            if not isinstance(link, Mapping):
+                raise TypeError("feature popup links must be mappings")
+            label = link.get("label")
+            url = link.get("url")
+            if not label or not url:
+                raise ValueError("each feature popup link needs label and url")
+            normalised_links.append(
+                {
+                    "label": str(label),
+                    "url": str(url),
+                    "target": str(link.get("target", "_blank")),
+                }
+            )
+
+        self.feature_popups.append(
+            {
+                "layer_id": layer_id,
+                "fields": [
+                    {"name": name, "alias": str(alias)}
+                    for name, alias in zip(field_names, field_aliases)
+                ],
+                "title": title,
+                "links": normalised_links,
+                "event": str(event),
+                "options": dict(options or {}),
+                "missing": str(missing),
+            }
+        )
+        return layer_id
+
     def add_tooltip(self, tooltip=None, layer_id=None, options=None, prop=None):
         """Add a tooltip to the map."""
         if isinstance(tooltip, Tooltip):
@@ -1704,6 +1859,83 @@ class Map:
         """Convenience method for mouseout events."""
 
         return self.on("mouseout", callback, **kwargs)
+
+    def add_feature_state_hover(
+        self,
+        layer_id,
+        source_id,
+        *,
+        source_layer=None,
+        state_name="hover",
+        cursor="pointer",
+    ):
+        """Toggle a boolean feature state while the pointer hovers a layer.
+
+        The helper tracks the previously hovered feature, including its
+        vector-tile source layer, and clears the state on mouse leave.
+        """
+
+        for name, value in {
+            "layer_id": layer_id,
+            "source_id": source_id,
+            "state_name": state_name,
+        }.items():
+            if not isinstance(value, str) or not value:
+                raise ValueError(f"{name} must be a non-empty string")
+
+        state_key = f"{source_id}:{source_layer or '*'}:{layer_id}:{state_name}"
+        state_key_js = json.dumps(state_key)
+        source_id_js = json.dumps(source_id)
+        source_layer_js = json.dumps(source_layer) if source_layer else "null"
+        state_name_js = json.dumps(state_name)
+        cursor_js = json.dumps(cursor)
+
+        move_js = f"""
+map.__maplibreumHoverStates = map.__maplibreumHoverStates || {{}};
+const hoverKey = {state_key_js};
+const previous = map.__maplibreumHoverStates[hoverKey];
+const feature = event.features && event.features[0];
+if (!feature) return;
+const nextSourceLayer = {source_layer_js} || feature.sourceLayer;
+const nextId = feature.id;
+if (previous && (previous.id !== nextId || previous.sourceLayer !== nextSourceLayer)) {{
+    const previousTarget = {{source: {source_id_js}, id: previous.id}};
+    if (previous.sourceLayer) previousTarget.sourceLayer = previous.sourceLayer;
+    map.setFeatureState(previousTarget, {{[{state_name_js}]: false}});
+}}
+if (nextId !== null && nextId !== undefined) {{
+    const nextTarget = {{source: {source_id_js}, id: nextId}};
+    if (nextSourceLayer) nextTarget.sourceLayer = nextSourceLayer;
+    map.setFeatureState(nextTarget, {{[{state_name_js}]: true}});
+    map.__maplibreumHoverStates[hoverKey] = {{id: nextId, sourceLayer: nextSourceLayer}};
+}}
+map.getCanvas().style.cursor = {cursor_js};
+"""
+        leave_js = f"""
+map.__maplibreumHoverStates = map.__maplibreumHoverStates || {{}};
+const hoverKey = {state_key_js};
+const previous = map.__maplibreumHoverStates[hoverKey];
+if (previous) {{
+    const target = {{source: {source_id_js}, id: previous.id}};
+    if (previous.sourceLayer) target.sourceLayer = previous.sourceLayer;
+    map.setFeatureState(target, {{[{state_name_js}]: false}});
+    delete map.__maplibreumHoverStates[hoverKey];
+}}
+map.getCanvas().style.cursor = '';
+"""
+        self.add_event_listener(
+            "mousemove",
+            layer_id=layer_id,
+            js=move_js,
+            event_id=f"feature-state-hover:{layer_id}:move",
+        )
+        self.add_event_listener(
+            "mouseleave",
+            layer_id=layer_id,
+            js=leave_js,
+            event_id=f"feature-state-hover:{layer_id}:leave",
+        )
+        return state_key
 
     def query_rendered_features_at_point(self, point, layers=None, filter=None):
         """Create a JavaScript snippet to query rendered features at a point.
@@ -2373,10 +2605,15 @@ class Map:
             animations=self.animations,
             rtl_text_plugin=self.rtl_text_plugin,
             external_scripts=self.external_scripts,
+            external_stylesheets=self.external_stylesheets,
+            external_modules=self.external_modules,
             pmtiles_protocols=list(self._pmtiles_protocols.values()),
             pmtiles_sources=self._pmtiles_sources,
             custom_protocols=self.custom_protocols,
             transform_request=self.transform_request,
+            feature_popups=self.feature_popups,
+            page_elements_before=self.page_elements_before,
+            page_elements_after=self.page_elements_after,
         )
 
     def _repr_html_(self):

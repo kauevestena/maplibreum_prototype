@@ -1,3 +1,5 @@
+import json
+
 from .utils import get_id
 from typing import Optional, List, Dict, Any
 
@@ -663,6 +665,51 @@ class ButtonControl:
             "css_class": self.css_class,
             "style": self.style,
             "onclick_js": self.onclick_js,
+        }
+
+
+class StyleSwitcherControl:
+    """Dropdown control for switching between complete MapLibre styles."""
+
+    control_type = "styleswitcher"
+
+    def __init__(
+        self,
+        styles,
+        *,
+        labels=None,
+        initial_style=None,
+        title="Map style",
+        control_id=None,
+    ):
+        if not isinstance(styles, dict) or not styles:
+            raise ValueError("styles must be a non-empty mapping")
+        if not all(isinstance(key, str) and key for key in styles):
+            raise ValueError("style keys must be non-empty strings")
+
+        self.styles = dict(styles)
+        self.labels = dict(labels or {})
+        unknown_labels = set(self.labels).difference(self.styles)
+        if unknown_labels:
+            raise ValueError(
+                "labels contain unknown style keys: " + ", ".join(sorted(unknown_labels))
+            )
+        self.initial_style = initial_style or next(iter(self.styles))
+        if self.initial_style not in self.styles:
+            raise ValueError("initial_style must be one of the supplied styles")
+        self.title = str(title)
+        self.id = control_id or get_id("style_switcher_")
+
+    def to_dict(self):
+        return {
+            "id": self.id,
+            "styles": self.styles,
+            "labels": {
+                key: self.labels.get(key, key.replace("_", " ").title())
+                for key in self.styles
+            },
+            "initial_style": self.initial_style,
+            "title": self.title,
         }
 
 
@@ -1609,20 +1656,19 @@ class PanelControl:
             "bottom-right": "bottom right",
         }
         pos_class = position_classes.get(self.position, "top left")
+        class_name = json.dumps(f"{self.css_class} {pos_class}")
+        html_content = json.dumps(self.html_content)
 
         return f"""
         (function() {{
             const overlay = document.createElement('div');
-            overlay.className = '{self.css_class} {pos_class}';
-            overlay.innerHTML = `{self.html_content}`;
+            overlay.className = {class_name};
+            overlay.innerHTML = {html_content};
 
-            // Wait for map container to be available
-            setTimeout(() => {{
-                if (map && map.getContainer()) {{
-                    map.getContainer().appendChild(overlay);
-                    {self.js_content}
-                }}
-            }}, 100);
+            if (map && map.getContainer()) {{
+                map.getContainer().appendChild(overlay);
+                {self.js_content}
+            }}
         }})();
         """
 

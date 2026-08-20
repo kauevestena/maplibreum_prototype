@@ -10,7 +10,7 @@ from .overlays import ImageOverlay, VideoOverlay
 from .markers import BeautifyIcon, DivIcon, Icon
 from .animation import AnimationLoop, TemporalInterval
 from .timedimension import TimeDimension
-from .controls import StorytellingControl
+from .controls import StorytellingControl, StyleSwitcherControl
 from . import controls
 from . import sources
 from . import layers
@@ -45,6 +45,7 @@ __all__ = [
     "cluster_features",
     "__version__",
     "StorytellingControl",
+    "StyleSwitcherControl",
     "controls",
     "sources",
     "layers",
