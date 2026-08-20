@@ -3,9 +3,9 @@ from .babylon import BabylonLayer
 from .three import ThreeLayer
 from .choropleth import Choropleth
 from .cluster import ClusteredGeoJson, MarkerCluster, cluster_features
-from .core import (GeoJson, GeoJsonPopup, GeoJsonTooltip, MAPLIBRE_VERSION,
-                   LatLngPopup, Legend, Map, Marker, Popup, StateToggle,
-                   Tooltip)
+from .core import (GeoJson, GeoJsonPopup, GeoJsonTooltip, LayerControl,
+                   MAPLIBRE_VERSION, LatLngPopup, Legend, Map, Marker, Popup,
+                   StateToggle, Tooltip)
 from .overlays import ImageOverlay, VideoOverlay
 from .markers import BeautifyIcon, DivIcon, Icon
 from .animation import AnimationLoop, TemporalInterval
@@ -26,6 +26,7 @@ __all__ = [
     "Marker",
     "GeoJson", 
     "Legend",
+    "LayerControl",
     "Choropleth",
     "Icon",
     "DivIcon",
