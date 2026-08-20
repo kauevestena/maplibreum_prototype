@@ -32,13 +32,13 @@ python -c "import json; data = json.load(open('development/maplibre_examples/sta
 
 ```
 development/maplibre_examples/
-├── README.md           # This file - agent instructions
-├── scrapping.py        # Fetches examples from maplibre.org
-├── status.json         # Tracks progress per example
-└── pages/             # Downloaded HTML examples
-    ├── 3d-terrain.html
-    ├── add-a-marker.html
-    └── ... (100+ examples)
+├── README.md               # This file - agent instructions
+├── scrapping.py            # Fetches examples from maplibre.org
+├── status.json             # Tracks progress per example
+├── generate_side_by_side.py # Generates side-by-side comparison pages
+├── pages/                 # Downloaded JavaScript code snippets
+├── reproduced_pages/      # Generated MapLibreum HTML outputs
+└── side-by-side/          # Side-by-side comparison pages + index.html
 ```
 
 ## Agent Workflow
@@ -49,6 +49,7 @@ development/maplibre_examples/
 3. **Create equivalent Python/maplibreum code** in `tests/test_examples/`
 4. **Update `status.json`** when implementation is complete
 5. **Run tests** with `pytest tests/test_examples/`
+6. **Generate side-by-side comparisons**: `python development/maplibre_examples/generate_side_by_side.py`
 
 ### For Adding New Examples:
 1. **Re-run scrapping** to fetch latest examples

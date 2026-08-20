@@ -1,0 +1,925 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Create A Draggable Point - MapLibre vs MapLibreum Side-by-Side</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/line-numbers/prism-line-numbers.min.css" />
+  <style>
+    :root {
+      --bg-dark: #0f172a;
+      --bg-surface: #1e293b;
+      --bg-surface-alt: #334155;
+      --border-color: #334155;
+      --text-main: #f8fafc;
+      --text-muted: #94a3b8;
+      --accent-blue: #38bdf8;
+      --accent-green: #4ade80;
+      --accent-amber: #fbbf24;
+      --accent-purple: #c084fc;
+      --header-height: 56px;
+      --pane-header-height: 38px;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: var(--bg-dark);
+      color: var(--text-main);
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+
+    /* Global Navigation Header */
+    header.app-header {
+      height: var(--header-height);
+      background: var(--bg-surface);
+      border-bottom: 1px solid var(--border-color);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 16px;
+      gap: 12px;
+      flex-shrink: 0;
+      z-index: 10;
+    }
+
+    .header-left, .header-center, .header-right {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .back-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 12px;
+      background: var(--bg-surface-alt);
+      color: var(--text-main);
+      text-decoration: none;
+      border-radius: 6px;
+      font-size: 13px;
+      font-weight: 500;
+      transition: all 0.2s ease;
+    }
+
+    .back-link:hover {
+      background: #475569;
+      color: #fff;
+      transform: translateY(-1px);
+    }
+
+    .example-title {
+      font-size: 16px;
+      font-weight: 700;
+      color: #fff;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      white-space: nowrap;
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 3px 8px;
+      border-radius: 9999px;
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.02em;
+    }
+
+    .badge-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+    }
+
+    .badge-success {
+      background: rgba(74, 222, 128, 0.15);
+      color: var(--accent-green);
+      border: 1px solid rgba(74, 222, 128, 0.3);
+    }
+    .badge-success .badge-dot {
+      background: var(--accent-green);
+      box-shadow: 0 0 6px var(--accent-green);
+    }
+
+    .badge-warning {
+      background: rgba(251, 191, 36, 0.15);
+      color: var(--accent-amber);
+      border: 1px solid rgba(251, 191, 36, 0.3);
+    }
+    .badge-warning .badge-dot {
+      background: var(--accent-amber);
+      box-shadow: 0 0 6px var(--accent-amber);
+    }
+
+    .example-select {
+      background: var(--bg-dark);
+      color: var(--text-main);
+      border: 1px solid var(--border-color);
+      padding: 6px 12px;
+      border-radius: 6px;
+      font-size: 13px;
+      font-weight: 500;
+      cursor: pointer;
+      outline: none;
+      max-width: 320px;
+    }
+
+    .example-select:focus {
+      border-color: var(--accent-blue);
+      box-shadow: 0 0 0 2px rgba(56, 189, 248, 0.2);
+    }
+
+    .nav-btn {
+      display: inline-flex;
+      align-items: center;
+      padding: 6px 12px;
+      background: var(--bg-surface-alt);
+      color: var(--text-main);
+      text-decoration: none;
+      border-radius: 6px;
+      font-size: 13px;
+      font-weight: 500;
+      transition: all 0.2s ease;
+    }
+
+    .nav-btn:hover:not(.disabled) {
+      background: #475569;
+      color: #fff;
+    }
+
+    .nav-btn.disabled {
+      opacity: 0.4;
+      cursor: not-allowed;
+    }
+
+    .view-mode-buttons {
+      display: flex;
+      background: var(--bg-dark);
+      padding: 2px;
+      border-radius: 6px;
+      border: 1px solid var(--border-color);
+    }
+
+    .mode-btn {
+      background: transparent;
+      border: none;
+      color: var(--text-muted);
+      padding: 4px 10px;
+      font-size: 12px;
+      font-weight: 600;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .mode-btn.active, .mode-btn:hover {
+      background: var(--bg-surface-alt);
+      color: #fff;
+    }
+
+    /* Main 2x2 Grid Workspace */
+    main.workspace {
+      flex: 1;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      overflow: hidden;
+      position: relative;
+    }
+
+    /* Left and Right Main Columns */
+    .comparison-column {
+      display: grid;
+      grid-template-rows: 1fr 1fr;
+      height: calc(100vh - var(--header-height));
+      overflow: hidden;
+      border-right: 1px solid var(--border-color);
+    }
+
+    .comparison-column:last-child {
+      border-right: none;
+    }
+
+    /* Pane Container */
+    .pane {
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      background: var(--bg-dark);
+      position: relative;
+    }
+
+    .pane-top {
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    /* Pane Header */
+    .pane-header {
+      height: var(--pane-header-height);
+      background: var(--bg-surface);
+      border-bottom: 1px solid var(--border-color);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 12px;
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--text-main);
+      user-select: none;
+      flex-shrink: 0;
+    }
+
+    .pane-title {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .pane-icon {
+      font-size: 14px;
+    }
+
+    .pane-actions {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .pane-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      background: var(--bg-surface-alt);
+      border: 1px solid transparent;
+      color: var(--text-main);
+      padding: 3px 8px;
+      border-radius: 4px;
+      font-size: 11px;
+      font-weight: 500;
+      text-decoration: none;
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+
+    .pane-btn:hover:not(.disabled) {
+      background: #475569;
+      border-color: #64748b;
+      color: #fff;
+    }
+
+    .pane-btn.disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+
+    .code-path-badge {
+      font-family: 'Fira Code', monospace;
+      font-size: 11px;
+      color: var(--accent-blue);
+      background: rgba(56, 189, 248, 0.1);
+      padding: 2px 6px;
+      border-radius: 4px;
+      max-width: 260px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .code-path-badge.status-pending {
+      color: var(--accent-amber);
+      background: rgba(251, 191, 36, 0.1);
+    }
+
+    /* Code Container */
+    .code-viewport {
+      flex: 1;
+      overflow: auto;
+      background: #141b2d;
+      position: relative;
+    }
+
+    .code-viewport pre {
+      margin: 0 !important;
+      padding: 14px 14px !important;
+      border-radius: 0 !important;
+      background: transparent !important;
+      font-family: 'Fira Code', monospace !important;
+      font-size: 12.5px !important;
+      line-height: 1.55 !important;
+    }
+
+    .code-viewport code {
+      font-family: 'Fira Code', monospace !important;
+    }
+
+    /* Map Container & Iframes */
+    .map-viewport {
+      flex: 1;
+      position: relative;
+      background: #020617;
+      overflow: hidden;
+    }
+
+    .map-viewport iframe {
+      width: 100%;
+      height: 100%;
+      border: none;
+      display: block;
+      background: #0b0f19;
+    }
+
+    /* Pending Placeholders */
+    .pending-code-card, .pending-map-card {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100%;
+      padding: 32px;
+      text-align: center;
+      color: var(--text-muted);
+      background: #141b2d;
+    }
+
+    .pending-icon {
+      font-size: 36px;
+      margin-bottom: 12px;
+    }
+
+    .pending-code-card h3, .pending-map-card h3 {
+      color: #fff;
+      font-size: 15px;
+      margin-bottom: 8px;
+    }
+
+    .pending-code-card p, .pending-map-card p {
+      font-size: 13px;
+      max-width: 380px;
+      line-height: 1.5;
+      margin-bottom: 6px;
+    }
+
+    .pending-code-card code {
+      background: var(--bg-surface-alt);
+      color: var(--accent-amber);
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-family: 'Fira Code', monospace;
+      font-size: 12px;
+    }
+
+    /* Toast Notification */
+    #toast {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      background: var(--accent-green);
+      color: #0f172a;
+      font-weight: 600;
+      font-size: 13px;
+      padding: 8px 16px;
+      border-radius: 6px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+      opacity: 0;
+      transform: translateY(10px);
+      transition: all 0.2s ease;
+      pointer-events: none;
+      z-index: 100;
+    }
+
+    #toast.show {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* Custom Scrollbar */
+    ::-webkit-scrollbar {
+      width: 8px;
+      height: 8px;
+    }
+    ::-webkit-scrollbar-track {
+      background: var(--bg-dark);
+    }
+    ::-webkit-scrollbar-thumb {
+      background: var(--bg-surface-alt);
+      border-radius: 4px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: #475569;
+    }
+
+    /* Responsive adjustments */
+    @media (max-width: 1024px) {
+      main.workspace {
+        grid-template-columns: 1fr;
+        overflow-y: auto;
+      }
+      .comparison-column {
+        height: auto;
+        min-height: 900px;
+        border-right: none;
+        border-bottom: 2px solid var(--border-color);
+      }
+      body {
+        overflow-y: auto;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Application Header -->
+  <header class="app-header">
+    <div class="header-left">
+      <a href="index.html" class="back-link">← All Examples</a>
+      <div class="example-title">
+        <span>Create A Draggable Point</span>
+        <span class="badge badge-success"><span class="badge-dot"></span> Parity Implemented</span>
+      </div>
+    </div>
+
+    <div class="header-center">
+      <select class="example-select" onchange="if (this.value) window.location.href = this.value">
+        <option value="3d-terrain.html">3D Terrain</option>
+          <option value="add-3d-tiles-using-threejs.html">Add 3D Tiles Using Three.js</option>
+          <option value="add-a-3d-model-to-globe-using-threejs.html">Add A 3D Model To Globe Using Three.js</option>
+          <option value="add-a-3d-model-using-threejs.html">Add A 3D Model Using Three.js</option>
+          <option value="add-a-3d-model-with-babylonjs.html">Add A 3D Model With Babylon.js</option>
+          <option value="add-a-3d-model-with-shadow-using-threejs.html">Add A 3D Model With Shadow Using Three.js</option>
+          <option value="add-a-canvas-source.html">Add A Canvas Source</option>
+          <option value="add-a-cog-raster-source.html">Add A COG Raster Source</option>
+          <option value="add-a-color-relief-layer.html">Add A Color Relief Layer</option>
+          <option value="add-a-custom-layer-with-tiles-to-a-globe.html">Add A Custom Layer With Tiles To A Globe</option>
+          <option value="add-a-custom-style-layer.html">Add A Custom Style Layer</option>
+          <option value="add-a-default-marker.html">Add A Default Marker</option>
+          <option value="add-a-generated-icon-to-the-map.html">Add A Generated Icon To The Map</option>
+          <option value="add-a-geojson-line.html">Add A GeoJSON Line</option>
+          <option value="add-a-geojson-polygon.html">Add A GeoJSON Polygon</option>
+          <option value="add-a-hillshade-layer.html">Add A Hillshade Layer</option>
+          <option value="add-a-multidirectional-hillshade-layer.html">Add A Multidirectional Hillshade Layer</option>
+          <option value="add-a-new-layer-below-labels.html">Add A New Layer Below Labels</option>
+          <option value="add-a-pattern-to-a-polygon.html">Add A Pattern To A Polygon</option>
+          <option value="add-a-raster-tile-source.html">Add A Raster Tile Source</option>
+          <option value="add-a-simple-custom-layer-on-a-globe.html">Add A Simple Custom Layer On A Globe</option>
+          <option value="add-a-stretchable-image-to-the-map.html">Add A Stretchable Image To The Map</option>
+          <option value="add-a-vector-tile-source.html">Add A Vector Tile Source</option>
+          <option value="add-a-video.html">Add A Video</option>
+          <option value="add-a-wms-source.html">Add A WMS Source</option>
+          <option value="add-an-animated-icon-to-the-map.html">Add An Animated Icon To The Map</option>
+          <option value="add-an-icon-to-the-map.html">Add An Icon To The Map</option>
+          <option value="add-contour-lines.html">Add Contour Lines</option>
+          <option value="add-custom-icons-with-markers.html">Add Custom Icons With Markers</option>
+          <option value="add-live-realtime-data.html">Add Live Realtime Data</option>
+          <option value="add-multiple-geometries-from-one-geojson-source.html">Add Multiple Geometries From One GeoJSON Source</option>
+          <option value="add-support-for-right-to-left-scripts.html">Add Support For Right To Left Scripts</option>
+          <option value="adding-3d-models-using-threejs-on-terrain.html">Adding 3D Models Using Three.js On Terrain</option>
+          <option value="animate-a-line.html">Animate A Line</option>
+          <option value="animate-a-marker.html">Animate A Marker</option>
+          <option value="animate-a-point.html">Animate A Point</option>
+          <option value="animate-a-point-along-a-route.html">Animate A Point Along A Route</option>
+          <option value="animate-a-series-of-images.html">Animate A Series Of Images</option>
+          <option value="animate-map-camera-around-a-point.html">Animate Map Camera Around A Point</option>
+          <option value="animate-symbol-to-follow-the-mouse.html">Animate Symbol To Follow The Mouse</option>
+          <option value="attach-a-popup-to-a-marker-instance.html">Attach A Popup To A Marker Instance</option>
+          <option value="center-the-map-on-a-clicked-symbol.html">Center The Map On A Clicked Symbol</option>
+          <option value="change-a-layers-color-with-buttons.html">Change A Layers Color With Buttons</option>
+          <option value="change-a-maps-language.html">Change A Maps Language</option>
+          <option value="change-building-color-based-on-zoom-level.html">Change Building Color Based On Zoom Level</option>
+          <option value="change-the-case-of-labels.html">Change The Case Of Labels</option>
+          <option value="change-the-default-position-for-attribution.html">Change The Default Position For Attribution</option>
+          <option value="check-if-webgl-is-supported.html">Check If WebGL Is Supported</option>
+          <option value="cooperative-gestures.html">Cooperative Gestures</option>
+          <option value="create-a-draggable-marker.html">Create A Draggable Marker</option>
+          <option value="create-a-draggable-point.html" selected="selected">Create A Draggable Point</option>
+          <option value="create-a-gradient-line-using-an-expression.html">Create A Gradient Line Using An Expression</option>
+          <option value="create-a-gradient-line-with-dasharray-using-an-expression.html">Create A Gradient Line With Dasharray Using An Expression</option>
+          <option value="create-a-heatmap-layer.html">Create A Heatmap Layer</option>
+          <option value="create-a-heatmap-layer-on-a-globe-with-terrain-elevation.html">Create A Heatmap Layer On A Globe With Terrain Elevation</option>
+          <option value="create-a-hover-effect.html">Create A Hover Effect</option>
+          <option value="create-a-time-slider.html">Create A Time Slider</option>
+          <option value="create-and-style-clusters.html">Create And Style Clusters</option>
+          <option value="create-deckgl-layer-using-rest-api.html">Create Deck.gl Layer Using REST API</option>
+          <option value="customize-camera-animations.html">Customize Camera Animations</option>
+          <option value="customize-the-map-transform-constrain.html">Customize The Map Transform Constrain</option>
+          <option value="disable-map-rotation.html">Disable Map Rotation</option>
+          <option value="disable-scroll-zoom.html">Disable Scroll Zoom</option>
+          <option value="display-a-globe-with-a-fill-extrusion-layer.html">Display A Globe With A Fill Extrusion Layer</option>
+          <option value="display-a-globe-with-a-vector-map.html">Display A Globe With A Vector Map</option>
+          <option value="display-a-globe-with-an-atmosphere.html">Display A Globe With An Atmosphere</option>
+          <option value="display-a-hybrid-satellite-map-with-terrain-elevation.html">Display A Hybrid Satellite Map With Terrain Elevation</option>
+          <option value="display-a-map.html">Display A Map</option>
+          <option value="display-a-map-with-mlt.html">Display A Map With MLT</option>
+          <option value="display-a-non-interactive-map.html">Display A Non Interactive Map</option>
+          <option value="display-a-popup.html">Display A Popup</option>
+          <option value="display-a-popup-on-click.html">Display A Popup On Click</option>
+          <option value="display-a-popup-on-hover.html">Display A Popup On Hover</option>
+          <option value="display-a-remote-svg-symbol.html">Display A Remote SVG Symbol</option>
+          <option value="display-a-satellite-map.html">Display A Satellite Map</option>
+          <option value="display-and-style-rich-text-labels.html">Display And Style Rich Text Labels</option>
+          <option value="display-buildings-in-3d.html">Display Buildings In 3D</option>
+          <option value="display-html-clusters-with-custom-properties.html">Display HTML Clusters With Custom Properties</option>
+          <option value="display-line-that-crosses-180th-meridian.html">Display Line That Crosses 180th Meridian</option>
+          <option value="display-map-navigation-controls.html">Display Map Navigation Controls</option>
+          <option value="display-map-performance-metrics.html">Display Map Performance Metrics</option>
+          <option value="draw-a-circle.html">Draw A Circle</option>
+          <option value="draw-geojson-points.html">Draw GeoJSON Points</option>
+          <option value="draw-geometries-with-terra-draw.html">Draw Geometries With Terra Draw</option>
+          <option value="draw-polygon-with-mapbox-gl-draw.html">Draw Polygon With Mapbox Gl Draw</option>
+          <option value="extrude-polygons-for-3d-indoor-mapping.html">Extrude Polygons For 3D Indoor Mapping</option>
+          <option value="filter-layer-symbols-using-global-state.html">Filter Layer Symbols Using Global State</option>
+          <option value="filter-symbols-by-text-input.html">Filter Symbols By Text Input</option>
+          <option value="filter-symbols-by-toggling-a-list.html">Filter Symbols By Toggling A List</option>
+          <option value="filter-within-a-layer.html">Filter Within A Layer</option>
+          <option value="fit-a-map-to-a-bounding-box.html">Fit A Map To A Bounding Box</option>
+          <option value="fit-to-the-bounds-of-a-linestring.html">Fit To The Bounds Of A Linestring</option>
+          <option value="fly-to-a-location.html">Fly To A Location</option>
+          <option value="fly-to-a-location-based-on-scroll-position.html">Fly To A Location Based On Scroll Position</option>
+          <option value="generate-and-add-a-missing-icon-to-the-map.html">Generate And Add A Missing Icon To The Map</option>
+          <option value="geocode-with-nominatim.html">Geocode With Nominatim</option>
+          <option value="get-coordinates-of-the-mouse-pointer.html">Get Coordinates Of The Mouse Pointer</option>
+          <option value="get-features-under-the-mouse-pointer.html">Get Features Under The Mouse Pointer</option>
+          <option value="hash-routing.html">Hash Routing</option>
+          <option value="jump-to-a-series-of-locations.html">Jump To A Series Of Locations</option>
+          <option value="level-of-detail-control.html">Level Of Detail Control</option>
+          <option value="locale-switching.html">Locale Switching</option>
+          <option value="locate-the-user.html">Locate The User</option>
+          <option value="measure-distances.html">Measure Distances</option>
+          <option value="navigate-the-map-with-game-like-controls.html">Navigate The Map With Game Like Controls</option>
+          <option value="offset-the-vanishing-point-using-padding.html">Offset The Vanishing Point Using Padding</option>
+          <option value="pmtiles-source-and-protocol.html">PMTiles Source And Protocol</option>
+          <option value="render-world-copies.html">Render World Copies</option>
+          <option value="restrict-map-panning-to-an-area.html">Restrict Map Panning To An Area</option>
+          <option value="select-features-with-a-boxzoomend-callback.html">Select Features With A Boxzoomend Callback</option>
+          <option value="set-center-point-above-ground.html">Set Center Point Above Ground</option>
+          <option value="set-pitch-and-bearing.html">Set Pitch And Bearing</option>
+          <option value="show-polygon-information-on-click.html">Show Polygon Information On Click</option>
+          <option value="sky-fog-terrain.html">Sky Fog Terrain</option>
+          <option value="slowly-fly-to-a-location.html">Slowly Fly To A Location</option>
+          <option value="style-labels-with-local-fonts.html">Style Labels With Local Fonts</option>
+          <option value="style-labels-with-web-fonts.html">Style Labels With Web Fonts</option>
+          <option value="style-lines-with-a-data-driven-property.html">Style Lines With A Data Driven Property</option>
+          <option value="sync-movement-of-multiple-maps.html">Sync Movement Of Multiple Maps</option>
+          <option value="toggle-deckgl-layer.html">Toggle Deck.gl Layer</option>
+          <option value="toggle-interactions.html">Toggle Interactions</option>
+          <option value="update-a-feature-in-realtime.html">Update A Feature In Realtime</option>
+          <option value="update-geojson-polygons.html">Update GeoJSON Polygons</option>
+          <option value="use-a-fallback-image.html">Use A Fallback Image</option>
+          <option value="use-addprotocol-to-transform-feature-properties.html">Use Addprotocol To Transform Feature Properties</option>
+          <option value="use-locally-generated-ideographs.html">Use Locally Generated Ideographs</option>
+          <option value="variable-label-placement.html">Variable Label Placement</option>
+          <option value="variable-label-placement-with-offset.html">Variable Label Placement With Offset</option>
+          <option value="view-a-fullscreen-map.html">View A Fullscreen Map</option>
+          <option value="view-local-geojson.html">View Local GeoJSON</option>
+          <option value="view-local-geojson-experimental.html">View Local GeoJSON Experimental</option>
+          <option value="visualize-population-density.html">Visualize Population Density</option>
+          <option value="zoom-and-planet-size-relation-on-globe.html">Zoom And Planet Size Relation On Globe</option>
+      </select>
+    </div>
+
+    <div class="header-right">
+      <div class="view-mode-buttons">
+        <button class="mode-btn active" onclick="setViewMode('split')" id="btn-split">50/50</button>
+        <button class="mode-btn" onclick="setViewMode('code-focus')" id="btn-code">Code</button>
+        <button class="mode-btn" onclick="setViewMode('map-focus')" id="btn-map">Maps</button>
+      </div>
+      <a href="create-a-draggable-marker.html" class="nav-btn" title="Previous: Create A Draggable Marker">← Prev</a>
+      <a href="create-a-gradient-line-using-an-expression.html" class="nav-btn" title="Next: Create A Gradient Line Using An Expression">Next →</a>
+    </div>
+  </header>
+
+  <!-- Side-by-Side 2x2 Workspace -->
+  <main class="workspace" id="workspace">
+
+    <!-- LEFT COLUMN: Original MapLibre GL JS -->
+    <section class="comparison-column" id="left-column">
+      
+      <!-- Top Left: Native JavaScript Code -->
+      <div class="pane pane-top" id="left-top-pane">
+        <div class="pane-header">
+          <div class="pane-title">
+            <span class="pane-icon">📜</span>
+            <span>Native MapLibre GL JS (JavaScript)</span>
+          </div>
+          <div class="pane-actions">
+            <a href="https://maplibre.org/maplibre-gl-js/docs/examples/./create-a-draggable-point/" target="_blank" rel="noopener" class="pane-btn" title="View official MapLibre documentation">Docs ↗</a>
+            <button class="pane-btn" onclick="copyCode('js-code-block')">Copy JS</button>
+          </div>
+        </div>
+        <div class="code-viewport">
+          <pre class="line-numbers"><code class="language-javascript" id="js-code-block">const coordinates = document.getElementById(&#x27;coordinates&#x27;);
+const map = new maplibregl.Map({
+    container: &#x27;map&#x27;,
+    style: &#x27;https://demotiles.maplibre.org/style.json&#x27;,
+    center: [0, 0],
+    zoom: 2
+});
+
+const canvas = map.getCanvasContainer();
+
+const geojson = {
+    &#x27;type&#x27;: &#x27;FeatureCollection&#x27;,
+    &#x27;features&#x27;: [
+        {
+            &#x27;type&#x27;: &#x27;Feature&#x27;,
+            &#x27;geometry&#x27;: {
+                &#x27;type&#x27;: &#x27;Point&#x27;,
+                &#x27;coordinates&#x27;: [0, 0]
+            }
+        }
+    ]
+};
+
+function onMove(e) {
+    const coords = e.lngLat;
+
+    // Set a UI indicator for dragging.
+    canvas.style.cursor = &#x27;grabbing&#x27;;
+
+    // Update the Point feature in `geojson` coordinates
+    // and call setData to the source layer `point` on it.
+    geojson.features[0].geometry.coordinates = [coords.lng, coords.lat];
+    map.getSource(&#x27;point&#x27;).setData(geojson);
+}
+
+function onUp(e) {
+    const coords = e.lngLat;
+
+    // Print the coordinates of where the point had
+    // finished being dragged to on the map.
+    coordinates.style.display = &#x27;block&#x27;;
+    coordinates.innerHTML =
+        `Longitude: ${coords.lng}&lt;br /&gt;Latitude: ${coords.lat}`;
+    canvas.style.cursor = &#x27;&#x27;;
+
+    // Unbind mouse/touch events
+    map.off(&#x27;mousemove&#x27;, onMove);
+    map.off(&#x27;touchmove&#x27;, onMove);
+}
+
+map.on(&#x27;load&#x27;, () =&gt; {
+    // Add a single point to the map
+    map.addSource(&#x27;point&#x27;, {
+        &#x27;type&#x27;: &#x27;geojson&#x27;,
+        &#x27;data&#x27;: geojson
+    });
+
+    map.addLayer({
+        &#x27;id&#x27;: &#x27;point&#x27;,
+        &#x27;type&#x27;: &#x27;circle&#x27;,
+        &#x27;source&#x27;: &#x27;point&#x27;,
+        &#x27;paint&#x27;: {
+            &#x27;circle-radius&#x27;: 10,
+            &#x27;circle-color&#x27;: &#x27;#3887be&#x27;
+        }
+    });
+
+    // When the cursor enters a feature in the point layer, prepare for dragging.
+    map.on(&#x27;mouseenter&#x27;, &#x27;point&#x27;, () =&gt; {
+        map.setPaintProperty(&#x27;point&#x27;, &#x27;circle-color&#x27;, &#x27;#3bb2d0&#x27;);
+        canvas.style.cursor = &#x27;move&#x27;;
+    });
+
+    map.on(&#x27;mouseleave&#x27;, &#x27;point&#x27;, () =&gt; {
+        map.setPaintProperty(&#x27;point&#x27;, &#x27;circle-color&#x27;, &#x27;#3887be&#x27;);
+        canvas.style.cursor = &#x27;&#x27;;
+    });
+
+    map.on(&#x27;mousedown&#x27;, &#x27;point&#x27;, (e) =&gt; {
+        // Prevent the default map drag behavior.
+        e.preventDefault();
+
+        canvas.style.cursor = &#x27;grab&#x27;;
+
+        map.on(&#x27;mousemove&#x27;, onMove);
+        map.once(&#x27;mouseup&#x27;, onUp);
+    });
+
+    map.on(&#x27;touchstart&#x27;, &#x27;point&#x27;, (e) =&gt; {
+        if (e.points.length !== 1) return;
+
+        // Prevent the default map drag behavior.
+        e.preventDefault();
+
+        map.on(&#x27;touchmove&#x27;, onMove);
+        map.once(&#x27;touchend&#x27;, onUp);
+    });
+});</code></pre>
+        </div>
+      </div>
+
+      <!-- Bottom Left: Original Reference Map -->
+      <div class="pane pane-bottom" id="left-bottom-pane">
+        <div class="pane-header">
+          <div class="pane-title">
+            <span class="pane-icon">🗺️</span>
+            <span>Original Reference Map</span>
+          </div>
+          <div class="pane-actions">
+            <a href="https://maplibre.org/maplibre-gl-js/docs/examples/create-a-draggable-point.html" target="_blank" rel="noopener" class="pane-btn" title="Open original standalone example">Open Standalone ↗</a>
+            <button class="pane-btn" onclick="reloadIframe('left-map-frame')">Reload ⟳</button>
+          </div>
+        </div>
+        <div class="map-viewport">
+          <iframe id="left-map-frame" src="https://maplibre.org/maplibre-gl-js/docs/examples/create-a-draggable-point.html" title="Original MapLibre Example"></iframe>
+        </div>
+      </div>
+
+    </section>
+
+    <!-- RIGHT COLUMN: MapLibreum Reproduced (Python) -->
+    <section class="comparison-column" id="right-column">
+
+      <!-- Top Right: Python Implementation Code -->
+      <div class="pane pane-top" id="right-top-pane">
+        <div class="pane-header">
+          <div class="pane-title">
+            <span class="pane-icon">🐍</span>
+            <span>MapLibreum (Python)</span>
+            <span class="code-path-badge" title="Source script">tests/test_examples/test_create_a_draggable_point.py</span>
+          </div>
+          <div class="pane-actions">
+            <button class="pane-btn" onclick="copyCode('py-code-block')">Copy Python</button>
+          </div>
+        </div>
+        <div class="code-viewport" id="py-code-block">
+          <pre class="line-numbers"><code class="language-python">&quot;&quot;&quot;Parity test for the create-a-draggable-point MapLibre example.&quot;&quot;&quot;
+
+from __future__ import annotations
+
+import json
+import textwrap
+
+from maplibreum.core import Map
+
+
+def test_create_a_draggable_point() -&gt; None:
+    &quot;&quot;&quot;Allow a circle feature to be dragged while updating its coordinates display.&quot;&quot;&quot;
+
+    geojson = {
+        &quot;type&quot;: &quot;FeatureCollection&quot;,
+        &quot;features&quot;: [
+            {
+                &quot;type&quot;: &quot;Feature&quot;,
+                &quot;geometry&quot;: {&quot;type&quot;: &quot;Point&quot;, &quot;coordinates&quot;: [0, 0]},
+            }
+        ],
+    }
+
+    map_instance = Map(
+        map_style=&quot;https://demotiles.maplibre.org/style.json&quot;,
+        center=[0, 0],
+        zoom=2,
+    )
+
+    map_instance.custom_css = textwrap.dedent(
+        &quot;&quot;&quot;
+        .maplibreum-draggable-coordinates {
+            background: rgba(0, 0, 0, 0.5);
+            color: #fff;
+            position: absolute;
+            bottom: 40px;
+            left: 10px;
+            padding: 5px 10px;
+            margin: 0;
+            font-size: 11px;
+            line-height: 18px;
+            border-radius: 3px;
+            display: none;
+        }
+        &quot;&quot;&quot;
+    ).strip()
+
+    map_instance.add_source(&quot;point&quot;, {&quot;type&quot;: &quot;geojson&quot;, &quot;data&quot;: geojson})
+    map_instance.add_circle_layer(
+        &quot;point&quot;,
+        &quot;point&quot;,
+        paint={&quot;circle-radius&quot;: 10, &quot;circle-color&quot;: &quot;#3887be&quot;},
+    )
+
+    map_instance.make_draggable(source_id=&quot;point&quot;, layer_id=&quot;point&quot;, geojson_data=geojson)
+
+    source_lookup = {source[&quot;name&quot;]: source[&quot;definition&quot;] for source in map_instance.sources}
+    assert &quot;point&quot; in source_lookup
+    assert source_lookup[&quot;point&quot;][&quot;type&quot;] == &quot;geojson&quot;
+    assert source_lookup[&quot;point&quot;][&quot;data&quot;] == geojson
+
+    layer_definition = next(layer for layer in map_instance.layers if layer[&quot;id&quot;] == &quot;point&quot;)
+    assert layer_definition[&quot;definition&quot;][&quot;type&quot;] == &quot;circle&quot;
+    assert layer_definition[&quot;definition&quot;][&quot;paint&quot;][&quot;circle-radius&quot;] == 10
+    assert layer_definition[&quot;definition&quot;][&quot;paint&quot;][&quot;circle-color&quot;] == &quot;#3887be&quot;
+
+    events = {binding.id: binding for binding in map_instance.event_bindings}
+    assert &quot;mouseenter@point&quot; in events
+    assert &quot;mouseleave@point&quot; in events
+    assert &quot;mousedown@point&quot; in events
+    assert &quot;touchstart@point&quot; in events
+    assert &quot;mousemove&quot; in events
+    assert &quot;touchmove&quot; in events
+    assert &quot;mouseup&quot; in events
+    assert &quot;touchend&quot; in events
+
+    assert &quot;setPaintProperty&quot; in events[&quot;mouseenter@point&quot;].js
+    assert &quot;details.active&quot; in events[&quot;mousedown@point&quot;].js
+    assert &quot;dragSource.setData&quot; in events[&quot;mousemove&quot;].js
+    assert &quot;details.element.style.display = &#x27;block&#x27;&quot; in events[&quot;mouseup&quot;].js
+
+    html = map_instance.render()
+    assert &quot;maplibreum-draggable-coordinates&quot; in html
+    assert &quot;window._maplibreumDragDetails_point_point&quot; in html
+    assert &quot;Longitude:&quot; in html</code></pre>
+        </div>
+      </div>
+
+      <!-- Bottom Right: MapLibreum Reproduced Map -->
+      <div class="pane pane-bottom" id="right-bottom-pane">
+        <div class="pane-header">
+          <div class="pane-title">
+            <span class="pane-icon">⚡</span>
+            <span>MapLibreum Generated Map</span>
+          </div>
+          <div class="pane-actions">
+            <a href="../reproduced_pages/create-a-draggable-point.html" target="_blank" rel="noopener" class="pane-btn" title="Open MapLibreum output in new tab">Open Standalone ↗</a>
+            <button class="pane-btn" onclick="reloadIframe('right-map-frame')">Reload ⟳</button>
+          </div>
+        </div>
+        <div class="map-viewport">
+          <iframe id="right-map-frame" src="../reproduced_pages/create-a-draggable-point.html" title="Reproduced MapLibreum Map"></iframe>
+        </div>
+      </div>
+
+    </section>
+
+  </main>
+
+  <div id="toast">Copied to clipboard!</div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-python.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/line-numbers/prism-line-numbers.min.js"></script>
+  <script>
+    function copyCode(containerId) {
+      const el = document.getElementById(containerId);
+      if (!el) return;
+      const code = el.innerText;
+      navigator.clipboard.writeText(code).then(() => {
+        showToast('Code copied to clipboard!');
+      }).catch(() => {
+        showToast('Failed to copy');
+      });
+    }
+
+    function reloadIframe(iframeId) {
+      const frame = document.getElementById(iframeId);
+      if (frame && frame.src) {
+        frame.src = frame.src;
+        showToast('Map reloaded');
+      }
+    }
+
+    function showToast(msg) {
+      const toast = document.getElementById('toast');
+      toast.textContent = msg;
+      toast.classList.add('show');
+      setTimeout(() => {
+        toast.classList.remove('show');
+      }, 2000);
+    }
+
+    function setViewMode(mode) {
+      document.querySelectorAll('.mode-btn').forEach(btn => btn.classList.remove('active'));
+      const leftCol = document.getElementById('left-column');
+      const rightCol = document.getElementById('right-column');
+
+      if (mode === 'split') {
+        document.getElementById('btn-split').classList.add('active');
+        leftCol.style.gridTemplateRows = '1fr 1fr';
+        rightCol.style.gridTemplateRows = '1fr 1fr';
+      } else if (mode === 'code-focus') {
+        document.getElementById('btn-code').classList.add('active');
+        leftCol.style.gridTemplateRows = '3fr 1fr';
+        rightCol.style.gridTemplateRows = '3fr 1fr';
+      } else if (mode === 'map-focus') {
+        document.getElementById('btn-map').classList.add('active');
+        leftCol.style.gridTemplateRows = '1fr 3fr';
+        rightCol.style.gridTemplateRows = '1fr 3fr';
+      }
+    }
+  </script>
+</body>
+</html>

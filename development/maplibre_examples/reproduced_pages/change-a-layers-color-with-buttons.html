@@ -54,6 +54,11 @@
     </style>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/dompurify/3.0.6/purify.min.js"></script>
+    <!-- Optional control libraries must load before map initialization. -->
+
+
+
+
 </head>
 <body>
 <div class="maplibreum-example-banner">
@@ -253,6 +258,17 @@
                 return Promise.resolve(undefined);
             }
 
+            _getViewState() {
+                const center = this.map.getCenter();
+                return {
+                    longitude: center.lng,
+                    latitude: center.lat,
+                    zoom: this.map.getZoom(),
+                    bearing: this.map.getBearing(),
+                    pitch: this.map.getPitch(),
+                };
+            }
+
             _buildProps(config, data) {
                 const jsonProps = (config.props && config.props.json) || {};
                 const props = { data };
@@ -290,7 +306,7 @@
                                     customLayer.__deck = new deck.Deck({
                                         gl,
                                         map,
-                                        initialViewState: map.getFreeCameraOptions(),
+                                        initialViewState: this._getViewState(),
                                         layers: [new deck[config.layerType](layerProps)],
                                     });
                                 } catch (error) {
@@ -308,9 +324,11 @@
                             });
                     },
                     render: () => {
-                        if (customLayer.__deck && this.map.getFreeCameraOptions) {
-                            const viewState = this.map.getFreeCameraOptions();
-                            customLayer.__deck.setProps({ viewState });
+                        if (customLayer.__deck) {
+                            customLayer.__deck.setProps({
+                                viewState: this._getViewState(),
+                            });
+                            customLayer.__deck.redraw();
                         }
                     },
                     onRemove: () => {
@@ -539,11 +557,6 @@ map.on('load', function() {
             }
         }
     </script>
-
-    <!-- Load additional libraries with fallbacks -->
-
-
-
 
 </body>
 

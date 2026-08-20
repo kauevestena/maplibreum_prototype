@@ -1,0 +1,3018 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>MapLibre GL JS vs MapLibreum Parity Suite</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg-dark: #0b0f19;
+      --bg-surface: #131b2e;
+      --bg-card: #1e293b;
+      --bg-card-hover: #273549;
+      --border-color: #334155;
+      --border-focus: #38bdf8;
+      --text-main: #f8fafc;
+      --text-muted: #94a3b8;
+      --accent-blue: #38bdf8;
+      --accent-green: #4ade80;
+      --accent-amber: #fbbf24;
+      --accent-purple: #c084fc;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: var(--bg-dark);
+      color: var(--text-main);
+      min-height: 100vh;
+      padding-bottom: 60px;
+    }
+
+    /* Hero Banner */
+    .hero {
+      background: linear-gradient(180deg, #131b2e 0%, #0b0f19 100%);
+      border-bottom: 1px solid var(--border-color);
+      padding: 48px 24px 36px;
+      text-align: center;
+    }
+
+    .hero-container {
+      max-width: 1000px;
+      margin: 0 auto;
+    }
+
+    .hero-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 4px 12px;
+      background: rgba(56, 189, 248, 0.15);
+      color: var(--accent-blue);
+      border: 1px solid rgba(56, 189, 248, 0.3);
+      border-radius: 9999px;
+      font-size: 12px;
+      font-weight: 600;
+      margin-bottom: 16px;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .hero-title {
+      font-size: 32px;
+      font-weight: 800;
+      color: #fff;
+      margin-bottom: 12px;
+      letter-spacing: -0.02em;
+    }
+
+    .hero-subtitle {
+      font-size: 16px;
+      color: var(--text-muted);
+      max-width: 680px;
+      margin: 0 auto 32px;
+      line-height: 1.6;
+    }
+
+    /* Metrics Grid */
+    .metrics-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 16px;
+      max-width: 800px;
+      margin: 0 auto 28px;
+    }
+
+    .metric-card {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-color);
+      padding: 16px 20px;
+      border-radius: 10px;
+      text-align: left;
+    }
+
+    .metric-label {
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      margin-bottom: 6px;
+      letter-spacing: 0.03em;
+    }
+
+    .metric-value {
+      font-size: 26px;
+      font-weight: 800;
+      color: #fff;
+      display: flex;
+      align-items: baseline;
+      gap: 6px;
+    }
+
+    .metric-value.success {
+      color: var(--accent-green);
+    }
+
+    .metric-value.warning {
+      color: var(--accent-amber);
+    }
+
+    /* Progress Bar */
+    .progress-bar-container {
+      max-width: 800px;
+      margin: 0 auto;
+      background: var(--bg-surface);
+      border: 1px solid var(--border-color);
+      border-radius: 9999px;
+      height: 12px;
+      overflow: hidden;
+      padding: 2px;
+    }
+
+    .progress-bar-fill {
+      background: linear-gradient(90deg, #38bdf8 0%, #4ade80 100%);
+      height: 100%;
+      border-radius: 9999px;
+      transition: width 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    /* Controls & Filter Bar */
+    .filter-section {
+      max-width: 1200px;
+      margin: 32px auto 24px;
+      padding: 0 24px;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+    }
+
+    .search-box {
+      flex: 1;
+      min-width: 280px;
+      position: relative;
+    }
+
+    .search-input {
+      width: 100%;
+      background: var(--bg-surface);
+      border: 1px solid var(--border-color);
+      color: var(--text-main);
+      padding: 10px 16px 10px 40px;
+      border-radius: 8px;
+      font-size: 14px;
+      outline: none;
+      transition: all 0.2s;
+    }
+
+    .search-input:focus {
+      border-color: var(--border-focus);
+      box-shadow: 0 0 0 3px rgba(56, 189, 248, 0.2);
+    }
+
+    .search-icon {
+      position: absolute;
+      left: 14px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--text-muted);
+      font-size: 14px;
+    }
+
+    .filter-tabs {
+      display: flex;
+      gap: 8px;
+      background: var(--bg-surface);
+      padding: 4px;
+      border-radius: 8px;
+      border: 1px solid var(--border-color);
+    }
+
+    .filter-tab {
+      background: transparent;
+      border: none;
+      color: var(--text-muted);
+      padding: 6px 14px;
+      border-radius: 6px;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .filter-tab.active, .filter-tab:hover {
+      background: var(--bg-card);
+      color: #fff;
+    }
+
+    /* Examples Grid */
+    .gallery-container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 24px;
+    }
+
+    .examples-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(360px, 1fr));
+      gap: 20px;
+    }
+
+    .example-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: 10px;
+      padding: 18px 20px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      transition: all 0.2s ease;
+    }
+
+    .example-card:hover {
+      background: var(--bg-card-hover);
+      border-color: #475569;
+      transform: translateY(-2px);
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+    }
+
+    .card-header {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 10px;
+    }
+
+    .card-title {
+      font-size: 15px;
+      font-weight: 700;
+      line-height: 1.3;
+    }
+
+    .card-title a {
+      color: #fff;
+      text-decoration: none;
+      transition: color 0.15s;
+    }
+
+    .card-title a:hover {
+      color: var(--accent-blue);
+    }
+
+    .card-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      padding: 3px 8px;
+      border-radius: 9999px;
+      font-size: 10.5px;
+      font-weight: 600;
+      white-space: nowrap;
+    }
+
+    .badge-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+    }
+
+    .badge-success {
+      background: rgba(74, 222, 128, 0.15);
+      color: var(--accent-green);
+      border: 1px solid rgba(74, 222, 128, 0.3);
+    }
+    .badge-success .badge-dot {
+      background: var(--accent-green);
+    }
+
+    .badge-warning {
+      background: rgba(251, 191, 36, 0.15);
+      color: var(--accent-amber);
+      border: 1px solid rgba(251, 191, 36, 0.3);
+    }
+    .badge-warning .badge-dot {
+      background: var(--accent-amber);
+    }
+
+    .card-meta {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 11.5px;
+      color: var(--text-muted);
+      margin-bottom: 10px;
+    }
+
+    .meta-slug code {
+      font-family: 'Fira Code', monospace;
+      color: var(--accent-blue);
+      background: rgba(56, 189, 248, 0.08);
+      padding: 2px 5px;
+      border-radius: 4px;
+    }
+
+    .card-script {
+      font-size: 11px;
+      color: var(--text-muted);
+      margin-bottom: 16px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .card-script code {
+      font-family: 'Fira Code', monospace;
+      color: #cbd5e1;
+    }
+
+    .card-actions {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding-top: 12px;
+      border-top: 1px solid rgba(255, 255, 255, 0.06);
+    }
+
+    .action-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 6px 12px;
+      border-radius: 6px;
+      font-size: 12px;
+      font-weight: 600;
+      text-decoration: none;
+      transition: all 0.15s;
+    }
+
+    .action-btn.primary {
+      flex: 1;
+      background: var(--accent-blue);
+      color: #0f172a;
+    }
+
+    .action-btn.primary:hover {
+      background: #7dd3fc;
+      transform: translateY(-1px);
+    }
+
+    .action-btn.secondary {
+      background: var(--bg-surface);
+      color: var(--text-muted);
+      border: 1px solid var(--border-color);
+    }
+
+    .action-btn.secondary:hover {
+      background: #334155;
+      color: #fff;
+    }
+
+    .text-muted {
+      color: var(--text-muted);
+    }
+
+    .no-results {
+      grid-column: 1 / -1;
+      text-align: center;
+      padding: 60px 20px;
+      color: var(--text-muted);
+      font-size: 15px;
+      display: none;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Hero Section -->
+  <section class="hero">
+    <div class="hero-container">
+      <div class="hero-badge">MapLibre GL JS Parity Suite</div>
+      <h1 class="hero-title">Side-by-Side Example Comparison</h1>
+      <p class="hero-subtitle">
+        Visual parity testing and interactive code viewer comparing upstream MapLibre GL JS examples with their native Python MapLibreum implementations.
+      </p>
+
+      <div class="metrics-grid">
+        <div class="metric-card">
+          <div class="metric-label">Total Examples</div>
+          <div class="metric-value">133</div>
+        </div>
+        <div class="metric-card">
+          <div class="metric-label">Implemented in Python</div>
+          <div class="metric-value success">120</div>
+        </div>
+        <div class="metric-card">
+          <div class="metric-label">Parity Coverage</div>
+          <div class="metric-value success">90.2%</div>
+        </div>
+        <div class="metric-card">
+          <div class="metric-label">Pending Port</div>
+          <div class="metric-value warning">13</div>
+        </div>
+      </div>
+
+      <div class="progress-bar-container" title="90.2% Coverage">
+        <div class="progress-bar-fill" style="width: 90.2%;"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Filter & Search Controls -->
+  <section class="filter-section">
+    <div class="search-box">
+      <span class="search-icon">🔍</span>
+      <input type="text" id="searchInput" class="search-input" placeholder="Search examples by name or slug..." oninput="filterExamples()" />
+    </div>
+
+    <div class="filter-tabs">
+      <button class="filter-tab active" onclick="setFilter('all', this)">All (133)</button>
+      <button class="filter-tab" onclick="setFilter('implemented', this)">Implemented (120)</button>
+      <button class="filter-tab" onclick="setFilter('pending', this)">Pending (13)</button>
+    </div>
+  </section>
+
+  <!-- Examples Grid -->
+  <main class="gallery-container">
+    <div class="examples-grid" id="examplesGrid">
+      
+      <div class="example-card implemented" data-slug="3d-terrain" data-title="3d terrain">
+        <div class="card-header">
+          <h3 class="card-title"><a href="3d-terrain.html">3D Terrain</a></h3>
+          <span class="card-badge badge-success"><span class="badge-dot"></span> Implemented</span>
+        </div>
+        <div class="card-meta">
+          <span class="meta-slug"><code>3d-terrain</code></span>
+          <span class="meta-js-size">1670 chars JS</span>
+        </div>
+        <div class="card-script">
+          <code>tests/test_examples/test_3d_terrain.py</code>
+        </div>
+        <div class="card-actions">
+          <a href="3d-terrain.html" class="action-btn primary">Side-by-Side View ↗</a>
+          <a href="https://maplibre.org/maplibre-gl-js/docs/examples/3d-terrain/" target="_blank" rel="noopener" class="action-btn secondary" title="MapLibre Docs">Docs</a>
+          <a href="../reproduced_pages/3d-terrain.html" target="_blank" rel="noopener" class="action-btn secondary" title="Direct Reproduced Map">Map</a>
+        </div>
+      </div>
+
+      <div class="example-card pending" data-slug="add-3d-tiles-using-threejs" data-title="add 3d tiles using three.js">
+        <div class="card-header">
+          <h3 class="card-title"><a href="add-3d-tiles-using-threejs.html">Add 3D Tiles Using Three.js</a></h3>
+          <span class="card-badge badge-warning"><span class="badge-dot"></span> Pending</span>
+        </div>
+        <div class="card-meta">
+          <span class="meta-slug"><code>add-3d-tiles-using-threejs</code></span>
+          <span class="meta-js-size">7182 chars JS</span>
+        </div>
+        <div class="card-script">
+          <span class='text-muted'>No test script mapped</span>
+        </div>
+        <div class="card-actions">
+          <a href="add-3d-tiles-using-threejs.html" class="action-btn primary">Side-by-Side View ↗</a>
+          <a href="https://maplibre.org/maplibre-gl-js/docs/examples/add-3d-tiles-using-threejs/" target="_blank" rel="noopener" class="action-btn secondary" title="MapLibre Docs">Docs</a>
+          
+        </div>
+      </div>
+
+      <div class="example-card implemented" data-slug="add-a-3d-model-to-globe-using-threejs" data-title="add a 3d model to globe using three.js">
+        <div class="card-header">
+          <h3 class="card-title"><a href="add-a-3d-model-to-globe-using-threejs.html">Add A 3D Model To Globe Using Three.js</a></h3>
+          <span class="card-badge badge-success"><span class="badge-dot"></span> Implemented</span>
+        </div>
+        <div class="card-meta">
+          <span class="meta-slug"><code>add-a-3d-model-to-globe-using-threejs</code></span>
+          <span class="meta-js-size">3485 chars JS</span>
+        </div>
+        <div class="card-script">
+          <code>tests/test_examples/test_add_a_3d_model_to_globe_using_threejs.py</code>
+        </div>
+        <div class="card-actions">
+          <a href="add-a-3d-model-to-globe-using-threejs.html" class="action-btn primary">Side-by-Side View ↗</a>
+          <a href="https://maplibre.org/maplibre-gl-js/docs/examples/add-a-3d-model-to-globe-using-threejs/" target="_blank" rel="noopener" class="action-btn secondary" title="MapLibre Docs">Docs</a>
+          <a href="../reproduced_pages/add-a-3d-model-to-globe-using-threejs.html" target="_blank" rel="noopener" class="action-btn secondary" title="Direct Reproduced Map">Map</a>
+        </div>
+      </div>
+
+      <div class="example-card implemented" data-slug="add-a-3d-model-using-threejs" data-title="add a 3d model using three.js">
+        <div class="card-header">
+          <h3 class="card-title"><a href="add-a-3d-model-using-threejs.html">Add A 3D Model Using Three.js</a></h3>
+          <span class="card-badge badge-success"><span class="badge-dot"></span> Implemented</span>
+        </div>
+        <div class="card-meta">
+          <span class="meta-slug"><code>add-a-3d-model-using-threejs</code></span>
+          <span class="meta-js-size">4333 chars JS</span>
+        </div>
+        <div class="card-script">
+          <code>tests/test_examples/test_add_a_3d_model_using_threejs.py</code>
+        </div>
+        <div class="card-actions">
+          <a href="add-a-3d-model-using-threejs.html" class="action-btn primary">Side-by-Side View ↗</a>
+          <a href="https://maplibre.org/maplibre-gl-js/docs/examples/add-a-3d-model-using-threejs/" target="_blank" rel="noopener" class="action-btn secondary" title="MapLibre Docs">Docs</a>
+          <a href="../reproduced_pages/add-a-3d-model-using-threejs.html" target="_blank" rel="noopener" class="action-btn secondary" title="Direct Reproduced Map">Map</a>
+        </div>
+      </div>
+
+      <div class="example-card implemented" data-slug="add-a-3d-model-with-babylonjs" data-title="add a 3d model with babylon.js">
+        <div class="card-header">
+          <h3 class="card-title"><a href="add-a-3d-model-with-babylonjs.html">Add A 3D Model With Babylon.js</a></h3>
+          <span class="card-badge badge-success"><span class="badge-dot"></span> Implemented</span>
+        </div>
+        <div class="card-meta">
+          <span class="meta-slug"><code>add-a-3d-model-with-babylonjs</code></span>
+          <span class="meta-js-size">4560 chars JS</span>
+        </div>
+        <div class="card-script">
+          <code>tests/test_examples/test_add_a_3d_model_with_babylonjs.py</code>
+        </div>
+        <div class="card-actions">
+          <a href="add-a-3d-model-with-babylonjs.html" class="action-btn primary">Side-by-Side View ↗</a>
+          <a href="https://maplibre.org/maplibre-gl-js/docs/examples/add-a-3d-model-with-babylonjs/" target="_blank" rel="noopener" class="action-btn secondary" title="MapLibre Docs">Docs</a>
+          <a href="../reproduced_pages/add-a-3d-model-with-babylonjs.html" target="_blank" rel="noopener" class="action-btn secondary" title="Direct Reproduced Map">Map</a>
+        </div>
+      </div>
+
+      <div class="example-card implemented" data-slug="add-a-3d-model-with-shadow-using-threejs" data-title="add a 3d model with shadow using three.js">
+        <div class="card-header">
+          <h3 class="card-title"><a href="add-a-3d-model-with-shadow-using-threejs.html">Add A 3D Model With Shadow Using Three.js</a></h3>
+          <span class="card-badge badge-success"><span class="badge-dot"></span> Implemented</span>
+        </div>
+        <div class="card-meta">
+          <span class="meta-slug"><code>add-a-3d-model-with-shadow-using-threejs</code></span>
+          <span class="meta-js-size">4246 chars JS</span>
+        </div>
+        <div class="card-script">
+          <code>tests/test_examples/test_add_a_3d_model_with_shadow_using_threejs.py</code>
+        </div>
+        <div class="card-actions">
+          <a href="add-a-3d-model-with-shadow-using-threejs.html" class="action-btn primary">Side-by-Side View ↗</a>
+          <a href="https://maplibre.org/maplibre-gl-js/docs/examples/add-a-3d-model-with-shadow-using-threejs/" target="_blank" rel="noopener" class="action-btn secondary" title="MapLibre Docs">Docs</a>
+          <a href="../reproduced_pages/add-a-3d-model-with-shadow-using-threejs.html" target="_blank" rel="noopener" class="action-btn secondary" title="Direct Reproduced Map">Map</a>
+        </div>
+      </div>
+
+      <div class="example-card implemented" data-slug="add-a-canvas-source" data-title="add a canvas source">
+        <div class="card-header">
+          <h3 class="card-title"><a href="add-a-canvas-source.html">Add A Canvas Source</a></h3>
+          <span class="card-badge badge-success"><span class="badge-dot"></span> Implemented</span>
+        </div>
+        <div class="card-meta">
+          <span class="meta-slug"><code>add-a-canvas-source</code></span>
+          <span class="meta-js-size">2239 chars JS</span>
+        </div>
+        <div class="card-script">
+          <code>tests/test_examples/test_add_a_canvas_source.py</code>
+        </div>
+        <div class="card-actions">
+          <a href="add-a-canvas-source.html" class="action-btn primary">Side-by-Side View ↗</a>
+          <a href="https://maplibre.org/maplibre-gl-js/docs/examples/add-a-canvas-source/" target="_blank" rel="noopener" class="action-btn secondary" title="MapLibre Docs">Docs</a>
+          <a href="../reproduced_pages/add-a-canvas-source.html" target="_blank" rel="noopener" class="action-btn secondary" title="Direct Reproduced Map">Map</a>
+        </div>
+      </div>
+
+      <div class="example-card implemented" data-slug="add-a-cog-raster-source" data-title="add a cog raster source">
+        <div class="card-header">
+          <h3 class="card-title"><a href="add-a-cog-raster-source.html">Add A COG Raster Source</a></h3>
+          <span class="card-badge badge-success"><span class="badge-dot"></span> Implemented</span>
+        </div>
+        <div class="card-meta">
+          <span class="meta-slug"><code>add-a-cog-raster-source</code></span>
+          <span class="meta-js-size">551 chars JS</span>
+        </div>
+        <div class="card-script">
+          <code>tests/test_examples/test_add_a_cog_raster_source.py</code>
+        </div>
+        <div class="card-actions">
+          <a href="add-a-cog-raster-source.html" class="action-btn primary">Side-by-Side View ↗</a>
+          <a href="https://maplibre.org/maplibre-gl-js/docs/examples/add-a-cog-raster-source/" target="_blank" rel="noopener" class="action-btn secondary" title="MapLibre Docs">Docs</a>
+          <a href="../reproduced_pages/add-a-cog-raster-source.html" target="_blank" rel="noopener" class="action-btn secondary" title="Direct Reproduced Map">Map</a>
+        </div>
+      </div>
+
+      <div class="example-card implemented" data-slug="add-a-color-relief-layer" data-title="add a color relief layer">
+        <div class="card-header">
+          <h3 class="card-title"><a href="add-a-color-relief-layer.html">Add A Color Relief Layer</a></h3>
+          <span class="card-badge badge-success"><span class="badge-dot"></span> Implemented</span>
+        </div>
+        <div class="card-meta">
+          <span class="meta-slug"><code>add-a-color-relief-layer</code></span>
+          <span class="meta-js-size">1790 chars JS</span>
+        </div>
+        <div class="card-script">
+          <code>tests/test_examples/test_add_a_color_relief_layer.py</code>
+        </div>
+        <div class="card-actions">
+          <a href="add-a-color-relief-layer.html" class="action-btn primary">Side-by-Side View ↗</a>
+          <a href="https://maplibre.org/maplibre-gl-js/docs/examples/add-a-color-relief-layer/" target="_blank" rel="noopener" class="action-btn secondary" title="MapLibre Docs">Docs</a>
+          <a href="../reproduced_pages/add-a-color-relief-layer.html" target="_blank" rel="noopener" class="action-btn secondary" title="Direct Reproduced Map">Map</a>
+        </div>
+      </div>
+
+      <div class="example-card implemented" data-slug="add-a-custom-layer-with-tiles-to-a-globe" data-title="add a custom layer with tiles to a globe">
+        <div class="card-header">
+          <h3 class="card-title"><a href="add-a-custom-layer-with-tiles-to-a-globe.html">Add A Custom Layer With Tiles To A Globe</a></h3>
+          <span class="card-badge badge-success"><span class="badge-dot"></span> Implemented</span>
+        </div>
+        <div class="card-meta">
+          <span class="meta-slug"><code>add-a-custom-layer-with-tiles-to-a-globe</code></span>
+          <span class="meta-js-size">9205 chars JS</span>
+        </div>
+        <div class="card-script">
+          <code>tests/test_examples/test_add_a_custom_layer_with_tiles_to_a_globe.py</code>
+        </div>
+        <div class="card-actions">
+          <a href="add-a-custom-layer-with-tiles-to-a-globe.html" class="action-btn primary">Side-by-Side View ↗</a>
+          <a href="https://maplibre.org/maplibre-gl-js/docs/examples/add-a-custom-layer-with-tiles-to-a-globe/" target="_blank" rel="noopener" class="action-btn secondary" title="MapLibre Docs">Docs</a>
+          <a href="../reproduced_pages/add-a-custom-layer-with-tiles-to-a-globe.html" target="_blank" rel="noopener" class="action-btn secondary" title="Direct Reproduced Map">Map</a>
+        </div>
+      </div>
+
+      <div class="example-card pending" data-slug="add-a-custom-style-layer" data-title="add a custom style layer">
+        <div class="card-header">
+          <h3 class="card-title"><a href="add-a-custom-style-layer.html">Add A Custom Style Layer</a></h3>
+          <span class="card-badge badge-warning"><span class="badge-dot"></span> Pending</span>
+        </div>
+        <div class="card-meta">
+          <span class="meta-slug"><code>add-a-custom-style-layer</code></span>
+          <span class="meta-js-size">3384 chars JS</span>
+        </div>
+        <div class="card-script">
+          <span class='text-muted'>No test script mapped</span>
+        </div>
+        <div class="card-actions">
+          <a href="add-a-custom-style-layer.html" class="action-btn primary">Side-by-Side View ↗</a>
+          <a href="https://maplibre.org/maplibre-gl-js/docs/examples/add-a-custom-style-layer/" target="_blank" rel="noopener" class="action-btn secondary" title="MapLibre Docs">Docs</a>
+          
+        </div>
+      </div>
+
+      <div class="example-card implemented" data-slug="add-a-default-marker" data-title="add a default marker">
+        <div class="card-header">
+          <h3 class="card-title"><a href="add-a-default-marker.html">Add A Default Marker</a></h3>
+          <span class="card-badge badge-success"><span class="badge-dot"></span> Implemented</span>
+        </div>
+        <div class="card-meta">
+          <span class="meta-slug"><code>add-a-default-marker</code></span>
+          <span class="meta-js-size">259 chars JS</span>
+        </div>
+        <div class="card-script">
+          <code>tests/test_examples/test_add_a_default_marker.py</code>
+        </div>
+        <div class="card-actions">
+          <a href="add-a-default-marker.html" class="action-btn primary">Side-by-Side View ↗</a>
+          <a href="https://maplibre.org/maplibre-gl-js/docs/examples/add-a-default-marker/" target="_blank" rel="noopener" class="action-btn secondary" title="MapLibre Docs">Docs</a>
+          <a href="../reproduced_pages/add-a-default-marker.html" target="_blank" rel="noopener" class="action-btn secondary" title="Direct Reproduced Map">Map</a>
+        </div>
+      </div>
+
+      <div class="example-card implemented" data-slug="add-a-generated-icon-to-the-map" data-title="add a generated icon to the map">
+        <div class="card-header">
+          <h3 class="card-title"><a href="add-a-generated-icon-to-the-map.html">Add A Generated Icon To The Map</a></h3>
+          <span class="card-badge badge-success"><span class="badge-dot"></span> Implemented</span>
+        </div>
+        <div class="card-meta">
+          <span class="meta-slug"><code>add-a-generated-icon-to-the-map</code></span>
+          <span class="meta-js-size">1351 chars JS</span>
+        </div>
+        <div class="card-script">
+          <code>tests/test_examples/test_add_a_generated_icon_to_the_map.py</code>
+        </div>
+        <div class="card-actions">
+          <a href="add-a-generated-icon-to-the-map.html" class="action-btn primary">Side-by-Side View ↗</a>
+          <a href="https://maplibre.org/maplibre-gl-js/docs/examples/add-a-generated-icon-to-the-map/" target="_blank" rel="noopener" class="action-btn secondary" title="MapLibre Docs">Docs</a>
+          <a href="../reproduced_pages/add-a-generated-icon-to-the-map.html" target="_blank" rel="noopener" class="action-btn secondary" title="Direct Reproduced Map">Map</a>
+        </div>
+      </div>
+
+      <div class="example-card implemented" data-slug="add-a-geojson-line" data-title="add a geojson line">
+        <div class="card-header">
+          <h3 class="card-title"><a href="add-a-geojson-line.html">Add A GeoJSON Line</a></h3>
+          <span class="card-badge badge-success"><span class="badge-dot"></span> Implemented</span>
+        </div>
+        <div class="card-meta">
+          <span class="meta-slug"><code>add-a-geojson-line</code></span>
+          <span class="meta-js-size">2074 chars JS</span>
+        </div>
+        <div class="card-script">
+          <code>tests/test_examples/test_add_a_geojson_line.py</code>
+        </div>
+        <div class="card-actions">
+          <a href="add-a-geojson-line.html" class="action-btn primary">Side-by-Side View ↗</a>
+          <a href="https://maplibre.org/maplibre-gl-js/docs/examples/add-a-geojson-line/" target="_blank" rel="noopener" class="action-btn secondary" title="MapLibre Docs">Docs</a>
+          <a href="../reproduced_pages/add-a-geojson-line.html" target="_blank" rel="noopener" class="action-btn secondary" title="Direct Reproduced Map">Map</a>
+        </div>
+      </div>
+
+      <div class="example-card implemented" data-slug="add-a-geojson-polygon" data-title="add a geojson polygon">
+        <div class="card-header">
+          <h3 class="card-title"><a href="add-a-geojson-polygon.html">Add A GeoJSON Polygon</a></h3>
+          <span class="card-badge badge-success"><span class="badge-dot"></span> Implemented</span>
+        </div>
+        <div class="card-meta">
+          <span class="meta-slug"><code>add-a-geojson-polygon</code></span>
+          <span class="meta-js-size">1935 chars JS</span>
+        </div>
+        <div class="card-script">
+          <code>tests/test_examples/test_add_a_geojson_polygon.py</code>
+        </div>
+        <div class="card-actions">
+          <a href="add-a-geojson-polygon.html" class="action-btn primary">Side-by-Side View ↗</a>
+          <a href="https://maplibre.org/maplibre-gl-js/docs/examples/add-a-geojson-polygon/" target="_blank" rel="noopener" class="action-btn secondary" title="MapLibre Docs">Docs</a>
+          <a href="../reproduced_pages/add-a-geojson-polygon.html" target="_blank" rel="noopener" class="action-btn secondary" title="Direct Reproduced Map">Map</a>
+        </div>
+      </div>
+
+      <div class="example-card implemented" data-slug="add-a-hillshade-layer" data-title="add a hillshade layer">
+        <div class="card-header">
+          <h3 class="card-title"><a href="add-a-hillshade-layer.html">Add A Hillshade Layer</a></h3>
+          <span class="card-badge badge-success"><span class="badge-dot"></span> Implemented</span>
+        </div>
+        <div class="card-meta">
+          <span class="meta-slug"><code>add-a-hillshade-layer</code></span>
+          <span class="meta-js-size">1005 chars JS</span>
+        </div>
+        <div class="card-script">
+          <code>tests/test_examples/test_add_a_hillshade_layer.py</code>
+        </div>
+        <div class="card-actions">
+          <a href="add-a-hillshade-layer.html" class="action-btn primary">Side-by-Side View ↗</a>
+          <a href="https://maplibre.org/maplibre-gl-js/docs/examples/add-a-hillshade-layer/" target="_blank" rel="noopener" class="action-btn secondary" title="MapLibre Docs">Docs</a>
+          <a href="../reproduced_pages/add-a-hillshade-layer.html" target="_blank" rel="noopener" class="action-btn secondary" title="Direct Reproduced Map">Map</a>
+        </div>
+      </div>
+
+      <div class="example-card implemented" data-slug="add-a-multidirectional-hillshade-layer" data-title="add a multidirectional hillshade layer">
+        <div class="card-header">
+          <h3 class="card-title"><a href="add-a-multidirectional-hillshade-layer.html">Add A Multidirectional Hillshade Layer</a></h3>
+          <span class="card-badge badge-success"><span class="badge-dot"></span> Implemented</span>
+        </div>
+        <div class="card-meta">
+          <span class="meta-slug"><code>add-a-multidirectional-hillshade-layer</code></span>
+          <span class="meta-js-size">1062 chars JS</span>
+        </div>
+        <div class="card-script">
+          <code>tests/test_examples/test_add_a_multidirectional_hillshade_layer.py</code>
+        </div>
+        <div class="card-actions">
+          <a href="add-a-multidirectional-hillshade-layer.html" class="action-btn primary">Side-by-Side View ↗</a>
+          <a href="https://maplibre.org/maplibre-gl-js/docs/examples/add-a-multidirectional-hillshade-layer/" target="_blank" rel="noopener" class="action-btn secondary" title="MapLibre Docs">Docs</a>
+          <a href="../reproduced_pages/add-a-multidirectional-hillshade-layer.html" target="_blank" rel="noopener" class="action-btn secondary" title="Direct Reproduced Map">Map</a>
+        </div>
+      </div>
+
+      <div class="example-card implemented" data-slug="add-a-new-layer-below-labels" data-title="add a new layer below labels">
+        <div class="card-header">
+          <h3 class="card-title"><a href="add-a-new-layer-below-labels.html">Add A New Layer Below Labels</a></h3>
+          <span class="card-badge badge-success"><span class="badge-dot"></span> Implemented</span>
+        </div>
+        <div class="card-meta">
+          <span class="meta-slug"><code>add-a-new-layer-below-labels</code></span>
+          <span class="meta-js-size">1498 chars JS</span>
+        </div>
+        <div class="card-script">
+          <code>tests/test_examples/test_add_a_new_layer_below_labels.py</code>
+        </div>
+        <div class="card-actions">
+          <a href="add-a-new-layer-below-labels.html" class="action-btn primary">Side-by-Side View ↗</a>
+          <a href="https://maplibre.org/maplibre-gl-js/docs/examples/add-a-new-layer-below-labels/" target="_blank" rel="noopener" class="action-btn secondary" title="MapLibre Docs">Docs</a>
+          <a href="../reproduced_pages/add-a-new-layer-below-labels.html" target="_blank" rel="noopener" class="action-btn secondary" title="Direct Reproduced Map">Map</a>
+        </div>
+      </div>
+
+      <div class="example-card implemented" data-slug="add-a-pattern-to-a-polygon" data-title="add a pattern to a polygon">
+        <div class="card-header">
+          <h3 class="card-title"><a href="add-a-pattern-to-a-polygon.html">Add A Pattern To A Polygon</a></h3>
+          <span class="card-badge badge-success"><span class="badge-dot"></span> Implemented</span>
+        </div>
+        <div class="card-meta">
+          <span class="meta-slug"><code>add-a-pattern-to-a-polygon</code></span>
+          <span class="meta-js-size">1133 chars JS</span>
+        </div>
+        <div class="card-script">
+          <code>tests/test_examples/test_add_a_pattern_to_a_polygon.py</code>
+        </div>
+        <div class="card-actions">
+          <a href="add-a-pattern-to-a-polygon.html" class="action-btn primary">Side-by-Side View ↗</a>
+          <a href="https://maplibre.org/maplibre-gl-js/docs/examples/add-a-pattern-to-a-polygon/" target="_blank" rel="noopener" class="action-btn secondary" title="MapLibre Docs">Docs</a>
+          <a href="../reproduced_pages/add-a-pattern-to-a-polygon.html" target="_blank" rel="noopener" class="action-btn secondary" title="Direct Reproduced Map">Map</a>
+        </div>
+      </div>
+
+      <div class="example-card implemented" data-slug="add-a-raster-tile-source" data-title="add a raster tile source">
+        <div class="card-header">
+          <h3 class="card-title"><a href="add-a-raster-tile-source.html">Add A Raster Tile Source</a></h3>
+          <span class="card-badge badge-success"><span class="badge-dot"></span> Implemented</span>
+        </div>
+        <div class="card-meta">
+          <span class="meta-slug"><code>add-a-raster-tile-source</code></span>
+          <span class="meta-js-size">726 chars JS</span>
+        </div>
+        <div class="card-script">
+          <code>tests/test_examples/test_add_a_raster_tile_source.py</code>
+        </div>
+        <div class="card-actions">
+          <a href="add-a-raster-tile-source.html" class="action-btn primary">Side-by-Side View ↗</a>
+          <a href="https://maplibre.org/maplibre-gl-js/docs/examples/add-a-raster-tile-source/" target="_blank" rel="noopener" class="action-btn secondary" title="MapLibre Docs">Docs</a>
+          <a href="../reproduced_pages/add-a-raster-tile-source.html" target="_blank" rel="noopener" class="action-btn secondary" title="Direct Reproduced Map">Map</a>
+        </div>
+      </div>
+
+      <div class="example-card pending" data-slug="add-a-simple-custom-layer-on-a-globe" data-title="add a simple custom layer on a globe">
+        <div class="card-header">
+          <h3 class="card-title"><a href="add-a-simple-custom-layer-on-a-globe.html">Add A Simple Custom Layer On A Globe</a></h3>
+          <span class="card-badge badge-warning"><span class="badge-dot"></span> Pending</span>
+        </div>
+        <div class="card-meta">
+          <span class="meta-slug"><code>add-a-simple-custom-layer-on-a-globe</code></span>
+          <span class="meta-js-size">7728 chars JS</span>
+        </div>
+        <div class="card-script">
+          <span class='text-muted'>No test script mapped</span>
+        </div>
+        <div class="card-actions">
+          <a href="add-a-simple-custom-layer-on-a-globe.html" class="action-btn primary">Side-by-Side View ↗</a>
+          <a href="https://maplibre.org/maplibre-gl-js/docs/examples/add-a-simple-custom-layer-on-a-globe/" target="_blank" rel="noopener" class="action-btn secondary" title="MapLibre Docs">Docs</a>
+          
+        </div>
+      </div>
+
+      <div class="example-card implemented" data-slug="add-a-stretchable-image-to-the-map" data-title="add a stretchable image to the map">
+        <div class="card-header">
+          <h3 class="card-title"><a href="add-a-stretchable-image-to-the-map.html">Add A Stretchable Image To The Map</a></h3>
+          <span class="card-badge badge-success"><span class="badge-dot"></span> Implemented</span>
+        </div>
+        <div class="card-meta">
+          <span class="meta-slug"><code>add-a-stretchable-image-to-the-map</code></span>
+          <span class="meta-js-size">4189 chars JS</span>
+        </div>
+        <div class="card-script">
+          <code>tests/test_examples/test_add_a_stretchable_image_to_the_map.py</code>
+        </div>
+        <div class="card-actions">
+          <a href="add-a-stretchable-image-to-the-map.html" class="action-btn primary">Side-by-Side View ↗</a>
+          <a href="https://maplibre.org/maplibre-gl-js/docs/examples/add-a-stretchable-image-to-the-map/" target="_blank" rel="noopener" class="action-btn secondary" title="MapLibre Docs">Docs</a>
+          <a href="../reproduced_pages/add-a-stretchable-image-to-the-map.html" target="_blank" rel="noopener" class="action-btn secondary" title="Direct Reproduced Map">Map</a>
+        </div>
+      </div>
+
+      <div class="example-card implemented" data-slug="add-a-vector-tile-source" data-title="add a vector tile source">
+        <div class="card-header">
+          <h3 class="card-title"><a href="add-a-vector-tile-source.html">Add A Vector Tile Source</a></h3>
+          <span class="card-badge badge-success"><span class="badge-dot"></span> Implemented</span>
+        </div>
+        <div class="card-meta">
+          <span class="meta-slug"><code>add-a-vector-tile-source</code></span>
+          <span class="meta-js-size">1082 chars JS</span>
+        </div>
+        <div class="card-script">
+          <code>tests/test_examples/test_add_a_vector_tile_source.py</code>
+        </div>
+        <div class="card-actions">
+          <a href="add-a-vector-tile-source.html" class="action-btn primary">Side-by-Side View ↗</a>
+          <a href="https://maplibre.org/maplibre-gl-js/docs/examples/add-a-vector-tile-source/" target="_blank" rel="noopener" class="action-btn secondary" title="MapLibre Docs">Docs</a>
+          <a href="../reproduced_pages/add-a-vector-tile-source.html" target="_blank" rel="noopener" class="action-btn secondary" title="Direct Reproduced Map">Map</a>
+        </div>
+      </div>
+
+      <div class="example-card implemented" data-slug="add-a-video" data-title="add a video">
+        <div class="card-header">
+          <h3 class="card-title"><a href="add-a-video.html">Add A Video</a></h3>
+          <span class="card-badge badge-success"><span class="badge-dot"></span> Implemented</span>
+        </div>
+        <div class="card-meta">
+          <span class="meta-slug"><code>add-a-video</code></span>
+          <span class="meta-js-size">1562 chars JS</span>
+        </div>
+        <div class="card-script">
+          <code>tests/test_examples/test_add_a_video.py</code>
+        </div>
+        <div class="card-actions">
+          <a href="add-a-video.html" class="action-btn primary">Side-by-Side View ↗</a>
+          <a href="https://maplibre.org/maplibre-gl-js/docs/examples/add-a-video/" target="_blank" rel="noopener" class="action-btn secondary" title="MapLibre Docs">Docs</a>
+          <a href="../reproduced_pages/add-a-video.html" target="_blank" rel="noopener" class="action-btn secondary" title="Direct Reproduced Map">Map</a>
+        </div>
+      </div>
+
+      <div class="example-card implemented" data-slug="add-a-wms-source" data-title="add a wms source">
+        <div class="card-header">
+          <h3 class="card-title"><a href="add-a-wms-source.html">Add A WMS Source</a></h3>
+          <span class="card-badge badge-success"><span class="badge-dot"></span> Implemented</span>
+        </div>
+        <div class="card-meta">
+          <span class="meta-slug"><code>add-a-wms-source</code></span>
+          <span class="meta-js-size">894 chars JS</span>
+        </div>
+        <div class="card-script">
+          <code>tests/test_examples/test_add_a_wms_source.py</code>
+        </div>
+        <div class="card-actions">
+          <a href="add-a-wms-source.html" class="action-btn primary">Side-by-Side View ↗</a>
+          <a href="https://maplibre.org/maplibre-gl-js/docs/examples/add-a-wms-source/" target="_blank" rel="noopener" class="action-btn secondary" title="MapLibre Docs">Docs</a>
+          <a href="../reproduced_pages/add-a-wms-source.html" target="_blank" rel="noopener" class="action-btn secondary" title="Direct Reproduced Map">Map</a>
+        </div>
+      </div>
+
+      <div class="example-card implemented" data-slug="add-an-animated-icon-to-the-map" data-title="add an animated icon to the map">
+        <div class="card-header">
+          <h3 class="card-title"><a href="add-an-animated-icon-to-the-map.html">Add An Animated Icon To The Map</a></h3>
+          <span class="card-badge badge-success"><span class="badge-dot"></span> Implemented</span>
+        </div>
+        <div class="card-meta">
+          <span class="meta-slug"><code>add-an-animated-icon-to-the-map</code></span>
+          <span class="meta-js-size">2814 chars JS</span>
+        </div>
+        <div class="card-script">
+          <code>tests/test_examples/test_add_an_animated_icon_to_the_map.py</code>
+        </div>
+        <div class="card-actions">
+          <a href="add-an-animated-icon-to-the-map.html" class="action-btn primary">Side-by-Side View ↗</a>
+          <a href="https://maplibre.org/maplibre-gl-js/docs/examples/add-an-animated-icon-to-the-map/" target="_blank" rel="noopener" class="action-btn secondary" title="MapLibre Docs">Docs</a>
+          <a href="../reproduced_pages/add-an-animated-icon-to-the-map.html" target="_blank" rel="noopener" class="action-btn secondary" title="Direct Reproduced Map">Map</a>
+        </div>
+      </div>
+
+      <div class="example-card implemented" data-slug="add-an-icon-to-the-map" data-title="add an icon to the map">
+        <div class="card-header">
+          <h3 class="card-title"><a href="add-an-icon-to-the-map.html">Add An Icon To The Map</a></h3>
+          <span class="card-badge badge-success"><span class="badge-dot"></span> Implemented</span>
+        </div>
+        <div class="card-meta">
+          <span class="meta-slug"><code>add-an-icon-to-the-map</code></span>
+          <span class="meta-js-size">876 chars JS</span>
+        </div>
+        <div class="card-script">
+          <code>tests/test_examples/test_add_an_icon_to_the_map.py</code>
+        </div>
+        <div class="card-actions">
+          <a href="add-an-icon-to-the-map.html" class="action-btn primary">Side-by-Side View ↗</a>
+          <a href="https://maplibre.org/maplibre-gl-js/docs/examples/add-an-icon-to-the-map/" target="_blank" rel="noopener" class="action-btn secondary" title="MapLibre Docs">Docs</a>
+          <a href="../reproduced_pages/add-an-icon-to-the-map.html" target="_blank" rel="noopener" class="action-btn secondary" title="Direct Reproduced Map">Map</a>
+        </div>
+      </div>
+
+      <div class="example-card implemented" data-slug="add-contour-lines" data-title="add contour lines">
+        <div class="card-header">
+          <h3 class="card-title"><a href="add-contour-lines.html">Add Contour Lines</a></h3>
+          <span class="card-badge badge-success"><span class="badge-dot"></span> Implemented</span>
+        </div>
+        <div class="card-meta">
+          <span class="meta-slug"><code>add-contour-lines</code></span>
+          <span class="meta-js-size">3247 chars JS</span>
+        </div>
+        <div class="card-script">
+          <code>tests/test_examples/test_add_contour_lines.py</code>
+        </div>
+        <div class="card-actions">
+          <a href="add-contour-lines.html" class="action-btn primary">Side-by-Side View ↗</a>
+          <a href="https://maplibre.org/maplibre-gl-js/docs/examples/add-contour-lines/" target="_blank" rel="noopener" class="action-btn secondary" title="MapLibre Docs">Docs</a>
+          <a href="../reproduced_pages/add-contour-lines.html" target="_blank" rel="noopener" class="action-btn secondary" title="Direct Reproduced Map">Map</a>
+        </div>
+      </div>
+
+      <div class="example-card implemented" data-slug="add-custom-icons-with-markers" data-title="add custom icons with markers">
+        <div class="card-header">
+          <h3 class="card-title"><a href="add-custom-icons-with-markers.html">Add Custom Icons With Markers</a></h3>
+          <span class="card-badge badge-success"><span class="badge-dot"></span> Implemented</span>
+        </div>
+        <div class="card-meta">
+          <span class="meta-slug"><code>add-custom-icons-with-markers</code></span>
+          <span class="meta-js-size">1835 chars JS</span>
+        </div>
+        <div class="card-script">
+          <code>tests/test_examples/test_add_custom_icons_with_markers.py</code>
+        </div>
+        <div class="card-actions">
+          <a href="add-custom-icons-with-markers.html" class="action-btn primary">Side-by-Side View ↗</a>
+          <a href="https://maplibre.org/maplibre-gl-js/docs/examples/add-custom-icons-with-markers/" target="_blank" rel="noopener" class="action-btn secondary" title="MapLibre Docs">Docs</a>
+          <a href="../reproduced_pages/add-custom-icons-with-markers.html" target="_blank" rel="noopener" class="action-btn secondary" title="Direct Reproduced Map">Map</a>
+        </div>
+      </div>
+
+      <div class="example-card implemented" data-slug="add-live-realtime-data" data-title="add live realtime data">
+        <div class="card-header">
+          <h3 class="card-title"><a href="add-live-realtime-data.html">Add Live Realtime Data</a></h3>
+          <span class="card-badge badge-success"><span class="badge-dot"></span> Implemented</span>
+        </div>
+        <div class="card-meta">
+          <span class="meta-slug"><code>add-live-realtime-data</code></span>
+          <span class="meta-js-size">1531 chars JS</span>
+        </div>
+        <div class="card-script">
+          <code>tests/test_examples/test_add_live_realtime_data.py</code>
+        </div>
+        <div class="card-actions">
+          <a href="add-live-realtime-data.html" class="action-btn primary">Side-by-Side View ↗</a>
+          <a href="https://maplibre.org/maplibre-gl-js/docs/examples/add-live-realtime-data/" target="_blank" rel="noopener" class="action-btn secondary" title="MapLibre Docs">Docs</a>
+          <a href="../reproduced_pages/add-live-realtime-data.html" target="_blank" rel="noopener" class="action-btn secondary" title="Direct Reproduced Map">Map</a>
+        </div>
+      </div>
+
+      <div class="example-card implemented" data-slug="add-multiple-geometries-from-one-geojson-source" data-title="add multiple geometries from one geojson source">
+        <div class="card-header">
+          <h3 class="card-title"><a href="add-multiple-geometries-from-one-geojson-source.html">Add Multiple Geometries From One GeoJSON Source</a></h3>
+          <span class="card-badge badge-success"><span class="badge-dot"></span> Implemented</span>
+        </div>
+        <div class="card-meta">
+          <span class="meta-slug"><code>add-multiple-geometries-from-one-geojson-source</code></span>
+          <span class="meta-js-size">2955 chars JS</span>
+        </div>
+        <div class="card-script">
+          <code>tests/test_examples/test_add_multiple_geometries_from_one_geojson_source.py</code>
+        </div>
+        <div class="card-actions">
+          <a href="add-multiple-geometries-from-one-geojson-source.html" class="action-btn primary">Side-by-Side View ↗</a>
+          <a href="https://maplibre.org/maplibre-gl-js/docs/examples/add-multiple-geometries-from-one-geojson-source/" target="_blank" rel="noopener" class="action-btn secondary" title="MapLibre Docs">Docs</a>
+          <a href="../reproduced_pages/add-multiple-geometries-from-one-geojson-source.html" target="_blank" rel="noopener" class="action-btn secondary" title="Direct Reproduced Map">Map</a>
+        </div>
+      </div>
+
+      <div class="example-card implemented" data-slug="add-support-for-right-to-left-scripts" data-title="add support for right to left scripts">
+        <div class="card-header">
+          <h3 class="card-title"><a href="add-support-for-right-to-left-scripts.html">Add Support For Right To Left Scripts</a></h3>
+          <span class="card-badge badge-success"><span class="badge-dot"></span> Implemented</span>
+        </div>
+        <div class="card-meta">
+          <span class="meta-slug"><code>add-support-for-right-to-left-scripts</code></span>
+          <span class="meta-js-size">313 chars JS</span>
+        </div>
+        <div class="card-script">
+          <code>tests/test_examples/test_add_support_for_right_to_left_scripts.py</code>
+        </div>
+        <div class="card-actions">
+          <a href="add-support-for-right-to-left-scripts.html" class="action-btn primary">Side-by-Side View ↗</a>
+          <a href="https://maplibre.org/maplibre-gl-js/docs/examples/add-support-for-right-to-left-scripts/" target="_blank" rel="noopener" class="action-btn secondary" title="MapLibre Docs">Docs</a>
+          <a href="../reproduced_pages/add-support-for-right-to-left-scripts.html" target="_blank" rel="noopener" class="action-btn secondary" title="Direct Reproduced Map">Map</a>
+        </div>
+      </div>
+
+      <div class="example-card implemented" data-slug="adding-3d-models-using-threejs-on-terrain" data-title="adding 3d models using three.js on terrain">
+        <div class="card-header">
+          <h3 class="card-title"><a href="adding-3d-models-using-threejs-on-terrain.html">Adding 3D Models Using Three.js On Terrain</a></h3>
+          <span class="card-badge badge-success"><span class="badge-dot"></span> Implemented</span>
+        </div>
+        <div class="card-meta">
+          <span class="meta-slug"><code>adding-3d-models-using-threejs-on-terrain</code></span>
+          <span class="meta-js-size">7693 chars JS</span>
+        </div>
+        <div class="card-script">
+          <code>tests/test_examples/test_adding_3d_models_using_threejs_on_terrain.py</code>
+        </div>
+        <div class="card-actions">
+          <a href="adding-3d-models-using-threejs-on-terrain.html" class="action-btn primary">Side-by-Side View ↗</a>
+          <a href="https://maplibre.org/maplibre-gl-js/docs/examples/adding-3d-models-using-threejs-on-terrain/" target="_blank" rel="noopener" class="action-btn secondary" title="MapLibre Docs">Docs</a>
+          <a href="../reproduced_pages/adding-3d-models-using-threejs-on-terrain.html" target="_blank" rel="noopener" class="action-btn secondary" title="Direct Reproduced Map">Map</a>
+        </div>
+      </div>
+
+      <div class="example-card implemented" data-slug="animate-a-line" data-title="animate a line">
+        <div class="card-header">
+          <h3 class="card-title"><a href="animate-a-line.html">Animate A Line</a></h3>
+          <span class="card-badge badge-success"><span class="badge-dot"></span> Implemented</span>
+        </div>
+        <div class="card-meta">
+          <span class="meta-slug"><code>animate-a-line</code></span>
+          <span class="meta-js-size">2909 chars JS</span>
+        </div>
+        <div class="card-script">
+          <code>tests/test_examples/test_animate_a_line.py</code>
+        </div>
+        <div class="card-actions">
+          <a href="animate-a-line.html" class="action-btn primary">Side-by-Side View ↗</a>
+          <a href="https://maplibre.org/maplibre-gl-js/docs/examples/animate-a-line/" target="_blank" rel="noopener" class="action-btn secondary" title="MapLibre Docs">Docs</a>
+          <a href="../reproduced_pages/animate-a-line.html" target="_blank" rel="noopener" class="action-btn secondary" title="Direct Reproduced Map">Map</a>
+        </div>
+      </div>
+
+      <div class="example-card implemented" data-slug="animate-a-marker" data-title="animate a marker">
+        <div class="card-header">
+          <h3 class="card-title"><a href="animate-a-marker.html">Animate A Marker</a></h3>
+          <span class="card-badge badge-success"><span class="badge-dot"></span> Implemented</span>
+        </div>
+        <div class="card-meta">
+          <span class="meta-slug"><code>animate-a-marker</code></span>
+          <span class="meta-js-size">791 chars JS</span>
+        </div>
+        <div class="card-script">
+          <code>tests/test_examples/test_animate_a_marker.py</code>
+        </div>
+        <div class="card-actions">
+          <a href="animate-a-marker.html" class="action-btn primary">Side-by-Side View ↗</a>
+          <a href="https://maplibre.org/maplibre-gl-js/docs/examples/animate-a-marker/" target="_blank" rel="noopener" class="action-btn secondary" title="MapLibre Docs">Docs</a>
+          <a href="../reproduced_pages/animate-a-marker.html" target="_blank" rel="noopener" class="action-btn secondary" title="Direct Reproduced Map">Map</a>
+        </div>
+      </div>
+
+      <div class="example-card implemented" data-slug="animate-a-point" data-title="animate a point">
+        <div class="card-header">
+          <h3 class="card-title"><a href="animate-a-point.html">Animate A Point</a></h3>
+          <span class="card-badge badge-success"><span class="badge-dot"></span> Implemented</span>
+        </div>
+        <div class="card-meta">
+          <span class="meta-slug"><code>animate-a-point</code></span>
+          <span class="meta-js-size">1176 chars JS</span>
+        </div>
+        <div class="card-script">
+          <code>tests/test_examples/test_animate_a_point.py</code>
+        </div>
+        <div class="card-actions">
+          <a href="animate-a-point.html" class="action-btn primary">Side-by-Side View ↗</a>
+          <a href="https://maplibre.org/maplibre-gl-js/docs/examples/animate-a-point/" target="_blank" rel="noopener" class="action-btn secondary" title="MapLibre Docs">Docs</a>
+          <a href="../reproduced_pages/animate-a-point.html" target="_blank" rel="noopener" class="action-btn secondary" title="Direct Reproduced Map">Map</a>
+        </div>
+      </div>
+
+      <div class="example-card implemented" data-slug="animate-a-point-along-a-route" data-title="animate a point along a route">
+        <div class="card-header">
+          <h3 class="card-title"><a href="animate-a-point-along-a-route.html">Animate A Point Along A Route</a></h3>
+          <span class="card-badge badge-success"><span class="badge-dot"></span> Implemented</span>
+        </div>
+        <div class="card-meta">
+          <span class="meta-slug"><code>animate-a-point-along-a-route</code></span>
+          <span class="meta-js-size">4272 chars JS</span>
+        </div>
+        <div class="card-script">
+          <code>tests/test_examples/test_animate_a_point_along_a_route.py</code>
+        </div>
+        <div class="card-actions">
+          <a href="animate-a-point-along-a-route.html" class="action-btn primary">Side-by-Side View ↗</a>
+          <a href="https://maplibre.org/maplibre-gl-js/docs/examples/animate-a-point-along-a-route/" target="_blank" rel="noopener" class="action-btn secondary" title="MapLibre Docs">Docs</a>
+          <a href="../reproduced_pages/animate-a-point-along-a-route.html" target="_blank" rel="noopener" class="action-btn secondary" title="Direct Reproduced Map">Map</a>
+        </div>
+      </div>
+
+      <div class="example-card implemented" data-slug="animate-a-series-of-images" data-title="animate a series of images">
+        <div class="card-header">
+          <h3 class="card-title"><a href="animate-a-series-of-images.html">Animate A Series Of Images</a></h3>
+          <span class="card-badge badge-success"><span class="badge-dot"></span> Implemented</span>
+        </div>
+        <div class="card-meta">
+          <span class="meta-slug"><code>animate-a-series-of-images</code></span>
+          <span class="meta-js-size">985 chars JS</span>
+        </div>
+        <div class="card-script">
+          <code>tests/test_examples/test_animate_a_series_of_images.py</code>
+        </div>
+        <div class="card-actions">
+          <a href="animate-a-series-of-images.html" class="action-btn primary">Side-by-Side View ↗</a>
+          <a href="https://maplibre.org/maplibre-gl-js/docs/examples/animate-a-series-of-images/" target="_blank" rel="noopener" class="action-btn secondary" title="MapLibre Docs">Docs</a>
+          <a href="../reproduced_pages/animate-a-series-of-images.html" target="_blank" rel="noopener" class="action-btn secondary" title="Direct Reproduced Map">Map</a>
+        </div>
+      </div>
+
+      <div class="example-card implemented" data-slug="animate-map-camera-around-a-point" data-title="animate map camera around a point">
+        <div class="card-header">
+          <h3 class="card-title"><a href="animate-map-camera-around-a-point.html">Animate Map Camera Around A Point</a></h3>
+          <span class="card-badge badge-success"><span class="badge-dot"></span> Implemented</span>
+        </div>
+        <div class="card-meta">
+          <span class="meta-slug"><code>animate-map-camera-around-a-point</code></span>
+          <span class="meta-js-size">889 chars JS</span>
+        </div>
+        <div class="card-script">
+          <code>tests/test_examples/test_animate_map_camera_around_a_point.py</code>
+        </div>
+        <div class="card-actions">
+          <a href="animate-map-camera-around-a-point.html" class="action-btn primary">Side-by-Side View ↗</a>
+          <a href="https://maplibre.org/maplibre-gl-js/docs/examples/animate-map-camera-around-a-point/" target="_blank" rel="noopener" class="action-btn secondary" title="MapLibre Docs">Docs</a>
+          <a href="../reproduced_pages/animate-map-camera-around-a-point.html" target="_blank" rel="noopener" class="action-btn secondary" title="Direct Reproduced Map">Map</a>
+        </div>
+      </div>
+
+      <div class="example-card implemented" data-slug="animate-symbol-to-follow-the-mouse" data-title="animate symbol to follow the mouse">
+        <div class="card-header">
+          <h3 class="card-title"><a href="animate-symbol-to-follow-the-mouse.html">Animate Symbol To Follow The Mouse</a></h3>
+          <span class="card-badge badge-success"><span class="badge-dot"></span> Implemented</span>
+        </div>
+        <div class="card-meta">
+          <span class="meta-slug"><code>animate-symbol-to-follow-the-mouse</code></span>
+          <span class="meta-js-size">914 chars JS</span>
+        </div>
+        <div class="card-script">
+          <code>tests/test_examples/test_animate_symbol_to_follow_the_mouse.py</code>
+        </div>
+        <div class="card-actions">
+          <a href="animate-symbol-to-follow-the-mouse.html" class="action-btn primary">Side-by-Side View ↗</a>
+          <a href="https://maplibre.org/maplibre-gl-js/docs/examples/animate-symbol-to-follow-the-mouse/" target="_blank" rel="noopener" class="action-btn secondary" title="MapLibre Docs">Docs</a>
+          <a href="../reproduced_pages/animate-symbol-to-follow-the-mouse.html" target="_blank" rel="noopener" class="action-btn secondary" title="Direct Reproduced Map">Map</a>
+        </div>
+      </div>
+
+      <div class="example-card implemented" data-slug="attach-a-popup-to-a-marker-instance" data-title="attach a popup to a marker instance">
+        <div class="card-header">
+          <h3 class="card-title"><a href="attach-a-popup-to-a-marker-instance.html">Attach A Popup To A Marker Instance</a></h3>
+          <span class="card-badge badge-success"><span class="badge-dot"></span> Implemented</span>
+        </div>
+        <div class="card-meta">
+          <span class="meta-slug"><code>attach-a-popup-to-a-marker-instance</code></span>
+          <span class="meta-js-size">581 chars JS</span>
+        </div>
+        <div class="card-script">
+          <code>tests/test_examples/test_attach_a_popup_to_a_marker_instance.py</code>
+        </div>
+        <div class="card-actions">
+          <a href="attach-a-popup-to-a-marker-instance.html" class="action-btn primary">Side-by-Side View ↗</a>
+          <a href="https://maplibre.org/maplibre-gl-js/docs/examples/attach-a-popup-to-a-marker-instance/" target="_blank" rel="noopener" class="action-btn secondary" title="MapLibre Docs">Docs</a>
+          <a href="../reproduced_pages/attach-a-popup-to-a-marker-instance.html" target="_blank" rel="noopener" class="action-btn secondary" title="Direct Reproduced Map">Map</a>
+        </div>
+      </div>
+
+      <div class="example-card implemented" data-slug="center-the-map-on-a-clicked-symbol" data-title="center the map on a clicked symbol">
+        <div class="card-header">
+          <h3 class="card-title"><a href="center-the-map-on-a-clicked-symbol.html">Center The Map On A Clicked Symbol</a></h3>
+          <span class="card-badge badge-success"><span class="badge-dot"></span> Implemented</span>
+        </div>
+        <div class="card-meta">
+          <span class="meta-slug"><code>center-the-map-on-a-clicked-symbol</code></span>
+          <span class="meta-js-size">2494 chars JS</span>
+        </div>
+        <div class="card-script">
+          <code>tests/test_examples/test_center_the_map_on_a_clicked_symbol.py</code>
+        </div>
+        <div class="card-actions">
+          <a href="center-the-map-on-a-clicked-symbol.html" class="action-btn primary">Side-by-Side View ↗</a>
+          <a href="https://maplibre.org/maplibre-gl-js/docs/examples/center-the-map-on-a-clicked-symbol/" target="_blank" rel="noopener" class="action-btn secondary" title="MapLibre Docs">Docs</a>
+          <a href="../reproduced_pages/center-the-map-on-a-clicked-symbol.html" target="_blank" rel="noopener" class="action-btn secondary" title="Direct Reproduced Map">Map</a>
+        </div>
+      </div>
+
+      <div class="example-card implemented" data-slug="change-a-layers-color-with-buttons" data-title="change a layers color with buttons">
+        <div class="card-header">
+          <h3 class="card-title"><a href="change-a-layers-color-with-buttons.html">Change A Layers Color With Buttons</a></h3>
+          <span class="card-badge badge-success"><span class="badge-dot"></span> Implemented</span>
+        </div>
+        <div class="card-meta">
+          <span class="meta-slug"><code>change-a-layers-color-with-buttons</code></span>
+          <span class="meta-js-size">760 chars JS</span>
+        </div>
+        <div class="card-script">
+          <code>tests/test_examples/test_change_a_layers_color_with_buttons.py</code>
+        </div>
+        <div class="card-actions">
+          <a href="change-a-layers-color-with-buttons.html" class="action-btn primary">Side-by-Side View ↗</a>
+          <a href="https://maplibre.org/maplibre-gl-js/docs/examples/change-a-layers-color-with-buttons/" target="_blank" rel="noopener" class="action-btn secondary" title="MapLibre Docs">Docs</a>
+          <a href="../reproduced_pages/change-a-layers-color-with-buttons.html" target="_blank" rel="noopener" class="action-btn secondary" title="Direct Reproduced Map">Map</a>
+        </div>
+      </div>
+
+      <div class="example-card implemented" data-slug="change-a-maps-language" data-title="change a maps language">
+        <div class="card-header">
+          <h3 class="card-title"><a href="change-a-maps-language.html">Change A Maps Language</a></h3>
+          <span class="card-badge badge-success"><span class="badge-dot"></span> Implemented</span>
+        </div>
+        <div class="card-meta">
+          <span class="meta-slug"><code>change-a-maps-language</code></span>
+          <span class="meta-js-size">914 chars JS</span>
+        </div>
+        <div class="card-script">
+          <code>tests/test_examples/test_change_a_maps_language.py</code>
+        </div>
+        <div class="card-actions">
+          <a href="change-a-maps-language.html" class="action-btn primary">Side-by-Side View ↗</a>
+          <a href="https://maplibre.org/maplibre-gl-js/docs/examples/change-a-maps-language/" target="_blank" rel="noopener" class="action-btn secondary" title="MapLibre Docs">Docs</a>
+          <a href="../reproduced_pages/change-a-maps-language.html" target="_blank" rel="noopener" class="action-btn secondary" title="Direct Reproduced Map">Map</a>
+        </div>
+      </div>
+
+      <div class="example-card implemented" data-slug="change-building-color-based-on-zoom-level" data-title="change building color based on zoom level">
+        <div class="card-header">
+          <h3 class="card-title"><a href="change-building-color-based-on-zoom-level.html">Change Building Color Based On Zoom Level</a></h3>
+          <span class="card-badge badge-success"><span class="badge-dot"></span> Implemented</span>
+        </div>
+        <div class="card-meta">
+          <span class="meta-slug"><code>change-building-color-based-on-zoom-level</code></span>
+          <span class="meta-js-size">683 chars JS</span>
+        </div>
+        <div class="card-script">
+          <code>tests/test_examples/test_change_building_color_based_on_zoom_level.py</code>
+        </div>
+        <div class="card-actions">
+          <a href="change-building-color-based-on-zoom-level.html" class="action-btn primary">Side-by-Side View ↗</a>
+          <a href="https://maplibre.org/maplibre-gl-js/docs/examples/change-building-color-based-on-zoom-level/" target="_blank" rel="noopener" class="action-btn secondary" title="MapLibre Docs">Docs</a>
+          <a href="../reproduced_pages/change-building-color-based-on-zoom-level.html" target="_blank" rel="noopener" class="action-btn secondary" title="Direct Reproduced Map">Map</a>
+        </div>
+      </div>
+
+      <div class="example-card implemented" data-slug="change-the-case-of-labels" data-title="change the case of labels">
+        <div class="card-header">
+          <h3 class="card-title"><a href="change-the-case-of-labels.html">Change The Case Of Labels</a></h3>
+          <span class="card-badge badge-success"><span class="badge-dot"></span> Implemented</span>
+        </div>
+        <div class="card-meta">
+          <span class="meta-slug"><code>change-the-case-of-labels</code></span>
+          <span class="meta-js-size">1092 chars JS</span>
+        </div>
+        <div class="card-script">
+          <code>tests/test_examples/test_change_the_case_of_labels.py</code>
+        </div>
+        <div class="card-actions">
+          <a href="change-the-case-of-labels.html" class="action-btn primary">Side-by-Side View ↗</a>
+          <a href="https://maplibre.org/maplibre-gl-js/docs/examples/change-the-case-of-labels/" target="_blank" rel="noopener" class="action-btn secondary" title="MapLibre Docs">Docs</a>
+          <a href="../reproduced_pages/change-the-case-of-labels.html" target="_blank" rel="noopener" class="action-btn secondary" title="Direct Reproduced Map">Map</a>
+        </div>
+      </div>
+
+      <div class="example-card implemented" data-slug="change-the-default-position-for-attribution" data-title="change the default position for attribution">
+        <div class="card-header">
+          <h3 class="card-title"><a href="change-the-default-position-for-attribution.html">Change The Default Position For Attribution</a></h3>
+          <span class="card-badge badge-success"><span class="badge-dot"></span> Implemented</span>
+        </div>
+        <div class="card-meta">
+          <span class="meta-slug"><code>change-the-default-position-for-attribution</code></span>
+          <span class="meta-js-size">253 chars JS</span>
+        </div>
+        <div class="card-script">
+          <code>tests/test_examples/test_change_the_default_position_for_attribution.py</code>
+        </div>
+        <div class="card-actions">
+          <a href="change-the-default-position-for-attribution.html" class="action-btn primary">Side-by-Side View ↗</a>
+          <a href="https://maplibre.org/maplibre-gl-js/docs/examples/change-the-default-position-for-attribution/" target="_blank" rel="noopener" class="action-btn secondary" title="MapLibre Docs">Docs</a>
+          <a href="../reproduced_pages/change-the-default-position-for-attribution.html" target="_blank" rel="noopener" class="action-btn secondary" title="Direct Reproduced Map">Map</a>
+        </div>
+      </div>
+
+      <div class="example-card implemented" data-slug="check-if-webgl-is-supported" data-title="check if webgl is supported">
+        <div class="card-header">
+          <h3 class="card-title"><a href="check-if-webgl-is-supported.html">Check If WebGL Is Supported</a></h3>
+          <span class="card-badge badge-success"><span class="badge-dot"></span> Implemented</span>
+        </div>
+        <div class="card-meta">
+          <span class="meta-slug"><code>check-if-webgl-is-supported</code></span>
+          <span class="meta-js-size">1096 chars JS</span>
+        </div>
+        <div class="card-script">
+          <code>tests/test_examples/test_check_if_webgl_is_supported.py</code>
+        </div>
+        <div class="card-actions">
+          <a href="check-if-webgl-is-supported.html" class="action-btn primary">Side-by-Side View ↗</a>
+          <a href="https://maplibre.org/maplibre-gl-js/docs/examples/check-if-webgl-is-supported/" target="_blank" rel="noopener" class="action-btn secondary" title="MapLibre Docs">Docs</a>
+          <a href="../reproduced_pages/check-if-webgl-is-supported.html" target="_blank" rel="noopener" class="action-btn secondary" title="Direct Reproduced Map">Map</a>
+        </div>
+      </div>
+
+      <div class="example-card implemented" data-slug="cooperative-gestures" data-title="cooperative gestures">
+        <div class="card-header">
+          <h3 class="card-title"><a href="cooperative-gestures.html">Cooperative Gestures</a></h3>
+          <span class="card-badge badge-success"><span class="badge-dot"></span> Implemented</span>
+        </div>
+        <div class="card-meta">
+          <span class="meta-slug"><code>cooperative-gestures</code></span>
+          <span class="meta-js-size">235 chars JS</span>
+        </div>
+        <div class="card-script">
+          <code>tests/test_examples/test_cooperative_gestures.py</code>
+        </div>
+        <div class="card-actions">
+          <a href="cooperative-gestures.html" class="action-btn primary">Side-by-Side View ↗</a>
+          <a href="https://maplibre.org/maplibre-gl-js/docs/examples/cooperative-gestures/" target="_blank" rel="noopener" class="action-btn secondary" title="MapLibre Docs">Docs</a>
+          <a href="../reproduced_pages/cooperative-gestures.html" target="_blank" rel="noopener" class="action-btn secondary" title="Direct Reproduced Map">Map</a>
+        </div>
+      </div>
+
+      <div class="example-card implemented" data-slug="create-a-draggable-marker" data-title="create a draggable marker">
+        <div class="card-header">
+          <h3 class="card-title"><a href="create-a-draggable-marker.html">Create A Draggable Marker</a></h3>
+          <span class="card-badge badge-success"><span class="badge-dot"></span> Implemented</span>
+        </div>
+        <div class="card-meta">
+          <span class="meta-slug"><code>create-a-draggable-marker</code></span>
+          <span class="meta-js-size">537 chars JS</span>
+        </div>
+        <div class="card-script">
+          <code>tests/test_examples/test_create_a_draggable_marker.py</code>
+        </div>
+        <div class="card-actions">
+          <a href="create-a-draggable-marker.html" class="action-btn primary">Side-by-Side View ↗</a>
+          <a href="https://maplibre.org/maplibre-gl-js/docs/examples/create-a-draggable-marker/" target="_blank" rel="noopener" class="action-btn secondary" title="MapLibre Docs">Docs</a>
+          <a href="../reproduced_pages/create-a-draggable-marker.html" target="_blank" rel="noopener" class="action-btn secondary" title="Direct Reproduced Map">Map</a>
+        </div>
+      </div>
+
+      <div class="example-card implemented" data-slug="create-a-draggable-point" data-title="create a draggable point">
+        <div class="card-header">
+          <h3 class="card-title"><a href="create-a-draggable-point.html">Create A Draggable Point</a></h3>
+          <span class="card-badge badge-success"><span class="badge-dot"></span> Implemented</span>
+        </div>
+        <div class="card-meta">
+          <span class="meta-slug"><code>create-a-draggable-point</code></span>
+          <span class="meta-js-size">2506 chars JS</span>
+        </div>
+        <div class="card-script">
+          <code>tests/test_examples/test_create_a_draggable_point.py</code>
+        </div>
+        <div class="card-actions">
+          <a href="create-a-draggable-point.html" class="action-btn primary">Side-by-Side View ↗</a>
+          <a href="https://maplibre.org/maplibre-gl-js/docs/examples/create-a-draggable-point/" target="_blank" rel="noopener" class="action-btn secondary" title="MapLibre Docs">Docs</a>
+          <a href="../reproduced_pages/create-a-draggable-point.html" target="_blank" rel="noopener" class="action-btn secondary" title="Direct Reproduced Map">Map</a>
+        </div>
+      </div>
+
+      <div class="example-card implemented" data-slug="create-a-gradient-line-using-an-expression" data-title="create a gradient line using an expression">
+        <div class="card-header">
+          <h3 class="card-title"><a href="create-a-gradient-line-using-an-expression.html">Create A Gradient Line Using An Expression</a></h3>
+          <span class="card-badge badge-success"><span class="badge-dot"></span> Implemented</span>
+        </div>
+        <div class="card-meta">
+          <span class="meta-slug"><code>create-a-gradient-line-using-an-expression</code></span>
+          <span class="meta-js-size">2331 chars JS</span>
+        </div>
+        <div class="card-script">
+          <code>tests/test_examples/test_create_a_gradient_line_using_an_expression.py</code>
+        </div>
+        <div class="card-actions">
+          <a href="create-a-gradient-line-using-an-expression.html" class="action-btn primary">Side-by-Side View ↗</a>
+          <a href="https://maplibre.org/maplibre-gl-js/docs/examples/create-a-gradient-line-using-an-expression/" target="_blank" rel="noopener" class="action-btn secondary" title="MapLibre Docs">Docs</a>
+          <a href="../reproduced_pages/create-a-gradient-line-using-an-expression.html" target="_blank" rel="noopener" class="action-btn secondary" title="Direct Reproduced Map">Map</a>
+        </div>
+      </div>
+
+      <div class="example-card pending" data-slug="create-a-gradient-line-with-dasharray-using-an-expression" data-title="create a gradient line with dasharray using an expression">
+        <div class="card-header">
+          <h3 class="card-title"><a href="create-a-gradient-line-with-dasharray-using-an-expression.html">Create A Gradient Line With Dasharray Using An Expression</a></h3>
+          <span class="card-badge badge-warning"><span class="badge-dot"></span> Pending</span>
+        </div>
+        <div class="card-meta">
+          <span class="meta-slug"><code>create-a-gradient-line-with-dasharray-using-an-expression</code></span>
+          <span class="meta-js-size">2441 chars JS</span>
+        </div>
+        <div class="card-script">
+          <span class='text-muted'>No test script mapped</span>
+        </div>
+        <div class="card-actions">
+          <a href="create-a-gradient-line-with-dasharray-using-an-expression.html" class="action-btn primary">Side-by-Side View ↗</a>
+          <a href="https://maplibre.org/maplibre-gl-js/docs/examples/create-a-gradient-line-with-dasharray-using-an-expression/" target="_blank" rel="noopener" class="action-btn secondary" title="MapLibre Docs">Docs</a>
+          
+        </div>
+      </div>
+
+      <div class="example-card implemented" data-slug="create-a-heatmap-layer" data-title="create a heatmap layer">
+        <div class="card-header">
+          <h3 class="card-title"><a href="create-a-heatmap-layer.html">Create A Heatmap Layer</a></h3>
+          <span class="card-badge badge-success"><span class="badge-dot"></span> Implemented</span>
+        </div>
+        <div class="card-meta">
+          <span class="meta-slug"><code>create-a-heatmap-layer</code></span>
+          <span class="meta-js-size">4392 chars JS</span>
+        </div>
+        <div class="card-script">
+          <code>tests/test_examples/test_create_a_heatmap_layer.py</code>
+        </div>
+        <div class="card-actions">
+          <a href="create-a-heatmap-layer.html" class="action-btn primary">Side-by-Side View ↗</a>
+          <a href="https://maplibre.org/maplibre-gl-js/docs/examples/create-a-heatmap-layer/" target="_blank" rel="noopener" class="action-btn secondary" title="MapLibre Docs">Docs</a>
+          <a href="../reproduced_pages/create-a-heatmap-layer.html" target="_blank" rel="noopener" class="action-btn secondary" title="Direct Reproduced Map">Map</a>
+        </div>
+      </div>
+
+      <div class="example-card implemented" data-slug="create-a-heatmap-layer-on-a-globe-with-terrain-elevation" data-title="create a heatmap layer on a globe with terrain elevation">
+        <div class="card-header">
+          <h3 class="card-title"><a href="create-a-heatmap-layer-on-a-globe-with-terrain-elevation.html">Create A Heatmap Layer On A Globe With Terrain Elevation</a></h3>
+          <span class="card-badge badge-success"><span class="badge-dot"></span> Implemented</span>
+        </div>
+        <div class="card-meta">
+          <span class="meta-slug"><code>create-a-heatmap-layer-on-a-globe-with-terrain-elevation</code></span>
+          <span class="meta-js-size">5795 chars JS</span>
+        </div>
+        <div class="card-script">
+          <code>tests/test_examples/test_create_a_heatmap_layer_on_a_globe_with_terrain_elevation.py</code>
+        </div>
+        <div class="card-actions">
+          <a href="create-a-heatmap-layer-on-a-globe-with-terrain-elevation.html" class="action-btn primary">Side-by-Side View ↗</a>
+          <a href="https://maplibre.org/maplibre-gl-js/docs/examples/create-a-heatmap-layer-on-a-globe-with-terrain-elevation/" target="_blank" rel="noopener" class="action-btn secondary" title="MapLibre Docs">Docs</a>
+          <a href="../reproduced_pages/create-a-heatmap-layer-on-a-globe-with-terrain-elevation.html" target="_blank" rel="noopener" class="action-btn secondary" title="Direct Reproduced Map">Map</a>
+        </div>
+      </div>
+
+      <div class="example-card implemented" data-slug="create-a-hover-effect" data-title="create a hover effect">
+        <div class="card-header">
+          <h3 class="card-title"><a href="create-a-hover-effect.html">Create A Hover Effect</a></h3>
+          <span class="card-badge badge-success"><span class="badge-dot"></span> Implemented</span>
+        </div>
+        <div class="card-meta">
+          <span class="meta-slug"><code>create-a-hover-effect</code></span>
+          <span class="meta-js-size">2118 chars JS</span>
+        </div>
+        <div class="card-script">
+          <code>tests/test_examples/test_create_a_hover_effect.py</code>
+        </div>
+        <div class="card-actions">
+          <a href="create-a-hover-effect.html" class="action-btn primary">Side-by-Side View ↗</a>
+          <a href="https://maplibre.org/maplibre-gl-js/docs/examples/create-a-hover-effect/" target="_blank" rel="noopener" class="action-btn secondary" title="MapLibre Docs">Docs</a>
+          <a href="../reproduced_pages/create-a-hover-effect.html" target="_blank" rel="noopener" class="action-btn secondary" title="Direct Reproduced Map">Map</a>
+        </div>
+      </div>
+
+      <div class="example-card implemented" data-slug="create-a-time-slider" data-title="create a time slider">
+        <div class="card-header">
+          <h3 class="card-title"><a href="create-a-time-slider.html">Create A Time Slider</a></h3>
+          <span class="card-badge badge-success"><span class="badge-dot"></span> Implemented</span>
+        </div>
+        <div class="card-meta">
+          <span class="meta-slug"><code>create-a-time-slider</code></span>
+          <span class="meta-js-size">3445 chars JS</span>
+        </div>
+        <div class="card-script">
+          <code>tests/test_examples/test_create_a_time_slider.py</code>
+        </div>
+        <div class="card-actions">
+          <a href="create-a-time-slider.html" class="action-btn primary">Side-by-Side View ↗</a>
+          <a href="https://maplibre.org/maplibre-gl-js/docs/examples/create-a-time-slider/" target="_blank" rel="noopener" class="action-btn secondary" title="MapLibre Docs">Docs</a>
+          <a href="../reproduced_pages/create-a-time-slider.html" target="_blank" rel="noopener" class="action-btn secondary" title="Direct Reproduced Map">Map</a>
+        </div>
+      </div>
+
+      <div class="example-card implemented" data-slug="create-and-style-clusters" data-title="create and style clusters">
+        <div class="card-header">
+          <h3 class="card-title"><a href="create-and-style-clusters.html">Create And Style Clusters</a></h3>
+          <span class="card-badge badge-success"><span class="badge-dot"></span> Implemented</span>
+        </div>
+        <div class="card-meta">
+          <span class="meta-slug"><code>create-and-style-clusters</code></span>
+          <span class="meta-js-size">4321 chars JS</span>
+        </div>
+        <div class="card-script">
+          <code>tests/test_examples/test_create_and_style_clusters.py</code>
+        </div>
+        <div class="card-actions">
+          <a href="create-and-style-clusters.html" class="action-btn primary">Side-by-Side View ↗</a>
+          <a href="https://maplibre.org/maplibre-gl-js/docs/examples/create-and-style-clusters/" target="_blank" rel="noopener" class="action-btn secondary" title="MapLibre Docs">Docs</a>
+          <a href="../reproduced_pages/create-and-style-clusters.html" target="_blank" rel="noopener" class="action-btn secondary" title="Direct Reproduced Map">Map</a>
+        </div>
+      </div>
+
+      <div class="example-card implemented" data-slug="create-deckgl-layer-using-rest-api" data-title="create deck.gl layer using rest api">
+        <div class="card-header">
+          <h3 class="card-title"><a href="create-deckgl-layer-using-rest-api.html">Create Deck.gl Layer Using REST API</a></h3>
+          <span class="card-badge badge-success"><span class="badge-dot"></span> Implemented</span>
+        </div>
+        <div class="card-meta">
+          <span class="meta-slug"><code>create-deckgl-layer-using-rest-api</code></span>
+          <span class="meta-js-size">2480 chars JS</span>
+        </div>
+        <div class="card-script">
+          <code>tests/test_examples/test_create_deckgl_layer_using_rest_api.py</code>
+        </div>
+        <div class="card-actions">
+          <a href="create-deckgl-layer-using-rest-api.html" class="action-btn primary">Side-by-Side View ↗</a>
+          <a href="https://maplibre.org/maplibre-gl-js/docs/examples/create-deckgl-layer-using-rest-api/" target="_blank" rel="noopener" class="action-btn secondary" title="MapLibre Docs">Docs</a>
+          <a href="../reproduced_pages/create-deckgl-layer-using-rest-api.html" target="_blank" rel="noopener" class="action-btn secondary" title="Direct Reproduced Map">Map</a>
+        </div>
+      </div>
+
+      <div class="example-card implemented" data-slug="customize-camera-animations" data-title="customize camera animations">
+        <div class="card-header">
+          <h3 class="card-title"><a href="customize-camera-animations.html">Customize Camera Animations</a></h3>
+          <span class="card-badge badge-success"><span class="badge-dot"></span> Implemented</span>
+        </div>
+        <div class="card-meta">
+          <span class="meta-slug"><code>customize-camera-animations</code></span>
+          <span class="meta-js-size">4527 chars JS</span>
+        </div>
+        <div class="card-script">
+          <code>tests/test_examples/test_customize_camera_animations.py</code>
+        </div>
+        <div class="card-actions">
+          <a href="customize-camera-animations.html" class="action-btn primary">Side-by-Side View ↗</a>
+          <a href="https://maplibre.org/maplibre-gl-js/docs/examples/customize-camera-animations/" target="_blank" rel="noopener" class="action-btn secondary" title="MapLibre Docs">Docs</a>
+          <a href="../reproduced_pages/customize-camera-animations.html" target="_blank" rel="noopener" class="action-btn secondary" title="Direct Reproduced Map">Map</a>
+        </div>
+      </div>
+
+      <div class="example-card pending" data-slug="customize-the-map-transform-constrain" data-title="customize the map transform constrain">
+        <div class="card-header">
+          <h3 class="card-title"><a href="customize-the-map-transform-constrain.html">Customize The Map Transform Constrain</a></h3>
+          <span class="card-badge badge-warning"><span class="badge-dot"></span> Pending</span>
+        </div>
+        <div class="card-meta">
+          <span class="meta-slug"><code>customize-the-map-transform-constrain</code></span>
+          <span class="meta-js-size">673 chars JS</span>
+        </div>
+        <div class="card-script">
+          <span class='text-muted'>No test script mapped</span>
+        </div>
+        <div class="card-actions">
+          <a href="customize-the-map-transform-constrain.html" class="action-btn primary">Side-by-Side View ↗</a>
+          <a href="https://maplibre.org/maplibre-gl-js/docs/examples/customize-the-map-transform-constrain/" target="_blank" rel="noopener" class="action-btn secondary" title="MapLibre Docs">Docs</a>
+          
+        </div>
+      </div>
+
+      <div class="example-card implemented" data-slug="disable-map-rotation" data-title="disable map rotation">
+        <div class="card-header">
+          <h3 class="card-title"><a href="disable-map-rotation.html">Disable Map Rotation</a></h3>
+          <span class="card-badge badge-success"><span class="badge-dot"></span> Implemented</span>
+        </div>
+        <div class="card-meta">
+          <span class="meta-slug"><code>disable-map-rotation</code></span>
+          <span class="meta-js-size">457 chars JS</span>
+        </div>
+        <div class="card-script">
+          <code>tests/test_examples/test_disable_map_rotation.py</code>
+        </div>
+        <div class="card-actions">
+          <a href="disable-map-rotation.html" class="action-btn primary">Side-by-Side View ↗</a>
+          <a href="https://maplibre.org/maplibre-gl-js/docs/examples/disable-map-rotation/" target="_blank" rel="noopener" class="action-btn secondary" title="MapLibre Docs">Docs</a>
+          <a href="../reproduced_pages/disable-map-rotation.html" target="_blank" rel="noopener" class="action-btn secondary" title="Direct Reproduced Map">Map</a>
+        </div>
+      </div>
+
+      <div class="example-card implemented" data-slug="disable-scroll-zoom" data-title="disable scroll zoom">
+        <div class="card-header">
+          <h3 class="card-title"><a href="disable-scroll-zoom.html">Disable Scroll Zoom</a></h3>
+          <span class="card-badge badge-success"><span class="badge-dot"></span> Implemented</span>
+        </div>
+        <div class="card-meta">
+          <span class="meta-slug"><code>disable-scroll-zoom</code></span>
+          <span class="meta-js-size">289 chars JS</span>
+        </div>
+        <div class="card-script">
+          <code>tests/test_examples/test_disable_scroll_zoom.py</code>
+        </div>
+        <div class="card-actions">
+          <a href="disable-scroll-zoom.html" class="action-btn primary">Side-by-Side View ↗</a>
+          <a href="https://maplibre.org/maplibre-gl-js/docs/examples/disable-scroll-zoom/" target="_blank" rel="noopener" class="action-btn secondary" title="MapLibre Docs">Docs</a>
+          <a href="../reproduced_pages/disable-scroll-zoom.html" target="_blank" rel="noopener" class="action-btn secondary" title="Direct Reproduced Map">Map</a>
+        </div>
+      </div>
+
+      <div class="example-card implemented" data-slug="display-a-globe-with-a-fill-extrusion-layer" data-title="display a globe with a fill extrusion layer">
+        <div class="card-header">
+          <h3 class="card-title"><a href="display-a-globe-with-a-fill-extrusion-layer.html">Display A Globe With A Fill Extrusion Layer</a></h3>
+          <span class="card-badge badge-success"><span class="badge-dot"></span> Implemented</span>
+        </div>
+        <div class="card-meta">
+          <span class="meta-slug"><code>display-a-globe-with-a-fill-extrusion-layer</code></span>
+          <span class="meta-js-size">2746 chars JS</span>
+        </div>
+        <div class="card-script">
+          <code>tests/test_examples/test_display_a_globe_with_a_fill_extrusion_layer.py</code>
+        </div>
+        <div class="card-actions">
+          <a href="display-a-globe-with-a-fill-extrusion-layer.html" class="action-btn primary">Side-by-Side View ↗</a>
+          <a href="https://maplibre.org/maplibre-gl-js/docs/examples/display-a-globe-with-a-fill-extrusion-layer/" target="_blank" rel="noopener" class="action-btn secondary" title="MapLibre Docs">Docs</a>
+          <a href="../reproduced_pages/display-a-globe-with-a-fill-extrusion-layer.html" target="_blank" rel="noopener" class="action-btn secondary" title="Direct Reproduced Map">Map</a>
+        </div>
+      </div>
+
+      <div class="example-card implemented" data-slug="display-a-globe-with-a-vector-map" data-title="display a globe with a vector map">
+        <div class="card-header">
+          <h3 class="card-title"><a href="display-a-globe-with-a-vector-map.html">Display A Globe With A Vector Map</a></h3>
+          <span class="card-badge badge-success"><span class="badge-dot"></span> Implemented</span>
+        </div>
+        <div class="card-meta">
+          <span class="meta-slug"><code>display-a-globe-with-a-vector-map</code></span>
+          <span class="meta-js-size">264 chars JS</span>
+        </div>
+        <div class="card-script">
+          <code>tests/test_examples/test_display_a_globe_with_a_vector_map.py</code>
+        </div>
+        <div class="card-actions">
+          <a href="display-a-globe-with-a-vector-map.html" class="action-btn primary">Side-by-Side View ↗</a>
+          <a href="https://maplibre.org/maplibre-gl-js/docs/examples/display-a-globe-with-a-vector-map/" target="_blank" rel="noopener" class="action-btn secondary" title="MapLibre Docs">Docs</a>
+          <a href="../reproduced_pages/display-a-globe-with-a-vector-map.html" target="_blank" rel="noopener" class="action-btn secondary" title="Direct Reproduced Map">Map</a>
+        </div>
+      </div>
+
+      <div class="example-card implemented" data-slug="display-a-globe-with-an-atmosphere" data-title="display a globe with an atmosphere">
+        <div class="card-header">
+          <h3 class="card-title"><a href="display-a-globe-with-an-atmosphere.html">Display A Globe With An Atmosphere</a></h3>
+          <span class="card-badge badge-success"><span class="badge-dot"></span> Implemented</span>
+        </div>
+        <div class="card-meta">
+          <span class="meta-slug"><code>display-a-globe-with-an-atmosphere</code></span>
+          <span class="meta-js-size">940 chars JS</span>
+        </div>
+        <div class="card-script">
+          <code>tests/test_examples/test_display_a_globe_with_an_atmosphere.py</code>
+        </div>
+        <div class="card-actions">
+          <a href="display-a-globe-with-an-atmosphere.html" class="action-btn primary">Side-by-Side View ↗</a>
+          <a href="https://maplibre.org/maplibre-gl-js/docs/examples/display-a-globe-with-an-atmosphere/" target="_blank" rel="noopener" class="action-btn secondary" title="MapLibre Docs">Docs</a>
+          <a href="../reproduced_pages/display-a-globe-with-an-atmosphere.html" target="_blank" rel="noopener" class="action-btn secondary" title="Direct Reproduced Map">Map</a>
+        </div>
+      </div>
+
+      <div class="example-card implemented" data-slug="display-a-hybrid-satellite-map-with-terrain-elevation" data-title="display a hybrid satellite map with terrain elevation">
+        <div class="card-header">
+          <h3 class="card-title"><a href="display-a-hybrid-satellite-map-with-terrain-elevation.html">Display A Hybrid Satellite Map With Terrain Elevation</a></h3>
+          <span class="card-badge badge-success"><span class="badge-dot"></span> Implemented</span>
+        </div>
+        <div class="card-meta">
+          <span class="meta-slug"><code>display-a-hybrid-satellite-map-with-terrain-elevation</code></span>
+          <span class="meta-js-size">2454 chars JS</span>
+        </div>
+        <div class="card-script">
+          <code>tests/test_examples/test_display_a_hybrid_satellite_map_with_terrain_elevation.py</code>
+        </div>
+        <div class="card-actions">
+          <a href="display-a-hybrid-satellite-map-with-terrain-elevation.html" class="action-btn primary">Side-by-Side View ↗</a>
+          <a href="https://maplibre.org/maplibre-gl-js/docs/examples/display-a-hybrid-satellite-map-with-terrain-elevation/" target="_blank" rel="noopener" class="action-btn secondary" title="MapLibre Docs">Docs</a>
+          <a href="../reproduced_pages/display-a-hybrid-satellite-map-with-terrain-elevation.html" target="_blank" rel="noopener" class="action-btn secondary" title="Direct Reproduced Map">Map</a>
+        </div>
+      </div>
+
+      <div class="example-card implemented" data-slug="display-a-map" data-title="display a map">
+        <div class="card-header">
+          <h3 class="card-title"><a href="display-a-map.html">Display A Map</a></h3>
+          <span class="card-badge badge-success"><span class="badge-dot"></span> Implemented</span>
+        </div>
+        <div class="card-meta">
+          <span class="meta-slug"><code>display-a-map</code></span>
+          <span class="meta-js-size">249 chars JS</span>
+        </div>
+        <div class="card-script">
+          <code>tests/test_examples/test_display_a_map.py</code>
+        </div>
+        <div class="card-actions">
+          <a href="display-a-map.html" class="action-btn primary">Side-by-Side View ↗</a>
+          <a href="https://maplibre.org/maplibre-gl-js/docs/examples/display-a-map/" target="_blank" rel="noopener" class="action-btn secondary" title="MapLibre Docs">Docs</a>
+          <a href="../reproduced_pages/display-a-map.html" target="_blank" rel="noopener" class="action-btn secondary" title="Direct Reproduced Map">Map</a>
+        </div>
+      </div>
+
+      <div class="example-card pending" data-slug="display-a-map-with-mlt" data-title="display a map with mlt">
+        <div class="card-header">
+          <h3 class="card-title"><a href="display-a-map-with-mlt.html">Display A Map With MLT</a></h3>
+          <span class="card-badge badge-warning"><span class="badge-dot"></span> Pending</span>
+        </div>
+        <div class="card-meta">
+          <span class="meta-slug"><code>display-a-map-with-mlt</code></span>
+          <span class="meta-js-size">259 chars JS</span>
+        </div>
+        <div class="card-script">
+          <span class='text-muted'>No test script mapped</span>
+        </div>
+        <div class="card-actions">
+          <a href="display-a-map-with-mlt.html" class="action-btn primary">Side-by-Side View ↗</a>
+          <a href="https://maplibre.org/maplibre-gl-js/docs/examples/display-a-map-with-mlt/" target="_blank" rel="noopener" class="action-btn secondary" title="MapLibre Docs">Docs</a>
+          
+        </div>
+      </div>
+
+      <div class="example-card implemented" data-slug="display-a-non-interactive-map" data-title="display a non interactive map">
+        <div class="card-header">
+          <h3 class="card-title"><a href="display-a-non-interactive-map.html">Display A Non Interactive Map</a></h3>
+          <span class="card-badge badge-success"><span class="badge-dot"></span> Implemented</span>
+        </div>
+        <div class="card-meta">
+          <span class="meta-slug"><code>display-a-non-interactive-map</code></span>
+          <span class="meta-js-size">317 chars JS</span>
+        </div>
+        <div class="card-script">
+          <code>tests/test_examples/test_display_a_non_interactive_map.py</code>
+        </div>
+        <div class="card-actions">
+          <a href="display-a-non-interactive-map.html" class="action-btn primary">Side-by-Side View ↗</a>
+          <a href="https://maplibre.org/maplibre-gl-js/docs/examples/display-a-non-interactive-map/" target="_blank" rel="noopener" class="action-btn secondary" title="MapLibre Docs">Docs</a>
+          <a href="../reproduced_pages/display-a-non-interactive-map.html" target="_blank" rel="noopener" class="action-btn secondary" title="Direct Reproduced Map">Map</a>
+        </div>
+      </div>
+
+      <div class="example-card implemented" data-slug="display-a-popup" data-title="display a popup">
+        <div class="card-header">
+          <h3 class="card-title"><a href="display-a-popup.html">Display A Popup</a></h3>
+          <span class="card-badge badge-success"><span class="badge-dot"></span> Implemented</span>
+        </div>
+        <div class="card-meta">
+          <span class="meta-slug"><code>display-a-popup</code></span>
+          <span class="meta-js-size">294 chars JS</span>
+        </div>
+        <div class="card-script">
+          <code>tests/test_examples/test_display_a_popup.py</code>
+        </div>
+        <div class="card-actions">
+          <a href="display-a-popup.html" class="action-btn primary">Side-by-Side View ↗</a>
+          <a href="https://maplibre.org/maplibre-gl-js/docs/examples/display-a-popup/" target="_blank" rel="noopener" class="action-btn secondary" title="MapLibre Docs">Docs</a>
+          <a href="../reproduced_pages/display-a-popup.html" target="_blank" rel="noopener" class="action-btn secondary" title="Direct Reproduced Map">Map</a>
+        </div>
+      </div>
+
+      <div class="example-card implemented" data-slug="display-a-popup-on-click" data-title="display a popup on click">
+        <div class="card-header">
+          <h3 class="card-title"><a href="display-a-popup-on-click.html">Display A Popup On Click</a></h3>
+          <span class="card-badge badge-success"><span class="badge-dot"></span> Implemented</span>
+        </div>
+        <div class="card-meta">
+          <span class="meta-slug"><code>display-a-popup-on-click</code></span>
+          <span class="meta-js-size">8681 chars JS</span>
+        </div>
+        <div class="card-script">
+          <code>tests/test_examples/test_display_a_popup_on_click.py</code>
+        </div>
+        <div class="card-actions">
+          <a href="display-a-popup-on-click.html" class="action-btn primary">Side-by-Side View ↗</a>
+          <a href="https://maplibre.org/maplibre-gl-js/docs/examples/display-a-popup-on-click/" target="_blank" rel="noopener" class="action-btn secondary" title="MapLibre Docs">Docs</a>
+          <a href="../reproduced_pages/display-a-popup-on-click.html" target="_blank" rel="noopener" class="action-btn secondary" title="Direct Reproduced Map">Map</a>
+        </div>
+      </div>
+
+      <div class="example-card implemented" data-slug="display-a-popup-on-hover" data-title="display a popup on hover">
+        <div class="card-header">
+          <h3 class="card-title"><a href="display-a-popup-on-hover.html">Display A Popup On Hover</a></h3>
+          <span class="card-badge badge-success"><span class="badge-dot"></span> Implemented</span>
+        </div>
+        <div class="card-meta">
+          <span class="meta-slug"><code>display-a-popup-on-hover</code></span>
+          <span class="meta-js-size">7726 chars JS</span>
+        </div>
+        <div class="card-script">
+          <code>tests/test_examples/test_display_a_popup_on_hover.py</code>
+        </div>
+        <div class="card-actions">
+          <a href="display-a-popup-on-hover.html" class="action-btn primary">Side-by-Side View ↗</a>
+          <a href="https://maplibre.org/maplibre-gl-js/docs/examples/display-a-popup-on-hover/" target="_blank" rel="noopener" class="action-btn secondary" title="MapLibre Docs">Docs</a>
+          <a href="../reproduced_pages/display-a-popup-on-hover.html" target="_blank" rel="noopener" class="action-btn secondary" title="Direct Reproduced Map">Map</a>
+        </div>
+      </div>
+
+      <div class="example-card implemented" data-slug="display-a-remote-svg-symbol" data-title="display a remote svg symbol">
+        <div class="card-header">
+          <h3 class="card-title"><a href="display-a-remote-svg-symbol.html">Display A Remote SVG Symbol</a></h3>
+          <span class="card-badge badge-success"><span class="badge-dot"></span> Implemented</span>
+        </div>
+        <div class="card-meta">
+          <span class="meta-slug"><code>display-a-remote-svg-symbol</code></span>
+          <span class="meta-js-size">1584 chars JS</span>
+        </div>
+        <div class="card-script">
+          <code>tests/test_examples/test_display_a_remote_svg_symbol.py</code>
+        </div>
+        <div class="card-actions">
+          <a href="display-a-remote-svg-symbol.html" class="action-btn primary">Side-by-Side View ↗</a>
+          <a href="https://maplibre.org/maplibre-gl-js/docs/examples/display-a-remote-svg-symbol/" target="_blank" rel="noopener" class="action-btn secondary" title="MapLibre Docs">Docs</a>
+          <a href="../reproduced_pages/display-a-remote-svg-symbol.html" target="_blank" rel="noopener" class="action-btn secondary" title="Direct Reproduced Map">Map</a>
+        </div>
+      </div>
+
+      <div class="example-card implemented" data-slug="display-a-satellite-map" data-title="display a satellite map">
+        <div class="card-header">
+          <h3 class="card-title"><a href="display-a-satellite-map.html">Display A Satellite Map</a></h3>
+          <span class="card-badge badge-success"><span class="badge-dot"></span> Implemented</span>
+        </div>
+        <div class="card-meta">
+          <span class="meta-slug"><code>display-a-satellite-map</code></span>
+          <span class="meta-js-size">584 chars JS</span>
+        </div>
+        <div class="card-script">
+          <code>tests/test_examples/test_display_a_satellite_map.py</code>
+        </div>
+        <div class="card-actions">
+          <a href="display-a-satellite-map.html" class="action-btn primary">Side-by-Side View ↗</a>
+          <a href="https://maplibre.org/maplibre-gl-js/docs/examples/display-a-satellite-map/" target="_blank" rel="noopener" class="action-btn secondary" title="MapLibre Docs">Docs</a>
+          <a href="../reproduced_pages/display-a-satellite-map.html" target="_blank" rel="noopener" class="action-btn secondary" title="Direct Reproduced Map">Map</a>
+        </div>
+      </div>
+
+      <div class="example-card implemented" data-slug="display-and-style-rich-text-labels" data-title="display and style rich text labels">
+        <div class="card-header">
+          <h3 class="card-title"><a href="display-and-style-rich-text-labels.html">Display And Style Rich Text Labels</a></h3>
+          <span class="card-badge badge-success"><span class="badge-dot"></span> Implemented</span>
+        </div>
+        <div class="card-meta">
+          <span class="meta-slug"><code>display-and-style-rich-text-labels</code></span>
+          <span class="meta-js-size">730 chars JS</span>
+        </div>
+        <div class="card-script">
+          <code>tests/test_examples/test_display_and_style_rich_text_labels.py</code>
+        </div>
+        <div class="card-actions">
+          <a href="display-and-style-rich-text-labels.html" class="action-btn primary">Side-by-Side View ↗</a>
+          <a href="https://maplibre.org/maplibre-gl-js/docs/examples/display-and-style-rich-text-labels/" target="_blank" rel="noopener" class="action-btn secondary" title="MapLibre Docs">Docs</a>
+          <a href="../reproduced_pages/display-and-style-rich-text-labels.html" target="_blank" rel="noopener" class="action-btn secondary" title="Direct Reproduced Map">Map</a>
+        </div>
+      </div>
+
+      <div class="example-card implemented" data-slug="display-buildings-in-3d" data-title="display buildings in 3d">
+        <div class="card-header">
+          <h3 class="card-title"><a href="display-buildings-in-3d.html">Display Buildings In 3D</a></h3>
+          <span class="card-badge badge-success"><span class="badge-dot"></span> Implemented</span>
+        </div>
+        <div class="card-meta">
+          <span class="meta-slug"><code>display-buildings-in-3d</code></span>
+          <span class="meta-js-size">1821 chars JS</span>
+        </div>
+        <div class="card-script">
+          <code>tests/test_examples/test_display_buildings_in_3d.py</code>
+        </div>
+        <div class="card-actions">
+          <a href="display-buildings-in-3d.html" class="action-btn primary">Side-by-Side View ↗</a>
+          <a href="https://maplibre.org/maplibre-gl-js/docs/examples/display-buildings-in-3d/" target="_blank" rel="noopener" class="action-btn secondary" title="MapLibre Docs">Docs</a>
+          <a href="../reproduced_pages/display-buildings-in-3d.html" target="_blank" rel="noopener" class="action-btn secondary" title="Direct Reproduced Map">Map</a>
+        </div>
+      </div>
+
+      <div class="example-card implemented" data-slug="display-html-clusters-with-custom-properties" data-title="display html clusters with custom properties">
+        <div class="card-header">
+          <h3 class="card-title"><a href="display-html-clusters-with-custom-properties.html">Display HTML Clusters With Custom Properties</a></h3>
+          <span class="card-badge badge-success"><span class="badge-dot"></span> Implemented</span>
+        </div>
+        <div class="card-meta">
+          <span class="meta-slug"><code>display-html-clusters-with-custom-properties</code></span>
+          <span class="meta-js-size">6617 chars JS</span>
+        </div>
+        <div class="card-script">
+          <code>tests/test_examples/test_display_html_clusters_with_custom_properties.py</code>
+        </div>
+        <div class="card-actions">
+          <a href="display-html-clusters-with-custom-properties.html" class="action-btn primary">Side-by-Side View ↗</a>
+          <a href="https://maplibre.org/maplibre-gl-js/docs/examples/display-html-clusters-with-custom-properties/" target="_blank" rel="noopener" class="action-btn secondary" title="MapLibre Docs">Docs</a>
+          <a href="../reproduced_pages/display-html-clusters-with-custom-properties.html" target="_blank" rel="noopener" class="action-btn secondary" title="Direct Reproduced Map">Map</a>
+        </div>
+      </div>
+
+      <div class="example-card implemented" data-slug="display-line-that-crosses-180th-meridian" data-title="display line that crosses 180th meridian">
+        <div class="card-header">
+          <h3 class="card-title"><a href="display-line-that-crosses-180th-meridian.html">Display Line That Crosses 180th Meridian</a></h3>
+          <span class="card-badge badge-success"><span class="badge-dot"></span> Implemented</span>
+        </div>
+        <div class="card-meta">
+          <span class="meta-slug"><code>display-line-that-crosses-180th-meridian</code></span>
+          <span class="meta-js-size">2479 chars JS</span>
+        </div>
+        <div class="card-script">
+          <code>tests/test_examples/test_display_line_that_crosses_180th_meridian.py</code>
+        </div>
+        <div class="card-actions">
+          <a href="display-line-that-crosses-180th-meridian.html" class="action-btn primary">Side-by-Side View ↗</a>
+          <a href="https://maplibre.org/maplibre-gl-js/docs/examples/display-line-that-crosses-180th-meridian/" target="_blank" rel="noopener" class="action-btn secondary" title="MapLibre Docs">Docs</a>
+          <a href="../reproduced_pages/display-line-that-crosses-180th-meridian.html" target="_blank" rel="noopener" class="action-btn secondary" title="Direct Reproduced Map">Map</a>
+        </div>
+      </div>
+
+      <div class="example-card implemented" data-slug="display-map-navigation-controls" data-title="display map navigation controls">
+        <div class="card-header">
+          <h3 class="card-title"><a href="display-map-navigation-controls.html">Display Map Navigation Controls</a></h3>
+          <span class="card-badge badge-success"><span class="badge-dot"></span> Implemented</span>
+        </div>
+        <div class="card-meta">
+          <span class="meta-slug"><code>display-map-navigation-controls</code></span>
+          <span class="meta-js-size">504 chars JS</span>
+        </div>
+        <div class="card-script">
+          <code>tests/test_examples/test_display_map_navigation_controls.py</code>
+        </div>
+        <div class="card-actions">
+          <a href="display-map-navigation-controls.html" class="action-btn primary">Side-by-Side View ↗</a>
+          <a href="https://maplibre.org/maplibre-gl-js/docs/examples/display-map-navigation-controls/" target="_blank" rel="noopener" class="action-btn secondary" title="MapLibre Docs">Docs</a>
+          <a href="../reproduced_pages/display-map-navigation-controls.html" target="_blank" rel="noopener" class="action-btn secondary" title="Direct Reproduced Map">Map</a>
+        </div>
+      </div>
+
+      <div class="example-card pending" data-slug="display-map-performance-metrics" data-title="display map performance metrics">
+        <div class="card-header">
+          <h3 class="card-title"><a href="display-map-performance-metrics.html">Display Map Performance Metrics</a></h3>
+          <span class="card-badge badge-warning"><span class="badge-dot"></span> Pending</span>
+        </div>
+        <div class="card-meta">
+          <span class="meta-slug"><code>display-map-performance-metrics</code></span>
+          <span class="meta-js-size">789 chars JS</span>
+        </div>
+        <div class="card-script">
+          <span class='text-muted'>No test script mapped</span>
+        </div>
+        <div class="card-actions">
+          <a href="display-map-performance-metrics.html" class="action-btn primary">Side-by-Side View ↗</a>
+          <a href="https://maplibre.org/maplibre-gl-js/docs/examples/display-map-performance-metrics/" target="_blank" rel="noopener" class="action-btn secondary" title="MapLibre Docs">Docs</a>
+          
+        </div>
+      </div>
+
+      <div class="example-card implemented" data-slug="draw-a-circle" data-title="draw a circle">
+        <div class="card-header">
+          <h3 class="card-title"><a href="draw-a-circle.html">Draw A Circle</a></h3>
+          <span class="card-badge badge-success"><span class="badge-dot"></span> Implemented</span>
+        </div>
+        <div class="card-meta">
+          <span class="meta-slug"><code>draw-a-circle</code></span>
+          <span class="meta-js-size">1604 chars JS</span>
+        </div>
+        <div class="card-script">
+          <code>tests/test_examples/test_draw_a_circle.py</code>
+        </div>
+        <div class="card-actions">
+          <a href="draw-a-circle.html" class="action-btn primary">Side-by-Side View ↗</a>
+          <a href="https://maplibre.org/maplibre-gl-js/docs/examples/draw-a-circle/" target="_blank" rel="noopener" class="action-btn secondary" title="MapLibre Docs">Docs</a>
+          <a href="../reproduced_pages/draw-a-circle.html" target="_blank" rel="noopener" class="action-btn secondary" title="Direct Reproduced Map">Map</a>
+        </div>
+      </div>
+
+      <div class="example-card implemented" data-slug="draw-geojson-points" data-title="draw geojson points">
+        <div class="card-header">
+          <h3 class="card-title"><a href="draw-geojson-points.html">Draw GeoJSON Points</a></h3>
+          <span class="card-badge badge-success"><span class="badge-dot"></span> Implemented</span>
+        </div>
+        <div class="card-meta">
+          <span class="meta-slug"><code>draw-geojson-points</code></span>
+          <span class="meta-js-size">5295 chars JS</span>
+        </div>
+        <div class="card-script">
+          <code>tests/test_examples/test_draw_geojson_points.py</code>
+        </div>
+        <div class="card-actions">
+          <a href="draw-geojson-points.html" class="action-btn primary">Side-by-Side View ↗</a>
+          <a href="https://maplibre.org/maplibre-gl-js/docs/examples/draw-geojson-points/" target="_blank" rel="noopener" class="action-btn secondary" title="MapLibre Docs">Docs</a>
+          <a href="../reproduced_pages/draw-geojson-points.html" target="_blank" rel="noopener" class="action-btn secondary" title="Direct Reproduced Map">Map</a>
+        </div>
+      </div>
+
+      <div class="example-card implemented" data-slug="draw-geometries-with-terra-draw" data-title="draw geometries with terra draw">
+        <div class="card-header">
+          <h3 class="card-title"><a href="draw-geometries-with-terra-draw.html">Draw Geometries With Terra Draw</a></h3>
+          <span class="card-badge badge-success"><span class="badge-dot"></span> Implemented</span>
+        </div>
+        <div class="card-meta">
+          <span class="meta-slug"><code>draw-geometries-with-terra-draw</code></span>
+          <span class="meta-js-size">827 chars JS</span>
+        </div>
+        <div class="card-script">
+          <code>tests/test_examples/test_draw_geometries_with_terra_draw.py</code>
+        </div>
+        <div class="card-actions">
+          <a href="draw-geometries-with-terra-draw.html" class="action-btn primary">Side-by-Side View ↗</a>
+          <a href="https://maplibre.org/maplibre-gl-js/docs/examples/draw-geometries-with-terra-draw/" target="_blank" rel="noopener" class="action-btn secondary" title="MapLibre Docs">Docs</a>
+          <a href="../reproduced_pages/draw-geometries-with-terra-draw.html" target="_blank" rel="noopener" class="action-btn secondary" title="Direct Reproduced Map">Map</a>
+        </div>
+      </div>
+
+      <div class="example-card implemented" data-slug="draw-polygon-with-mapbox-gl-draw" data-title="draw polygon with mapbox gl draw">
+        <div class="card-header">
+          <h3 class="card-title"><a href="draw-polygon-with-mapbox-gl-draw.html">Draw Polygon With Mapbox Gl Draw</a></h3>
+          <span class="card-badge badge-success"><span class="badge-dot"></span> Implemented</span>
+        </div>
+        <div class="card-meta">
+          <span class="meta-slug"><code>draw-polygon-with-mapbox-gl-draw</code></span>
+          <span class="meta-js-size">5417 chars JS</span>
+        </div>
+        <div class="card-script">
+          <code>tests/test_examples/test_draw_polygon_with_mapbox_gl_draw.py</code>
+        </div>
+        <div class="card-actions">
+          <a href="draw-polygon-with-mapbox-gl-draw.html" class="action-btn primary">Side-by-Side View ↗</a>
+          <a href="https://maplibre.org/maplibre-gl-js/docs/examples/draw-polygon-with-mapbox-gl-draw/" target="_blank" rel="noopener" class="action-btn secondary" title="MapLibre Docs">Docs</a>
+          <a href="../reproduced_pages/draw-polygon-with-mapbox-gl-draw.html" target="_blank" rel="noopener" class="action-btn secondary" title="Direct Reproduced Map">Map</a>
+        </div>
+      </div>
+
+      <div class="example-card implemented" data-slug="extrude-polygons-for-3d-indoor-mapping" data-title="extrude polygons for 3d indoor mapping">
+        <div class="card-header">
+          <h3 class="card-title"><a href="extrude-polygons-for-3d-indoor-mapping.html">Extrude Polygons For 3D Indoor Mapping</a></h3>
+          <span class="card-badge badge-success"><span class="badge-dot"></span> Implemented</span>
+        </div>
+        <div class="card-meta">
+          <span class="meta-slug"><code>extrude-polygons-for-3d-indoor-mapping</code></span>
+          <span class="meta-js-size">2145 chars JS</span>
+        </div>
+        <div class="card-script">
+          <code>tests/test_examples/test_extrude_polygons_for_3d_indoor_mapping.py</code>
+        </div>
+        <div class="card-actions">
+          <a href="extrude-polygons-for-3d-indoor-mapping.html" class="action-btn primary">Side-by-Side View ↗</a>
+          <a href="https://maplibre.org/maplibre-gl-js/docs/examples/extrude-polygons-for-3d-indoor-mapping/" target="_blank" rel="noopener" class="action-btn secondary" title="MapLibre Docs">Docs</a>
+          <a href="../reproduced_pages/extrude-polygons-for-3d-indoor-mapping.html" target="_blank" rel="noopener" class="action-btn secondary" title="Direct Reproduced Map">Map</a>
+        </div>
+      </div>
+
+      <div class="example-card implemented" data-slug="filter-layer-symbols-using-global-state" data-title="filter layer symbols using global state">
+        <div class="card-header">
+          <h3 class="card-title"><a href="filter-layer-symbols-using-global-state.html">Filter Layer Symbols Using Global State</a></h3>
+          <span class="card-badge badge-success"><span class="badge-dot"></span> Implemented</span>
+        </div>
+        <div class="card-meta">
+          <span class="meta-slug"><code>filter-layer-symbols-using-global-state</code></span>
+          <span class="meta-js-size">1694 chars JS</span>
+        </div>
+        <div class="card-script">
+          <code>tests/test_examples/test_filter_layer_symbols_using_global_state.py</code>
+        </div>
+        <div class="card-actions">
+          <a href="filter-layer-symbols-using-global-state.html" class="action-btn primary">Side-by-Side View ↗</a>
+          <a href="https://maplibre.org/maplibre-gl-js/docs/examples/filter-layer-symbols-using-global-state/" target="_blank" rel="noopener" class="action-btn secondary" title="MapLibre Docs">Docs</a>
+          <a href="../reproduced_pages/filter-layer-symbols-using-global-state.html" target="_blank" rel="noopener" class="action-btn secondary" title="Direct Reproduced Map">Map</a>
+        </div>
+      </div>
+
+      <div class="example-card implemented" data-slug="filter-symbols-by-text-input" data-title="filter symbols by text input">
+        <div class="card-header">
+          <h3 class="card-title"><a href="filter-symbols-by-text-input.html">Filter Symbols By Text Input</a></h3>
+          <span class="card-badge badge-success"><span class="badge-dot"></span> Implemented</span>
+        </div>
+        <div class="card-meta">
+          <span class="meta-slug"><code>filter-symbols-by-text-input</code></span>
+          <span class="meta-js-size">3905 chars JS</span>
+        </div>
+        <div class="card-script">
+          <code>tests/test_examples/test_filter_symbols_by_text_input.py</code>
+        </div>
+        <div class="card-actions">
+          <a href="filter-symbols-by-text-input.html" class="action-btn primary">Side-by-Side View ↗</a>
+          <a href="https://maplibre.org/maplibre-gl-js/docs/examples/filter-symbols-by-text-input/" target="_blank" rel="noopener" class="action-btn secondary" title="MapLibre Docs">Docs</a>
+          <a href="../reproduced_pages/filter-symbols-by-text-input.html" target="_blank" rel="noopener" class="action-btn secondary" title="Direct Reproduced Map">Map</a>
+        </div>
+      </div>
+
+      <div class="example-card implemented" data-slug="filter-symbols-by-toggling-a-list" data-title="filter symbols by toggling a list">
+        <div class="card-header">
+          <h3 class="card-title"><a href="filter-symbols-by-toggling-a-list.html">Filter Symbols By Toggling A List</a></h3>
+          <span class="card-badge badge-success"><span class="badge-dot"></span> Implemented</span>
+        </div>
+        <div class="card-meta">
+          <span class="meta-slug"><code>filter-symbols-by-toggling-a-list</code></span>
+          <span class="meta-js-size">3674 chars JS</span>
+        </div>
+        <div class="card-script">
+          <code>tests/test_examples/test_filter_symbols_by_toggling_a_list.py</code>
+        </div>
+        <div class="card-actions">
+          <a href="filter-symbols-by-toggling-a-list.html" class="action-btn primary">Side-by-Side View ↗</a>
+          <a href="https://maplibre.org/maplibre-gl-js/docs/examples/filter-symbols-by-toggling-a-list/" target="_blank" rel="noopener" class="action-btn secondary" title="MapLibre Docs">Docs</a>
+          <a href="../reproduced_pages/filter-symbols-by-toggling-a-list.html" target="_blank" rel="noopener" class="action-btn secondary" title="Direct Reproduced Map">Map</a>
+        </div>
+      </div>
+
+      <div class="example-card implemented" data-slug="filter-within-a-layer" data-title="filter within a layer">
+        <div class="card-header">
+          <h3 class="card-title"><a href="filter-within-a-layer.html">Filter Within A Layer</a></h3>
+          <span class="card-badge badge-success"><span class="badge-dot"></span> Implemented</span>
+        </div>
+        <div class="card-meta">
+          <span class="meta-slug"><code>filter-within-a-layer</code></span>
+          <span class="meta-js-size">2299 chars JS</span>
+        </div>
+        <div class="card-script">
+          <code>tests/test_examples/test_filter_within_a_layer.py</code>
+        </div>
+        <div class="card-actions">
+          <a href="filter-within-a-layer.html" class="action-btn primary">Side-by-Side View ↗</a>
+          <a href="https://maplibre.org/maplibre-gl-js/docs/examples/filter-within-a-layer/" target="_blank" rel="noopener" class="action-btn secondary" title="MapLibre Docs">Docs</a>
+          <a href="../reproduced_pages/filter-within-a-layer.html" target="_blank" rel="noopener" class="action-btn secondary" title="Direct Reproduced Map">Map</a>
+        </div>
+      </div>
+
+      <div class="example-card implemented" data-slug="fit-a-map-to-a-bounding-box" data-title="fit a map to a bounding box">
+        <div class="card-header">
+          <h3 class="card-title"><a href="fit-a-map-to-a-bounding-box.html">Fit A Map To A Bounding Box</a></h3>
+          <span class="card-badge badge-success"><span class="badge-dot"></span> Implemented</span>
+        </div>
+        <div class="card-meta">
+          <span class="meta-slug"><code>fit-a-map-to-a-bounding-box</code></span>
+          <span class="meta-js-size">313 chars JS</span>
+        </div>
+        <div class="card-script">
+          <code>tests/test_examples/test_fit_a_map_to_a_bounding_box.py</code>
+        </div>
+        <div class="card-actions">
+          <a href="fit-a-map-to-a-bounding-box.html" class="action-btn primary">Side-by-Side View ↗</a>
+          <a href="https://maplibre.org/maplibre-gl-js/docs/examples/fit-a-map-to-a-bounding-box/" target="_blank" rel="noopener" class="action-btn secondary" title="MapLibre Docs">Docs</a>
+          <a href="../reproduced_pages/fit-a-map-to-a-bounding-box.html" target="_blank" rel="noopener" class="action-btn secondary" title="Direct Reproduced Map">Map</a>
+        </div>
+      </div>
+
+      <div class="example-card implemented" data-slug="fit-to-the-bounds-of-a-linestring" data-title="fit to the bounds of a linestring">
+        <div class="card-header">
+          <h3 class="card-title"><a href="fit-to-the-bounds-of-a-linestring.html">Fit To The Bounds Of A Linestring</a></h3>
+          <span class="card-badge badge-success"><span class="badge-dot"></span> Implemented</span>
+        </div>
+        <div class="card-meta">
+          <span class="meta-slug"><code>fit-to-the-bounds-of-a-linestring</code></span>
+          <span class="meta-js-size">2536 chars JS</span>
+        </div>
+        <div class="card-script">
+          <code>tests/test_examples/test_fit_to_the_bounds_of_a_linestring.py</code>
+        </div>
+        <div class="card-actions">
+          <a href="fit-to-the-bounds-of-a-linestring.html" class="action-btn primary">Side-by-Side View ↗</a>
+          <a href="https://maplibre.org/maplibre-gl-js/docs/examples/fit-to-the-bounds-of-a-linestring/" target="_blank" rel="noopener" class="action-btn secondary" title="MapLibre Docs">Docs</a>
+          <a href="../reproduced_pages/fit-to-the-bounds-of-a-linestring.html" target="_blank" rel="noopener" class="action-btn secondary" title="Direct Reproduced Map">Map</a>
+        </div>
+      </div>
+
+      <div class="example-card implemented" data-slug="fly-to-a-location" data-title="fly to a location">
+        <div class="card-header">
+          <h3 class="card-title"><a href="fly-to-a-location.html">Fly To A Location</a></h3>
+          <span class="card-badge badge-success"><span class="badge-dot"></span> Implemented</span>
+        </div>
+        <div class="card-meta">
+          <span class="meta-slug"><code>fly-to-a-location</code></span>
+          <span class="meta-js-size">568 chars JS</span>
+        </div>
+        <div class="card-script">
+          <code>tests/test_examples/test_fly_to_a_location.py</code>
+        </div>
+        <div class="card-actions">
+          <a href="fly-to-a-location.html" class="action-btn primary">Side-by-Side View ↗</a>
+          <a href="https://maplibre.org/maplibre-gl-js/docs/examples/fly-to-a-location/" target="_blank" rel="noopener" class="action-btn secondary" title="MapLibre Docs">Docs</a>
+          <a href="../reproduced_pages/fly-to-a-location.html" target="_blank" rel="noopener" class="action-btn secondary" title="Direct Reproduced Map">Map</a>
+        </div>
+      </div>
+
+      <div class="example-card implemented" data-slug="fly-to-a-location-based-on-scroll-position" data-title="fly to a location based on scroll position">
+        <div class="card-header">
+          <h3 class="card-title"><a href="fly-to-a-location-based-on-scroll-position.html">Fly To A Location Based On Scroll Position</a></h3>
+          <span class="card-badge badge-success"><span class="badge-dot"></span> Implemented</span>
+        </div>
+        <div class="card-meta">
+          <span class="meta-slug"><code>fly-to-a-location-based-on-scroll-position</code></span>
+          <span class="meta-js-size">2209 chars JS</span>
+        </div>
+        <div class="card-script">
+          <code>tests/test_examples/test_fly_to_a_location_based_on_scroll_position.py</code>
+        </div>
+        <div class="card-actions">
+          <a href="fly-to-a-location-based-on-scroll-position.html" class="action-btn primary">Side-by-Side View ↗</a>
+          <a href="https://maplibre.org/maplibre-gl-js/docs/examples/fly-to-a-location-based-on-scroll-position/" target="_blank" rel="noopener" class="action-btn secondary" title="MapLibre Docs">Docs</a>
+          <a href="../reproduced_pages/fly-to-a-location-based-on-scroll-position.html" target="_blank" rel="noopener" class="action-btn secondary" title="Direct Reproduced Map">Map</a>
+        </div>
+      </div>
+
+      <div class="example-card implemented" data-slug="generate-and-add-a-missing-icon-to-the-map" data-title="generate and add a missing icon to the map">
+        <div class="card-header">
+          <h3 class="card-title"><a href="generate-and-add-a-missing-icon-to-the-map.html">Generate And Add A Missing Icon To The Map</a></h3>
+          <span class="card-badge badge-success"><span class="badge-dot"></span> Implemented</span>
+        </div>
+        <div class="card-meta">
+          <span class="meta-slug"><code>generate-and-add-a-missing-icon-to-the-map</code></span>
+          <span class="meta-js-size">2450 chars JS</span>
+        </div>
+        <div class="card-script">
+          <code>tests/test_examples/test_generate_and_add_a_missing_icon_to_the_map.py</code>
+        </div>
+        <div class="card-actions">
+          <a href="generate-and-add-a-missing-icon-to-the-map.html" class="action-btn primary">Side-by-Side View ↗</a>
+          <a href="https://maplibre.org/maplibre-gl-js/docs/examples/generate-and-add-a-missing-icon-to-the-map/" target="_blank" rel="noopener" class="action-btn secondary" title="MapLibre Docs">Docs</a>
+          <a href="../reproduced_pages/generate-and-add-a-missing-icon-to-the-map.html" target="_blank" rel="noopener" class="action-btn secondary" title="Direct Reproduced Map">Map</a>
+        </div>
+      </div>
+
+      <div class="example-card implemented" data-slug="geocode-with-nominatim" data-title="geocode with nominatim">
+        <div class="card-header">
+          <h3 class="card-title"><a href="geocode-with-nominatim.html">Geocode With Nominatim</a></h3>
+          <span class="card-badge badge-success"><span class="badge-dot"></span> Implemented</span>
+        </div>
+        <div class="card-meta">
+          <span class="meta-slug"><code>geocode-with-nominatim</code></span>
+          <span class="meta-js-size">1732 chars JS</span>
+        </div>
+        <div class="card-script">
+          <code>tests/test_examples/test_geocode_with_nominatim.py</code>
+        </div>
+        <div class="card-actions">
+          <a href="geocode-with-nominatim.html" class="action-btn primary">Side-by-Side View ↗</a>
+          <a href="https://maplibre.org/maplibre-gl-js/docs/examples/geocode-with-nominatim/" target="_blank" rel="noopener" class="action-btn secondary" title="MapLibre Docs">Docs</a>
+          <a href="../reproduced_pages/geocode-with-nominatim.html" target="_blank" rel="noopener" class="action-btn secondary" title="Direct Reproduced Map">Map</a>
+        </div>
+      </div>
+
+      <div class="example-card implemented" data-slug="get-coordinates-of-the-mouse-pointer" data-title="get coordinates of the mouse pointer">
+        <div class="card-header">
+          <h3 class="card-title"><a href="get-coordinates-of-the-mouse-pointer.html">Get Coordinates Of The Mouse Pointer</a></h3>
+          <span class="card-badge badge-success"><span class="badge-dot"></span> Implemented</span>
+        </div>
+        <div class="card-meta">
+          <span class="meta-slug"><code>get-coordinates-of-the-mouse-pointer</code></span>
+          <span class="meta-js-size">594 chars JS</span>
+        </div>
+        <div class="card-script">
+          <code>tests/test_examples/test_get_coordinates_of_the_mouse_pointer.py</code>
+        </div>
+        <div class="card-actions">
+          <a href="get-coordinates-of-the-mouse-pointer.html" class="action-btn primary">Side-by-Side View ↗</a>
+          <a href="https://maplibre.org/maplibre-gl-js/docs/examples/get-coordinates-of-the-mouse-pointer/" target="_blank" rel="noopener" class="action-btn secondary" title="MapLibre Docs">Docs</a>
+          <a href="../reproduced_pages/get-coordinates-of-the-mouse-pointer.html" target="_blank" rel="noopener" class="action-btn secondary" title="Direct Reproduced Map">Map</a>
+        </div>
+      </div>
+
+      <div class="example-card implemented" data-slug="get-features-under-the-mouse-pointer" data-title="get features under the mouse pointer">
+        <div class="card-header">
+          <h3 class="card-title"><a href="get-features-under-the-mouse-pointer.html">Get Features Under The Mouse Pointer</a></h3>
+          <span class="card-badge badge-success"><span class="badge-dot"></span> Implemented</span>
+        </div>
+        <div class="card-meta">
+          <span class="meta-slug"><code>get-features-under-the-mouse-pointer</code></span>
+          <span class="meta-js-size">853 chars JS</span>
+        </div>
+        <div class="card-script">
+          <code>tests/test_examples/test_get_features_under_the_mouse_pointer.py</code>
+        </div>
+        <div class="card-actions">
+          <a href="get-features-under-the-mouse-pointer.html" class="action-btn primary">Side-by-Side View ↗</a>
+          <a href="https://maplibre.org/maplibre-gl-js/docs/examples/get-features-under-the-mouse-pointer/" target="_blank" rel="noopener" class="action-btn secondary" title="MapLibre Docs">Docs</a>
+          <a href="../reproduced_pages/get-features-under-the-mouse-pointer.html" target="_blank" rel="noopener" class="action-btn secondary" title="Direct Reproduced Map">Map</a>
+        </div>
+      </div>
+
+      <div class="example-card implemented" data-slug="hash-routing" data-title="hash routing">
+        <div class="card-header">
+          <h3 class="card-title"><a href="hash-routing.html">Hash Routing</a></h3>
+          <span class="card-badge badge-success"><span class="badge-dot"></span> Implemented</span>
+        </div>
+        <div class="card-meta">
+          <span class="meta-slug"><code>hash-routing</code></span>
+          <span class="meta-js-size">417 chars JS</span>
+        </div>
+        <div class="card-script">
+          <code>tests/test_examples/test_hash_routing.py</code>
+        </div>
+        <div class="card-actions">
+          <a href="hash-routing.html" class="action-btn primary">Side-by-Side View ↗</a>
+          <a href="https://maplibre.org/maplibre-gl-js/docs/examples/hash-routing/" target="_blank" rel="noopener" class="action-btn secondary" title="MapLibre Docs">Docs</a>
+          <a href="../reproduced_pages/hash-routing.html" target="_blank" rel="noopener" class="action-btn secondary" title="Direct Reproduced Map">Map</a>
+        </div>
+      </div>
+
+      <div class="example-card implemented" data-slug="jump-to-a-series-of-locations" data-title="jump to a series of locations">
+        <div class="card-header">
+          <h3 class="card-title"><a href="jump-to-a-series-of-locations.html">Jump To A Series Of Locations</a></h3>
+          <span class="card-badge badge-success"><span class="badge-dot"></span> Implemented</span>
+        </div>
+        <div class="card-meta">
+          <span class="meta-slug"><code>jump-to-a-series-of-locations</code></span>
+          <span class="meta-js-size">1655 chars JS</span>
+        </div>
+        <div class="card-script">
+          <code>tests/test_examples/test_jump_to_a_series_of_locations.py</code>
+        </div>
+        <div class="card-actions">
+          <a href="jump-to-a-series-of-locations.html" class="action-btn primary">Side-by-Side View ↗</a>
+          <a href="https://maplibre.org/maplibre-gl-js/docs/examples/jump-to-a-series-of-locations/" target="_blank" rel="noopener" class="action-btn secondary" title="MapLibre Docs">Docs</a>
+          <a href="../reproduced_pages/jump-to-a-series-of-locations.html" target="_blank" rel="noopener" class="action-btn secondary" title="Direct Reproduced Map">Map</a>
+        </div>
+      </div>
+
+      <div class="example-card implemented" data-slug="level-of-detail-control" data-title="level of detail control">
+        <div class="card-header">
+          <h3 class="card-title"><a href="level-of-detail-control.html">Level Of Detail Control</a></h3>
+          <span class="card-badge badge-success"><span class="badge-dot"></span> Implemented</span>
+        </div>
+        <div class="card-meta">
+          <span class="meta-slug"><code>level-of-detail-control</code></span>
+          <span class="meta-js-size">1282 chars JS</span>
+        </div>
+        <div class="card-script">
+          <code>tests/test_examples/test_level_of_detail_control.py</code>
+        </div>
+        <div class="card-actions">
+          <a href="level-of-detail-control.html" class="action-btn primary">Side-by-Side View ↗</a>
+          <a href="https://maplibre.org/maplibre-gl-js/docs/examples/level-of-detail-control/" target="_blank" rel="noopener" class="action-btn secondary" title="MapLibre Docs">Docs</a>
+          <a href="../reproduced_pages/level-of-detail-control.html" target="_blank" rel="noopener" class="action-btn secondary" title="Direct Reproduced Map">Map</a>
+        </div>
+      </div>
+
+      <div class="example-card pending" data-slug="locale-switching" data-title="locale switching">
+        <div class="card-header">
+          <h3 class="card-title"><a href="locale-switching.html">Locale Switching</a></h3>
+          <span class="card-badge badge-warning"><span class="badge-dot"></span> Pending</span>
+        </div>
+        <div class="card-meta">
+          <span class="meta-slug"><code>locale-switching</code></span>
+          <span class="meta-js-size">610 chars JS</span>
+        </div>
+        <div class="card-script">
+          <span class='text-muted'>No test script mapped</span>
+        </div>
+        <div class="card-actions">
+          <a href="locale-switching.html" class="action-btn primary">Side-by-Side View ↗</a>
+          <a href="https://maplibre.org/maplibre-gl-js/docs/examples/locale-switching/" target="_blank" rel="noopener" class="action-btn secondary" title="MapLibre Docs">Docs</a>
+          
+        </div>
+      </div>
+
+      <div class="example-card implemented" data-slug="locate-the-user" data-title="locate the user">
+        <div class="card-header">
+          <h3 class="card-title"><a href="locate-the-user.html">Locate The User</a></h3>
+          <span class="card-badge badge-success"><span class="badge-dot"></span> Implemented</span>
+        </div>
+        <div class="card-meta">
+          <span class="meta-slug"><code>locate-the-user</code></span>
+          <span class="meta-js-size">417 chars JS</span>
+        </div>
+        <div class="card-script">
+          <code>tests/test_examples/test_locate_the_user.py</code>
+        </div>
+        <div class="card-actions">
+          <a href="locate-the-user.html" class="action-btn primary">Side-by-Side View ↗</a>
+          <a href="https://maplibre.org/maplibre-gl-js/docs/examples/locate-the-user/" target="_blank" rel="noopener" class="action-btn secondary" title="MapLibre Docs">Docs</a>
+          <a href="../reproduced_pages/locate-the-user.html" target="_blank" rel="noopener" class="action-btn secondary" title="Direct Reproduced Map">Map</a>
+        </div>
+      </div>
+
+      <div class="example-card implemented" data-slug="measure-distances" data-title="measure distances">
+        <div class="card-header">
+          <h3 class="card-title"><a href="measure-distances.html">Measure Distances</a></h3>
+          <span class="card-badge badge-success"><span class="badge-dot"></span> Implemented</span>
+        </div>
+        <div class="card-meta">
+          <span class="meta-slug"><code>measure-distances</code></span>
+          <span class="meta-js-size">3322 chars JS</span>
+        </div>
+        <div class="card-script">
+          <code>tests/test_examples/test_measure_distances.py</code>
+        </div>
+        <div class="card-actions">
+          <a href="measure-distances.html" class="action-btn primary">Side-by-Side View ↗</a>
+          <a href="https://maplibre.org/maplibre-gl-js/docs/examples/measure-distances/" target="_blank" rel="noopener" class="action-btn secondary" title="MapLibre Docs">Docs</a>
+          <a href="../reproduced_pages/measure-distances.html" target="_blank" rel="noopener" class="action-btn secondary" title="Direct Reproduced Map">Map</a>
+        </div>
+      </div>
+
+      <div class="example-card implemented" data-slug="navigate-the-map-with-game-like-controls" data-title="navigate the map with game like controls">
+        <div class="card-header">
+          <h3 class="card-title"><a href="navigate-the-map-with-game-like-controls.html">Navigate The Map With Game Like Controls</a></h3>
+          <span class="card-badge badge-success"><span class="badge-dot"></span> Implemented</span>
+        </div>
+        <div class="card-meta">
+          <span class="meta-slug"><code>navigate-the-map-with-game-like-controls</code></span>
+          <span class="meta-js-size">1378 chars JS</span>
+        </div>
+        <div class="card-script">
+          <code>tests/test_examples/test_navigate_the_map_with_game_like_controls.py</code>
+        </div>
+        <div class="card-actions">
+          <a href="navigate-the-map-with-game-like-controls.html" class="action-btn primary">Side-by-Side View ↗</a>
+          <a href="https://maplibre.org/maplibre-gl-js/docs/examples/navigate-the-map-with-game-like-controls/" target="_blank" rel="noopener" class="action-btn secondary" title="MapLibre Docs">Docs</a>
+          <a href="../reproduced_pages/navigate-the-map-with-game-like-controls.html" target="_blank" rel="noopener" class="action-btn secondary" title="Direct Reproduced Map">Map</a>
+        </div>
+      </div>
+
+      <div class="example-card implemented" data-slug="offset-the-vanishing-point-using-padding" data-title="offset the vanishing point using padding">
+        <div class="card-header">
+          <h3 class="card-title"><a href="offset-the-vanishing-point-using-padding.html">Offset The Vanishing Point Using Padding</a></h3>
+          <span class="card-badge badge-success"><span class="badge-dot"></span> Implemented</span>
+        </div>
+        <div class="card-meta">
+          <span class="meta-slug"><code>offset-the-vanishing-point-using-padding</code></span>
+          <span class="meta-js-size">1278 chars JS</span>
+        </div>
+        <div class="card-script">
+          <code>tests/test_examples/test_offset_the_vanishing_point_using_padding.py</code>
+        </div>
+        <div class="card-actions">
+          <a href="offset-the-vanishing-point-using-padding.html" class="action-btn primary">Side-by-Side View ↗</a>
+          <a href="https://maplibre.org/maplibre-gl-js/docs/examples/offset-the-vanishing-point-using-padding/" target="_blank" rel="noopener" class="action-btn secondary" title="MapLibre Docs">Docs</a>
+          <a href="../reproduced_pages/offset-the-vanishing-point-using-padding.html" target="_blank" rel="noopener" class="action-btn secondary" title="Direct Reproduced Map">Map</a>
+        </div>
+      </div>
+
+      <div class="example-card implemented" data-slug="pmtiles-source-and-protocol" data-title="pmtiles source and protocol">
+        <div class="card-header">
+          <h3 class="card-title"><a href="pmtiles-source-and-protocol.html">PMTiles Source And Protocol</a></h3>
+          <span class="card-badge badge-success"><span class="badge-dot"></span> Implemented</span>
+        </div>
+        <div class="card-meta">
+          <span class="meta-slug"><code>pmtiles-source-and-protocol</code></span>
+          <span class="meta-js-size">1889 chars JS</span>
+        </div>
+        <div class="card-script">
+          <code>tests/test_examples/test_pmtiles_source_and_protocol.py</code>
+        </div>
+        <div class="card-actions">
+          <a href="pmtiles-source-and-protocol.html" class="action-btn primary">Side-by-Side View ↗</a>
+          <a href="https://maplibre.org/maplibre-gl-js/docs/examples/pmtiles-source-and-protocol/" target="_blank" rel="noopener" class="action-btn secondary" title="MapLibre Docs">Docs</a>
+          <a href="../reproduced_pages/pmtiles-source-and-protocol.html" target="_blank" rel="noopener" class="action-btn secondary" title="Direct Reproduced Map">Map</a>
+        </div>
+      </div>
+
+      <div class="example-card implemented" data-slug="render-world-copies" data-title="render world copies">
+        <div class="card-header">
+          <h3 class="card-title"><a href="render-world-copies.html">Render World Copies</a></h3>
+          <span class="card-badge badge-success"><span class="badge-dot"></span> Implemented</span>
+        </div>
+        <div class="card-meta">
+          <span class="meta-slug"><code>render-world-copies</code></span>
+          <span class="meta-js-size">604 chars JS</span>
+        </div>
+        <div class="card-script">
+          <code>tests/test_examples/test_render_world_copies.py</code>
+        </div>
+        <div class="card-actions">
+          <a href="render-world-copies.html" class="action-btn primary">Side-by-Side View ↗</a>
+          <a href="https://maplibre.org/maplibre-gl-js/docs/examples/render-world-copies/" target="_blank" rel="noopener" class="action-btn secondary" title="MapLibre Docs">Docs</a>
+          <a href="../reproduced_pages/render-world-copies.html" target="_blank" rel="noopener" class="action-btn secondary" title="Direct Reproduced Map">Map</a>
+        </div>
+      </div>
+
+      <div class="example-card implemented" data-slug="restrict-map-panning-to-an-area" data-title="restrict map panning to an area">
+        <div class="card-header">
+          <h3 class="card-title"><a href="restrict-map-panning-to-an-area.html">Restrict Map Panning To An Area</a></h3>
+          <span class="card-badge badge-success"><span class="badge-dot"></span> Implemented</span>
+        </div>
+        <div class="card-meta">
+          <span class="meta-slug"><code>restrict-map-panning-to-an-area</code></span>
+          <span class="meta-js-size">404 chars JS</span>
+        </div>
+        <div class="card-script">
+          <code>tests/test_examples/test_restrict_map_panning_to_an_area.py</code>
+        </div>
+        <div class="card-actions">
+          <a href="restrict-map-panning-to-an-area.html" class="action-btn primary">Side-by-Side View ↗</a>
+          <a href="https://maplibre.org/maplibre-gl-js/docs/examples/restrict-map-panning-to-an-area/" target="_blank" rel="noopener" class="action-btn secondary" title="MapLibre Docs">Docs</a>
+          <a href="../reproduced_pages/restrict-map-panning-to-an-area.html" target="_blank" rel="noopener" class="action-btn secondary" title="Direct Reproduced Map">Map</a>
+        </div>
+      </div>
+
+      <div class="example-card pending" data-slug="select-features-with-a-boxzoomend-callback" data-title="select features with a boxzoomend callback">
+        <div class="card-header">
+          <h3 class="card-title"><a href="select-features-with-a-boxzoomend-callback.html">Select Features With A Boxzoomend Callback</a></h3>
+          <span class="card-badge badge-warning"><span class="badge-dot"></span> Pending</span>
+        </div>
+        <div class="card-meta">
+          <span class="meta-slug"><code>select-features-with-a-boxzoomend-callback</code></span>
+          <span class="meta-js-size">1755 chars JS</span>
+        </div>
+        <div class="card-script">
+          <span class='text-muted'>No test script mapped</span>
+        </div>
+        <div class="card-actions">
+          <a href="select-features-with-a-boxzoomend-callback.html" class="action-btn primary">Side-by-Side View ↗</a>
+          <a href="https://maplibre.org/maplibre-gl-js/docs/examples/select-features-with-a-boxzoomend-callback/" target="_blank" rel="noopener" class="action-btn secondary" title="MapLibre Docs">Docs</a>
+          
+        </div>
+      </div>
+
+      <div class="example-card implemented" data-slug="set-center-point-above-ground" data-title="set center point above ground">
+        <div class="card-header">
+          <h3 class="card-title"><a href="set-center-point-above-ground.html">Set Center Point Above Ground</a></h3>
+          <span class="card-badge badge-success"><span class="badge-dot"></span> Implemented</span>
+        </div>
+        <div class="card-meta">
+          <span class="meta-slug"><code>set-center-point-above-ground</code></span>
+          <span class="meta-js-size">1452 chars JS</span>
+        </div>
+        <div class="card-script">
+          <code>tests/test_examples/test_set_center_point_above_ground.py</code>
+        </div>
+        <div class="card-actions">
+          <a href="set-center-point-above-ground.html" class="action-btn primary">Side-by-Side View ↗</a>
+          <a href="https://maplibre.org/maplibre-gl-js/docs/examples/set-center-point-above-ground/" target="_blank" rel="noopener" class="action-btn secondary" title="MapLibre Docs">Docs</a>
+          <a href="../reproduced_pages/set-center-point-above-ground.html" target="_blank" rel="noopener" class="action-btn secondary" title="Direct Reproduced Map">Map</a>
+        </div>
+      </div>
+
+      <div class="example-card implemented" data-slug="set-pitch-and-bearing" data-title="set pitch and bearing">
+        <div class="card-header">
+          <h3 class="card-title"><a href="set-pitch-and-bearing.html">Set Pitch And Bearing</a></h3>
+          <span class="card-badge badge-success"><span class="badge-dot"></span> Implemented</span>
+        </div>
+        <div class="card-meta">
+          <span class="meta-slug"><code>set-pitch-and-bearing</code></span>
+          <span class="meta-js-size">269 chars JS</span>
+        </div>
+        <div class="card-script">
+          <code>tests/test_examples/test_set_pitch_and_bearing.py</code>
+        </div>
+        <div class="card-actions">
+          <a href="set-pitch-and-bearing.html" class="action-btn primary">Side-by-Side View ↗</a>
+          <a href="https://maplibre.org/maplibre-gl-js/docs/examples/set-pitch-and-bearing/" target="_blank" rel="noopener" class="action-btn secondary" title="MapLibre Docs">Docs</a>
+          <a href="../reproduced_pages/set-pitch-and-bearing.html" target="_blank" rel="noopener" class="action-btn secondary" title="Direct Reproduced Map">Map</a>
+        </div>
+      </div>
+
+      <div class="example-card implemented" data-slug="show-polygon-information-on-click" data-title="show polygon information on click">
+        <div class="card-header">
+          <h3 class="card-title"><a href="show-polygon-information-on-click.html">Show Polygon Information On Click</a></h3>
+          <span class="card-badge badge-success"><span class="badge-dot"></span> Implemented</span>
+        </div>
+        <div class="card-meta">
+          <span class="meta-slug"><code>show-polygon-information-on-click</code></span>
+          <span class="meta-js-size">1408 chars JS</span>
+        </div>
+        <div class="card-script">
+          <code>tests/test_examples/test_show_polygon_information_on_click.py</code>
+        </div>
+        <div class="card-actions">
+          <a href="show-polygon-information-on-click.html" class="action-btn primary">Side-by-Side View ↗</a>
+          <a href="https://maplibre.org/maplibre-gl-js/docs/examples/show-polygon-information-on-click/" target="_blank" rel="noopener" class="action-btn secondary" title="MapLibre Docs">Docs</a>
+          <a href="../reproduced_pages/show-polygon-information-on-click.html" target="_blank" rel="noopener" class="action-btn secondary" title="Direct Reproduced Map">Map</a>
+        </div>
+      </div>
+
+      <div class="example-card implemented" data-slug="sky-fog-terrain" data-title="sky fog terrain">
+        <div class="card-header">
+          <h3 class="card-title"><a href="sky-fog-terrain.html">Sky Fog Terrain</a></h3>
+          <span class="card-badge badge-success"><span class="badge-dot"></span> Implemented</span>
+        </div>
+        <div class="card-meta">
+          <span class="meta-slug"><code>sky-fog-terrain</code></span>
+          <span class="meta-js-size">3060 chars JS</span>
+        </div>
+        <div class="card-script">
+          <code>tests/test_examples/test_sky_fog_terrain.py</code>
+        </div>
+        <div class="card-actions">
+          <a href="sky-fog-terrain.html" class="action-btn primary">Side-by-Side View ↗</a>
+          <a href="https://maplibre.org/maplibre-gl-js/docs/examples/sky-fog-terrain/" target="_blank" rel="noopener" class="action-btn secondary" title="MapLibre Docs">Docs</a>
+          <a href="../reproduced_pages/sky-fog-terrain.html" target="_blank" rel="noopener" class="action-btn secondary" title="Direct Reproduced Map">Map</a>
+        </div>
+      </div>
+
+      <div class="example-card implemented" data-slug="slowly-fly-to-a-location" data-title="slowly fly to a location">
+        <div class="card-header">
+          <h3 class="card-title"><a href="slowly-fly-to-a-location.html">Slowly Fly To A Location</a></h3>
+          <span class="card-badge badge-success"><span class="badge-dot"></span> Implemented</span>
+        </div>
+        <div class="card-meta">
+          <span class="meta-slug"><code>slowly-fly-to-a-location</code></span>
+          <span class="meta-js-size">1267 chars JS</span>
+        </div>
+        <div class="card-script">
+          <code>tests/test_examples/test_slowly_fly_to_a_location.py</code>
+        </div>
+        <div class="card-actions">
+          <a href="slowly-fly-to-a-location.html" class="action-btn primary">Side-by-Side View ↗</a>
+          <a href="https://maplibre.org/maplibre-gl-js/docs/examples/slowly-fly-to-a-location/" target="_blank" rel="noopener" class="action-btn secondary" title="MapLibre Docs">Docs</a>
+          <a href="../reproduced_pages/slowly-fly-to-a-location.html" target="_blank" rel="noopener" class="action-btn secondary" title="Direct Reproduced Map">Map</a>
+        </div>
+      </div>
+
+      <div class="example-card pending" data-slug="style-labels-with-local-fonts" data-title="style labels with local fonts">
+        <div class="card-header">
+          <h3 class="card-title"><a href="style-labels-with-local-fonts.html">Style Labels With Local Fonts</a></h3>
+          <span class="card-badge badge-warning"><span class="badge-dot"></span> Pending</span>
+        </div>
+        <div class="card-meta">
+          <span class="meta-slug"><code>style-labels-with-local-fonts</code></span>
+          <span class="meta-js-size">2120 chars JS</span>
+        </div>
+        <div class="card-script">
+          <span class='text-muted'>No test script mapped</span>
+        </div>
+        <div class="card-actions">
+          <a href="style-labels-with-local-fonts.html" class="action-btn primary">Side-by-Side View ↗</a>
+          <a href="https://maplibre.org/maplibre-gl-js/docs/examples/style-labels-with-local-fonts/" target="_blank" rel="noopener" class="action-btn secondary" title="MapLibre Docs">Docs</a>
+          
+        </div>
+      </div>
+
+      <div class="example-card pending" data-slug="style-labels-with-web-fonts" data-title="style labels with web fonts">
+        <div class="card-header">
+          <h3 class="card-title"><a href="style-labels-with-web-fonts.html">Style Labels With Web Fonts</a></h3>
+          <span class="card-badge badge-warning"><span class="badge-dot"></span> Pending</span>
+        </div>
+        <div class="card-meta">
+          <span class="meta-slug"><code>style-labels-with-web-fonts</code></span>
+          <span class="meta-js-size">2129 chars JS</span>
+        </div>
+        <div class="card-script">
+          <span class='text-muted'>No test script mapped</span>
+        </div>
+        <div class="card-actions">
+          <a href="style-labels-with-web-fonts.html" class="action-btn primary">Side-by-Side View ↗</a>
+          <a href="https://maplibre.org/maplibre-gl-js/docs/examples/style-labels-with-web-fonts/" target="_blank" rel="noopener" class="action-btn secondary" title="MapLibre Docs">Docs</a>
+          
+        </div>
+      </div>
+
+      <div class="example-card implemented" data-slug="style-lines-with-a-data-driven-property" data-title="style lines with a data driven property">
+        <div class="card-header">
+          <h3 class="card-title"><a href="style-lines-with-a-data-driven-property.html">Style Lines With A Data Driven Property</a></h3>
+          <span class="card-badge badge-success"><span class="badge-dot"></span> Implemented</span>
+        </div>
+        <div class="card-meta">
+          <span class="meta-slug"><code>style-lines-with-a-data-driven-property</code></span>
+          <span class="meta-js-size">3692 chars JS</span>
+        </div>
+        <div class="card-script">
+          <code>tests/test_examples/test_style_lines_with_a_data_driven_property.py</code>
+        </div>
+        <div class="card-actions">
+          <a href="style-lines-with-a-data-driven-property.html" class="action-btn primary">Side-by-Side View ↗</a>
+          <a href="https://maplibre.org/maplibre-gl-js/docs/examples/style-lines-with-a-data-driven-property/" target="_blank" rel="noopener" class="action-btn secondary" title="MapLibre Docs">Docs</a>
+          <a href="../reproduced_pages/style-lines-with-a-data-driven-property.html" target="_blank" rel="noopener" class="action-btn secondary" title="Direct Reproduced Map">Map</a>
+        </div>
+      </div>
+
+      <div class="example-card implemented" data-slug="sync-movement-of-multiple-maps" data-title="sync movement of multiple maps">
+        <div class="card-header">
+          <h3 class="card-title"><a href="sync-movement-of-multiple-maps.html">Sync Movement Of Multiple Maps</a></h3>
+          <span class="card-badge badge-success"><span class="badge-dot"></span> Implemented</span>
+        </div>
+        <div class="card-meta">
+          <span class="meta-slug"><code>sync-movement-of-multiple-maps</code></span>
+          <span class="meta-js-size">591 chars JS</span>
+        </div>
+        <div class="card-script">
+          <code>tests/test_examples/test_sync_movement_of_multiple_maps.py</code>
+        </div>
+        <div class="card-actions">
+          <a href="sync-movement-of-multiple-maps.html" class="action-btn primary">Side-by-Side View ↗</a>
+          <a href="https://maplibre.org/maplibre-gl-js/docs/examples/sync-movement-of-multiple-maps/" target="_blank" rel="noopener" class="action-btn secondary" title="MapLibre Docs">Docs</a>
+          <a href="../reproduced_pages/sync-movement-of-multiple-maps.html" target="_blank" rel="noopener" class="action-btn secondary" title="Direct Reproduced Map">Map</a>
+        </div>
+      </div>
+
+      <div class="example-card implemented" data-slug="toggle-deckgl-layer" data-title="toggle deck.gl layer">
+        <div class="card-header">
+          <h3 class="card-title"><a href="toggle-deckgl-layer.html">Toggle Deck.gl Layer</a></h3>
+          <span class="card-badge badge-success"><span class="badge-dot"></span> Implemented</span>
+        </div>
+        <div class="card-meta">
+          <span class="meta-slug"><code>toggle-deckgl-layer</code></span>
+          <span class="meta-js-size">3624 chars JS</span>
+        </div>
+        <div class="card-script">
+          <code>tests/test_examples/test_toggle_deckgl_layer.py</code>
+        </div>
+        <div class="card-actions">
+          <a href="toggle-deckgl-layer.html" class="action-btn primary">Side-by-Side View ↗</a>
+          <a href="https://maplibre.org/maplibre-gl-js/docs/examples/toggle-deckgl-layer/" target="_blank" rel="noopener" class="action-btn secondary" title="MapLibre Docs">Docs</a>
+          <a href="../reproduced_pages/toggle-deckgl-layer.html" target="_blank" rel="noopener" class="action-btn secondary" title="Direct Reproduced Map">Map</a>
+        </div>
+      </div>
+
+      <div class="example-card implemented" data-slug="toggle-interactions" data-title="toggle interactions">
+        <div class="card-header">
+          <h3 class="card-title"><a href="toggle-interactions.html">Toggle Interactions</a></h3>
+          <span class="card-badge badge-success"><span class="badge-dot"></span> Implemented</span>
+        </div>
+        <div class="card-meta">
+          <span class="meta-slug"><code>toggle-interactions</code></span>
+          <span class="meta-js-size">420 chars JS</span>
+        </div>
+        <div class="card-script">
+          <code>tests/test_examples/test_toggle_interactions.py</code>
+        </div>
+        <div class="card-actions">
+          <a href="toggle-interactions.html" class="action-btn primary">Side-by-Side View ↗</a>
+          <a href="https://maplibre.org/maplibre-gl-js/docs/examples/toggle-interactions/" target="_blank" rel="noopener" class="action-btn secondary" title="MapLibre Docs">Docs</a>
+          <a href="../reproduced_pages/toggle-interactions.html" target="_blank" rel="noopener" class="action-btn secondary" title="Direct Reproduced Map">Map</a>
+        </div>
+      </div>
+
+      <div class="example-card implemented" data-slug="update-a-feature-in-realtime" data-title="update a feature in realtime">
+        <div class="card-header">
+          <h3 class="card-title"><a href="update-a-feature-in-realtime.html">Update A Feature In Realtime</a></h3>
+          <span class="card-badge badge-success"><span class="badge-dot"></span> Implemented</span>
+        </div>
+        <div class="card-meta">
+          <span class="meta-slug"><code>update-a-feature-in-realtime</code></span>
+          <span class="meta-js-size">1890 chars JS</span>
+        </div>
+        <div class="card-script">
+          <code>tests/test_examples/test_update_a_feature_in_realtime.py</code>
+        </div>
+        <div class="card-actions">
+          <a href="update-a-feature-in-realtime.html" class="action-btn primary">Side-by-Side View ↗</a>
+          <a href="https://maplibre.org/maplibre-gl-js/docs/examples/update-a-feature-in-realtime/" target="_blank" rel="noopener" class="action-btn secondary" title="MapLibre Docs">Docs</a>
+          <a href="../reproduced_pages/update-a-feature-in-realtime.html" target="_blank" rel="noopener" class="action-btn secondary" title="Direct Reproduced Map">Map</a>
+        </div>
+      </div>
+
+      <div class="example-card pending" data-slug="update-geojson-polygons" data-title="update geojson polygons">
+        <div class="card-header">
+          <h3 class="card-title"><a href="update-geojson-polygons.html">Update GeoJSON Polygons</a></h3>
+          <span class="card-badge badge-warning"><span class="badge-dot"></span> Pending</span>
+        </div>
+        <div class="card-meta">
+          <span class="meta-slug"><code>update-geojson-polygons</code></span>
+          <span class="meta-js-size">3018 chars JS</span>
+        </div>
+        <div class="card-script">
+          <span class='text-muted'>No test script mapped</span>
+        </div>
+        <div class="card-actions">
+          <a href="update-geojson-polygons.html" class="action-btn primary">Side-by-Side View ↗</a>
+          <a href="https://maplibre.org/maplibre-gl-js/docs/examples/update-geojson-polygons/" target="_blank" rel="noopener" class="action-btn secondary" title="MapLibre Docs">Docs</a>
+          
+        </div>
+      </div>
+
+      <div class="example-card implemented" data-slug="use-a-fallback-image" data-title="use a fallback image">
+        <div class="card-header">
+          <h3 class="card-title"><a href="use-a-fallback-image.html">Use A Fallback Image</a></h3>
+          <span class="card-badge badge-success"><span class="badge-dot"></span> Implemented</span>
+        </div>
+        <div class="card-meta">
+          <span class="meta-slug"><code>use-a-fallback-image</code></span>
+          <span class="meta-js-size">2040 chars JS</span>
+        </div>
+        <div class="card-script">
+          <code>tests/test_examples/test_use_a_fallback_image.py</code>
+        </div>
+        <div class="card-actions">
+          <a href="use-a-fallback-image.html" class="action-btn primary">Side-by-Side View ↗</a>
+          <a href="https://maplibre.org/maplibre-gl-js/docs/examples/use-a-fallback-image/" target="_blank" rel="noopener" class="action-btn secondary" title="MapLibre Docs">Docs</a>
+          <a href="../reproduced_pages/use-a-fallback-image.html" target="_blank" rel="noopener" class="action-btn secondary" title="Direct Reproduced Map">Map</a>
+        </div>
+      </div>
+
+      <div class="example-card implemented" data-slug="use-addprotocol-to-transform-feature-properties" data-title="use addprotocol to transform feature properties">
+        <div class="card-header">
+          <h3 class="card-title"><a href="use-addprotocol-to-transform-feature-properties.html">Use Addprotocol To Transform Feature Properties</a></h3>
+          <span class="card-badge badge-success"><span class="badge-dot"></span> Implemented</span>
+        </div>
+        <div class="card-meta">
+          <span class="meta-slug"><code>use-addprotocol-to-transform-feature-properties</code></span>
+          <span class="meta-js-size">1859 chars JS</span>
+        </div>
+        <div class="card-script">
+          <code>tests/test_examples/test_use_addprotocol_to_transform_feature_properties.py</code>
+        </div>
+        <div class="card-actions">
+          <a href="use-addprotocol-to-transform-feature-properties.html" class="action-btn primary">Side-by-Side View ↗</a>
+          <a href="https://maplibre.org/maplibre-gl-js/docs/examples/use-addprotocol-to-transform-feature-properties/" target="_blank" rel="noopener" class="action-btn secondary" title="MapLibre Docs">Docs</a>
+          <a href="../reproduced_pages/use-addprotocol-to-transform-feature-properties.html" target="_blank" rel="noopener" class="action-btn secondary" title="Direct Reproduced Map">Map</a>
+        </div>
+      </div>
+
+      <div class="example-card implemented" data-slug="use-locally-generated-ideographs" data-title="use locally generated ideographs">
+        <div class="card-header">
+          <h3 class="card-title"><a href="use-locally-generated-ideographs.html">Use Locally Generated Ideographs</a></h3>
+          <span class="card-badge badge-success"><span class="badge-dot"></span> Implemented</span>
+        </div>
+        <div class="card-meta">
+          <span class="meta-slug"><code>use-locally-generated-ideographs</code></span>
+          <span class="meta-js-size">218 chars JS</span>
+        </div>
+        <div class="card-script">
+          <code>tests/test_examples/test_use_locally_generated_ideographs.py</code>
+        </div>
+        <div class="card-actions">
+          <a href="use-locally-generated-ideographs.html" class="action-btn primary">Side-by-Side View ↗</a>
+          <a href="https://maplibre.org/maplibre-gl-js/docs/examples/use-locally-generated-ideographs/" target="_blank" rel="noopener" class="action-btn secondary" title="MapLibre Docs">Docs</a>
+          <a href="../reproduced_pages/use-locally-generated-ideographs.html" target="_blank" rel="noopener" class="action-btn secondary" title="Direct Reproduced Map">Map</a>
+        </div>
+      </div>
+
+      <div class="example-card implemented" data-slug="variable-label-placement" data-title="variable label placement">
+        <div class="card-header">
+          <h3 class="card-title"><a href="variable-label-placement.html">Variable Label Placement</a></h3>
+          <span class="card-badge badge-success"><span class="badge-dot"></span> Implemented</span>
+        </div>
+        <div class="card-meta">
+          <span class="meta-slug"><code>variable-label-placement</code></span>
+          <span class="meta-js-size">3042 chars JS</span>
+        </div>
+        <div class="card-script">
+          <code>tests/test_examples/test_variable_label_placement.py</code>
+        </div>
+        <div class="card-actions">
+          <a href="variable-label-placement.html" class="action-btn primary">Side-by-Side View ↗</a>
+          <a href="https://maplibre.org/maplibre-gl-js/docs/examples/variable-label-placement/" target="_blank" rel="noopener" class="action-btn secondary" title="MapLibre Docs">Docs</a>
+          <a href="../reproduced_pages/variable-label-placement.html" target="_blank" rel="noopener" class="action-btn secondary" title="Direct Reproduced Map">Map</a>
+        </div>
+      </div>
+
+      <div class="example-card implemented" data-slug="variable-label-placement-with-offset" data-title="variable label placement with offset">
+        <div class="card-header">
+          <h3 class="card-title"><a href="variable-label-placement-with-offset.html">Variable Label Placement With Offset</a></h3>
+          <span class="card-badge badge-success"><span class="badge-dot"></span> Implemented</span>
+        </div>
+        <div class="card-meta">
+          <span class="meta-slug"><code>variable-label-placement-with-offset</code></span>
+          <span class="meta-js-size">3044 chars JS</span>
+        </div>
+        <div class="card-script">
+          <code>tests/test_examples/test_variable_label_placement_with_offset.py</code>
+        </div>
+        <div class="card-actions">
+          <a href="variable-label-placement-with-offset.html" class="action-btn primary">Side-by-Side View ↗</a>
+          <a href="https://maplibre.org/maplibre-gl-js/docs/examples/variable-label-placement-with-offset/" target="_blank" rel="noopener" class="action-btn secondary" title="MapLibre Docs">Docs</a>
+          <a href="../reproduced_pages/variable-label-placement-with-offset.html" target="_blank" rel="noopener" class="action-btn secondary" title="Direct Reproduced Map">Map</a>
+        </div>
+      </div>
+
+      <div class="example-card implemented" data-slug="view-a-fullscreen-map" data-title="view a fullscreen map">
+        <div class="card-header">
+          <h3 class="card-title"><a href="view-a-fullscreen-map.html">View A Fullscreen Map</a></h3>
+          <span class="card-badge badge-success"><span class="badge-dot"></span> Implemented</span>
+        </div>
+        <div class="card-meta">
+          <span class="meta-slug"><code>view-a-fullscreen-map</code></span>
+          <span class="meta-js-size">288 chars JS</span>
+        </div>
+        <div class="card-script">
+          <code>tests/test_examples/test_view_a_fullscreen_map.py</code>
+        </div>
+        <div class="card-actions">
+          <a href="view-a-fullscreen-map.html" class="action-btn primary">Side-by-Side View ↗</a>
+          <a href="https://maplibre.org/maplibre-gl-js/docs/examples/view-a-fullscreen-map/" target="_blank" rel="noopener" class="action-btn secondary" title="MapLibre Docs">Docs</a>
+          <a href="../reproduced_pages/view-a-fullscreen-map.html" target="_blank" rel="noopener" class="action-btn secondary" title="Direct Reproduced Map">Map</a>
+        </div>
+      </div>
+
+      <div class="example-card implemented" data-slug="view-local-geojson" data-title="view local geojson">
+        <div class="card-header">
+          <h3 class="card-title"><a href="view-local-geojson.html">View Local GeoJSON</a></h3>
+          <span class="card-badge badge-success"><span class="badge-dot"></span> Implemented</span>
+        </div>
+        <div class="card-meta">
+          <span class="meta-slug"><code>view-local-geojson</code></span>
+          <span class="meta-js-size">1269 chars JS</span>
+        </div>
+        <div class="card-script">
+          <code>tests/test_examples/test_view_local_geojson.py</code>
+        </div>
+        <div class="card-actions">
+          <a href="view-local-geojson.html" class="action-btn primary">Side-by-Side View ↗</a>
+          <a href="https://maplibre.org/maplibre-gl-js/docs/examples/view-local-geojson/" target="_blank" rel="noopener" class="action-btn secondary" title="MapLibre Docs">Docs</a>
+          <a href="../reproduced_pages/view-local-geojson.html" target="_blank" rel="noopener" class="action-btn secondary" title="Direct Reproduced Map">Map</a>
+        </div>
+      </div>
+
+      <div class="example-card pending" data-slug="view-local-geojson-experimental" data-title="view local geojson experimental">
+        <div class="card-header">
+          <h3 class="card-title"><a href="view-local-geojson-experimental.html">View Local GeoJSON Experimental</a></h3>
+          <span class="card-badge badge-warning"><span class="badge-dot"></span> Pending</span>
+        </div>
+        <div class="card-meta">
+          <span class="meta-slug"><code>view-local-geojson-experimental</code></span>
+          <span class="meta-js-size">1692 chars JS</span>
+        </div>
+        <div class="card-script">
+          <span class='text-muted'>No test script mapped</span>
+        </div>
+        <div class="card-actions">
+          <a href="view-local-geojson-experimental.html" class="action-btn primary">Side-by-Side View ↗</a>
+          <a href="https://maplibre.org/maplibre-gl-js/docs/examples/view-local-geojson-experimental/" target="_blank" rel="noopener" class="action-btn secondary" title="MapLibre Docs">Docs</a>
+          
+        </div>
+      </div>
+
+      <div class="example-card implemented" data-slug="visualize-population-density" data-title="visualize population density">
+        <div class="card-header">
+          <h3 class="card-title"><a href="visualize-population-density.html">Visualize Population Density</a></h3>
+          <span class="card-badge badge-success"><span class="badge-dot"></span> Implemented</span>
+        </div>
+        <div class="card-meta">
+          <span class="meta-slug"><code>visualize-population-density</code></span>
+          <span class="meta-js-size">1625 chars JS</span>
+        </div>
+        <div class="card-script">
+          <code>tests/test_examples/test_visualize_population_density.py</code>
+        </div>
+        <div class="card-actions">
+          <a href="visualize-population-density.html" class="action-btn primary">Side-by-Side View ↗</a>
+          <a href="https://maplibre.org/maplibre-gl-js/docs/examples/visualize-population-density/" target="_blank" rel="noopener" class="action-btn secondary" title="MapLibre Docs">Docs</a>
+          <a href="../reproduced_pages/visualize-population-density.html" target="_blank" rel="noopener" class="action-btn secondary" title="Direct Reproduced Map">Map</a>
+        </div>
+      </div>
+
+      <div class="example-card implemented" data-slug="zoom-and-planet-size-relation-on-globe" data-title="zoom and planet size relation on globe">
+        <div class="card-header">
+          <h3 class="card-title"><a href="zoom-and-planet-size-relation-on-globe.html">Zoom And Planet Size Relation On Globe</a></h3>
+          <span class="card-badge badge-success"><span class="badge-dot"></span> Implemented</span>
+        </div>
+        <div class="card-meta">
+          <span class="meta-slug"><code>zoom-and-planet-size-relation-on-globe</code></span>
+          <span class="meta-js-size">1741 chars JS</span>
+        </div>
+        <div class="card-script">
+          <code>tests/test_examples/test_zoom_and_planet_size_relation_on_globe.py</code>
+        </div>
+        <div class="card-actions">
+          <a href="zoom-and-planet-size-relation-on-globe.html" class="action-btn primary">Side-by-Side View ↗</a>
+          <a href="https://maplibre.org/maplibre-gl-js/docs/examples/zoom-and-planet-size-relation-on-globe/" target="_blank" rel="noopener" class="action-btn secondary" title="MapLibre Docs">Docs</a>
+          <a href="../reproduced_pages/zoom-and-planet-size-relation-on-globe.html" target="_blank" rel="noopener" class="action-btn secondary" title="Direct Reproduced Map">Map</a>
+        </div>
+      </div>
+      <div class="no-results" id="noResults">
+        No examples found matching your search query.
+      </div>
+    </div>
+  </main>
+
+  <script>
+    let currentFilter = 'all';
+
+    function setFilter(filter, tabEl) {
+      currentFilter = filter;
+      document.querySelectorAll('.filter-tab').forEach(el => el.classList.remove('active'));
+      tabEl.classList.add('active');
+      filterExamples();
+    }
+
+    function filterExamples() {
+      const query = document.getElementById('searchInput').value.toLowerCase().trim();
+      const cards = document.querySelectorAll('.example-card');
+      let visibleCount = 0;
+
+      cards.forEach(card => {
+        const title = card.getAttribute('data-title') || '';
+        const slug = card.getAttribute('data-slug') || '';
+        const isImplemented = card.classList.contains('implemented');
+
+        const matchesQuery = !query || title.includes(query) || slug.includes(query);
+        let matchesFilter = true;
+
+        if (currentFilter === 'implemented' && !isImplemented) matchesFilter = false;
+        if (currentFilter === 'pending' && isImplemented) matchesFilter = false;
+
+        if (matchesQuery && matchesFilter) {
+          card.style.display = 'flex';
+          visibleCount++;
+        } else {
+          card.style.display = 'none';
+        }
+      });
+
+      document.getElementById('noResults').style.display = visibleCount === 0 ? 'block' : 'none';
+    }
+  </script>
+</body>
+</html>
