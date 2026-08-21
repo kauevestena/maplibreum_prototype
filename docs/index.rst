@@ -11,6 +11,7 @@ Welcome to maplibreum's documentation!
    :caption: Contents:
 
    README
+   RELEASING
    CDN_FALLBACKS
    GITHUB_PAGES
    api
