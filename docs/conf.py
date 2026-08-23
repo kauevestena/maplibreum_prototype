@@ -7,15 +7,17 @@ import os
 import sys
 sys.path.insert(0, os.path.abspath('..'))
 
+from maplibreum import __version__
+
 # -- Project information -----------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#project-information
 
 project = 'maplibreum'
-copyright = '2025, maplibreum'
-author = 'maplibreum'
+copyright = '2025–2026, Kauê de Moraes Vestena'
+author = 'Kauê de Moraes Vestena'
 
-version = '0.1'
-release = '0.1'
+version = __version__
+release = __version__
 
 # -- General configuration ---------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#general-configuration

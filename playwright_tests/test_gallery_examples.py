@@ -232,6 +232,28 @@ def test_rendered_example_loads(
         assert map_summary["canvasHeight"] > 0
 
     assert not page_errors, f"Unhandled page errors: {page_errors}"
+
+    # MapLibre's public demo tile service is outside Maplibreum's control. Once
+    # every map has initialized with a populated style, an unavailable demo
+    # vector/raster tile is not evidence that the generated page is broken.
+    demo_tile_request_failed = any(
+        "https://demotiles.maplibre.org/" in failure for failure in failed_requests
+    )
+    failed_requests = [
+        failure
+        for failure in failed_requests
+        if "https://demotiles.maplibre.org/" not in failure
+    ]
+    console_errors = [
+        message
+        for message in console_errors
+        if "https://demotiles.maplibre.org/" not in message
+        and not (
+            demo_tile_request_failed
+            and message == "Failed to load resource: net::ERR_FAILED"
+        )
+    ]
+
     if os.environ.get("MAPLIBREUM_BLOCK_PRIMARY_CDN"):
         console_errors = [
             message
@@ -240,13 +262,13 @@ def test_rendered_example_loads(
                 "Failed to load resource: the server responded with a status of 503"
             )
         ]
-    assert not console_errors, f"Browser console errors: {console_errors}"
-    if os.environ.get("MAPLIBREUM_BLOCK_PRIMARY_CDN"):
         failed_requests = [
             failure
             for failure in failed_requests
             if "https://unpkg.com/maplibre-gl@" not in failure
         ]
+
+    assert not console_errors, f"Browser console errors: {console_errors}"
     assert not failed_requests, f"Failed browser requests: {failed_requests}"
 
     expected_cdn_host = os.environ.get("MAPLIBREUM_EXPECT_CDN_HOST")

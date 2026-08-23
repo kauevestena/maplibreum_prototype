@@ -53,6 +53,7 @@ all = [
 ]
 
 [project.urls]
+"Documentation" = "https://kauevestena.github.io/maplibreum_prototype/docs/"
 "Source" = "https://github.com/kauevestena/maplibreum_prototype"
 "Issues" = "https://github.com/kauevestena/maplibreum_prototype/issues"
 "Changelog" = "https://github.com/kauevestena/maplibreum_prototype/blob/main/CHANGELOG.md"

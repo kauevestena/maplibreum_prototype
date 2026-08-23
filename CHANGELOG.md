@@ -6,16 +6,12 @@ The format is inspired by [Keep a Changelog](https://keepachangelog.com/en/1.1.0
 
 ## [Unreleased]
 
+## [0.2.0] - 2026-08-20
+
 ### Added
 - Added a complete-style dropdown control, external ES-module and stylesheet loading, structured vector-feature popups, reusable feature-state hover handling, and page-level dashboard elements.
 - Retained initial source definitions on the generated map runtime so large mutable GeoJSON sources can be reused without serializing a second copy.
 - Added five production field-test examples reproducing the distinct MapLibre applications deployed by `opensidewalkmap_beta`: the main node map, accessible routing, hazard analysis, completeness analysis, and data-acquisition dashboard.
-
-### Fixed
-- JSON-encoded floating-panel HTML so backticks and `${...}` text cannot break out of a JavaScript template literal, and removed its unnecessary delayed insertion race.
-- Declared the existing runtime use of `requests` as an installation dependency.
-
-## [0.2.0] - 2026-07-30
 
 ### Changed
 - Standardized generated maps on MapLibre GL JS 6.0.0 and its ES module build.
@@ -27,6 +23,8 @@ The format is inspired by [Keep a Changelog](https://keepachangelog.com/en/1.1.0
 - Added a clean-wheel installation and standalone-render smoke test.
 
 ### Fixed
+- JSON-encoded floating-panel HTML so backticks and `${...}` text cannot break out of a JavaScript template literal, and removed its unnecessary delayed insertion race.
+- Declared the existing runtime use of `requests` as an installation dependency.
 - Made every implemented gallery example generate a browser-testable HTML page.
 - Served browser tests over local HTTP and adapted MapLibre 6's ES module
   version API to the generated page's browser-global compatibility contract.
@@ -43,5 +41,5 @@ The format is inspired by [Keep a Changelog](https://keepachangelog.com/en/1.1.0
 - Event wiring for click, move, and draw callbacks in Jupyter environments.
 
 [Unreleased]: https://github.com/kauevestena/maplibreum_prototype/compare/v0.2.0...HEAD
-[0.2.0]: https://github.com/kauevestena/maplibreum_prototype/compare/v0.1.0...v0.2.0
-[0.1.0]: https://github.com/kauevestena/maplibreum_prototype/releases/tag/v0.1.0
+[0.2.0]: https://github.com/kauevestena/maplibreum_prototype/releases/tag/v0.2.0
+[0.1.0]: https://github.com/kauevestena/maplibreum_prototype/tree/e0ed3869ac734cfd8077f1f1a6b9b8245ff066e8

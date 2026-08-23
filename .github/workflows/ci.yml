@@ -127,14 +127,14 @@ jobs:
           from pathlib import Path
           from tempfile import TemporaryDirectory
 
-          from maplibreum import MAPLIBRE_VERSION, Map
+          from maplibreum import MAPLIBRE_VERSION, Map, __version__
 
-          assert version("maplibreum") == "0.2.0"
+          assert version("maplibreum") == __version__
           assert MAPLIBRE_VERSION == "6.0.0"
           with TemporaryDirectory() as directory:
               output = Path(directory) / "smoke.html"
               map_ = Map(center=[0, 0], zoom=2)
-              map_.add_marker(coordinates=[0, 0], popup="Maplibreum 0.2.0")
+              map_.add_marker(coordinates=[0, 0], popup=f"Maplibreum {__version__}")
               map_.save(output)
               html = output.read_text(encoding="utf-8")
               assert "maplibre-gl@6.0.0" in html
