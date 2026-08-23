@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 260" role="img" aria-labelledby="mlm-icon-title">
+  <title id="mlm-icon-title">MapLibreum icon</title>
+  <defs>
+    <linearGradient id="mlmPinGradient" x1="10%" y1="0%" x2="95%" y2="100%">
+      <stop offset="0%" stop-color="#2C5C99"/>
+      <stop offset="100%" stop-color="#38A5DE"/>
+    </linearGradient>
+  </defs>
+  <path d="M120,18 C170,18 208,56 208,106 C208,148 178,172 148,214 C138,228 128,240 120,250 C112,240 102,228 92,214 C62,172 32,148 32,106 C32,56 70,18 120,18 Z" fill="url(#mlmPinGradient)"/>
+  <path d="M60,150 L92,90 L120,122 L148,90 L180,150 Z" fill="#F4FAFF"/>
+  <circle cx="148" cy="74" r="6" fill="#8FE0FF"/>
+</svg>

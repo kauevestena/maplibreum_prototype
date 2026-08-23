@@ -41,3 +41,11 @@ exclude_patterns = ['_build', 'Thumbs.db', '.DS_Store']
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#options-for-html-output
 
 html_theme = 'sphinx_rtd_theme'
+html_static_path = ['_static']
+html_logo = '_static/logo.png'
+html_favicon = '_static/favicon.ico'
+# _extra/branding symlinks to ../branding; copied verbatim as "branding/" so
+# the README's raw-HTML <img src="branding/..."> tags (not picked up by
+# Sphinx's normal image-copying, since they're raw HTML) still resolve when
+# the README is included into the docs build.
+html_extra_path = ['_extra']
