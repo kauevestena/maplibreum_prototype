@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 620 160" role="img" aria-labelledby="mlm-logo-dark-title">
+  <title id="mlm-logo-dark-title">MapLibreum</title>
+  <defs>
+    <linearGradient id="mlmPinGradientDark" x1="10%" y1="0%" x2="95%" y2="100%">
+      <stop offset="0%" stop-color="#3E7DC4"/>
+      <stop offset="100%" stop-color="#4FC0F0"/>
+    </linearGradient>
+  </defs>
+  <g transform="translate(6,4) scale(0.56)">
+    <path d="M120,18 C170,18 208,56 208,106 C208,148 178,172 148,214 C138,228 128,240 120,250 C112,240 102,228 92,214 C62,172 32,148 32,106 C32,56 70,18 120,18 Z" fill="url(#mlmPinGradientDark)"/>
+    <path d="M60,150 L92,90 L120,122 L148,90 L180,150 Z" fill="#0D1420"/>
+    <circle cx="148" cy="74" r="6" fill="#B7ECFF"/>
+  </g>
+  <text x="158" y="102" font-family="'Segoe UI', Helvetica, Arial, sans-serif" font-size="62" font-weight="700" letter-spacing="-1" fill="#F2F6FA">maplibreum</text>
+</svg>

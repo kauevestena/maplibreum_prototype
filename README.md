@@ -1,3 +1,10 @@
+<p align="center">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="branding/logo-dark.svg">
+    <img src="branding/logo.svg" alt="MapLibreum logo" width="320">
+  </picture>
+</p>
+
 [![CI](https://github.com/kauevestena/maplibreum_prototype/actions/workflows/ci.yml/badge.svg)](https://github.com/kauevestena/maplibreum_prototype/actions/workflows/ci.yml)
 [![Documentation Build](https://github.com/kauevestena/maplibreum_prototype/actions/workflows/deploy-unified-site.yml/badge.svg)](https://github.com/kauevestena/maplibreum_prototype/actions/workflows/deploy-unified-site.yml)
 [![PyPI](https://img.shields.io/pypi/v/maplibreum.svg)](https://pypi.org/project/maplibreum/)
