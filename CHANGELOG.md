@@ -6,15 +6,20 @@ The format is inspired by [Keep a Changelog](https://keepachangelog.com/en/1.1.0
 
 ## [Unreleased]
 
-### Added
-- Added keyless aliases for the OpenFreeMap Liberty, Bright, Positron, Fiord, and Dark styles.
-
-### Changed
-- Replaced the sparse MapLibre demonstration style with OpenFreeMap Liberty as the default basemap.
+## [0.2.2] - 2026-08-28
 
 ### Fixed
 - Fixed the measure control's browser initialization against the current `maplibre-gl-measures` bundle, pinned the working plugin version, and allowed maps to continue rendering if the optional control cannot load.
 - Replaced the globe three.js layer's use of MapLibre's unstable internal transform with projection-aware model matrices, eliminating an intermittent browser-rendering failure.
+
+## [0.2.1] - 2026-08-28
+
+### Added
+- Added keyless aliases for the OpenFreeMap Liberty, Bright, Positron, Fiord, and Dark styles.
+- Reworked the six example notebooks into deterministic, narrative tutorials and added execution and rendering regression coverage.
+
+### Changed
+- Replaced the sparse MapLibre demonstration style with OpenFreeMap Liberty as the default basemap.
 
 ## [0.2.0] - 2026-08-20
 
@@ -50,6 +55,8 @@ The format is inspired by [Keep a Changelog](https://keepachangelog.com/en/1.1.0
 - Terrain, sky, and fog helpers alongside expression builders for data-driven styling.
 - Event wiring for click, move, and draw callbacks in Jupyter environments.
 
-[Unreleased]: https://github.com/kauevestena/maplibreum_prototype/compare/v0.2.0...HEAD
+[Unreleased]: https://github.com/kauevestena/maplibreum_prototype/compare/v0.2.2...HEAD
+[0.2.2]: https://github.com/kauevestena/maplibreum_prototype/compare/v0.2.1...v0.2.2
+[0.2.1]: https://github.com/kauevestena/maplibreum_prototype/compare/v0.2.0...v0.2.1
 [0.2.0]: https://github.com/kauevestena/maplibreum_prototype/releases/tag/v0.2.0
 [0.1.0]: https://github.com/kauevestena/maplibreum_prototype/tree/e0ed3869ac734cfd8077f1f1a6b9b8245ff066e8
