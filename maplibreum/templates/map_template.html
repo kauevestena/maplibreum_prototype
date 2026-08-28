@@ -166,7 +166,7 @@
     <script src="https://unpkg.com/maplibregl-minimap/dist/minimap-control.js" onerror="console.warn('Failed to load minimap control')"></script>
     {% endif %}
     {% if measure_control %}
-    <script src="https://unpkg.com/maplibre-gl-measures@latest/dist/maplibre-gl-measures.js" onerror="console.warn('Failed to load measure control')"></script>
+    <script src="https://unpkg.com/maplibre-gl-measures@0.0.20/dist/maplibre-gl-measures.js" onerror="console.warn('Failed to load measure control')"></script>
     {% endif %}
     {% if time_dimension %}
     <script src="https://cdn.jsdelivr.net/npm/leaflet-timedimension@1.1.0/dist/leaflet.timedimension.min.js" onerror="console.warn('Failed to load time dimension')"></script>
@@ -1092,8 +1092,17 @@ function _storeMeasure(data) {
         Jupyter.notebook.kernel.execute(cmd);
     }
 }
-var measure = new maplibreGLMeasures(Object.assign({{ measure_control_options | tojson }}, {onCreate: _storeMeasure, onRender: _storeMeasure}));
-map.addControl(measure, '{{ measure_control_position }}');
+var MeasureControlConstructor = window.maplibreGLMeasures && (
+    window.maplibreGLMeasures.default ||
+    window.maplibreGLMeasures.MeasuresControl ||
+    window.maplibreGLMeasures
+);
+if (typeof MeasureControlConstructor === 'function') {
+    var measure = new MeasureControlConstructor(Object.assign({{ measure_control_options | tojson }}, {onCreate: _storeMeasure, onRender: _storeMeasure}));
+    map.addControl(measure, '{{ measure_control_position }}');
+} else {
+    console.warn('Measure control is unavailable; continuing without it');
+}
 {% endif %}
 
 map.on('load', function() {

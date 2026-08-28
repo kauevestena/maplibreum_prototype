@@ -12,6 +12,10 @@ The format is inspired by [Keep a Changelog](https://keepachangelog.com/en/1.1.0
 ### Changed
 - Replaced the sparse MapLibre demonstration style with OpenFreeMap Liberty as the default basemap.
 
+### Fixed
+- Fixed the measure control's browser initialization against the current `maplibre-gl-measures` bundle, pinned the working plugin version, and allowed maps to continue rendering if the optional control cannot load.
+- Replaced the globe three.js layer's use of MapLibre's unstable internal transform with projection-aware model matrices, eliminating an intermittent browser-rendering failure.
+
 ## [0.2.0] - 2026-08-20
 
 ### Added
