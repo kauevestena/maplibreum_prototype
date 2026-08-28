@@ -6,6 +6,7 @@ They are designed to be dependable:
 
 - synthetic teaching data is embedded or generated with fixed random seeds;
 - no notebook requires an API key;
+- maps use OpenFreeMap Liberty by default, providing roads, places, land use, and buildings instead of a sparse demonstration basemap;
 - core tutorials do not download mutable datasets at execution time;
 - outputs and execution counters are not committed;
 - CI executes every code cell and renders every resulting map;
@@ -28,7 +29,7 @@ Simply create a `Map` instance (e.g., `m = Map(...)`) and evaluate `m` as the la
 
 If you need fine-grained control over the map's dimensions, pass `width` and `height` to `Map`, or call `m.display_in_notebook(width="100%", height="500px")`.
 
-The first three notebooks are fully self-contained. Notebook 4 intentionally fetches public demonstration terrain and PMTiles data in the browser; replace those endpoints with production infrastructure before deploying a real application.
+The first three notebooks use embedded teaching data over the public OpenFreeMap Liberty style. OpenFreeMap requires no API key, but its public instance does not provide an availability guarantee; use infrastructure with an appropriate service level for production deployments. Notebook 4 intentionally fetches public demonstration terrain and PMTiles data in the browser; replace those endpoints with production infrastructure before deploying a real application.
 
 ## Production field tests
 

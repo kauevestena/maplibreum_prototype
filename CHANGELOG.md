@@ -6,6 +6,12 @@ The format is inspired by [Keep a Changelog](https://keepachangelog.com/en/1.1.0
 
 ## [Unreleased]
 
+### Added
+- Added keyless aliases for the OpenFreeMap Liberty, Bright, Positron, Fiord, and Dark styles.
+
+### Changed
+- Replaced the sparse MapLibre demonstration style with OpenFreeMap Liberty as the default basemap.
+
 ## [0.2.0] - 2026-08-20
 
 ### Added

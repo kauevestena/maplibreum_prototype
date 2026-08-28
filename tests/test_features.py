@@ -22,6 +22,26 @@ def test_map_style():
     )
 
 
+def test_default_map_uses_openfreemap_liberty():
+    m = Map()
+    assert m.map_style == "https://tiles.openfreemap.org/styles/liberty"
+
+
+@pytest.mark.parametrize(
+    ("name", "style"),
+    [
+        ("liberty", "liberty"),
+        ("bright", "bright"),
+        ("positron", "positron"),
+        ("fiord", "fiord"),
+        ("openfreemap-dark", "dark"),
+    ],
+)
+def test_openfreemap_style_aliases(name, style):
+    m = Map(map_style=name)
+    assert m.map_style == f"https://tiles.openfreemap.org/styles/{style}"
+
+
 def test_marker():
     m = Map()
     marker = Marker(coordinates=[-74.5, 40], popup="A marker!", color="red")
@@ -325,4 +345,3 @@ def test_geojson_popup_tooltip_properties():
     assert "<b>Title</b>: First" in html
     assert "A tip" in html
     assert "<b>desc</b>" not in html
-

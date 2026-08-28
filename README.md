@@ -34,6 +34,11 @@ from maplibreum import Map
 # Create a map centered at a specific location
 m = Map(center=[-23.5505, -46.6333], zoom=10)
 
+# The default is OpenFreeMap Liberty: a detailed basemap with no API key.
+# Other keyless presets include liberty, bright, positron, fiord, and
+# openfreemap-dark.
+m_light = Map(map_style="positron")
+
 # Pin a compatible MapLibre GL JS version (defaults to 6.0.0)
 m_custom = Map(maplibre_version="6.0.0")
 
@@ -150,7 +155,7 @@ The examples gallery is automatically generated from six progressive notebooks i
 - interaction that survives export without a Python kernel;
 - WebGL clustering for thousands of points.
 
-The notebooks use deterministic teaching data, require no API keys, and are executed and rendered in CI.
+The notebooks use deterministic teaching data, require no API keys, and are executed and rendered in CI. Maps that do not specify a style use the detailed OpenFreeMap Liberty basemap.
 
 To deploy examples to GitHub Pages, see the
 [GitHub Pages documentation](https://github.com/kauevestena/maplibreum_prototype/blob/main/docs/GITHUB_PAGES.md).
