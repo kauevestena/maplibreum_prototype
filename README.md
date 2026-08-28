@@ -141,11 +141,16 @@ jupyter notebook examples
 
 View interactive examples deployed to GitHub Pages: [MapLibreum Examples Gallery](https://kauevestena.github.io/maplibreum_prototype/)
 
-The examples gallery is automatically generated from Jupyter notebooks in the `examples/` folder and showcases:
-- Creative MapLibreum examples and tutorials
-- Basic usage patterns
-- New features demonstrations  
-- Event handling and interactions
+The examples gallery is automatically generated from six progressive notebooks in the `examples/` folder:
+
+- a polished first map and standalone HTML export;
+- data-driven accessibility styling;
+- decision-oriented choropleth mapping;
+- 3D terrain and PMTiles;
+- interaction that survives export without a Python kernel;
+- WebGL clustering for thousands of points.
+
+The notebooks use deterministic teaching data, require no API keys, and are executed and rendered in CI.
 
 To deploy examples to GitHub Pages, see the
 [GitHub Pages documentation](https://github.com/kauevestena/maplibreum_prototype/blob/main/docs/GITHUB_PAGES.md).
