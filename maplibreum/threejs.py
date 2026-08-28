@@ -190,6 +190,32 @@ class ThreeJSLayer:
                 const modelRotate = [{self.model_rotate[0]}, {self.model_rotate[1]}, {self.model_rotate[2]}];
                 const scaling = {self.model_scale};
 
+                function getMercatorModelMatrix(location, altitude) {{
+                    const mercator = maplibregl.MercatorCoordinate.fromLngLat(
+                        location,
+                        altitude
+                    );
+                    const scale = mercator.meterInMercatorCoordinateUnits();
+                    return new THREE.Matrix4()
+                        .makeTranslation(mercator.x, mercator.y, mercator.z)
+                        .multiply(new THREE.Matrix4().makeRotationZ(Math.PI))
+                        .multiply(new THREE.Matrix4().makeRotationX(Math.PI / 2))
+                        .multiply(new THREE.Matrix4().makeScale(-scale, scale, scale));
+                }}
+
+                const earthRadius = 6371008.8;
+                function getGlobeModelMatrix(location, altitude) {{
+                    const lng = location[0];
+                    const lat = location[1];
+                    const scale = 1 / earthRadius;
+                    return new THREE.Matrix4()
+                        .makeRotationY(lng / 180 * Math.PI)
+                        .multiply(new THREE.Matrix4().makeRotationX(-lat / 180 * Math.PI))
+                        .multiply(new THREE.Matrix4().makeTranslation(0, 0, 1 + altitude / earthRadius))
+                        .multiply(new THREE.Matrix4().makeRotationX(Math.PI / 2))
+                        .multiply(new THREE.Matrix4().makeScale(scale, scale, scale));
+                }}
+
                 const customLayer = {{
                     id: '{self.id}',
                     type: 'custom',
@@ -224,17 +250,15 @@ class ThreeJSLayer:
                     }},
                     render: function(gl, args) {{
                         if ({str(self.globe).lower()}) {{
-                            const modelMatrix = map.transform.getMatrixForModel(
-                                modelOrigin,
-                                modelAltitude
-                            );
+                            const isGlobe = args.defaultProjectionData.projectionTransition > 0;
+                            const modelMatrix = isGlobe
+                                ? getGlobeModelMatrix(modelOrigin, modelAltitude)
+                                : getMercatorModelMatrix(modelOrigin, modelAltitude);
+                            modelMatrix.scale(new THREE.Vector3(scaling, scaling, scaling));
                             const projectionMatrix = new THREE.Matrix4().fromArray(
                                 args.defaultProjectionData.mainMatrix
                             );
-                            const transform = new THREE.Matrix4()
-                                .fromArray(modelMatrix)
-                                .scale(new THREE.Vector3(scaling, scaling, scaling));
-                            this.camera.projectionMatrix = projectionMatrix.multiply(transform);
+                            this.camera.projectionMatrix = projectionMatrix.multiply(modelMatrix);
                         }} else {{
                             const modelAsMercatorCoordinate = maplibregl.MercatorCoordinate.fromLngLat(
                                 modelOrigin,

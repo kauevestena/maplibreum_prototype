@@ -6,9 +6,11 @@ def test_measure_control_snippet():
     m = Map()
     m.add_measure_control()
     html = m.render()
-    assert "maplibre-gl-measures.js" in html
+    assert "maplibre-gl-measures@0.0.20/dist/maplibre-gl-measures.js" in html
     assert "mapbox-gl-draw.css" in html
-    assert "new maplibreGLMeasures" in html
+    assert "window.maplibreGLMeasures.default" in html
+    assert "new MeasureControlConstructor" in html
+    assert "continuing without it" in html
 
 
 def test_measure_features_storage():

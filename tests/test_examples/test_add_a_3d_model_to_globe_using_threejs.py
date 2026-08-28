@@ -74,6 +74,29 @@ def test_add_a_3d_model_to_globe_using_threejs_configuration():
             map.setProjection({ type: next });
         });
 
+        function getMercatorModelMatrix(location, altitude) {
+            var mercator = maplibregl.MercatorCoordinate.fromLngLat(location, altitude);
+            var scale = mercator.meterInMercatorCoordinateUnits();
+            return new THREE.Matrix4()
+                .makeTranslation(mercator.x, mercator.y, mercator.z)
+                .multiply(new THREE.Matrix4().makeRotationZ(Math.PI))
+                .multiply(new THREE.Matrix4().makeRotationX(Math.PI / 2))
+                .multiply(new THREE.Matrix4().makeScale(-scale, scale, scale));
+        }
+
+        var earthRadius = 6371008.8;
+        function getGlobeModelMatrix(location, altitude) {
+            var lng = location[0];
+            var lat = location[1];
+            var scale = 1 / earthRadius;
+            return new THREE.Matrix4()
+                .makeRotationY(lng / 180 * Math.PI)
+                .multiply(new THREE.Matrix4().makeRotationX(-lat / 180 * Math.PI))
+                .multiply(new THREE.Matrix4().makeTranslation(0, 0, 1 + altitude / earthRadius))
+                .multiply(new THREE.Matrix4().makeRotationX(Math.PI / 2))
+                .multiply(new THREE.Matrix4().makeScale(scale, scale, scale));
+        }
+
         var customLayer = {
             id: '3d-model',
             type: 'custom',
@@ -110,17 +133,15 @@ def test_add_a_3d_model_to_globe_using_threejs_configuration():
                 var modelOrigin = [148.9819, -35.39847];
                 var modelAltitude = 0.0;
                 var scaling = 10000.0;
-                var modelMatrix = map.transform.getMatrixForModel(
-                    modelOrigin,
-                    modelAltitude
-                );
+                var isGlobe = args.defaultProjectionData.projectionTransition > 0;
+                var modelMatrix = isGlobe
+                    ? getGlobeModelMatrix(modelOrigin, modelAltitude)
+                    : getMercatorModelMatrix(modelOrigin, modelAltitude);
+                modelMatrix.scale(new THREE.Vector3(scaling, scaling, scaling));
                 var projectionMatrix = new THREE.Matrix4().fromArray(
                     args.defaultProjectionData.mainMatrix
                 );
-                var transform = new THREE.Matrix4()
-                    .fromArray(modelMatrix)
-                    .scale(new THREE.Vector3(scaling, scaling, scaling));
-                this.camera.projectionMatrix = projectionMatrix.multiply(transform);
+                this.camera.projectionMatrix = projectionMatrix.multiply(modelMatrix);
                 this.renderer.resetState();
                 this.renderer.render(this.scene, this.camera);
                 this.map.triggerRepaint();
@@ -143,7 +164,10 @@ def test_add_a_3d_model_to_globe_using_threejs_configuration():
     assert "\"canvasContextAttributes\": {\"antialias\": true}" in html
     assert "map.setProjection({ type: 'globe' });" in html
     assert "renderingMode: '3d'" in html
-    assert "map.transform.getMatrixForModel" in html
+    assert "args.defaultProjectionData.projectionTransition" in html
+    assert "getGlobeModelMatrix" in html
+    assert "getMercatorModelMatrix" in html
+    assert "map.transform.getMatrixForModel" not in html
     assert "map.addLayer(customLayer);" in html
     assert ".maplibreum-projection-toggle" in html
 
@@ -187,4 +211,7 @@ def test_add_a_3d_model_to_globe_using_threejs_with_python_api():
     assert "const modelAltitude = 0.0;" in html
     assert "const scaling = 10000.0;" in html
     assert '{"name": "globe"}' in html
-    assert "map.transform.getMatrixForModel" in html
+    assert "args.defaultProjectionData.projectionTransition" in html
+    assert "getGlobeModelMatrix" in html
+    assert "getMercatorModelMatrix" in html
+    assert "map.transform.getMatrixForModel" not in html

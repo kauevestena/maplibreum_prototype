@@ -51,6 +51,10 @@ def test_measure_distances() -> None:
     map_instance.custom_css = measure_tool.to_css()
     map_instance.add_on_load_js(measure_tool.to_js())
 
+    # Exercise the packaged browser control too. This keeps its live CDN export
+    # contract covered by the sharded Chromium gallery tests.
+    map_instance.add_measure_control(units="metric", fixedLengthUnit="km")
+
     html = map_instance.render()
 
     # Verify Python API usage
@@ -78,6 +82,10 @@ def test_measure_distances() -> None:
     # Verify cursor change logic
     assert "cursor" in html
     assert "crosshair" in html
+
+    # Verify the browser control uses the module bundle's default export.
+    assert "window.maplibreGLMeasures.default" in html
+    assert '"fixedLengthUnit": "km"' in html
 
     # Verify layers are configured
     assert "measure-points" in html
