@@ -4,10 +4,11 @@ This repository includes a GitHub Actions workflow that automatically converts J
 
 ## How to Deploy Examples
 
-The deployment is triggered manually to give full control over when examples are published:
+The deployment runs automatically after a push to `main`. It can also be
+started manually when you need to rebuild the gallery without a new commit:
 
 1. Go to the repository's **Actions** tab
-2. Select the "Deploy Examples to GitHub Pages" workflow
+2. Select the "Documentation Build" workflow
 3. Click **Run workflow**
 4. Optionally enable debug mode for more verbose output
 5. Click the green **Run workflow** button
@@ -19,7 +20,7 @@ The deployment is triggered manually to give full control over when examples are
 2. **Execute Notebooks**: Runs each Jupyter notebook in the `examples/` folder:
    - Executes all cells to generate outputs and interactive maps
    - Converts notebooks to HTML format
-   - Handles errors gracefully - if execution fails, converts without execution
+   - Stops the build if execution fails, preventing broken examples from being published
 
 3. **Create Gallery**: Generates a beautiful index page that showcases all examples with descriptions
 
@@ -27,12 +28,11 @@ The deployment is triggered manually to give full control over when examples are
 
 ## Examples Included
 
-The following notebooks are automatically processed:
-
-- **Creative MapLibreum Examples & Tutorials**: Comprehensive showcase of features
-- **Basic Usage Examples**: Fundamental patterns for creating maps  
-- **New Features Demo**: Latest MapLibreum capabilities
-- **Event Handling**: Interactive callbacks and user interactions
+The gallery follows a six-part learning path: quickstart, data-driven styling,
+thematic mapping, terrain and PMTiles, export-safe interaction, and clustering
+for larger point collections. See the
+[examples guide](https://github.com/kauevestena/maplibreum_prototype/blob/main/examples/README.md)
+for the current notebook descriptions.
 
 ## Accessing the Deployed Examples
 
@@ -50,7 +50,8 @@ For this repository:
 
 ## Troubleshooting
 
-- If a notebook fails to execute, it will still be converted to HTML without execution
+- If a notebook fails, the workflow fails and preserves the error in the Actions log
 - Check the Actions log for detailed error messages
-- Ensure all notebooks have valid Python code and required data
+- Run `pytest tests/test_notebooks.py -v` before pushing notebook changes
+- Ensure all notebooks have valid Python code and deterministic teaching data
 - The workflow includes a 5-minute timeout per notebook execution

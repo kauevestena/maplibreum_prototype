@@ -65,12 +65,12 @@ jobs:
           mkdir -p ../site/examples
           for notebook in *.ipynb; do
             echo "Processing $notebook..."
-            if jupyter nbconvert --to html --execute "$notebook" --output-dir ../site/examples/ --allow-errors --ExecutePreprocessor.timeout=300; then
-              echo "Successfully executed and converted $notebook"
-            else
-              echo "Warning: Failed to execute $notebook, converting without execution"
-              jupyter nbconvert --to html "$notebook" --output-dir ../site/examples/
-            fi
+            jupyter nbconvert \
+              --to html \
+              --execute "$notebook" \
+              --output-dir ../site/examples/ \
+              --ExecutePreprocessor.timeout=300 \
+              --ExecutePreprocessor.allow_errors=False
           done
           
       # Copy documentation to site
@@ -93,9 +93,37 @@ jobs:
           EXAMPLE_ITEMS=""
           for htmlfile in site/examples/*.html; do
             filename=$(basename "$htmlfile")
-            # Create a human-readable title from the filename
-            title=$(echo "$filename" | sed 's/\.html$//' | sed 's/_/ /g' | sed 's/\b\(.\)/\u\1/g')
-            EXAMPLE_ITEMS="${EXAMPLE_ITEMS}              <li class=\"example-item\"><a href=\"${filename}\">${title}</a></li>\n"
+            case "$filename" in
+              01_basic_usage.html)
+                title="Your first MapLibreum map"
+                description="Build and export a polished walking tour."
+                ;;
+              02_layers_and_controls.html)
+                title="Data-driven styling"
+                description="Map an accessibility audit with expressions and rich popups."
+                ;;
+              03_geojson_and_choropleth.html)
+                title="Thematic mapping"
+                description="Combine a choropleth with candidate investments."
+                ;;
+              04_advanced_layers.html)
+                title="Terrain and cloud-native tiles"
+                description="Explore pitched terrain and a PMTiles vector map."
+                ;;
+              05_realtime_and_events.html)
+                title="Interaction that survives export"
+                description="Filter, restyle, inspect, and measure without a Python kernel."
+                ;;
+              06_clustering_and_performance.html)
+                title="Thousands of points"
+                description="Cluster 6,000 observations with the WebGL renderer."
+                ;;
+              *)
+                title=$(echo "$filename" | sed 's/\.html$//' | sed 's/_/ /g' | sed 's/\b\(.\)/\u\1/g')
+                description="Interactive MapLibreum notebook."
+                ;;
+            esac
+            EXAMPLE_ITEMS="${EXAMPLE_ITEMS}              <li class=\"example-item\"><a href=\"${filename}\"><span class=\"example-title\">${title}</span><span class=\"example-description\">${description}</span></a></li>\n"
           done
           
           cat > site/examples/index.html << ENDOFFILE
@@ -148,10 +176,20 @@ jobs:
                   .example-item a {
                       text-decoration: none;
                       color: #2c3e50;
-                      font-weight: 500;
+                      display: block;
                   }
                   .example-item a:hover {
                       color: #3498db;
+                  }
+                  .example-title {
+                      display: block;
+                      font-size: 1.05rem;
+                      font-weight: 650;
+                  }
+                  .example-description {
+                      display: block;
+                      margin-top: 3px;
+                      color: #5d6770;
                   }
                   .footer {
                       margin-top: 40px;
@@ -170,7 +208,7 @@ jobs:
               </div>
               
               <h1>MapLibreum Examples Gallery</h1>
-              <p>Interactive MapLibre maps created with MapLibreum - a Python library for building beautiful, interactive maps.</p>
+              <p>Six progressive tutorials—from a first marker to terrain, PMTiles, export-safe interaction, and thousands of clustered points.</p>
               
               <ul class="example-list">
           $(printf '%b' "$EXAMPLE_ITEMS")
