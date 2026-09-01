@@ -9,6 +9,7 @@
 
 
 
+
     <style>
         body {
             margin: 0;
@@ -45,6 +46,61 @@
 
         }
 
+        .maplibreum-style-switcher {
+            background: #fff;
+            border-radius: 4px;
+            box-shadow: 0 0 0 2px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+
+        .maplibreum-style-switcher select {
+            appearance: none;
+            background: #fff;
+            border: 0;
+            color: #263238;
+            cursor: pointer;
+            font: 600 12px/20px -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+            min-width: 150px;
+            padding: 8px 30px 8px 10px;
+        }
+
+        .maplibreum-feature-popup {
+            color: #263238;
+            font: 12px/1.45 -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+            min-width: 220px;
+        }
+
+        .maplibreum-feature-popup-title {
+            font-size: 14px;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+
+        .maplibreum-feature-popup-row {
+            border-top: 1px solid #eceff1;
+            display: grid;
+            gap: 10px;
+            grid-template-columns: minmax(90px, 1fr) minmax(70px, 1fr);
+            padding: 4px 0;
+        }
+
+        .maplibreum-feature-popup-label {
+            color: #607d8b;
+            font-weight: 600;
+        }
+
+        .maplibreum-feature-popup-value {
+            overflow-wrap: anywhere;
+            text-align: right;
+        }
+
+        .maplibreum-feature-popup-links {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: 9px;
+        }
+
 
 
         #maplibreum_0 { width: 100%; height: 500px; }
@@ -53,11 +109,16 @@
 
     </style>
 
-    <script src="https://cdn.jsdelivr.net/npm/three@0.169.0/build/three.min.js" defer></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/build/three.min.js" defer></script>
 
-    <script src="https://cdn.jsdelivr.net/npm/three@0.169.0/examples/js/loaders/GLTFLoader.js" defer></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/GLTFLoader.js" defer></script>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/dompurify/3.0.6/purify.min.js"></script>
+    <!-- Optional control libraries must load before map initialization. -->
+
+
+
+
 </head>
 <body>
 <div class="maplibreum-example-banner">
@@ -66,10 +127,12 @@
   <p>Generated from test_add_a_3d_model_using_threejs.py by the automated test suite.</p>
 </div>
 
+
     <div id="maplibreum_0">
 
 
     </div>
+
     <!-- MapLibre GL JS with CDN fallbacks -->
     <script>
         // Load MapLibre 6's ES module build, with an independent CDN fallback.
@@ -257,6 +320,17 @@
                 return Promise.resolve(undefined);
             }
 
+            _getViewState() {
+                const center = this.map.getCenter();
+                return {
+                    longitude: center.lng,
+                    latitude: center.lat,
+                    zoom: this.map.getZoom(),
+                    bearing: this.map.getBearing(),
+                    pitch: this.map.getPitch(),
+                };
+            }
+
             _buildProps(config, data) {
                 const jsonProps = (config.props && config.props.json) || {};
                 const props = { data };
@@ -294,7 +368,7 @@
                                     customLayer.__deck = new deck.Deck({
                                         gl,
                                         map,
-                                        initialViewState: map.getFreeCameraOptions(),
+                                        initialViewState: this._getViewState(),
                                         layers: [new deck[config.layerType](layerProps)],
                                     });
                                 } catch (error) {
@@ -312,9 +386,11 @@
                             });
                     },
                     render: () => {
-                        if (customLayer.__deck && this.map.getFreeCameraOptions) {
-                            const viewState = this.map.getFreeCameraOptions();
-                            customLayer.__deck.setProps({ viewState });
+                        if (customLayer.__deck) {
+                            customLayer.__deck.setProps({
+                                viewState: this._getViewState(),
+                            });
+                            customLayer.__deck.redraw();
                         }
                     },
                     onRemove: () => {
@@ -354,11 +430,12 @@
         }
 
         // Load MapLibre and initialize map
-        loadMapLibreGL().then(() => {
+        loadMapLibreGL().then(async () => {
             // MapLibre loaded successfully, check if it's available
             if (typeof maplibregl === 'undefined') {
                 throw new Error('MapLibre GL JS loaded but not available');
             }
+
 
 
 
@@ -388,7 +465,8 @@
 
 map.on('load', function() {
 
-    // Add sources
+    // Add sources and retain their original definitions for data-driven apps.
+    map.__maplibreumSourceDefinitions = map.__maplibreumSourceDefinitions || {};
 
 
     // Register images used by style layers
@@ -403,6 +481,9 @@ map.on('load', function() {
 
 
     // Popups
+
+
+    // Structured feature-property popups for remote and vector-tile sources
 
 
     // Tooltips
@@ -436,6 +517,32 @@ const modelOrigin = [148.9819, -35.39847];
 const modelAltitude = 0.0;
 const modelRotate = [1.5707963267948966, 0.0, 0.0];
 const scaling = 1.0;
+
+function getMercatorModelMatrix(location, altitude) {
+    const mercator = maplibregl.MercatorCoordinate.fromLngLat(
+        location,
+        altitude
+    );
+    const scale = mercator.meterInMercatorCoordinateUnits();
+    return new THREE.Matrix4()
+        .makeTranslation(mercator.x, mercator.y, mercator.z)
+        .multiply(new THREE.Matrix4().makeRotationZ(Math.PI))
+        .multiply(new THREE.Matrix4().makeRotationX(Math.PI / 2))
+        .multiply(new THREE.Matrix4().makeScale(-scale, scale, scale));
+}
+
+const earthRadius = 6371008.8;
+function getGlobeModelMatrix(location, altitude) {
+    const lng = location[0];
+    const lat = location[1];
+    const scale = 1 / earthRadius;
+    return new THREE.Matrix4()
+        .makeRotationY(lng / 180 * Math.PI)
+        .multiply(new THREE.Matrix4().makeRotationX(-lat / 180 * Math.PI))
+        .multiply(new THREE.Matrix4().makeTranslation(0, 0, 1 + altitude / earthRadius))
+        .multiply(new THREE.Matrix4().makeRotationX(Math.PI / 2))
+        .multiply(new THREE.Matrix4().makeScale(scale, scale, scale));
+}
 
 const customLayer = {
     id: '3d-model',
@@ -471,17 +578,15 @@ const customLayer = {
     },
     render: function(gl, args) {
         if (false) {
-            const modelMatrix = map.transform.getMatrixForModel(
-                modelOrigin,
-                modelAltitude
-            );
+            const isGlobe = args.defaultProjectionData.projectionTransition > 0;
+            const modelMatrix = isGlobe
+                ? getGlobeModelMatrix(modelOrigin, modelAltitude)
+                : getMercatorModelMatrix(modelOrigin, modelAltitude);
+            modelMatrix.scale(new THREE.Vector3(scaling, scaling, scaling));
             const projectionMatrix = new THREE.Matrix4().fromArray(
                 args.defaultProjectionData.mainMatrix
             );
-            const transform = new THREE.Matrix4()
-                .fromArray(modelMatrix)
-                .scale(new THREE.Vector3(scaling, scaling, scaling));
-            this.camera.projectionMatrix = projectionMatrix.multiply(transform);
+            this.camera.projectionMatrix = projectionMatrix.multiply(modelMatrix);
         } else {
             const modelAsMercatorCoordinate = maplibregl.MercatorCoordinate.fromLngLat(
                 modelOrigin,
@@ -564,11 +669,6 @@ map.addLayer(customLayer, '');
             }
         }
     </script>
-
-    <!-- Load additional libraries with fallbacks -->
-
-
-
 
 </body>
 

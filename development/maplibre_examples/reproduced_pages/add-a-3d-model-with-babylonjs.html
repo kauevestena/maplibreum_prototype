@@ -9,6 +9,7 @@
 
 
 
+
     <style>
         body {
             margin: 0;
@@ -45,6 +46,61 @@
 
         }
 
+        .maplibreum-style-switcher {
+            background: #fff;
+            border-radius: 4px;
+            box-shadow: 0 0 0 2px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+
+        .maplibreum-style-switcher select {
+            appearance: none;
+            background: #fff;
+            border: 0;
+            color: #263238;
+            cursor: pointer;
+            font: 600 12px/20px -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+            min-width: 150px;
+            padding: 8px 30px 8px 10px;
+        }
+
+        .maplibreum-feature-popup {
+            color: #263238;
+            font: 12px/1.45 -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+            min-width: 220px;
+        }
+
+        .maplibreum-feature-popup-title {
+            font-size: 14px;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+
+        .maplibreum-feature-popup-row {
+            border-top: 1px solid #eceff1;
+            display: grid;
+            gap: 10px;
+            grid-template-columns: minmax(90px, 1fr) minmax(70px, 1fr);
+            padding: 4px 0;
+        }
+
+        .maplibreum-feature-popup-label {
+            color: #607d8b;
+            font-weight: 600;
+        }
+
+        .maplibreum-feature-popup-value {
+            overflow-wrap: anywhere;
+            text-align: right;
+        }
+
+        .maplibreum-feature-popup-links {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: 9px;
+        }
+
 
 
         #maplibreum_0 { width: 100%; height: 500px; }
@@ -58,6 +114,11 @@
     <script src="https://unpkg.com/babylonjs-loaders@5.42.2/babylonjs.loaders.min.js"></script>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/dompurify/3.0.6/purify.min.js"></script>
+    <!-- Optional control libraries must load before map initialization. -->
+
+
+
+
 </head>
 <body>
 <div class="maplibreum-example-banner">
@@ -66,10 +127,12 @@
   <p>Generated from test_add_a_3d_model_with_babylonjs.py by the automated test suite.</p>
 </div>
 
+
     <div id="maplibreum_0">
 
 
     </div>
+
     <!-- MapLibre GL JS with CDN fallbacks -->
     <script>
         // Load MapLibre 6's ES module build, with an independent CDN fallback.
@@ -257,6 +320,17 @@
                 return Promise.resolve(undefined);
             }
 
+            _getViewState() {
+                const center = this.map.getCenter();
+                return {
+                    longitude: center.lng,
+                    latitude: center.lat,
+                    zoom: this.map.getZoom(),
+                    bearing: this.map.getBearing(),
+                    pitch: this.map.getPitch(),
+                };
+            }
+
             _buildProps(config, data) {
                 const jsonProps = (config.props && config.props.json) || {};
                 const props = { data };
@@ -294,7 +368,7 @@
                                     customLayer.__deck = new deck.Deck({
                                         gl,
                                         map,
-                                        initialViewState: map.getFreeCameraOptions(),
+                                        initialViewState: this._getViewState(),
                                         layers: [new deck[config.layerType](layerProps)],
                                     });
                                 } catch (error) {
@@ -312,9 +386,11 @@
                             });
                     },
                     render: () => {
-                        if (customLayer.__deck && this.map.getFreeCameraOptions) {
-                            const viewState = this.map.getFreeCameraOptions();
-                            customLayer.__deck.setProps({ viewState });
+                        if (customLayer.__deck) {
+                            customLayer.__deck.setProps({
+                                viewState: this._getViewState(),
+                            });
+                            customLayer.__deck.redraw();
                         }
                     },
                     onRemove: () => {
@@ -354,11 +430,12 @@
         }
 
         // Load MapLibre and initialize map
-        loadMapLibreGL().then(() => {
+        loadMapLibreGL().then(async () => {
             // MapLibre loaded successfully, check if it's available
             if (typeof maplibregl === 'undefined') {
                 throw new Error('MapLibre GL JS loaded but not available');
             }
+
 
 
 
@@ -388,7 +465,8 @@
 
 map.on('load', function() {
 
-    // Add sources
+    // Add sources and retain their original definitions for data-driven apps.
+    map.__maplibreumSourceDefinitions = map.__maplibreumSourceDefinitions || {};
 
 
     // Register images used by style layers
@@ -407,6 +485,9 @@ map.on('load', function() {
 
 
     // Popups
+
+
+    // Structured feature-property popups for remote and vector-tile sources
 
 
     // Tooltips
@@ -539,11 +620,6 @@ map.on('style.load', () => {
             }
         }
     </script>
-
-    <!-- Load additional libraries with fallbacks -->
-
-
-
 
 </body>
 
