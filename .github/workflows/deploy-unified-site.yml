@@ -118,6 +118,10 @@ jobs:
                 title="Thousands of points"
                 description="Cluster 6,000 observations with the WebGL renderer."
                 ;;
+              07_pmtiles_world_basemap.html)
+                title="One file, the whole planet"
+                description="Stream the Protomaps world PMTiles build with hand-written style layers."
+                ;;
               *)
                 title=$(echo "$filename" | sed 's/\.html$//' | sed 's/_/ /g' | sed 's/\b\(.\)/\u\1/g')
                 description="Interactive MapLibreum notebook."

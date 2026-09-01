@@ -6,6 +6,9 @@ The format is inspired by [Keep a Changelog](https://keepachangelog.com/en/1.1.0
 
 ## [Unreleased]
 
+### Added
+- Added `examples/07_pmtiles_world_basemap.ipynb`, a minimal gallery notebook that renders Protomaps' world PMTiles build with `PMTilesSource` and `Map.add_pmtiles_source`.
+
 ## [0.2.2] - 2026-08-28
 
 ### Fixed
