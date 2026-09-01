@@ -22,6 +22,7 @@ To explore these examples interactively, you can run them directly within Jupyte
 4. **`04_advanced_layers.ipynb` — Terrain and cloud-native tiles:** render pitched 3D terrain and a vector map streamed from a single PMTiles archive.
 5. **`05_realtime_and_events.ipynb` — Interaction that survives export:** add filtering, restyling, measurement, popups, and coordinate inspection that work without a Python kernel.
 6. **`06_clustering_and_performance.ipynb` — Thousands of points:** generate and cluster 6,000 deterministic observations, then measure the rendered artifact.
+7. **`07_pmtiles_world_basemap.ipynb` — One file, the whole planet:** render Protomaps' world PMTiles build with a handful of hand-written style layers.
 
 ## Displaying Maps inside Notebooks
 
@@ -29,7 +30,7 @@ Simply create a `Map` instance (e.g., `m = Map(...)`) and evaluate `m` as the la
 
 If you need fine-grained control over the map's dimensions, pass `width` and `height` to `Map`, or call `m.display_in_notebook(width="100%", height="500px")`.
 
-The first three notebooks use embedded teaching data over the public OpenFreeMap Liberty style. OpenFreeMap requires no API key, but its public instance does not provide an availability guarantee; use infrastructure with an appropriate service level for production deployments. Notebook 4 intentionally fetches public demonstration terrain and PMTiles data in the browser; replace those endpoints with production infrastructure before deploying a real application.
+The first three notebooks use embedded teaching data over the public OpenFreeMap Liberty style. OpenFreeMap requires no API key, but its public instance does not provide an availability guarantee; use infrastructure with an appropriate service level for production deployments. Notebooks 4 and 7 intentionally fetch public demonstration terrain and PMTiles data in the browser; replace those endpoints with production infrastructure before deploying a real application.
 
 ## Production field tests
 

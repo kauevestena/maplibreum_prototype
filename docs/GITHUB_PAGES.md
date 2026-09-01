@@ -28,9 +28,9 @@ started manually when you need to rebuild the gallery without a new commit:
 
 ## Examples Included
 
-The gallery follows a six-part learning path: quickstart, data-driven styling,
-thematic mapping, terrain and PMTiles, export-safe interaction, and clustering
-for larger point collections. See the
+The gallery follows a seven-part learning path: quickstart, data-driven styling,
+thematic mapping, terrain and PMTiles, export-safe interaction, clustering
+for larger point collections, and a planet-scale PMTiles basemap. See the
 [examples guide](https://github.com/kauevestena/maplibreum_prototype/blob/main/examples/README.md)
 for the current notebook descriptions.
 
